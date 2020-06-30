@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.*
 
@@ -14,18 +15,21 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
+import com.shid.mosquefinder.Model.Mosque
 import com.shid.mosquefinder.Utils.PermissionUtils
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
+        private val TAG = "MapsActivity"
     }
 
     private lateinit var mMap: GoogleMap
     private lateinit var database: FirebaseFirestore
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var mMosqueListEventListener: ListenerRegistration
+    private val mMosqueList: MutableList<Mosque> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +47,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun getTotalMosques() {
         val mosqueRef: CollectionReference = database.collection("mosques")
+        mMosqueListEventListener =
+            mosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
+                if (firebaseFirestoreException != null) {
+                    Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
+                    return@EventListener
+                }
+
+                if (querySnapshot != null) {
+                    mMosqueList.clear()
+                    for (doc in querySnapshot) {
+                        val mosque = doc.toObject(Mosque::class.java)
+                        mMosqueList.add(mosque)
+                    }
+                }
+            })
+
     }
 
     /**
