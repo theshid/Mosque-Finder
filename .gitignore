@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 /app/src/debug/res/values
+/app/google-services.json
+/app/src/release/res/values/google_maps_api.xml
