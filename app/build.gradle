@@ -41,4 +41,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
 
+    //Google map utility
+    implementation 'com.google.maps.android:android-maps-utils:2.0.1'
+    implementation 'com.google.maps.android:maps-utils-ktx:1.7.0'
+
+
 }
