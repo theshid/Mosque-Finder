@@ -2,24 +2,35 @@ package com.shid.mosquefinder
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
-
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener
+import com.google.android.gms.maps.GoogleMap.OnPolylineClickListener
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.firestore.*
+import com.google.maps.GeoApiContext
+import com.google.maps.android.clustering.ClusterManager
+import com.shid.mosquefinder.Model.ClusterMarker
 import com.shid.mosquefinder.Model.Mosque
+import com.shid.mosquefinder.Model.PolylineData
+import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
 import com.shid.mosquefinder.Utils.PermissionUtils
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
+    View.OnClickListener,
+    OnInfoWindowClickListener, OnPolylineClickListener{
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
         private val TAG = "MapsActivity"
@@ -30,6 +41,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private val mMosqueList: MutableList<Mosque> = ArrayList()
+
+    private lateinit var mMapView: MapView
+    private lateinit var mGeoApiContext: GeoApiContext
+    private lateinit var mMapBoundary: LatLngBounds
+    private lateinit var mClusterManager: ClusterManager<ClusterMarker>
+    private lateinit var mClusterManagerRenderer: MyClusterManagerRenderer
+    private val mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
+    private val mPolylinesData: MutableList<PolylineData> = ArrayList()
+    private val mTripMarkers: MutableList<Marker> = ArrayList()
+    private lateinit var mSelectedMarker: Marker
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,11 +98,72 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        addMapMarkers()
+        mMap.setOnInfoWindowClickListener(this)
+        mMap.setOnPolylineClickListener(this)
+    }
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    private fun addMapMarkers() {
+        resetMap()
+        if (mClusterManager == null) {
+            mClusterManager =
+                ClusterManager(this.applicationContext, mMap)
+        }
+        if (mClusterManagerRenderer == null) {
+            mClusterManagerRenderer = MyClusterManagerRenderer(
+                this,
+                mClusterManager,
+                mMap
+            )
+            mClusterManager.setRenderer(mClusterManagerRenderer)
+        }
+        for (mosqueLocation in mMosqueList) {
+            Log.d(
+                com.shid.swissaid.UI.GeolocationActivity.TAG,
+                "addMapMarkers: location: " + userLocation.getGeo_point().toString()
+            )
+            try {
+                var snippet = ""
+                snippet = if (userLocation.getUser().getUser_id()
+                        .equals(FirebaseAuth.getInstance().getUid())
+                ) {
+                    getString(R.string.you)
+                } else {
+                    getString(R.string.determine_route) + " " + userLocation.getUser()
+                        .getUsername() + "?"
+                }
+                val avatar: String = userLocation.getUser().getImageUrl()
+                Log.d("Avatar", "avatar link $avatar")
+                // int avatar = R.mipmap.icon; // set the default avatar
+                val newClusterMarker = ClusterMarker(
+                    LatLng(
+                        userLocation.getGeo_point().getLatitude(),
+                        userLocation.getGeo_point().getLongitude()
+                    ),
+                    userLocation.getUser().getUsername(),
+                    snippet,
+                    avatar,
+                    userLocation.getUser()
+                )
+                mClusterManager.addItem(newClusterMarker)
+                mClusterMarkers.add(newClusterMarker)
+            } catch (e: NullPointerException) {
+                Log.e(
+                    com.shid.swissaid.UI.GeolocationActivity.TAG,
+                    "addMapMarkers: NullPointerException: " + e.message
+                )
+            }
+        }
+        mClusterManager.cluster()
+        setCameraView()
+    }
+
+    private fun setCameraView() {
+        TODO("Not yet implemented")
+    }
+
+    private fun resetMap() {
+        TODO("Not yet implemented")
     }
 
 
@@ -156,5 +239,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    override fun onClick(v: View?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onInfoWindowClick(p0: Marker?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onPolylineClick(p0: Polyline?) {
+        TODO("Not yet implemented")
     }
 }

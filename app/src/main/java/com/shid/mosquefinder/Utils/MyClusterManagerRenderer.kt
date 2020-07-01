@@ -2,7 +2,10 @@ package com.shid.mosquefinder.Utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.widget.ImageView
+import coil.ImageLoader
+import coil.request.LoadRequest
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.MarkerOptions
@@ -12,6 +15,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
 import com.shid.mosquefinder.Model.ClusterMarker
 import com.shid.mosquefinder.R
+import java.util.concurrent.ExecutionException
 
 class MyClusterManagerRenderer constructor(
     context: Context,
@@ -21,7 +25,7 @@ class MyClusterManagerRenderer constructor(
     private lateinit var imageView: ImageView
     private var markerWidth: Int? = null
     private var markerHeight: Int? = null
-    private lateinit var mContext: Context
+     lateinit var mContext: Context
 
     init {
         mContext=context
@@ -44,12 +48,12 @@ class MyClusterManagerRenderer constructor(
         } else {
             //We create a Thread to fetch the image in the database and display it onto the map
             val getBitmap: com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap =
-                com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap(item.iconPic)
+                com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap(item.iconPic,mContext)
             val thread = Thread(getBitmap)
             thread.start()
             try {
                 thread.join()
-                val pic: Bitmap = getBitmap.getBitmapFromThread()
+                val pic: Bitmap? = getBitmap.getBitmapFromThread()
                 imageView.setImageBitmap(pic)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
@@ -74,5 +78,37 @@ class MyClusterManagerRenderer constructor(
         if (marker != null) {
             marker.position = clusterMarker.position
         }
+    }
+
+     class GetBitmap(var url: String, var context: Context) : Runnable {
+
+         var icon: Bitmap? = null
+
+        override fun run() {
+            try {
+
+                val loader = ImageLoader(context)
+                val req = LoadRequest.Builder(context)
+                    .data(url) // demo link
+                    .target { result ->
+                       icon = (result as BitmapDrawable).bitmap
+                    }
+                    .build()
+
+                val disposable = loader.execute(req)
+
+
+
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+        }
+
+         fun getBitmapFromThread(): Bitmap? {
+             return icon
+         }
+
     }
 }
