@@ -3,6 +3,7 @@ package com.shid.mosquefinder.Utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.view.ViewGroup
 import android.widget.ImageView
 import coil.ImageLoader
 import coil.request.LoadRequest
@@ -22,7 +23,7 @@ class MyClusterManagerRenderer constructor(
     clusterManager: ClusterManager<ClusterMarker>, map: GoogleMap?
 ): DefaultClusterRenderer<ClusterMarker>(context, map, clusterManager) {
     private lateinit var iconGenerator: IconGenerator
-    private lateinit var imageView: ImageView
+    private  var imageView: ImageView? = null
     private var markerWidth: Int? = null
     private var markerHeight: Int? = null
      lateinit var mContext: Context
@@ -33,16 +34,18 @@ class MyClusterManagerRenderer constructor(
         imageView = ImageView(context.applicationContext)
         markerWidth = (context.resources.getDimension(R.dimen.custom_marker_image)).toInt()
         markerHeight = (context.resources.getDimension(R.dimen.custom_marker_image)).toInt()
-        imageView.layoutParams.width = markerWidth!!
-        imageView.layoutParams.height = markerHeight!!
+        var params:ViewGroup.LayoutParams = ViewGroup.LayoutParams(markerWidth!!, markerHeight!!)
+        imageView!!.layoutParams = params
+        /*imageView!!.layoutParams.width = markerWidth!!
+        imageView!!.layoutParams.height = markerHeight!!*/
         val padding = context.resources.getDimension(R.dimen.custom_marker_padding).toInt()
-        imageView.setPadding(padding,padding,padding,padding)
+        imageView!!.setPadding(padding,padding,padding,padding)
         iconGenerator.setContentView(imageView)
     }
 
     override fun onBeforeClusterItemRendered(item: ClusterMarker, markerOptions: MarkerOptions) {
         if (item.iconPic.equals("default")) {
-            imageView.setImageResource(R.drawable.mosque)
+            imageView!!.setImageResource(R.drawable.mosque)
             val icon = iconGenerator.makeIcon()
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
         } else {
@@ -54,7 +57,7 @@ class MyClusterManagerRenderer constructor(
             try {
                 thread.join()
                 val pic: Bitmap? = getBitmap.getBitmapFromThread()
-                imageView.setImageBitmap(pic)
+                imageView!!.setImageBitmap(pic)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             } catch (e: InterruptedException) {

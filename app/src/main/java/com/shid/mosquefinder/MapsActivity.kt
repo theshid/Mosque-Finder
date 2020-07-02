@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
@@ -13,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.*
@@ -46,19 +48,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private val mMosqueList: MutableList<Mosque> = ArrayList()
 
     private lateinit var mMapView: MapView
-    private lateinit var mGeoApiContext: GeoApiContext
     private lateinit var mMapBoundary: LatLngBounds
-    private lateinit var mClusterManager: ClusterManager<ClusterMarker>
-    private lateinit var mClusterManagerRenderer: MyClusterManagerRenderer
+    private var mClusterManager: ClusterManager<ClusterMarker>? = null
+    private  var mClusterManagerRenderer: MyClusterManagerRenderer? = null
     private var mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
     private var mPolylinesData: MutableList<PolylineData> = ArrayList()
     private val mTripMarkers: MutableList<Marker> = ArrayList()
     private var mSelectedMarker: Marker? = null
-    private lateinit var userPosition: LatLng
+    private var userPosition: LatLng = LatLng(5.6358102,-0.2346342)
     private var mapJob = Job()
+    private var mGeoApiContext: GeoApiContext? = null
     private val uiScope = CoroutineScope(Dispatchers.Main + mapJob)
+    private lateinit var mGoogleApiClient: GoogleApiClient
 
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -66,11 +70,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        if (mGeoApiContext == null) {
+            mGeoApiContext = GeoApiContext.Builder()
+                .apiKey(getString(R.string.google_maps_key))
+                .build()
+        }
+
+
 
         database = FirebaseFirestore.getInstance()
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        getTotalMosques()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapJob.cancel()
     }
 
     private fun getTotalMosques() {
@@ -87,6 +102,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     for (doc in querySnapshot) {
                         val mosque = doc.toObject(Mosque::class.java)
                         mMosqueList.add(mosque)
+                        var mosqueName: String = doc.get("name") as String
+                        var locationMos: GeoPoint = doc.get("position") as GeoPoint
+                        var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
+                        var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))
+                        Log.d(TAG,"mosque position"+ mosque.position.latitude)
                     }
                 }
             })
@@ -104,6 +124,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.addMarker(MarkerOptions().position(userPosition).title("Marker in Sydney"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(userPosition))
+        getTotalMosques()
         addMapMarkers()
         mMap.setOnInfoWindowClickListener(this)
         mMap.setOnPolylineClickListener(this)
@@ -111,17 +134,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun addMapMarkers() {
         resetMap()
+        getTotalMosques()
         if (mClusterManager == null) {
-            mClusterManager =
-                ClusterManager(this.applicationContext, mMap)
+            mClusterManager = ClusterManager(this.applicationContext, mMap)
         }
         if (mClusterManagerRenderer == null) {
             mClusterManagerRenderer = MyClusterManagerRenderer(
                 this,
-                mClusterManager,
+                mClusterManager!!,
                 mMap
             )
-            mClusterManager.setRenderer(mClusterManagerRenderer)
+            mClusterManager!!.renderer = mClusterManagerRenderer
         }
         for (mosqueLocation in mMosqueList) {
             Log.d(
@@ -143,7 +166,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     snippet,
                     "default"
                 )
-                mClusterManager.addItem(newClusterMarker)
+                mClusterManager!!.addItem(newClusterMarker)
                 mClusterMarkers.add(newClusterMarker)
             } catch (e: NullPointerException) {
                 Log.e(
@@ -152,7 +175,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 )
             }
         }
-        mClusterManager.cluster()
+        mClusterManager!!.cluster()
         setCameraView()
     }
 
@@ -185,7 +208,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         if (mMap != null) {
             mMap.clear()
             if (mClusterManager != null) {
-                mClusterManager.clearItems()
+                mClusterManager!!.clearItems()
             }
             if (mClusterMarkers.size > 0) {
                 mClusterMarkers.clear()
@@ -325,6 +348,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         /* latTextView.text = location.latitude.toString()
                          lngTextView.text = location.longitude.toString()*/
                         userPosition = LatLng(location.latitude, location.longitude)
+                        Log.d(TAG,"position="+location.latitude +""+location.longitude)
                     }
                     // Few more things we can do here:
                     // For example: Update the location of user on server
@@ -468,8 +492,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         for (polylineData in mPolylinesData) {
             Log.d(TAG, "onPolylineClick: toString: $polylineData")
             if (polyline.id == polylineData.polyline.id) {
-                polylineData.polyline.color = ContextCompat.getColor(applicationContext, R.color.unicef)
-                polylineData.polyline.zIndex = 1F // gives a elevation in orfer to easily differenciate from the others
+                polylineData.polyline.color =
+                    ContextCompat.getColor(applicationContext, R.color.unicef)
+                polylineData.polyline.zIndex =
+                    1F // gives a elevation in orfer to easily differenciate from the others
                 val endpoint =
                     LatLng(
                         polylineData.leg.endLocation.lat,
@@ -484,7 +510,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 marker.showInfoWindow()
                 mTripMarkers.add(marker)
             } else {
-                polylineData.polyline.color = ContextCompat.getColor(applicationContext, R.color.grey)
+                polylineData.polyline.color =
+                    ContextCompat.getColor(applicationContext, R.color.grey)
                 polylineData.polyline.zIndex = 0F
             }
         }

@@ -2,15 +2,19 @@ package com.shid.mosquefinder.Model
 
 import com.google.firebase.firestore.GeoPoint
 
-class Mosque constructor(
+class Mosque (
 
-    var name: String,
+    var name: String ="",
 
-    var position: GeoPoint
+    var position: GeoPoint = GeoPoint(0.0, 0.0)
 
 
 ) {
-    override fun toString(): String? {
+
+    fun Mosque(){
+
+    }
+    override fun toString(): String {
         return "MosqueLocation{" +
                 "geo_point=" + position +
                 ", name=" + name +
