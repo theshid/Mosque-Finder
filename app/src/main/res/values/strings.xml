@@ -6,5 +6,12 @@
     <string name="location_permission_not_granted">Location Permission not granted</string>
     <string name="enable_gps">Enable GPS</string>
     <string name="title_activity_maps">Map</string>
+    <string name="determine_route">Determine route to </string>
+    <string name="duree">Duration: </string>
+    <string name="trip">Trip # </string>
     <string name="title_activity_maps2">Map</string>
+    <string name="open_google_map">Open Google Maps?</string>
+    <string name="map_error">Couldn\'t open map</string>
+    <string name="yes">This is you</string>
+    <string name="no">No</string>
 </resources>

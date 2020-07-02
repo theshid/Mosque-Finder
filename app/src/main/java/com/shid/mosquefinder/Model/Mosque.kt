@@ -10,6 +10,11 @@ class Mosque constructor(
 
 
 ) {
-
+    override fun toString(): String? {
+        return "MosqueLocation{" +
+                "geo_point=" + position +
+                ", name=" + name +
+                '}'
+    }
 
 }
