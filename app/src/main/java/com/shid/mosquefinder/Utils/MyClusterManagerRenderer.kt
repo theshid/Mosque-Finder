@@ -34,7 +34,7 @@ class MyClusterManagerRenderer constructor(
         imageView = ImageView(context.applicationContext)
         markerWidth = (context.resources.getDimension(R.dimen.custom_marker_image)).toInt()
         markerHeight = (context.resources.getDimension(R.dimen.custom_marker_image)).toInt()
-        var params:ViewGroup.LayoutParams = ViewGroup.LayoutParams(markerWidth!!, markerHeight!!)
+        val params:ViewGroup.LayoutParams = ViewGroup.LayoutParams(markerWidth!!, markerHeight!!)
         imageView!!.layoutParams = params
         /*imageView!!.layoutParams.width = markerWidth!!
         imageView!!.layoutParams.height = markerHeight!!*/
@@ -44,14 +44,19 @@ class MyClusterManagerRenderer constructor(
     }
 
     override fun onBeforeClusterItemRendered(item: ClusterMarker, markerOptions: MarkerOptions) {
-        if (item.iconPic.equals("default")) {
+        if (item.mPic == "default") {
             imageView!!.setImageResource(R.drawable.mosque)
             val icon = iconGenerator.makeIcon()
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
         } else {
+            imageView!!.setImageResource(R.drawable.user)
+            val icon = iconGenerator.makeIcon()
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+
+
             //We create a Thread to fetch the image in the database and display it onto the map
-            val getBitmap: com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap =
-                com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap(item.iconPic,mContext)
+            /*val getBitmap: com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap =
+                com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap(item.mPic,mContext)
             val thread = Thread(getBitmap)
             thread.start()
             try {
@@ -62,7 +67,7 @@ class MyClusterManagerRenderer constructor(
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
-            }
+            }*/
             //Glide.with(context).load(item.getIconPicture()).into(imageView);
         }
     }

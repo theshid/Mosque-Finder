@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
@@ -45,7 +46,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var database: FirebaseFirestore
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mMosqueListEventListener: ListenerRegistration
-    private val mMosqueList: MutableList<Mosque> = ArrayList()
+    private var mMosqueList: MutableList<Mosque> = ArrayList()
 
     private lateinit var mMapView: MapView
     private lateinit var mMapBoundary: LatLngBounds
@@ -55,7 +56,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private var mPolylinesData: MutableList<PolylineData> = ArrayList()
     private val mTripMarkers: MutableList<Marker> = ArrayList()
     private var mSelectedMarker: Marker? = null
-    private var userPosition: LatLng = LatLng(5.6358102,-0.2346342)
+    private lateinit var userPosition: LatLng
     private var mapJob = Job()
     private var mGeoApiContext: GeoApiContext? = null
     private val uiScope = CoroutineScope(Dispatchers.Main + mapJob)
@@ -101,11 +102,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     mMosqueList.clear()
                     for (doc in querySnapshot) {
                         val mosque = doc.toObject(Mosque::class.java)
-                        mMosqueList.add(mosque)
+                       // mMosqueList.add(mosque)
                         var mosqueName: String = doc.get("name") as String
                         var locationMos: GeoPoint = doc.get("position") as GeoPoint
-                        var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
-                        var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))
+                        var mosqueElem:Mosque = Mosque(mosqueName,locationMos)
+                        mMosqueList.add(mosqueElem)
+                       /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
+                        var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*/
                         Log.d(TAG,"mosque position"+ mosque.position.latitude)
                     }
                 }
@@ -124,17 +127,64 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.addMarker(MarkerOptions().position(userPosition).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(userPosition))
-        getTotalMosques()
-        addMapMarkers()
+//        mMap.addMarker(MarkerOptions().position(userPosition).title("Marker in Sydney"))
+
+            getTotalMosques()
+
+
+        Handler().postDelayed(Runnable {
+            //anything you want to start after 3s
+            addMapMarkers()
+            addUserMarker()
+        }, 3000)
+
         mMap.setOnInfoWindowClickListener(this)
         mMap.setOnPolylineClickListener(this)
     }
 
+    private fun addUserMarker(){
+        if (mClusterManager == null) {
+            mClusterManager = ClusterManager(this.applicationContext, mMap)
+        }
+        if (mClusterManagerRenderer == null) {
+            mClusterManagerRenderer = MyClusterManagerRenderer(
+                this,
+                mClusterManager!!,
+                mMap
+            )
+            mClusterManager!!.renderer = mClusterManagerRenderer
+        }
+
+            try {
+                val snippet = getString(R.string.you)
+
+                /*val avatar: String = mosqueLocation
+                Log.d("Avatar", "avatar link $avatar")*/
+                // int avatar = R.mipmap.icon; // set the default avatar
+                val newClusterMarker = ClusterMarker(
+                    userPosition.latitude                    ,
+                    userPosition.longitude
+                    ,
+                    "You",
+                    snippet,
+                    "Me"
+                )
+                mClusterManager!!.addItem(newClusterMarker)
+                mClusterMarkers.add(newClusterMarker)
+            } catch (e: NullPointerException) {
+                Log.e(
+                    "Map",
+                    "addMapMarkers: NullPointerException: " + e.message
+                )
+            }
+
+        mClusterManager!!.cluster()
+        setCameraView()
+    }
+
     private fun addMapMarkers() {
         resetMap()
-        getTotalMosques()
+        //getTotalMosques()
         if (mClusterManager == null) {
             mClusterManager = ClusterManager(this.applicationContext, mMap)
         }
@@ -158,10 +208,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 Log.d("Avatar", "avatar link $avatar")*/
                 // int avatar = R.mipmap.icon; // set the default avatar
                 val newClusterMarker = ClusterMarker(
-                    LatLng(
-                        mosqueLocation.position.latitude,
+
+                        mosqueLocation.position.latitude ,
                         mosqueLocation.position.longitude
-                    ),
+                    ,
                     mosqueLocation.name,
                     snippet,
                     "default"
@@ -176,7 +226,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             }
         }
         mClusterManager!!.cluster()
-        setCameraView()
+
     }
 
     private fun setCameraView() {
@@ -205,19 +255,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun resetMap() {
-        if (mMap != null) {
-            mMap.clear()
-            if (mClusterManager != null) {
-                mClusterManager!!.clearItems()
-            }
-            if (mClusterMarkers.size > 0) {
-                mClusterMarkers.clear()
-                mClusterMarkers = java.util.ArrayList()
-            }
-            if (mPolylinesData.size > 0) {
-                mPolylinesData.clear()
-                mPolylinesData = ArrayList()
-            }
+        mMap.clear()
+        if (mClusterManager != null) {
+            mClusterManager!!.clearItems()
+        }
+        if (mClusterMarkers.size > 0) {
+            mClusterMarkers.clear()
+            mClusterMarkers = java.util.ArrayList()
+        }
+        if (mPolylinesData.size > 0) {
+            mPolylinesData.clear()
+            mPolylinesData = ArrayList()
         }
     }
 
@@ -273,7 +321,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         polylineData.polyline.remove()
                     }
                     mPolylinesData.clear()
-                    mPolylinesData = java.util.ArrayList()
+                    mPolylinesData = ArrayList()
                 }
                 var duration = 99999999.0
                 //Gives you a list of check points
@@ -314,7 +362,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun zoomRoute(lstLatLngRoute: List<LatLng>) {
-        if (mMap == null || lstLatLngRoute == null || lstLatLngRoute.isEmpty()) return
+        if (lstLatLngRoute.isEmpty()) return
 
         val boundsBuilder = LatLngBounds.Builder()
         for (latLngPoint in lstLatLngRoute) boundsBuilder.include(

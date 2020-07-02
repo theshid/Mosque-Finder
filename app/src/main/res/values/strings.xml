@@ -14,4 +14,5 @@
     <string name="map_error">Couldn\'t open map</string>
     <string name="yes">This is you</string>
     <string name="no">No</string>
+    <string name="you">This is you</string>
 </resources>
