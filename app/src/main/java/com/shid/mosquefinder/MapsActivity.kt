@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -14,8 +14,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.*
@@ -25,6 +25,7 @@ import com.google.maps.DirectionsApiRequest
 import com.google.maps.GeoApiContext
 import com.google.maps.PendingResult
 import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.collections.MarkerManager
 import com.google.maps.internal.PolylineEncoding
 import com.google.maps.model.DirectionsResult
 import com.shid.mosquefinder.Model.ClusterMarker
@@ -35,7 +36,6 @@ import com.shid.mosquefinder.Utils.PermissionUtils
 import kotlinx.coroutines.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
-    View.OnClickListener,
     OnInfoWindowClickListener, OnPolylineClickListener {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
@@ -44,11 +44,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private lateinit var mMap: GoogleMap
     private lateinit var database: FirebaseFirestore
-    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private var mMosqueList: MutableList<Mosque> = ArrayList()
 
-    private lateinit var mMapView: MapView
+
     private lateinit var mMapBoundary: LatLngBounds
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
     private  var mClusterManagerRenderer: MyClusterManagerRenderer? = null
@@ -60,7 +59,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private var mapJob = Job()
     private var mGeoApiContext: GeoApiContext? = null
     private val uiScope = CoroutineScope(Dispatchers.Main + mapJob)
-    private lateinit var mGoogleApiClient: GoogleApiClient
+    private var markerManager: MarkerManager? = null
+
 
 
     @SuppressLint("MissingPermission")
@@ -135,16 +135,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         Handler().postDelayed(Runnable {
             //anything you want to start after 3s
             addMapMarkers()
-            addUserMarker()
-        }, 3000)
+           // addUserMarker()
 
+        }, 3000)
         mMap.setOnInfoWindowClickListener(this)
+
         mMap.setOnPolylineClickListener(this)
+        /*mMap.setOnInfoWindowClickListener(object : GoogleMap.OnInfoWindowClickListener {
+            override fun onInfoWindowClick(marker: Marker) {
+                *//*var lat = marker.position.latitude
+                var long = marker.position.longitude
+                var addPositions: LatLng
+                addPositions = LatLng(lat, long)*//*
+
+                Toast.makeText(applicationContext,"Youpiiiiii",Toast.LENGTH_LONG).show()
+            }
+        })*/
+
     }
 
-    private fun addUserMarker(){
+   /* private fun addUserMarker(){
         if (mClusterManager == null) {
             mClusterManager = ClusterManager(this.applicationContext, mMap)
+
         }
         if (mClusterManagerRenderer == null) {
             mClusterManagerRenderer = MyClusterManagerRenderer(
@@ -155,32 +168,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             mClusterManager!!.renderer = mClusterManagerRenderer
         }
 
-            try {
-                val snippet = getString(R.string.you)
 
-                /*val avatar: String = mosqueLocation
-                Log.d("Avatar", "avatar link $avatar")*/
-                // int avatar = R.mipmap.icon; // set the default avatar
-                val newClusterMarker = ClusterMarker(
-                    userPosition.latitude                    ,
-                    userPosition.longitude
-                    ,
-                    "You",
-                    snippet,
-                    "Me"
-                )
-                mClusterManager!!.addItem(newClusterMarker)
-                mClusterMarkers.add(newClusterMarker)
-            } catch (e: NullPointerException) {
-                Log.e(
-                    "Map",
-                    "addMapMarkers: NullPointerException: " + e.message
-                )
-            }
 
         mClusterManager!!.cluster()
-        setCameraView()
-    }
+
+
+    }*/
 
     private fun addMapMarkers() {
         resetMap()
@@ -203,6 +196,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             )
             try {
                 val snippet = getString(R.string.determine_route) + " " + mosqueLocation.name + "?"
+                val title =  mosqueLocation.name
 
                 /*val avatar: String = mosqueLocation
                 Log.d("Avatar", "avatar link $avatar")*/
@@ -212,12 +206,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         mosqueLocation.position.latitude ,
                         mosqueLocation.position.longitude
                     ,
-                    mosqueLocation.name,
+                    title,
                     snippet,
                     "default"
                 )
                 mClusterManager!!.addItem(newClusterMarker)
+                var markerCollection: MarkerManager.Collection= mClusterManager!!.markerCollection
+                //markerCollection.setOnInfoWindowClickListener(this)
+             /*   markerCollection.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker: Marker? ->
+                    Toast.makeText(applicationContext,"Yesssss",Toast.LENGTH_LONG).show()
+                })
+              markerCollection.setOnInfoWindowClickListener(object: GoogleMap.OnInfoWindowClickListener{
+                  override fun onInfoWindowClick(p0: Marker?) {
+                      Toast.makeText(applicationContext,"Yesssss",Toast.LENGTH_LONG).show()
+                  }
+
+              })*/
                 mClusterMarkers.add(newClusterMarker)
+
+
             } catch (e: NullPointerException) {
                 Log.e(
                     "Map",
@@ -225,7 +232,85 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 )
             }
         }
+
+
+        try {
+
+            val snippet2 = getString(R.string.you)
+            val newClusterMarker2 = ClusterMarker(
+                userPosition.latitude                    ,
+                userPosition.longitude
+                ,
+                "You",
+                snippet2,
+                "Me"
+            )
+            mClusterManager!!.addItem(newClusterMarker2)
+            mClusterMarkers.add(newClusterMarker2)
+            /*val avatar: String = mosqueLocation
+            Log.d("Avatar", "avatar link $avatar")*/
+            // int avatar = R.mipmap.icon; // set the default avatar
+
+            /*
+            markerCollection.setOnInfoWindowClickListener(this)*/
+
+        } catch (e: NullPointerException) {
+            Log.e(
+                "Map",
+                "addMapMarkers: NullPointerException: " + e.message
+            )
+        }
+        var markerCollection: MarkerManager.Collection= mClusterManager!!.markerCollection
+        markerCollection.setOnMarkerClickListener(object: OnMarkerClickListener{
+            override fun onMarkerClick(marker: Marker?): Boolean {
+                Log.d(TAG,"you clicked")
+                openDialog(marker!!)
+                return true
+            }
+
+        })
         mClusterManager!!.cluster()
+        setCameraView()
+    }
+
+    private fun openDialog(marker: Marker){
+        // Initialize a new instance of
+        val builder = AlertDialog.Builder(this@MapsActivity)
+
+        // Set the alert dialog title
+        builder.setTitle("App background color")
+
+        // Display a message on alert dialog
+        builder.setMessage("Are you want to set the app background color to RED?")
+
+        // Set a positive button and its click listener on alert dialog
+        builder.setPositiveButton("YES"){dialog, which ->
+            // Do something when user press the positive button
+            resetSelectedMarker()
+            mSelectedMarker = marker
+            calculateDirections(marker)
+            dialog.dismiss()
+
+
+        }
+
+
+        // Display a negative button on alert dialog
+        builder.setNegativeButton("No"){dialog,which ->
+            Toast.makeText(applicationContext,"You are not agree.",Toast.LENGTH_SHORT).show()
+        }
+
+
+        // Display a neutral button on alert dialog
+        builder.setNeutralButton("Cancel"){_,_ ->
+            Toast.makeText(applicationContext,"You cancelled the dialog.",Toast.LENGTH_SHORT).show()
+        }
+
+        // Finally, make the alert dialog using builder
+        val dialog: AlertDialog = builder.create()
+
+        // Display the alert dialog on app interface
+        dialog.show()
 
     }
 
@@ -456,11 +541,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
-    override fun onClick(v: View?) {
-        TODO("Not yet implemented")
-    }
+
 
     override fun onInfoWindowClick(marker: Marker) {
+        Log.d(TAG,"you clicked")
         if (marker.title.contains("Trip #") || marker.title.contains("Parcours #")) {
             val builder =
                 AlertDialog.Builder(this)
@@ -564,4 +648,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             }
         }
     }
+
+
 }
