@@ -44,31 +44,39 @@ class MyClusterManagerRenderer constructor(
     }
 
     override fun onBeforeClusterItemRendered(item: ClusterMarker, markerOptions: MarkerOptions) {
-        if (item.mPic == "default") {
-            imageView!!.setImageResource(R.drawable.mosque)
-            val icon = iconGenerator.makeIcon()
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
-        } else {
-            imageView!!.setImageResource(R.drawable.user)
-            val icon = iconGenerator.makeIcon()
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
-
-
-            //We create a Thread to fetch the image in the database and display it onto the map
-            /*val getBitmap: com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap =
-                com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap(item.mPic,mContext)
-            val thread = Thread(getBitmap)
-            thread.start()
-            try {
-                thread.join()
-                val pic: Bitmap? = getBitmap.getBitmapFromThread()
-                imageView!!.setImageBitmap(pic)
+        when (item.mPic) {
+            "default" -> {
+                imageView!!.setImageResource(R.drawable.mosque)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }*/
-            //Glide.with(context).load(item.getIconPicture()).into(imageView);
+            }
+            "verified" -> {
+                imageView!!.setImageResource(R.drawable.mosque_check)
+                val icon = iconGenerator.makeIcon()
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+            }
+            else -> {
+                imageView!!.setImageResource(R.drawable.user)
+                val icon = iconGenerator.makeIcon()
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+
+
+                //We create a Thread to fetch the image in the database and display it onto the map
+                /*val getBitmap: com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap =
+                    com.shid.mosquefinder.Utils.MyClusterManagerRenderer.GetBitmap(item.mPic,mContext)
+                val thread = Thread(getBitmap)
+                thread.start()
+                try {
+                    thread.join()
+                    val pic: Bitmap? = getBitmap.getBitmapFromThread()
+                    imageView!!.setImageBitmap(pic)
+                    val icon = iconGenerator.makeIcon()
+                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }*/
+                //Glide.with(context).load(item.getIconPicture()).into(imageView);
+            }
         }
     }
 

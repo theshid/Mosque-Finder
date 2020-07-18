@@ -9,13 +9,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.InputType
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.GoogleMap.*
@@ -37,6 +42,7 @@ import com.shid.mosquefinder.Model.PolylineData
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
 import com.shid.mosquefinder.Utils.PermissionUtils
+import kotlinx.android.synthetic.main.activity_maps.*
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -95,7 +101,66 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
         database = FirebaseFirestore.getInstance()
+        btn_reset_map.setOnClickListener {
+            addMapMarkers()
+        }
+        startActivityButton.setOnClickListener {
+            MaterialDialog(this).show {
+                title(text = "Mosque Finder")
+                message(text = "Are you sure you want to add a mosque on this location?")
+                positiveButton(text = "Yes")
+                negativeButton(text = "Cancel")
+                positiveButton(text = "Yes") { dialog ->
+                    dialog.cancel()
+                    openInputDialog(userPosition)
 
+                }
+                negativeButton(text = "Cancel") { dialog ->
+                    dialog.cancel()
+                }
+                icon(R.drawable.logo)
+            }
+        }
+
+    }
+
+    private fun openInputDialog(userPosition: LatLng) {
+        //val type = InputType.TYPE_CLASS_TEXT
+
+        MaterialDialog(this).show {
+            input(hint = "Your Hint Text")
+           // input(inputType = type)
+            title(text = "Mosque Finder")
+            message(text = "Are you sure you want to add a mosque on this location?")
+            positiveButton(text = "Save Mosque") { dialog ->
+                val inputField = dialog.getInputField().text.toString()
+
+                dialog.cancel()
+                saveInputInDatabase(userPosition,inputField)
+            }
+            negativeButton(text = "Cancel") { dialog ->
+                dialog.cancel()
+            }
+            icon(R.drawable.logo)
+        }
+    }
+
+    private fun saveInputInDatabase(userPosition: LatLng, inputField: String) {
+        val location:GeoPoint = GeoPoint(userPosition.latitude,userPosition.longitude)
+        val mosquePosition = hashMapOf(
+            "name" to inputField,
+            "position" to location
+
+        )
+
+        database.collection("mosques").document()
+            .set(mosquePosition)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!")
+                addMapMarkers()
+                nearByPlace("mosque")
+            Toast.makeText(this,"Mosque added",Toast.LENGTH_LONG).show()}
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e)
+                Toast.makeText(this,"Error try again",Toast.LENGTH_LONG).show()}
 
     }
 
@@ -228,7 +293,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         })
                         mClusterManager!!.cluster()
                     }
-                    if (response.body()!!.nextPageToken != ""){
+                    //Code to loop to get at most 60 mosque
+                  /*  if (response.body()!!.nextPageToken != ""){
 
                         Handler().postDelayed(Runnable {
 
@@ -238,7 +304,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         }, 3000)
                     } else{
                         Toast.makeText(applicationContext,"No more results",Toast.LENGTH_LONG).show()
-                    }
+                    }*/
                 }
 
             })
@@ -248,7 +314,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         val googlePlaceUrl =
             StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
         googlePlaceUrl.append("?location=$latitude,$longitude")
-        googlePlaceUrl.append("&radius=5000")
+        googlePlaceUrl.append("&radius=3000")
         googlePlaceUrl.append("&type=$place")
         googlePlaceUrl.append("&key="+ getString(R.string.browser_key))
         googlePlaceUrl.append("&pagetoken=$token")
@@ -296,7 +362,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         mMap = googleMap
 //        mMap.addMarker(MarkerOptions().position(userPosition).title("Marker in Sydney"))
 
-        getTotalMosques()
+        //getTotalMosques()
 
 
         Handler().postDelayed(Runnable {
@@ -326,7 +392,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun addMapMarkers() {
         resetMap()
-        //getTotalMosques()
+        getTotalMosques()
         if (mClusterManager == null) {
             mClusterManager = ClusterManager(this.applicationContext, mMap)
         }
@@ -358,7 +424,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         ,
                         title,
                         snippet,
-                        "default"
+                        "verified"
                     )
                     mClusterManager!!.addItem(newClusterMarker)
                     markerCollectionForClusters = mClusterManager!!.markerCollection
