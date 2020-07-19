@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.google.android.gms.location.*
@@ -43,6 +44,7 @@ import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
 import com.shid.mosquefinder.Utils.PermissionUtils
 import kotlinx.android.synthetic.main.activity_maps.*
+import kotlinx.android.synthetic.main.dialog_layout.*
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -77,10 +79,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private var markerManager: MarkerManager? = null
     private var markerCollection: MarkerManager.Collection? = null
     private var markerCollectionForClusters: MarkerManager.Collection? = null
+    private var markerCollectionForClusters2: MarkerManager.Collection? = null
 
     lateinit var mService: ApiInterface
     internal var currentPlace: Place? = null
-
 
 
     @SuppressLint("MissingPermission")
@@ -103,6 +105,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         database = FirebaseFirestore.getInstance()
         btn_reset_map.setOnClickListener {
             addMapMarkers()
+
         }
         startActivityButton.setOnClickListener {
             MaterialDialog(this).show {
@@ -128,15 +131,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         //val type = InputType.TYPE_CLASS_TEXT
 
         MaterialDialog(this).show {
-            input(hint = "Your Hint Text")
-           // input(inputType = type)
+            input(hint = "Enter the name of the mosque")
+            // input(inputType = type)
             title(text = "Mosque Finder")
             message(text = "Are you sure you want to add a mosque on this location?")
             positiveButton(text = "Save Mosque") { dialog ->
                 val inputField = dialog.getInputField().text.toString()
 
                 dialog.cancel()
-                saveInputInDatabase(userPosition,inputField)
+                saveInputInDatabase(userPosition, inputField)
             }
             negativeButton(text = "Cancel") { dialog ->
                 dialog.cancel()
@@ -146,21 +149,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun saveInputInDatabase(userPosition: LatLng, inputField: String) {
-        val location:GeoPoint = GeoPoint(userPosition.latitude,userPosition.longitude)
+        val location: GeoPoint = GeoPoint(userPosition.latitude, userPosition.longitude)
         val mosquePosition = hashMapOf(
             "name" to inputField,
-            "position" to location
+            "position" to location,
+            "documentId" to "0",
+            "report" to 0
 
         )
 
         database.collection("mosques").document()
             .set(mosquePosition)
-            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!")
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully written!")
                 addMapMarkers()
-                nearByPlace("mosque")
-            Toast.makeText(this,"Mosque added",Toast.LENGTH_LONG).show()}
-            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e)
-                Toast.makeText(this,"Error try again",Toast.LENGTH_LONG).show()}
+
+
+                Toast.makeText(this, "Mosque added", Toast.LENGTH_LONG).show()
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error writing document", e)
+                Toast.makeText(this, "Error try again", Toast.LENGTH_LONG).show()
+            }
 
     }
 
@@ -170,7 +180,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     }
 
-    private fun nearByPlace(place: String, nextToken:String = "") {
+    private fun nearByPlace(place: String, nextToken: String = "") {
         //mMap.clear()
 
         //Build url request base on location
@@ -210,7 +220,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                 "addMapMarkers: location: " + googlePlace.geometry.location.toString()
                             )
                             try {
-                                val snippet = getString(R.string.determine_route) + " " + placeName + "?"
+                                val snippet =
+                                    getString(R.string.determine_route) + " " + placeName + "?"
                                 val title = placeName
 
                                 /*val avatar: String = mosqueLocation
@@ -237,7 +248,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                     "addMapMarkers: NullPointerException: " + e.message
                                 )
                             }
-
 
 
                             /*markerOptions.position(latLng)
@@ -279,13 +289,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         }
                         markerCollectionForClusters?.setOnMarkerClickListener { marker ->
                             Log.d(TAG, "you clicked")
-                            openDialog(marker!!)
+
+                            dialogOpenGoogleMap(marker)
                             true
                         }
 
-                        markerCollectionForClusters?.setOnInfoWindowClickListener(object : OnInfoWindowClickListener{
+                        markerCollectionForClusters?.setOnInfoWindowClickListener(object :
+                            OnInfoWindowClickListener {
                             override fun onInfoWindowClick(marker: Marker?) {
-                                if (marker!!.title.contains("Trip")){
+                                if (marker!!.title.contains("Trip")) {
                                     dialogOpenGoogleMap(marker)
                                 }
                             }
@@ -294,29 +306,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         mClusterManager!!.cluster()
                     }
                     //Code to loop to get at most 60 mosque
-                  /*  if (response.body()!!.nextPageToken != ""){
+                    /*  if (response.body()!!.nextPageToken != ""){
 
-                        Handler().postDelayed(Runnable {
+                          Handler().postDelayed(Runnable {
 
-                            nearByPlace("mosque", response.body()!!.nextPageToken.toString())
+                              nearByPlace("mosque", response.body()!!.nextPageToken.toString())
 
 
-                        }, 3000)
-                    } else{
-                        Toast.makeText(applicationContext,"No more results",Toast.LENGTH_LONG).show()
-                    }*/
+                          }, 3000)
+                      } else{
+                          Toast.makeText(applicationContext,"No more results",Toast.LENGTH_LONG).show()
+                      }*/
                 }
 
             })
     }
 
-    private fun getUrl(latitude: Double, longitude: Double, place: String, token:String = ""): String {
+    private fun getUrl(
+        latitude: Double,
+        longitude: Double,
+        place: String,
+        token: String = ""
+    ): String {
         val googlePlaceUrl =
             StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
         googlePlaceUrl.append("?location=$latitude,$longitude")
         googlePlaceUrl.append("&radius=3000")
         googlePlaceUrl.append("&type=$place")
-        googlePlaceUrl.append("&key="+ getString(R.string.browser_key))
+        googlePlaceUrl.append("&key=" + getString(R.string.browser_key))
         googlePlaceUrl.append("&pagetoken=$token")
         Log.d("Url_debug", googlePlaceUrl.toString())
         return googlePlaceUrl.toString()
@@ -335,10 +352,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     mMosqueList.clear()
                     for (doc in querySnapshot) {
                         val mosque = doc.toObject(Mosque::class.java)
+
+                        mosque.documentId = doc.id
                         // mMosqueList.add(mosque)
                         var mosqueName: String = doc.get("name") as String
                         var locationMos: GeoPoint = doc.get("position") as GeoPoint
-                        var mosqueElem: Mosque = Mosque(mosqueName, locationMos)
+                        var mosqueId: String = mosque.documentId
+                        var reportIndex:Long = doc.get("report") as Long
+
+                        var mosqueElem: Mosque = Mosque(mosqueName, locationMos, mosqueId, reportIndex)
+                        Log.d("Map", "the id  is" + mosqueElem.documentId)
                         mMosqueList.add(mosqueElem)
                         /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
                          var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*/
@@ -362,13 +385,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         mMap = googleMap
 //        mMap.addMarker(MarkerOptions().position(userPosition).title("Marker in Sydney"))
 
-        //getTotalMosques()
+        getTotalMosques()
 
 
         Handler().postDelayed(Runnable {
             //anything you want to start after 3s
             addMapMarkers()
-            nearByPlace("mosque")
+
             // addUserMarker()
 
         }, 3000)
@@ -389,9 +412,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
 
-
     private fun addMapMarkers() {
         resetMap()
+        nearByPlace("mosque")
         getTotalMosques()
         if (mClusterManager == null) {
             mClusterManager = ClusterManager(this.applicationContext, mMap)
@@ -404,14 +427,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             )
             mClusterManager!!.renderer = mClusterManagerRenderer
         }
-        if (mMosqueList != null){
+        if (mMosqueList != null) {
             for (mosqueLocation in mMosqueList) {
                 Log.d(
                     "Map",
                     "addMapMarkers: location: " + mosqueLocation.position.toString()
                 )
                 try {
-                    val snippet = getString(R.string.determine_route) + " " + mosqueLocation.name + "?"
+                    val snippet =
+                        getString(R.string.determine_route) + " " + mosqueLocation.name + "?"
                     val title = mosqueLocation.name
 
                     /*val avatar: String = mosqueLocation
@@ -427,7 +451,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         "verified"
                     )
                     mClusterManager!!.addItem(newClusterMarker)
-                    markerCollectionForClusters = mClusterManager!!.markerCollection
+                    markerCollectionForClusters2 = mClusterManager!!.markerCollection
 
                     //markerCollection.setOnInfoWindowClickListener(this)
                     /*   markerCollection.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker: Marker? ->
@@ -480,16 +504,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             )
         }
         //val markerCollection: MarkerManager.Collection = mClusterManager!!.markerCollection
-        markerCollectionForClusters?.setOnMarkerClickListener { marker ->
+        markerCollectionForClusters2?.setOnMarkerClickListener { marker ->
             Log.d(TAG, "you clicked")
-            openDialog(marker!!)
+            //openDialog(marker!!)
+            marker.showInfoWindow()
             true
         }
 
-        markerCollectionForClusters?.setOnInfoWindowClickListener(object : OnInfoWindowClickListener{
+        markerCollectionForClusters2?.setOnInfoWindowClickListener(object :
+            OnInfoWindowClickListener {
             override fun onInfoWindowClick(marker: Marker?) {
-                if (marker!!.title.contains("Trip")){
-                    dialogOpenGoogleMap(marker)
+                if (marker != null) {
+                    openDialog(marker)
                 }
             }
 
@@ -505,10 +531,75 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         } else if (marker.title.contains("Trip")) {
             dialogOpenGoogleMap(marker)
         } else {
-            dialogOpenGoogleMap(marker)
+            openDialogMarker(marker)
+            //dialogOpenGoogleMap(marker)
             //dialogForRoute(marker)
         }
 
+    }
+
+    private fun openDialogMarker(marker: Marker) {
+        MaterialDialog(this).show {
+            customView(R.layout.dialog_layout, scrollable = true)
+            title(text = "Mosque Finder")
+
+            icon(R.drawable.logo)
+            btn_open_map.setOnClickListener {
+                this.cancel()
+                dialogOpenGoogleMap(marker)
+            }
+
+            btn_report.setOnClickListener {
+                this.cancel()
+                openReportDialog(marker)
+
+
+            }
+        }
+    }
+
+    private fun openReportDialog(marker: Marker) {
+        MaterialDialog(this).show {
+            title(text = "Mosque Finder")
+            message(text = "Confirm or Report false location")
+            icon(R.drawable.logo)
+
+
+            positiveButton(text = "Confirm Mosque") { dialog ->
+                dialog.cancel()
+                for(mosque in mMosqueList){
+                    if (marker.position.latitude == mosque.position.latitude){
+                        val reportIndex = mosque.report + 1
+                        database.collection("users").document(mosque.documentId)
+                            .update("report", reportIndex)
+                            .addOnSuccessListener {
+                                Toast.makeText(this@MapsActivity,"Thanks",Toast.LENGTH_LONG).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this@MapsActivity,"Error",Toast.LENGTH_LONG).show()
+                            }
+                    }
+                }
+                Toast.makeText(this@MapsActivity,"Thank you for your cooperation",Toast.LENGTH_LONG).show()
+            }
+            negativeButton(text = "Report Mosque") { dialog ->
+                dialog.cancel()
+                for(mosque in mMosqueList){
+                    if (marker.position.latitude == mosque.position.latitude){
+                        val reportIndex = mosque.report - 1
+                        database.collection("users").document(mosque.documentId)
+                            .update("report", reportIndex)
+                            .addOnSuccessListener {
+                                Toast.makeText(this@MapsActivity,"Thanks",Toast.LENGTH_LONG).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this@MapsActivity,"Error",Toast.LENGTH_LONG).show()
+                            }
+                    }
+                }
+                Toast.makeText(this@MapsActivity,"Thank you for your cooperation",Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun dialogOpenGoogleMap(marker: Marker) {
@@ -874,17 +965,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 markerManager = MarkerManager(mMap)
                 markerCollection = markerManager!!.newCollection()
 
-              val marker: Marker =  markerCollection!!.addMarker{
+                val marker: Marker = markerCollection!!.addMarker {
                     position(endpoint)
                     title(getString(R.string.trip) + index)
                     snippet(getString(R.string.duree) + polylineData.leg.duration)
                 }
-               /* val marker: Marker = mMap.addMarker(
-                    MarkerOptions()
-                        .position(endpoint)
-                        .title(getString(R.string.trip) + index)
-                        .snippet(getString(R.string.duree) + polylineData.leg.duration)
-                )*/
+                /* val marker: Marker = mMap.addMarker(
+                     MarkerOptions()
+                         .position(endpoint)
+                         .title(getString(R.string.trip) + index)
+                         .snippet(getString(R.string.duree) + polylineData.leg.duration)
+                 )*/
                 marker.showInfoWindow()
                 mTripMarkers.add(marker)
                 markerCollection!!.setOnMarkerClickListener(object : OnMarkerClickListener {
@@ -894,7 +985,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     }
                 })
 
-                markerCollection!!.setOnInfoWindowClickListener(object : OnInfoWindowClickListener{
+                markerCollection!!.setOnInfoWindowClickListener(object : OnInfoWindowClickListener {
                     override fun onInfoWindowClick(marker: Marker) {
                         dialogOpenGoogleMap(marker)
                     }
@@ -907,7 +998,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             }
         }
     }
-
 
 
 }

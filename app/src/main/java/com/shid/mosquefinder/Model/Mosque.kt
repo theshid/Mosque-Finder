@@ -9,11 +9,14 @@ class Mosque (
 
     var position: GeoPoint = GeoPoint(0.0, 0.0),
 
-    @DocumentId
-    var id:String = ""
+
+    var documentId: String = "0",
+
+    var report: Long = 0
 
 
 ) {
+
 
     fun Mosque(){
 
