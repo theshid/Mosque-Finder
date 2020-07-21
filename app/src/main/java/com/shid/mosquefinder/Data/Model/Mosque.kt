@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.Model
+package com.shid.mosquefinder.Data.Model
 
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.GeoPoint

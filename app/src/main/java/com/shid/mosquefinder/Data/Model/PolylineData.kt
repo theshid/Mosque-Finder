@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.Model
+package com.shid.mosquefinder.Data.Model
 
 import com.google.android.gms.maps.model.Polyline
 import com.google.maps.model.DirectionsLeg

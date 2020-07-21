@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.Model
+package com.shid.mosquefinder.Data.Model
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem

@@ -1,22 +1,16 @@
 package com.shid.mosquefinder
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.InputType
 import android.util.Log
-import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -35,11 +29,11 @@ import com.google.maps.android.collections.MarkerManager
 import com.google.maps.android.ktx.utils.collection.addMarker
 import com.google.maps.internal.PolylineEncoding
 import com.google.maps.model.DirectionsResult
-import com.shid.mosquefinder.Api.ApiInterface
-import com.shid.mosquefinder.Model.ClusterMarker
-import com.shid.mosquefinder.Model.Mosque
-import com.shid.mosquefinder.Model.Pojo.Place
-import com.shid.mosquefinder.Model.PolylineData
+import com.shid.mosquefinder.Data.Model.Api.ApiInterface
+import com.shid.mosquefinder.Data.Model.ClusterMarker
+import com.shid.mosquefinder.Data.Model.Mosque
+import com.shid.mosquefinder.Data.Model.Pojo.Place
+import com.shid.mosquefinder.Data.Model.PolylineData
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
 import com.shid.mosquefinder.Utils.PermissionUtils
@@ -227,16 +221,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                 /*val avatar: String = mosqueLocation
                                 Log.d("Avatar", "avatar link $avatar")*/
                                 // int avatar = R.mipmap.icon; // set the default avatar
-                                val newClusterMarker = ClusterMarker(
+                                val newClusterMarker =
+                                    ClusterMarker(
 
-                                    lat,
-                                    lng
-                                    ,
-                                    title,
-                                    snippet,
-                                    "default",
-                                    true
-                                )
+                                        lat,
+                                        lng
+                                        ,
+                                        title,
+                                        snippet,
+                                        "default",
+                                        true
+                                    )
                                 mClusterManager!!.addItem(newClusterMarker)
                                 markerCollectionForClusters = mClusterManager!!.markerCollection
 
@@ -367,7 +362,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         var reportIndex: Long = doc.get("report") as Long
 
                         var mosqueElem: Mosque =
-                            Mosque(mosqueName, locationMos, mosqueId, reportIndex)
+                            Mosque(
+                                mosqueName,
+                                locationMos,
+                                mosqueId,
+                                reportIndex
+                            )
                         Log.d("Map", "the id  is" + mosqueElem.documentId)
                         mMosqueList.add(mosqueElem)
                         /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
@@ -448,16 +448,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     /*val avatar: String = mosqueLocation
                     Log.d("Avatar", "avatar link $avatar")*/
                     // int avatar = R.mipmap.icon; // set the default avatar
-                    val newClusterMarker = ClusterMarker(
+                    val newClusterMarker =
+                        ClusterMarker(
 
-                        mosqueLocation.position.latitude,
-                        mosqueLocation.position.longitude
-                        ,
-                        title,
-                        snippet,
-                        "verified",
-                        false
-                    )
+                            mosqueLocation.position.latitude,
+                            mosqueLocation.position.longitude
+                            ,
+                            title,
+                            snippet,
+                            "verified",
+                            false
+                        )
                     mClusterManager!!.addItem(newClusterMarker)
                     markerCollectionForClusters2 = mClusterManager!!.markerCollection
 
@@ -488,15 +489,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         try {
 
             val snippet2 = getString(R.string.you)
-            val newClusterMarker2 = ClusterMarker(
-                userPosition.latitude,
-                userPosition.longitude
-                ,
-                "You",
-                snippet2,
-                "Me",
-                false
-            )
+            val newClusterMarker2 =
+                ClusterMarker(
+                    userPosition.latitude,
+                    userPosition.longitude
+                    ,
+                    "You",
+                    snippet2,
+                    "Me",
+                    false
+                )
             mClusterManager!!.addItem(newClusterMarker2)
             mClusterMarkers.add(newClusterMarker2)
             /*val avatar: String = mosqueLocation
@@ -835,7 +837,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         mMap.addPolyline(PolylineOptions().addAll(newDecodedPath))
                     polyline.color = ContextCompat.getColor(applicationContext, R.color.grey)
                     polyline.isClickable = true
-                    mPolylinesData.add(PolylineData(polyline, route.legs[0]))
+                    mPolylinesData.add(
+                        PolylineData(
+                            polyline,
+                            route.legs[0]
+                        )
+                    )
                     mSelectedMarker!!.isVisible = false
                     val tempDuration = route.legs[0].duration.inSeconds.toDouble()
                     if (tempDuration < duration) {

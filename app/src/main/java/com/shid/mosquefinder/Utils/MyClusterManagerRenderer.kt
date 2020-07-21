@@ -14,7 +14,7 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
-import com.shid.mosquefinder.Model.ClusterMarker
+import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.R
 import java.util.concurrent.ExecutionException
 

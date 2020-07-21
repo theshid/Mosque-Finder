@@ -1,22 +1,8 @@
-package com.shid.mosquefinder.Api
-
-
-import android.content.Context
-import com.shid.mosquefinder.App
-import com.shid.mosquefinder.R
-
-
-
-import okhttp3.HttpUrl
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
+package com.shid.mosquefinder.Data.Model.Api
 
 
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 object ApiClient {
 

@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.Model.Pojo
+package com.shid.mosquefinder.Data.Model.Pojo
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
