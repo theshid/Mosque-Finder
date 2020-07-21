@@ -234,7 +234,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                     ,
                                     title,
                                     snippet,
-                                    "default"
+                                    "default",
+                                    true
                                 )
                                 mClusterManager!!.addItem(newClusterMarker)
                                 markerCollectionForClusters = mClusterManager!!.markerCollection
@@ -289,16 +290,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         }
                         markerCollectionForClusters?.setOnMarkerClickListener { marker ->
                             Log.d(TAG, "you clicked")
+                            marker.showInfoWindow()
 
-                            dialogOpenGoogleMap(marker)
                             true
                         }
 
                         markerCollectionForClusters?.setOnInfoWindowClickListener(object :
                             OnInfoWindowClickListener {
-                            override fun onInfoWindowClick(marker: Marker?) {
-                                if (marker!!.title.contains("Trip")) {
-                                    dialogOpenGoogleMap(marker)
+                            override fun onInfoWindowClick(marker: Marker) {
+                                for (i in mClusterMarkers) {
+                                    if (i.mComefromGooglePlace && i.title == marker.title) {
+                                        dialogOpenGoogleMap(marker)
+
+                                    } else if (i.title == marker.title && !i.mComefromGooglePlace) {
+                                        openDialog(marker)
+                                    }
                                 }
                             }
 
@@ -358,9 +364,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         var mosqueName: String = doc.get("name") as String
                         var locationMos: GeoPoint = doc.get("position") as GeoPoint
                         var mosqueId: String = mosque.documentId
-                        var reportIndex:Long = doc.get("report") as Long
+                        var reportIndex: Long = doc.get("report") as Long
 
-                        var mosqueElem: Mosque = Mosque(mosqueName, locationMos, mosqueId, reportIndex)
+                        var mosqueElem: Mosque =
+                            Mosque(mosqueName, locationMos, mosqueId, reportIndex)
                         Log.d("Map", "the id  is" + mosqueElem.documentId)
                         mMosqueList.add(mosqueElem)
                         /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
@@ -448,7 +455,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         ,
                         title,
                         snippet,
-                        "verified"
+                        "verified",
+                        false
                     )
                     mClusterManager!!.addItem(newClusterMarker)
                     markerCollectionForClusters2 = mClusterManager!!.markerCollection
@@ -486,7 +494,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 ,
                 "You",
                 snippet2,
-                "Me"
+                "Me",
+                false
             )
             mClusterManager!!.addItem(newClusterMarker2)
             mClusterMarkers.add(newClusterMarker2)
@@ -513,10 +522,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
         markerCollectionForClusters2?.setOnInfoWindowClickListener(object :
             OnInfoWindowClickListener {
-            override fun onInfoWindowClick(marker: Marker?) {
-                if (marker != null) {
-                    openDialog(marker)
+            override fun onInfoWindowClick(marker: Marker) {
+                for (i in mClusterMarkers) {
+                    //We check if the marker comes from Google Place or FireStore
+                    if (i.mComefromGooglePlace && i.title == marker.title) {
+                        dialogOpenGoogleMap(marker)
+
+                    } else if (i.title == marker.title && !i.mComefromGooglePlace) {
+                        openDialog(marker)
+                    }
                 }
+
             }
 
         })
@@ -567,37 +583,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
             positiveButton(text = "Confirm Mosque") { dialog ->
                 dialog.cancel()
-                for(mosque in mMosqueList){
-                    if (marker.position.latitude == mosque.position.latitude){
+                for (mosque in mMosqueList) {
+                    if (marker.position.latitude == mosque.position.latitude) {
                         val reportIndex = mosque.report + 1
-                        database.collection("users").document(mosque.documentId)
-                            .update("report", reportIndex)
+                        database.collection("mosques").document(mosque.documentId)
+                            .update("report", FieldValue.increment(1))
                             .addOnSuccessListener {
-                                Toast.makeText(this@MapsActivity,"Thanks",Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG)
+                                    .show()
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this@MapsActivity,"Error",Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MapsActivity, "Error", Toast.LENGTH_LONG).show()
                             }
                     }
                 }
-                Toast.makeText(this@MapsActivity,"Thank you for your cooperation",Toast.LENGTH_LONG).show()
+
             }
             negativeButton(text = "Report Mosque") { dialog ->
                 dialog.cancel()
-                for(mosque in mMosqueList){
-                    if (marker.position.latitude == mosque.position.latitude){
-                        val reportIndex = mosque.report - 1
-                        database.collection("users").document(mosque.documentId)
-                            .update("report", reportIndex)
+                for (mosque in mMosqueList) {
+                    if (marker.title == mosque.name) {
+
+                        database.collection("mosques").document(mosque.documentId)
+                            .update("report",  FieldValue.increment(-1))
                             .addOnSuccessListener {
-                                Toast.makeText(this@MapsActivity,"Thanks",Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG)
+                                    .show()
                             }
                             .addOnFailureListener {
-                                Toast.makeText(this@MapsActivity,"Error",Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MapsActivity, "Error" , Toast.LENGTH_LONG).show()
+                                Log.d("Error", it.message.toString() + it.localizedMessage.toString())
                             }
                     }
                 }
-                Toast.makeText(this@MapsActivity,"Thank you for your cooperation",Toast.LENGTH_LONG).show()
+              
             }
         }
     }
