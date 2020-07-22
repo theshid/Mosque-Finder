@@ -15,4 +15,5 @@
     <string name="yes">This is you</string>
     <string name="no">No</string>
     <string name="you">This is you</string>
+    <string name="sign_out_button">sign ouit</string>
 </resources>

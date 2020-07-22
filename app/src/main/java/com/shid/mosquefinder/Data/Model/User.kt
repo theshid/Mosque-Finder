@@ -3,7 +3,7 @@ package com.shid.mosquefinder.Data.Model
 import com.google.firebase.firestore.Exclude
 import java.io.Serializable
 
-data class User(var uid: String,var name: String?,var email: String?) : Serializable {
+data class User(var uid: String = "",var name: String?="",var email: String?="") : Serializable {
 
     val mUid: String = uid
 
@@ -20,5 +20,7 @@ data class User(var uid: String,var name: String?,var email: String?) : Serializ
 
     @Exclude
     var isCreated: Boolean ?= null
+
+
 
 }

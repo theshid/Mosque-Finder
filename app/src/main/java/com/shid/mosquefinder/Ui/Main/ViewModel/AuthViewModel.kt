@@ -8,16 +8,20 @@ import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.Data.Repository.AuthRepository
 
 
-class AuthViewModel :AndroidViewModel {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private var authRepository: AuthRepository? = null
     var authenticatedUserLiveData: LiveData<User>? = null
     var createdUserLiveData: LiveData<User>? = null
 
-     constructor(application: Application?) : super(application!!) {
+    init {
         authRepository = AuthRepository()
     }
 
     fun signInWithGoogle(googleAuthCredential: AuthCredential?) {
         authenticatedUserLiveData = authRepository?.firebaseSignInWithGoogle(googleAuthCredential)
+    }
+
+    fun createUser(authenticatedUser: User) {
+        createdUserLiveData = authRepository?.createUserInFirestoreIfNotExists(authenticatedUser)
     }
 }
