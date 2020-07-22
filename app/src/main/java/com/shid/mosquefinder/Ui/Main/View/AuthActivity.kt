@@ -17,7 +17,7 @@ import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.MainActivity
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
-import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModelFactory
+import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
@@ -51,7 +51,8 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun initAuthViewModel() {
-        authViewModelFactory = AuthViewModelFactory(application)
+        authViewModelFactory =
+            AuthViewModelFactory(application)
         authViewModel= ViewModelProvider(this,authViewModelFactory).get(AuthViewModel(application)::class.java)
     }
 

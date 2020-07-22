@@ -7,9 +7,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.MainActivity
-import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.SplashViewModel
-import com.shid.mosquefinder.Ui.Main.ViewModel.SplashViewModelFactory
+import com.shid.mosquefinder.Ui.Base.SplashViewModelFactory
 import com.shid.mosquefinder.Utils.Common.USER
 
 
@@ -61,7 +60,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun initSplashViewModel() {
-        splashViewModelFactory = SplashViewModelFactory(application)
+        splashViewModelFactory =
+            SplashViewModelFactory(application)
         splashViewModel = ViewModelProvider(this,splashViewModelFactory).get(SplashViewModel(application)::class.java)
     }
 }

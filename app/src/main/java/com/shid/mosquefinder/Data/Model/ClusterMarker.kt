@@ -5,7 +5,7 @@ import com.google.maps.android.clustering.ClusterItem
 
 class ClusterMarker: ClusterItem {
 
-     val mComefromGooglePlace: Boolean
+     val isMarkerFromGooglePlace: Boolean
     private val mPosition: LatLng
     private val mTitle: String
     private val mSnippet: String
@@ -17,7 +17,7 @@ class ClusterMarker: ClusterItem {
         mTitle = ""
         mSnippet = ""
         mPic = ""
-        mComefromGooglePlace = false
+        isMarkerFromGooglePlace = false
     }
 
     constructor(lat: Double, lng: Double, title: String, snippet: String, pic: String, place:Boolean) {
@@ -25,7 +25,7 @@ class ClusterMarker: ClusterItem {
         mTitle = title
         mSnippet = snippet
         mPic = pic
-        mComefromGooglePlace = place
+        isMarkerFromGooglePlace = place
     }
 
     override fun getPosition(): LatLng {
