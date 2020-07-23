@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
@@ -35,6 +37,8 @@ import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
 import com.shid.mosquefinder.Data.Model.PolylineData
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.Base.MapViewModelFactory
+import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
 import com.shid.mosquefinder.Utils.PermissionUtils
@@ -79,6 +83,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     lateinit var mService: ApiInterface
     internal var mosqueInArea: Place? = null
 
+    private lateinit var mapViewModel: MapViewModel
+
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +99,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             mGeoApiContext = GeoApiContext.Builder()
                 .apiKey(getString(R.string.google_maps_key))
                 .build()
+            setupViewModel()
         }
 
 
@@ -120,6 +127,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             }
         }
 
+    }
+
+    private fun setupViewModel() {
+        mapViewModel = ViewModelProvider(this,MapViewModelFactory(Common.googleApiService)).get(MapViewModel::class.java)
     }
 
     private fun mosqueInputDialog(userPosition: LatLng) {

@@ -34,12 +34,16 @@ class MapRepository constructor(var mService:ApiInterface) {
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private val TAG:String = "Map Repository"
     private val mApp:App = App()
-    private lateinit var userPosition: LatLng
+
+    private var mClusterManager: ClusterManager<ClusterMarker>? = null
+    private var mClusterManagerRenderer: MyClusterManagerRenderer? = null
+    private var mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
+
     init {
         mService = Common.googleApiService
     }
 
-    private fun getTotalMosquesFromFirebase():MutableList<Mosque>{
+     fun getTotalMosquesFromFirebase():MutableList<Mosque>{
         val mMosqueList:MutableList<Mosque> = ArrayList()
         mMosqueListEventListener =
             firebaseMosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
@@ -78,31 +82,7 @@ class MapRepository constructor(var mService:ApiInterface) {
         return  mMosqueList
     }
 
-    @SuppressLint("MissingPermission")
-    private fun setUpLocationListener() {
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mApp.applicationContext)
-        // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    for (location in locationResult.locations) {
-                        /* latTextView.text = location.latitude.toString()
-                         lngTextView.text = location.longitude.toString()*/
-                        userPosition = LatLng(location.latitude, location.longitude)
-                        Log.d(TAG, "position=" + location.latitude + "" + location.longitude)
-                    }
-                    // Few more things we can do here:
-                    // For example: Update the location of user on server
-                }
-            },
-            Looper.myLooper()
-        )
-    }
 
     private fun getRequestUrl(
         latitude: Double,
@@ -121,7 +101,8 @@ class MapRepository constructor(var mService:ApiInterface) {
         return googlePlaceUrl.toString()
     }
 
-    private fun googlePlaceNearbyMosques(keyword: String, nextToken: String = "") {
+    fun googlePlaceNearbyMosques(keyword: String, userPosition:LatLng,mMap:GoogleMap, nextToken:String="")
+            :Pair<MutableList<ClusterMarker>,ClusterManager<ClusterMarker>?>{
         //mMap.clear()
 
         //Build url request base on location
@@ -130,17 +111,17 @@ class MapRepository constructor(var mService:ApiInterface) {
         mService.getNearbyPlaces(requestUrl)
             .enqueue(object : Callback<Place> {
                 override fun onFailure(call: Call<Place>, t: Throwable) {
-                    Toast.makeText(baseContext, "" + t.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(mApp.applicationContext, "" + t.message, Toast.LENGTH_LONG).show()
                 }
 
                 override fun onResponse(call: Call<Place>, response: Response<Place>) {
-                    mosqueInArea = response.body()
+                    val mosqueInArea = response.body()
                     if (mClusterManager == null) {
-                        mClusterManager = ClusterManager(applicationContext, mMap)
+                        mClusterManager = ClusterManager(mApp.applicationContext, mMap)
                     }
                     if (mClusterManagerRenderer == null) {
                         mClusterManagerRenderer = MyClusterManagerRenderer(
-                            applicationContext,
+                            mApp.applicationContext,
                             mClusterManager!!,
                             mMap
                         )
@@ -162,7 +143,7 @@ class MapRepository constructor(var mService:ApiInterface) {
                             )
                             try {
                                 val snippet =
-                                    getString(R.string.determine_route) + " " + placeName + "?"
+                                    mApp.applicationContext.getString(R.string.determine_route) + " " + placeName + "?"
                                 val title = placeName
 
                                 /*val avatar: String = mosqueLocation
@@ -180,7 +161,8 @@ class MapRepository constructor(var mService:ApiInterface) {
                                         true
                                     )
                                 mClusterManager!!.addItem(newClusterMarker)
-                                markerCollectionForClusters = mClusterManager!!.markerCollection
+                                //markerCollectionForClusters = mClusterManager!!.markerCollection
+
 
                                 mClusterMarkers.add(newClusterMarker)
 
@@ -194,8 +176,8 @@ class MapRepository constructor(var mService:ApiInterface) {
 
 
                         }
-                        markerCollectionForClusters?.setOnMarkerClickListener { marker ->
-                            Log.d(MapsActivity.TAG, "you clicked")
+                       /* markerCollectionForClusters?.setOnMarkerClickListener { marker ->
+                            Log.d(TAG, "you clicked")
                             marker.showInfoWindow()
 
                             true
@@ -214,8 +196,8 @@ class MapRepository constructor(var mService:ApiInterface) {
                                 }
                             }
 
-                        })
-                        mClusterManager!!.cluster()
+                        })*/
+                       // mClusterManager!!.cluster()
                     }
                     //Code to loop to get at most 60 mosque
                     /*  if (response.body()!!.nextPageToken != ""){
@@ -232,5 +214,6 @@ class MapRepository constructor(var mService:ApiInterface) {
                 }
 
             })
+        return Pair(mClusterMarkers,mClusterManager)
     }
 }

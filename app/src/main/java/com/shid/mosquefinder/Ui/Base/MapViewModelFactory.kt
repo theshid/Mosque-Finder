@@ -8,16 +8,15 @@ import com.shid.mosquefinder.Data.Repository.MapRepository
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
 
-class AuthViewModelFactory constructor(application: Application) : ViewModelProvider.Factory {
+class MapViewModelFactory constructor(apiInterface: ApiInterface) : ViewModelProvider.Factory {
 
-    val mApplication = application
+    val mApiInterface = apiInterface
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
-            return AuthViewModel(
+        if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
+            return MapViewModel(
 
-                mApplication
-
+                        MapRepository(mApiInterface)
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
