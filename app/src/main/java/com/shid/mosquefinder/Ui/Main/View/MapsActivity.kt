@@ -130,7 +130,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun setupViewModel() {
-        mapViewModel = ViewModelProvider(this,MapViewModelFactory(Common.googleApiService)).get(MapViewModel::class.java)
+        mapViewModel = ViewModelProvider(this,MapViewModelFactory(Common.googleApiService,application)).get(MapViewModel::class.java)
     }
 
     private fun mosqueInputDialog(userPosition: LatLng) {
@@ -572,7 +572,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun confirmMosquePosition(marker:Marker){
         for (mosque in mMosqueList) {
-            if (marker.position.latitude == mosque.position.latitude) {
+            if (marker.title == mosque.name) {
                 val reportIndex = mosque.report + 1
                 database.collection("mosques").document(mosque.documentId)
                     .update("report", FieldValue.increment(1))

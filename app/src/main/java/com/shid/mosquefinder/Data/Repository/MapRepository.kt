@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Data.Repository
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
@@ -27,24 +28,28 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.StringBuilder
+import java.util.HashMap
 
-class MapRepository constructor(var mService:ApiInterface) {
+class MapRepository constructor(var mService:ApiInterface,application: Application) {
     private val database:FirebaseFirestore = FirebaseFirestore.getInstance()
     private  val firebaseMosqueRef: CollectionReference = database.collection("mosques")
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private val TAG:String = "Map Repository"
-    private val mApp:App = App()
+    private val mApp:Application = application
 
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
     private var mClusterManagerRenderer: MyClusterManagerRenderer? = null
     private var mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
+    val mMosqueList:MutableList<Mosque> = ArrayList()
 
     init {
         mService = Common.googleApiService
     }
 
      fun getTotalMosquesFromFirebase():MutableList<Mosque>{
-        val mMosqueList:MutableList<Mosque> = ArrayList()
+        if (mMosqueList.isNotEmpty()){
+            mMosqueList.clear()
+        }
         mMosqueListEventListener =
             firebaseMosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
@@ -215,5 +220,52 @@ class MapRepository constructor(var mService:ApiInterface) {
 
             })
         return Pair(mClusterMarkers,mClusterManager)
+    }
+
+   fun inputMosqueInDatabase(userInput:HashMap<String,Comparable<*>>){
+       database.collection("mosques").document()
+           .set(userInput)
+           .addOnSuccessListener {
+               Log.d(TAG, "DocumentSnapshot successfully written!")
+               //addMapMarkers()
+
+           }
+           .addOnFailureListener { e ->
+               Log.w(TAG, "Error writing document", e)
+
+           }
+   }
+
+    fun confirmMosqueLocation(marker: Marker){
+        for (mosque in mMosqueList) {
+            if (marker.title == mosque.name) {
+                val reportIndex = mosque.report + 1
+                database.collection("mosques").document(mosque.documentId)
+                    .update("report", FieldValue.increment(1))
+                    .addOnSuccessListener {
+                        //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
+                    }
+                    .addOnFailureListener {
+                        //Toast.makeText(this@MapsActivity, "Error", Toast.LENGTH_LONG).show()
+                    }
+            }
+        }
+    }
+
+    fun reportFalseLocation(marker: Marker){
+        for (mosque in mMosqueList) {
+            if (marker.title == mosque.name) {
+
+                database.collection("mosques").document(mosque.documentId)
+                    .update("report",  FieldValue.increment(-1))
+                    .addOnSuccessListener {
+                        //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
+                    }
+                    .addOnFailureListener {
+                       // Toast.makeText(this@MapsActivity, "Error" , Toast.LENGTH_LONG).show()
+                        Log.d("Error", it.message.toString() + it.localizedMessage.toString())
+                    }
+            }
+        }
     }
 }
