@@ -1,19 +1,28 @@
 package com.shid.mosquefinder
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,15 +30,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.collections.MarkerManager
+import com.google.maps.model.PlacesSearchResult
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Ui.Base.MapViewModelFactory
 import com.shid.mosquefinder.Ui.Main.View.MapsActivity
 import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
+import com.shid.mosquefinder.Utils.AppLocationProvider
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
 import com.shid.mosquefinder.Utils.PermissionUtils
@@ -45,7 +55,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
         private const val TAG = "MapsActivity"
-
+        lateinit var userPosition: LatLng
+        lateinit var position:LatLng
     }
 
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
@@ -54,9 +65,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
     private var markerCollection: MarkerManager.Collection? = null
     private var markerCollectionForClusters: MarkerManager.Collection? = null
     private var mMosqueList: MutableList<Mosque> = ArrayList()
-    private lateinit var userPosition: LatLng
+
     private lateinit var mMapBoundary: LatLngBounds
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps2)
@@ -64,31 +76,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        setupViewModel()
-        btnClickListeners()
-    }
-
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-
-        Handler().postDelayed(kotlinx.coroutines.Runnable {
-            //anything you want to start after 3s
-            addMapMarkers()
-
-            // addUserMarker()
-
-        }, 3000)
-    }
-
-    override fun onStart() {
-        super.onStart()
         when {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
-                        //setUpLocationListener()
-                        getUserPosition()
+                        setUpLocationListener()
+                        AppLocationProvider().getLocation(this, object : AppLocationProvider.LocationCallBack {
+                            override fun locationResult(location: Location?) {
+                                position = LatLng(location!!.latitude,location.longitude)
+                                // use location, this might get called in a different thread if a location is a last known location. In that case, you can post location on main thread
+                            }
+                        })
                     }
                     else -> {
                         PermissionUtils.showGPSNotEnabledDialog(this)
@@ -102,6 +100,94 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                 )
             }
         }
+
+        btnClickListeners()
+
+
+
+    }
+
+
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        when {
+            PermissionUtils.isAccessFineLocationGranted(this) -> {
+                when {
+                    PermissionUtils.isLocationEnabled(this) -> {
+                        Handler().postDelayed(kotlinx.coroutines.Runnable {
+                            //anything you want to start after 3s
+                            addMapMarkers()
+
+                            // addUserMarker()
+
+                        }, 3000)
+                        //getUserPosition()
+                    }
+                    else -> {
+                        PermissionUtils.showGPSNotEnabledDialog(this)
+                    }
+                }
+            }
+            else -> {
+                PermissionUtils.requestAccessFineLocationPermission(
+                    this,
+                    LOCATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        when {
+            PermissionUtils.isAccessFineLocationGranted(this) -> {
+                when {
+                    PermissionUtils.isLocationEnabled(this) -> {
+                        setupViewModel()
+                        //getUserPosition()
+                    }
+                    else -> {
+                        PermissionUtils.showGPSNotEnabledDialog(this)
+                    }
+                }
+            }
+            else -> {
+                PermissionUtils.requestAccessFineLocationPermission(
+                    this,
+                    LOCATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun setUpLocationListener() {
+        val fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(application)
+        // for getting the current location update after every 2 seconds with high accuracy
+        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+                    for (location in locationResult.locations) {
+                        /* latTextView.text = location.latitude.toString()
+                         lngTextView.text = location.longitude.toString()*/
+                        userPosition = LatLng(location.latitude, location.longitude)
+                        Log.d(Common.TAG, "position=" + location.latitude + "" + location.longitude)
+                    }
+                    // Few more things we can do here:
+                    // For example: Update the location of user on server
+                }
+            },
+            Looper.myLooper()
+        )
     }
 
     private fun btnClickListeners() {
@@ -168,7 +254,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun getUserPosition() {
-        userPosition = mapViewModel.getUserPosition()
+        userPosition = mapViewModel.getUserPosition()!!
     }
 
     private fun setupViewModel() {
@@ -181,8 +267,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
 
     private fun addMapMarkers() {
         resetMap()
-        getMosquesFromGoogleMap(mMap)
-        getMosqueFromFirebase()
+        if (mClusterManager == null) {
+            mClusterManager = ClusterManager(this, mMap)
+        }
         if (mClusterManagerRenderer == null) {
             mClusterManagerRenderer = MyClusterManagerRenderer(
                 this,
@@ -191,6 +278,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
             )
             mClusterManager!!.renderer = mClusterManagerRenderer
         }
+        getMosquesFromGoogleMap()
+        getMosqueFromFirebase()
         addFirebaseMarkersToClusterManager()
         addUserMarker()
         markersClickListeners()
@@ -232,9 +321,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                         getString(R.string.determine_route) + " " + mosqueLocation.name + "?"
                     val title = mosqueLocation.name
 
-                    /*val avatar: String = mosqueLocation
-                    Log.d("Avatar", "avatar link $avatar")*/
-                    // int avatar = R.mipmap.icon; // set the default avatar
                     val newClusterMarker =
                         ClusterMarker(
 
@@ -249,19 +335,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                     mClusterManager!!.addItem(newClusterMarker)
 
 
-                    //markerCollection.setOnInfoWindowClickListener(this)
-                    /*   markerCollection.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker: Marker? ->
-                           Toast.makeText(applicationContext,"Yesssss",Toast.LENGTH_LONG).show()
-                       })
-                     markerCollection.setOnInfoWindowClickListener(object: GoogleMap.OnInfoWindowClickListener{
-                         override fun onInfoWindowClick(p0: Marker?) {
-                             Toast.makeText(applicationContext,"Yesssss",Toast.LENGTH_LONG).show()
-                         }
-
-                     })*/
-                    mClusterMarkers.add(newClusterMarker)
-
-
                 } catch (e: NullPointerException) {
                     Log.e(
                         "Map",
@@ -273,7 +346,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addUserMarker() {
-        userPosition = mapViewModel.getUserPosition()
+        //userPosition = mapViewModel.getUserPosition()!!
         try {
 
             val snippet2 = getString(R.string.you)
@@ -289,12 +362,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                 )
             mClusterManager!!.addItem(newClusterMarker2)
             mClusterMarkers.add(newClusterMarker2)
-            /*val avatar: String = mosqueLocation
-            Log.d("Avatar", "avatar link $avatar")*/
-            // int avatar = R.mipmap.icon; // set the default avatar
 
-            /*
-            markerCollection.setOnInfoWindowClickListener(this)*/
 
         } catch (e: NullPointerException) {
             Log.e(
@@ -382,7 +450,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun confirmMosquePosition(marker: Marker) {
-        confirmMosquePosition(marker)
+        mapViewModel.confirmMosqueLocation(marker)
     }
 
     private fun showDirectionInGoogleMapDialog(marker: Marker) {
@@ -438,8 +506,85 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
         mMosqueList = mapViewModel.getUsersMosqueFromRepository()
     }
 
-    private fun getMosquesFromGoogleMap(map: GoogleMap) {
-        val (mClusterMarkers, mClusterManager) = mapViewModel.getMosquePositionFromApi(map)
+    private fun getMosquesFromGoogleMap() {
+
+        mapViewModel.getGoogleMapMosqueFromRepository()?.observe(this, Observer {
+            val places: List<PlacesSearchResult> = it.results
+            for(i in places.indices){
+                val googlePlace = it!!.results!![i]
+                val lat = googlePlace.geometry!!.location!!.lat
+                val lng = googlePlace.geometry!!.location!!.lng
+                val placeName = googlePlace.name
+
+                Log.d(
+                    "Map",
+                    "addMapMarkers: location: " + googlePlace.geometry.location.toString()
+                )
+                Log.d(
+                    "Map",
+                    "addMapMarkers: name: " + googlePlace.name
+                )
+                try {
+                    val snippet =
+                        getString(R.string.determine_route) + " " + placeName + "?"
+                    val title = placeName
+
+                    /*val avatar: String = mosqueLocation
+                    Log.d("Avatar", "avatar link $avatar")*/
+                    // int avatar = R.mipmap.icon; // set the default avatar
+                    val newClusterMarker =
+                        ClusterMarker(
+
+                            lat,
+                            lng
+                            ,
+                            title,
+                            snippet,
+                            "default",
+                            true
+                        )
+                    mClusterManager!!.addItem(newClusterMarker)
+                    markerCollectionForClusters = mClusterManager!!.markerCollection
+
+                    mClusterMarkers.add(newClusterMarker)
+                    for(i in mClusterMarkers){
+                        Log.d(TAG,i.title)
+                    }
+
+
+                } catch (e: NullPointerException) {
+                    Log.e(
+                        "Map",
+                        "addMapMarkers: NullPointerException: " + e.message
+                    )
+                }
+
+            }
+            markerCollectionForClusters?.setOnMarkerClickListener { marker ->
+                Log.d(TAG, "you clicked")
+                marker.showInfoWindow()
+
+                true
+            }
+
+            markerCollectionForClusters?.setOnInfoWindowClickListener(object :
+                GoogleMap.OnInfoWindowClickListener {
+                override fun onInfoWindowClick(marker: Marker) {
+                    for (i in mClusterMarkers) {
+                        if (i.isMarkerFromGooglePlace && i.title == marker.title) {
+                            showDirectionInGoogleMapDialog(marker)
+
+                        } else if (i.title == marker.title && !i.isMarkerFromGooglePlace) {
+                            showOptionsDialog(marker)
+                        }
+                    }
+                }
+
+            })
+           // mClusterManager!!.cluster()
+        })
+
+        //mClusterManager?.cluster()
     }
 
     override fun onRequestPermissionsResult(
@@ -453,8 +598,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
-                            //setUpLocationListener()
-                            getUserPosition()
+                            setUpLocationListener()
+                            //getUserPosition()
                         }
                         else -> {
                             PermissionUtils.showGPSNotEnabledDialog(this)
