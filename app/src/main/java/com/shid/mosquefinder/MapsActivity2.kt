@@ -1,11 +1,9 @@
 package com.shid.mosquefinder
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -37,7 +35,6 @@ import com.google.maps.model.PlacesSearchResult
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Ui.Base.MapViewModelFactory
-import com.shid.mosquefinder.Ui.Main.View.MapsActivity
 import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
 import com.shid.mosquefinder.Utils.AppLocationProvider
 import com.shid.mosquefinder.Utils.Common
@@ -56,7 +53,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
         private const val TAG = "MapsActivity"
         lateinit var userPosition: LatLng
-        lateinit var position:LatLng
+        lateinit var position: LatLng
     }
 
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
@@ -81,12 +78,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
                         setUpLocationListener()
-                        AppLocationProvider().getLocation(this, object : AppLocationProvider.LocationCallBack {
-                            override fun locationResult(location: Location?) {
-                                position = LatLng(location!!.latitude,location.longitude)
-                                // use location, this might get called in a different thread if a location is a last known location. In that case, you can post location on main thread
-                            }
-                        })
+                        AppLocationProvider().getLocation(
+                            this,
+                            object : AppLocationProvider.LocationCallBack {
+                                override fun locationResult(location: Location?) {
+                                    position = LatLng(location!!.latitude, location.longitude)
+                                    // use location, this might get called in a different thread if a location is a last known location. In that case, you can post location on main thread
+                                }
+                            })
+                        setupViewModel()
+
                     }
                     else -> {
                         PermissionUtils.showGPSNotEnabledDialog(this)
@@ -101,12 +102,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+
+
         btnClickListeners()
 
 
-
     }
-
 
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -117,11 +118,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                     PermissionUtils.isLocationEnabled(this) -> {
                         Handler().postDelayed(kotlinx.coroutines.Runnable {
                             //anything you want to start after 3s
+
+
                             addMapMarkers()
 
                             // addUserMarker()
 
-                        }, 3000)
+                        }, 5000)
+
+
                         //getUserPosition()
                     }
                     else -> {
@@ -146,7 +151,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
-                        setupViewModel()
+
                         //getUserPosition()
                     }
                     else -> {
@@ -510,7 +515,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
 
         mapViewModel.getGoogleMapMosqueFromRepository()?.observe(this, Observer {
             val places: List<PlacesSearchResult> = it.results
-            for(i in places.indices){
+            for (i in places.indices) {
                 val googlePlace = it!!.results!![i]
                 val lat = googlePlace.geometry!!.location!!.lat
                 val lng = googlePlace.geometry!!.location!!.lng
@@ -547,8 +552,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                     markerCollectionForClusters = mClusterManager!!.markerCollection
 
                     mClusterMarkers.add(newClusterMarker)
-                    for(i in mClusterMarkers){
-                        Log.d(TAG,i.title)
+                    for (i in mClusterMarkers) {
+                        Log.d(TAG, i.title)
                     }
 
 
@@ -581,7 +586,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
                 }
 
             })
-           // mClusterManager!!.cluster()
+            // mClusterManager!!.cluster()
         })
 
         //mClusterManager?.cluster()
