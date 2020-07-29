@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -17,6 +20,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -28,22 +34,31 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
+
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.collections.MarkerManager
 import com.google.maps.model.PlacesSearchResult
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
+import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.Ui.Base.MapViewModelFactory
+import com.shid.mosquefinder.Ui.Main.View.AuthActivity
+import com.shid.mosquefinder.Ui.Main.View.SplashActivity
 import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
-import com.shid.mosquefinder.Utils.AppLocationProvider
-import com.shid.mosquefinder.Utils.Common
-import com.shid.mosquefinder.Utils.MyClusterManagerRenderer
-import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.*
+import com.shid.mosquefinder.Utils.Network.Event
+import com.shid.mosquefinder.Utils.Network.NetworkEvents
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_maps.*
+import kotlinx.android.synthetic.main.activity_maps.btn_reset_map
+import kotlinx.android.synthetic.main.activity_maps.startActivityButton
+import kotlinx.android.synthetic.main.activity_maps2.*
+import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 
-class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener {
 
     private lateinit var mMap: GoogleMap
 
@@ -52,7 +67,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
         private const val TAG = "MapsActivity"
-        lateinit var userPosition: LatLng
+        var userPosition: LatLng? = null
         lateinit var position: LatLng
     }
 
@@ -65,106 +80,154 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMapBoundary: LatLngBounds
 
+    private var previousSate = true
+
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private var googleSignInClient: GoogleSignInClient? = null
+    private var user: User?=null
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps2)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        getUserPositionFromOtherActivities()
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        when {
-            PermissionUtils.isAccessFineLocationGranted(this) -> {
-                when {
-                    PermissionUtils.isLocationEnabled(this) -> {
-                        setUpLocationListener()
-                        AppLocationProvider().getLocation(
-                            this,
-                            object : AppLocationProvider.LocationCallBack {
-                                override fun locationResult(location: Location?) {
-                                    position = LatLng(location!!.latitude, location.longitude)
-                                    // use location, this might get called in a different thread if a location is a last known location. In that case, you can post location on main thread
-                                }
-                            })
-                        setupViewModel()
 
-                    }
-                    else -> {
-                        PermissionUtils.showGPSNotEnabledDialog(this)
-                    }
-                }
-            }
-            else -> {
-                PermissionUtils.requestAccessFineLocationPermission(
-                    this,
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
-            }
+        user = getUserFromIntent()
+
+        savedInstanceState?.let {
+            previousSate = it.getBoolean("LOST_CONNECTION")
         }
 
+        wifi_off_icon.visibility = if (!ConnectivityStateHolder.isConnected) View.VISIBLE else View.GONE
 
-
+        NetworkEvents.observe(this, Observer {
+            if (it is Event.ConnectivityEvent)
+                handleConnectivityChange()
+        })
+        setUpLocationListener()
+        setupViewModel()
+        initGoogleSignInClient()
+        setMessageForToast(user!!)
         btnClickListeners()
 
 
     }
 
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        when {
-            PermissionUtils.isAccessFineLocationGranted(this) -> {
-                when {
-                    PermissionUtils.isLocationEnabled(this) -> {
-                        Handler().postDelayed(kotlinx.coroutines.Runnable {
-                            //anything you want to start after 3s
-
-
-                            addMapMarkers()
-
-                            // addUserMarker()
-
-                        }, 5000)
-
-
-                        //getUserPosition()
-                    }
-                    else -> {
-                        PermissionUtils.showGPSNotEnabledDialog(this)
-                    }
-                }
-            }
-            else -> {
-                PermissionUtils.requestAccessFineLocationPermission(
-                    this,
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
-            }
+    override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
+        val firebaseUser = firebaseAuth.currentUser
+        if (firebaseUser == null) {
+            goToAuthInActivity()
         }
+    }
 
+    private fun signOut() {
+        singOutFirebase()
+        signOutGoogle()
+    }
+
+    private fun singOutFirebase() {
+        firebaseAuth.signOut()
+    }
+
+    private fun signOutGoogle() {
+        googleSignInClient!!.signOut()
     }
 
     override fun onStart() {
         super.onStart()
+        firebaseAuth.addAuthStateListener(this)
+    }
 
-        when {
-            PermissionUtils.isAccessFineLocationGranted(this) -> {
-                when {
-                    PermissionUtils.isLocationEnabled(this) -> {
+    override fun onStop() {
+        super.onStop()
+        firebaseAuth.removeAuthStateListener(this)
+    }
 
-                        //getUserPosition()
-                    }
-                    else -> {
-                        PermissionUtils.showGPSNotEnabledDialog(this)
-                    }
-                }
-            }
-            else -> {
-                PermissionUtils.requestAccessFineLocationPermission(
-                    this,
-                    LOCATION_PERMISSION_REQUEST_CODE
-                )
-            }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if (menuItem.itemId === R.id.sign_out_button) {
+            signOut()
+            return true
+        }
+        return super.onOptionsItemSelected(menuItem)
+    }
+
+
+    private fun setMessageForToast(user: User) {
+        val message = "You are logged in as: " + user.name
+        // messageTextView!!.text = message
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show()
+    }
+
+    private fun goToAuthInActivity() {
+        val intent = Intent(this@MapsActivity2, AuthActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun getUserFromIntent(): User? {
+        return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.Data.Model.User
+    }
+
+    private fun initGoogleSignInClient() {
+        val googleSignInOptions =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .build()
+        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
+    }
+
+    private fun handleConnectivityChange() {
+        if (ConnectivityStateHolder.isConnected && !previousSate) {
+            showSnackBar(textView, "The network is back !")
+            wifi_off_icon.visibility = View.GONE
+        }
+
+        if (!ConnectivityStateHolder.isConnected && previousSate) {
+            showSnackBar(textView, "No Network !")
+            wifi_off_icon.visibility = View.VISIBLE
+        }
+
+        previousSate = ConnectivityStateHolder.isConnected
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleConnectivityChange()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("LOST_CONNECTION", previousSate)
+        super.onSaveInstanceState(outState)
+    }
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        Handler().postDelayed(kotlinx.coroutines.Runnable {
+            //anything you want to start after 3s
+
+            addMapMarkers()
+
+
+            // addUserMarker()
+
+        }, 5000)
+
+
+    }
+
+
+    private fun getUserPositionFromOtherActivities() {
+        if (AuthActivity.userPosition != null) {
+            userPosition = AuthActivity.userPosition!!
+        } else if (SplashActivity.userPosition != null) {
+            userPosition = SplashActivity.userPosition!!
         }
     }
 
@@ -214,7 +277,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
             negativeButton(text = "Cancel")
             positiveButton(text = "Yes") { dialog ->
                 dialog.cancel()
-                mosqueInputDialog(userPosition)
+                userPosition?.let { mosqueInputDialog(it) }
 
             }
             negativeButton(text = "Cancel") { dialog ->
@@ -258,10 +321,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    private fun getUserPosition() {
-        userPosition = mapViewModel.getUserPosition()!!
-    }
-
     private fun setupViewModel() {
         mapViewModel = ViewModelProvider(
             this,
@@ -294,10 +353,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setCameraView() {
         // Set a boundary to start
-        val bottomBoundary: Double = userPosition.latitude - .009
-        val leftBoundary: Double = userPosition.longitude - .009
-        val topBoundary: Double = userPosition.latitude + .009
-        val rightBoundary: Double = userPosition.longitude + .009
+        val bottomBoundary: Double = userPosition!!.latitude - .009
+        val leftBoundary: Double = userPosition!!.longitude - .009
+        val topBoundary: Double = userPosition!!.latitude + .009
+        val rightBoundary: Double = userPosition!!.longitude + .009
 
         mMapBoundary = LatLngBounds(
             LatLng(bottomBoundary, leftBoundary),
@@ -357,8 +416,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback {
             val snippet2 = getString(R.string.you)
             val newClusterMarker2 =
                 ClusterMarker(
-                    userPosition.latitude,
-                    userPosition.longitude
+                    userPosition!!.latitude,
+                    userPosition!!.longitude
                     ,
                     "You",
                     snippet2,

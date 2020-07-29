@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
+import com.shid.mosquefinder.Utils.Network.Core.safeRun
 
 internal class ActivityLifecycleCallbacksImp : Application.ActivityLifecycleCallbacks {
 

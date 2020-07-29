@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity2" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MapsActivity2">
 
     <fragment
         android:layout_width="match_parent"
@@ -29,5 +30,16 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:id="@+id/btn_reset_map"/>
+
+    <ImageView
+        android:id="@+id/wifi_off_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:layout_below="@id/btn_reset_map"
+        android:layout_centerInParent="true"
+        app:srcCompat="@drawable/ic_signal_wifi_off_black_24dp"
+        tools:visibility="visible" />
 
 </RelativeLayout>

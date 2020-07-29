@@ -1,7 +1,12 @@
 package com.shid.mosquefinder.Ui.Main.View
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Looper
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -11,32 +16,171 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
+import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.User
-import com.shid.mosquefinder.MainActivity
+import com.shid.mosquefinder.MapsActivity2
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
+import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
+import com.shid.mosquefinder.Utils.Common.USER_LAT
+import com.shid.mosquefinder.Utils.Common.USER_LG
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
+import com.shid.mosquefinder.Utils.Network.Event
+import com.shid.mosquefinder.Utils.Network.NetworkEvents
+import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.showSnackBar
 import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.android.synthetic.main.activity_splash.*
 
 
 class AuthActivity : AppCompatActivity() {
 
-    private lateinit var authViewModel:AuthViewModel
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 999
+        private const val TAG = "AuthActivity"
+        var userPosition: LatLng? = null
+
+    }
+
+
+    private lateinit var authViewModel: AuthViewModel
     private lateinit var authViewModelFactory: AuthViewModelFactory
-    private lateinit var googleSignInClient:GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private var previousSate = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
+        savedInstanceState?.let {
+            previousSate = it.getBoolean("LOST_CONNECTION")
+        }
+
+        wifi_off_icon.visibility =
+            if (!ConnectivityStateHolder.isConnected) View.VISIBLE else View.GONE
+        NetworkEvents.observe(this, Observer {
+            if (it is Event.ConnectivityEvent)
+                handleConnectivityChange()
+        })
+        checkIfPermissionIsActive()
         initSignInButton()
         initAuthViewModel()
         initGoogleSignInClient()
+    }
+
+    private fun checkIfPermissionIsActive() {
+        when {
+            PermissionUtils.isAccessFineLocationGranted(this) -> {
+                when {
+                    PermissionUtils.isLocationEnabled(this) -> {
+                        setUpLocationListener()
+
+                    }
+                    else -> {
+                        PermissionUtils.showGPSNotEnabledDialog(this)
+                    }
+                }
+            }
+            else -> {
+                PermissionUtils.requestAccessFineLocationPermission(
+                    this,
+                    LOCATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleConnectivityChange()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("LOST_CONNECTION", previousSate)
+        super.onSaveInstanceState(outState)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun setUpLocationListener() {
+        val fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(application)
+        // for getting the current location update after every 2 seconds with high accuracy
+        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+                    for (location in locationResult.locations) {
+                        /* latTextView.text = location.latitude.toString()
+                         lngTextView.text = location.longitude.toString()*/
+                        userPosition = LatLng(location.latitude, location.longitude)
+                        Log.d(Common.TAG, "position=" + location.latitude + "" + location.longitude)
+                    }
+                    // Few more things we can do here:
+                    // For example: Update the location of user on server
+                }
+            },
+            Looper.myLooper()
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    when {
+                        PermissionUtils.isLocationEnabled(this) -> {
+                            setUpLocationListener()
+                            //getUserPosition()
+                        }
+                        else -> {
+                            PermissionUtils.showGPSNotEnabledDialog(this)
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.location_permission_not_granted),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun handleConnectivityChange() {
+        if (ConnectivityStateHolder.isConnected && !previousSate) {
+            showSnackBar(textView, "The network is back !")
+            wifi_off_icon.visibility = View.GONE
+            google_sign_in_button.isClickable = true
+        }
+
+        if (!ConnectivityStateHolder.isConnected && previousSate) {
+            showSnackBar(textView, "No Network !")
+            wifi_off_icon.visibility = View.VISIBLE
+            google_sign_in_button.isClickable = false
+        }
+
+        previousSate = ConnectivityStateHolder.isConnected
     }
 
     private fun initSignInButton() {
@@ -53,7 +197,10 @@ class AuthActivity : AppCompatActivity() {
     private fun initAuthViewModel() {
         authViewModelFactory =
             AuthViewModelFactory(application)
-        authViewModel= ViewModelProvider(this,authViewModelFactory).get(AuthViewModel(application)::class.java)
+        authViewModel = ViewModelProvider(
+            this,
+            authViewModelFactory
+        ).get(AuthViewModel(application)::class.java)
     }
 
     private fun initGoogleSignInClient() {
@@ -94,7 +241,7 @@ class AuthActivity : AppCompatActivity() {
             if (it.isNew!!) {
                 createNewUser(it)
             } else {
-                goToMainActivity(it)
+                goToMapActivity(it)
             }
         })
 
@@ -107,7 +254,7 @@ class AuthActivity : AppCompatActivity() {
             if (it.isCreated!!) {
                 toastMessage(it.name!!)
             }
-            goToMainActivity(it)
+            goToMapActivity(it)
         })
 
     }
@@ -120,8 +267,8 @@ class AuthActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun goToMainActivity(user: User) {
-        val intent = Intent(this@AuthActivity, MainActivity::class.java)
+    private fun goToMapActivity(user: User) {
+        val intent = Intent(this@AuthActivity, MapsActivity2::class.java)
         intent.putExtra(USER, user)
         startActivity(intent)
         finish()

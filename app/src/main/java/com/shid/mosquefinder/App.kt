@@ -2,6 +2,7 @@ package com.shid.mosquefinder
 
 import android.app.Application
 import android.content.Context
+import com.shid.mosquefinder.ConnectivityStateHolder.registerConnectivityBroadcaster
 
 class App : Application() {
 
@@ -13,5 +14,6 @@ class App : Application() {
         super.onCreate()
 
         context = this;
+        registerConnectivityBroadcaster()
     }
 }

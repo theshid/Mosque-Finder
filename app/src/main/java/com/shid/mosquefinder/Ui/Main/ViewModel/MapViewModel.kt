@@ -30,26 +30,20 @@ import java.util.HashMap
 
 class MapViewModel( mapRepository: MapRepository, application: Application) :ViewModel() {
     private var mMosqueList: MutableList<Mosque> = ArrayList()
-    private lateinit var userPosition: LatLng
-    private val mApplication = application
     private val mRepository = mapRepository
     val position:LatLng = LatLng(5.6363262,-0.2349102)
     private  var getPlace: MutableLiveData<Place>? = null
 
 
     init {
-        setUpLocationListener()
+
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
 
 
-       // getPlace = mRepository.googlePlaceNearbyMosques("mosque", MapsActivity2.position)
+        if (MapsActivity2.userPosition != null){
+            getPlace = mRepository.googlePlaceNearbyMosques("mosque", MapsActivity2.userPosition!!)
+        }
 
-
-
-    }
-
-    fun getUserPosition(): LatLng? {
-        return userPosition
     }
 
     fun inputMosqueInDatabase(userInput: HashMap<String, Comparable<*>>) {
@@ -62,7 +56,8 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
     }
 
     fun getGoogleMapMosqueFromRepository(): MutableLiveData<Place>? {
-        getPlace = mRepository.googlePlaceNearbyMosques("mosque", MapsActivity2.userPosition)
+        getPlace =
+            MapsActivity2.userPosition?.let { mRepository.googlePlaceNearbyMosques("mosque", it) }
         return getPlace
 
     }
@@ -75,30 +70,4 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
         mRepository.reportFalseLocation(marker)
     }
 
-    @SuppressLint("MissingPermission")
-    fun setUpLocationListener() {
-        val fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(mApplication)
-        // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    for (location in locationResult.locations) {
-                        /* latTextView.text = location.latitude.toString()
-                         lngTextView.text = location.longitude.toString()*/
-                        userPosition = LatLng(location.latitude, location.longitude)
-                        Log.d(TAG, "position=" + location.latitude + "" + location.longitude)
-                    }
-                    // Few more things we can do here:
-                    // For example: Update the location of user on server
-                }
-            },
-            Looper.myLooper()
-        )
-    }
 }

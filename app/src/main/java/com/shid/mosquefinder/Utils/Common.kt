@@ -9,6 +9,8 @@ object Common {
     var RC_SIGN_IN = 123
     var USER = "user"
     var USERS = "users"
+    var USER_LAT = "user_lat"
+    var USER_LG = "user_lg"
     var TAG = "FirebaseAuthAppTag"
 
     fun logErrorMessage(errorMessage: String?) {
