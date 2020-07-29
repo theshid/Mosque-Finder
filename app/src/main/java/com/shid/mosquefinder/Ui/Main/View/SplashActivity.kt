@@ -27,8 +27,8 @@ import com.shid.mosquefinder.Utils.PermissionUtils
 
 
 class SplashActivity : AppCompatActivity() {
-    lateinit var splashViewModel: SplashViewModel
-    lateinit var splashViewModelFactory: SplashViewModelFactory
+    private lateinit var splashViewModel: SplashViewModel
+    private lateinit var splashViewModelFactory: SplashViewModelFactory
     companion object{
         var userPosition:LatLng?= null
     }
@@ -79,8 +79,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun checkIfUserIsAuthenticated() {
-        splashViewModel!!.checkIfUserIsAuthenticated()
-        splashViewModel!!.isUserAuthenticatedLiveData!!.observe(this,
+        splashViewModel.checkIfUserIsAuthenticated()
+        splashViewModel.isUserAuthenticatedLiveData!!.observe(this,
             Observer { user: User ->
                 if (!user.isAuthenticated!!) {
                     goToAuthInActivity()
@@ -93,8 +93,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun getUserFromDatabase(uid: String) {
-        splashViewModel!!.setUid(uid)
-        splashViewModel!!.userLiveData!!.observe(
+        splashViewModel.setUid(uid)
+        splashViewModel.userLiveData!!.observe(
             this,
             Observer { user: User? ->
                 goToMapActivity(user)

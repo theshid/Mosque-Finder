@@ -108,6 +108,8 @@ dependencies {
     // Annotation processor
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
+    implementation 'com.irozon.sneaker:sneaker:2.0.0'
+
 
 
 

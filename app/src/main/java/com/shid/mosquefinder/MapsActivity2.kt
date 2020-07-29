@@ -40,6 +40,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.collections.MarkerManager
 import com.google.maps.model.PlacesSearchResult
+import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Data.Model.User
@@ -102,7 +103,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
 
-        wifi_off_icon.visibility = if (!ConnectivityStateHolder.isConnected) View.VISIBLE else View.GONE
+
 
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
@@ -185,13 +186,19 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
-            showSnackBar(textView, "The network is back !")
-            wifi_off_icon.visibility = View.GONE
+           // showSnackBar(textView, "The network is back !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle("Connected!!")
+                .setMessage("The network is back !")
+                .sneakSuccess()
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-            showSnackBar(textView, "No Network !")
-            wifi_off_icon.visibility = View.VISIBLE
+           // showSnackBar(textView, "No Network !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle("Connection lost")
+                .setMessage("No Network!")
+                .sneakError()
         }
 
         previousSate = ConnectivityStateHolder.isConnected

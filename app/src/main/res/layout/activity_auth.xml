@@ -13,15 +13,6 @@
         android:layout_centerInParent="true"
         app:buttonSize="wide" />
 
-    <ImageView
-        android:id="@+id/wifi_off_icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        android:layout_below="@id/google_sign_in_button"
-        android:layout_centerInParent="true"
-        app:srcCompat="@drawable/ic_signal_wifi_off_black_24dp"
-        tools:visibility="visible" />
+
 
 </RelativeLayout>

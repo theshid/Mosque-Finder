@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
+import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.MapsActivity2
@@ -67,8 +68,7 @@ class AuthActivity : AppCompatActivity() {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
 
-        wifi_off_icon.visibility =
-            if (!ConnectivityStateHolder.isConnected) View.VISIBLE else View.GONE
+
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
@@ -169,14 +169,20 @@ class AuthActivity : AppCompatActivity() {
 
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
-            showSnackBar(textView, "The network is back !")
-            wifi_off_icon.visibility = View.GONE
+            //showSnackBar(textView, "The network is back !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle("Connected!!")
+                .setMessage("The network is back !")
+                .sneakSuccess()
             google_sign_in_button.isClickable = true
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-            showSnackBar(textView, "No Network !")
-            wifi_off_icon.visibility = View.VISIBLE
+            //showSnackBar(textView, "No Network !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle("Connection lost")
+                .setMessage("No Network!")
+                .sneakError()
             google_sign_in_button.isClickable = false
         }
 

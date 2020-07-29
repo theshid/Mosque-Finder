@@ -32,7 +32,7 @@ class AuthRepository {
                         val email = firebaseUser.email
                         val user = User(uid, name, email)
                         user.isNew = isNewUser
-                        authenticatedUserMutableLiveData.setValue(user)
+                        authenticatedUserMutableLiveData.value = user
                     }
                 } else {
                     logErrorMessage(authTask.exception!!.message)
