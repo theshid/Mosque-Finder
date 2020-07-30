@@ -68,7 +68,7 @@ class SplashActivity : AppCompatActivity() {
                         /* latTextView.text = location.latitude.toString()
                          lngTextView.text = location.longitude.toString()*/
                         userPosition = LatLng(location.latitude, location.longitude)
-                        Log.d(Common.TAG, "position=" + location.latitude + "" + location.longitude)
+                        Log.d("Splash", "position=" + location.latitude + "" + location.longitude)
                     }
                     // Few more things we can do here:
                     // For example: Update the location of user on server

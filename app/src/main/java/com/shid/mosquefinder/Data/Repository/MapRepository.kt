@@ -158,7 +158,7 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
                                 //markerCollectionForClusters = mClusterManager!!.markerCollection
 
 
-                                mClusterMarkers.add(newClusterMarker)
+                                //mClusterMarkers.add(newClusterMarker)
 
 
                             } catch (e: NullPointerException) {

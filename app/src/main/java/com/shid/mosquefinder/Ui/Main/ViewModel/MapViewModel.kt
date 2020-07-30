@@ -56,8 +56,7 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
     }
 
     fun getGoogleMapMosqueFromRepository(): MutableLiveData<Place>? {
-        getPlace =
-            MapsActivity2.userPosition?.let { mRepository.googlePlaceNearbyMosques("mosque", it) }
+
         return getPlace
 
     }

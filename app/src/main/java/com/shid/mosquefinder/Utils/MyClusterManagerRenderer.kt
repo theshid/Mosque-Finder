@@ -9,6 +9,7 @@ import coil.ImageLoader
 import coil.request.LoadRequest
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
@@ -78,10 +79,16 @@ class MyClusterManagerRenderer constructor(
                 //Glide.with(context).load(item.getIconPicture()).into(imageView);
             }
         }
+        markerOptions.snippet(item.snippet)
     }
 
     override fun shouldRenderAsCluster(cluster: Cluster<ClusterMarker>): Boolean {
         return false
+    }
+
+    override fun onClusterRendered(cluster: Cluster<ClusterMarker>, marker: Marker) {
+        super.onClusterRendered(cluster, marker)
+
     }
 
     /**
