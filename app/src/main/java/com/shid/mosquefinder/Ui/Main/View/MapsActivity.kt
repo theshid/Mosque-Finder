@@ -34,6 +34,7 @@ import com.google.maps.model.DirectionsResult
 import com.shid.mosquefinder.Data.Model.Api.ApiInterface
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
+import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
 import com.shid.mosquefinder.Data.Model.PolylineData
 import com.shid.mosquefinder.R
@@ -62,6 +63,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var database: FirebaseFirestore
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private var mMosqueList: MutableList<Mosque> = ArrayList()
+    private var mGoogleMosqueList:MutableList<GoogleMosque> = ArrayList()
 
 
     private lateinit var mMapBoundary: LatLngBounds

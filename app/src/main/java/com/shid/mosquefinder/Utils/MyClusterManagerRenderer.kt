@@ -47,17 +47,27 @@ class MyClusterManagerRenderer constructor(
     override fun onBeforeClusterItemRendered(item: ClusterMarker, markerOptions: MarkerOptions) {
         when (item.mPic) {
             "default" -> {
-                imageView!!.setImageResource(R.drawable.mosque)
+                imageView!!.setImageResource(R.drawable.google)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             }
             "verified" -> {
-                imageView!!.setImageResource(R.drawable.mosque_check)
+                imageView!!.setImageResource(R.drawable.verified)
+                val icon = iconGenerator.makeIcon()
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+            }
+            "not_verified" ->{
+                imageView!!.setImageResource(R.drawable.not_verified)
+                val icon = iconGenerator.makeIcon()
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+            }
+            "false" -> {
+                imageView!!.setImageResource(R.drawable.false_location)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             }
             else -> {
-                imageView!!.setImageResource(R.drawable.user)
+                imageView!!.setImageResource(R.drawable.user_pic)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
 

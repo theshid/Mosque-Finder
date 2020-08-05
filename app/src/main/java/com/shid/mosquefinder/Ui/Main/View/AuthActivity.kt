@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -26,22 +25,17 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.User
-import com.shid.mosquefinder.MapsActivity2
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
-import com.shid.mosquefinder.Utils.Common.USER_LAT
-import com.shid.mosquefinder.Utils.Common.USER_LG
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
-import com.shid.mosquefinder.Utils.showSnackBar
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.android.synthetic.main.activity_splash.*
 
 
 class AuthActivity : AppCompatActivity() {

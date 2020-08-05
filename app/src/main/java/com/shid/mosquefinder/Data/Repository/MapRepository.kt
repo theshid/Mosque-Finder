@@ -11,6 +11,7 @@ import com.google.firebase.firestore.*
 import com.shid.mosquefinder.Data.Model.Api.ApiInterface
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
+import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Utils.Common
@@ -24,6 +25,11 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
     private lateinit var mMosqueListEventListener: ListenerRegistration
+
+    private val firebaseGoogleMosqueRef: CollectionReference = database.collection("test")
+    private lateinit var mGoogleMosqueListEventListener: ListenerRegistration
+    var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
+
     private val TAG: String = "Map Repository"
     private val mApp: Application = application
     private val service = Common.googleApiService
@@ -36,6 +42,48 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
     init {
 
 
+    }
+
+    fun getGoogleMosqueFromFirebase(): MutableList<GoogleMosque>{
+        mGoogleMosqueListEventListener =
+            firebaseGoogleMosqueRef.addSnapshotListener(EventListener<QuerySnapshot>
+            { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
+                if (firebaseFirestoreException != null) {
+                    Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
+                    return@EventListener
+                }
+
+                if (querySnapshot != null) {
+
+                    mGoogleMosqueList.clear()
+                    for (doc in querySnapshot) {
+                        val mosque = doc.toObject(GoogleMosque::class.java)
+
+                        //mosque.documentId = doc.id
+
+                        var mosqueLat:Double = doc.get("Latitude") as Double
+                        var mosqueLg = doc.get("Longitude") as Double
+                        var mosqueId:String = doc.get("Place ID") as String
+                        var mosqueName: String = doc.get("Place Name") as String
+
+
+                        var mosqueElem: GoogleMosque =
+                            GoogleMosque(
+                                mosqueLat,
+                                mosqueLg,
+                                mosqueId,
+                                mosqueName
+                            )
+                        //Log.d(TAG, "the id  is" + mosqueElem.documentId)
+                        mGoogleMosqueList.add(mosqueElem)
+                        /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
+                         var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*/
+                        //Log.d(TAG, "mosque position" + mosque.position.latitude)
+                    }
+                }
+            })
+        Log.d(TAG,"Mosque firebase" +mMosqueList.isEmpty().toString())
+        return mGoogleMosqueList
     }
 
     fun getTotalMosquesFromFirebase(): MutableList<Mosque> {

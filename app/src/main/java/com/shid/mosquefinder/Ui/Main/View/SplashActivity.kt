@@ -16,12 +16,9 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.Data.Model.User
-import com.shid.mosquefinder.MainActivity
-import com.shid.mosquefinder.MapsActivity2
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.SplashViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.SplashViewModel
-import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.PermissionUtils
 
