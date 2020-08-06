@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Ui.Main.ViewModel
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
@@ -8,8 +9,10 @@ import com.google.android.gms.maps.model.Marker
 import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
+import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.Data.Repository.MapRepository
 import com.shid.mosquefinder.Ui.Main.View.MapsActivity2
+import com.shid.mosquefinder.Utils.Resource
 import java.util.HashMap
 
 class MapViewModel( mapRepository: MapRepository, application: Application) :ViewModel() {
@@ -24,12 +27,17 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
 
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()
+        retrieveStatusMsg()
 
 
         /*if (MapsActivity2.userPosition != null){
             getPlace = mRepository.googlePlaceNearbyMosques("mosque", MapsActivity2.userPosition!!)
         }*/
 
+    }
+
+     fun retrieveStatusMsg():LiveData<Resource<String>> {
+        return mRepository.returnStatusMsg()
     }
 
     fun inputMosqueInDatabase(userInput: HashMap<String, Comparable<*>>) {
@@ -51,12 +59,12 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
 
     }
 
-    fun confirmMosqueLocation(marker: Marker) {
-        mRepository.confirmMosqueLocation(marker)
+    fun confirmMosqueLocation(marker: Marker,user:User) {
+        mRepository.confirmMosqueLocation(marker,user)
     }
 
-    fun reportFalseMosqueLocation(marker: Marker) {
-        mRepository.reportFalseLocation(marker)
+    fun reportFalseMosqueLocation(marker: Marker,user:User) {
+        mRepository.reportFalseLocation(marker,user)
     }
 
 }

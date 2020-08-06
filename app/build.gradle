@@ -110,6 +110,10 @@ dependencies {
 
     implementation 'com.irozon.sneaker:sneaker:2.0.0'
 
+    //Real time database
+    implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
+
+
 
 
 

@@ -3,28 +3,36 @@ package com.shid.mosquefinder.Data.Repository
 
 import android.app.Application
 import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.*
+import com.google.firebase.ktx.Firebase
 import com.shid.mosquefinder.Data.Model.Api.ApiInterface
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
+import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Utils.Common
+import com.shid.mosquefinder.Utils.Resource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.StringBuilder
 import java.util.HashMap
 
-class MapRepository constructor( mService: ApiInterface, application: Application) {
+class MapRepository constructor(mService: ApiInterface, application: Application) {
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
     private lateinit var mMosqueListEventListener: ListenerRegistration
+    private val realDatabase: DatabaseReference = Firebase.database.reference
 
     private val firebaseGoogleMosqueRef: CollectionReference = database.collection("test")
     private lateinit var mGoogleMosqueListEventListener: ListenerRegistration
@@ -35,21 +43,25 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
     private val service = Common.googleApiService
 
     private var mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
-     var mMosqueList: MutableList<Mosque> = ArrayList()
-    val apiService:ApiInterface = mService
-    val placeData:MutableLiveData<Place> = MutableLiveData<com.shid.mosquefinder.Data.Model.Pojo.Place>()
+    var mMosqueList: MutableList<Mosque> = ArrayList()
+    val apiService: ApiInterface = mService
+    val placeData: MutableLiveData<Place> =
+        MutableLiveData<com.shid.mosquefinder.Data.Model.Pojo.Place>()
+
+    private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     init {
 
 
     }
 
-    fun getGoogleMosqueFromFirebase(): MutableList<GoogleMosque>{
+    fun getGoogleMosqueFromFirebase(): MutableList<GoogleMosque> {
         mGoogleMosqueListEventListener =
             firebaseGoogleMosqueRef.addSnapshotListener(EventListener<QuerySnapshot>
             { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
                     Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
+                    statusMsg.postValue(Resource.error(firebaseFirestoreException.toString(),"could not load data, check internet"))
                     return@EventListener
                 }
 
@@ -61,9 +73,9 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
 
                         //mosque.documentId = doc.id
 
-                        var mosqueLat:Double = doc.get("Latitude") as Double
+                        var mosqueLat: Double = doc.get("Latitude") as Double
                         var mosqueLg = doc.get("Longitude") as Double
-                        var mosqueId:String = doc.get("Place ID") as String
+                        var mosqueId: String = doc.get("Place ID") as String
                         var mosqueName: String = doc.get("Place Name") as String
 
 
@@ -82,7 +94,7 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
                     }
                 }
             })
-        Log.d(TAG,"Mosque firebase" +mMosqueList.isEmpty().toString())
+        Log.d(TAG, "Mosque firebase" + mMosqueList.isEmpty().toString())
         return mGoogleMosqueList
     }
 
@@ -91,6 +103,7 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
             firebaseMosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
                     Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
+                    statusMsg.postValue(Resource.error(firebaseFirestoreException.toString(),"could not load data, check internet"))
                     return@EventListener
                 }
 
@@ -122,7 +135,7 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
                     }
                 }
             })
-        Log.d(TAG,"Mosque firebase" +mMosqueList.isEmpty().toString())
+        Log.d(TAG, "Mosque firebase" + mMosqueList.isEmpty().toString())
         return mMosqueList
     }
 
@@ -162,7 +175,7 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
                 override fun onFailure(call: Call<Place>, t: Throwable) {
                     /*Toast.makeText(mApp.applicationContext, "" + t.message, Toast.LENGTH_LONG)
                         .show()*/
-                    Log.d(TAG,"failed")
+                    Log.d(TAG, "failed")
                     placeData?.value = null
                 }
 
@@ -219,12 +232,12 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
 
                         }
 
-                }
+                    }
 
                 }
 
             })
-        Log.d(TAG,"Api Mosque"+ mClusterMarkers.isEmpty().toString())
+        Log.d(TAG, "Api Mosque" + mClusterMarkers.isEmpty().toString())
         return placeData
     }
 
@@ -233,44 +246,94 @@ class MapRepository constructor( mService: ApiInterface, application: Applicatio
             .set(userInput)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully written!")
+                statusMsg.postValue(Resource.success("Thank you for confirming location"))
                 //addMapMarkers()
 
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error writing document", e)
+                statusMsg.postValue(
+                    Resource.error(
+                        e.localizedMessage,
+                        "Mosque has not been added check internet"
+                    )
+                )
 
             }
     }
 
-    fun confirmMosqueLocation(marker: Marker) {
+    fun returnStatusMsg(): LiveData<Resource<String>> {
+        return statusMsg
+    }
+
+    fun confirmMosqueLocation(marker: Marker, user: User) {
         for (mosque in mMosqueList) {
             if (marker.title == mosque.name) {
                 val reportIndex = mosque.report + 1
-                database.collection("mosques").document(mosque.documentId)
-                    .update("report", FieldValue.increment(1))
+
+
+                realDatabase.child("votes").child(mosque.documentId)
+                    .child(user.uid).setValue(1L)
                     .addOnSuccessListener {
-                        //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
+                        statusMsg.postValue(Resource.success("Thank you for confirming location"))
+                        database.collection("mosques").document(mosque.documentId)
+                            .update("report", FieldValue.increment(1))
+                            .addOnSuccessListener {
+                                //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
+                            }
+                            .addOnFailureListener {
+
+                            }
+
+
                     }
                     .addOnFailureListener {
-                        //Toast.makeText(this@MapsActivity, "Error", Toast.LENGTH_LONG).show()
+                        statusMsg.postValue(
+                            Resource.error(
+                                it.localizedMessage,
+                                "You already made a choice "
+                            )
+                        )
                     }
+
+
             }
+
         }
     }
 
-    fun reportFalseLocation(marker: Marker) {
+
+    fun reportFalseLocation(marker: Marker, user: User) {
         for (mosque in mMosqueList) {
             if (marker.title == mosque.name) {
 
-                database.collection("mosques").document(mosque.documentId)
-                    .update("report", FieldValue.increment(-1))
+                realDatabase.child("votes").child(mosque.documentId)
+                    .child(user.uid).setValue(-1L)
                     .addOnSuccessListener {
-                        //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
+                        statusMsg.postValue(Resource.success("Thank you for reporting location"))
+                        database.collection("mosques").document(mosque.documentId)
+                            .update("report", FieldValue.increment(-1))
+                            .addOnSuccessListener {
+                                //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
+                            }
+                            .addOnFailureListener {
+
+                                Log.d(
+                                    "Error",
+                                    it.message.toString() + it.localizedMessage.toString()
+                                )
+                            }
                     }
                     .addOnFailureListener {
-                        // Toast.makeText(this@MapsActivity, "Error" , Toast.LENGTH_LONG).show()
-                        Log.d("Error", it.message.toString() + it.localizedMessage.toString())
+                        statusMsg.postValue(
+                            Resource.error(
+                                it.localizedMessage,
+                                "You already reported this location "
+                            )
+                        )
                     }
+
+
             }
         }
     }

@@ -116,8 +116,28 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setMessageForToast(user!!)
         btnClickListeners()
         testLocation()
+        setObserver()
 
 
+    }
+
+    private fun setObserver() {
+        mapViewModel.retrieveStatusMsg().observe(this, Observer {
+            when(it.status){
+                Status.SUCCESS -> {
+                   Toast.makeText(this,it.data,Toast.LENGTH_LONG).show()
+                }
+                Status.LOADING -> {
+
+                }
+                Status.ERROR -> {
+                    //Handle Error
+
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                    Log.d(TAG,it.message)
+                }
+            }
+        })
     }
 
     private fun testLocation() {
@@ -484,7 +504,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                                 "verified",
                                 false
                             )
-                    } else if (mosqueLocation.report == 0L || mosqueLocation.report == -1L){
+                    } else if (mosqueLocation.report == 0L || mosqueLocation.report == -1L || mosqueLocation.report == 1L){
                         newClusterMarker =
                             ClusterMarker(
 
@@ -620,21 +640,21 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
             positiveButton(text = "Confirm Mosque") { dialog ->
                 dialog.cancel()
-                confirmMosquePosition(marker)
+                user?.let { confirmMosquePosition(marker, it) }
             }
             negativeButton(text = "Report Mosque") { dialog ->
                 dialog.cancel()
-                reportMosquePosition(marker)
+                user?.let { reportMosquePosition(marker, it) }
             }
         }
     }
 
-    private fun reportMosquePosition(marker: Marker) {
-        mapViewModel.reportFalseMosqueLocation(marker)
+    private fun reportMosquePosition(marker: Marker,user:User) {
+        mapViewModel.reportFalseMosqueLocation(marker,user)
     }
 
-    private fun confirmMosquePosition(marker: Marker) {
-        mapViewModel.confirmMosqueLocation(marker)
+    private fun confirmMosquePosition(marker: Marker,user:User) {
+        mapViewModel.confirmMosqueLocation(marker,user)
     }
 
     private fun showDirectionInGoogleMapDialog(marker: Marker) {
