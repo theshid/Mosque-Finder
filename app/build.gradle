@@ -118,6 +118,7 @@ dependencies {
 
     //Fab
     implementation 'uk.co.markormesher:android-fab:2.5.0'
+    implementation 'com.bitvale:lavafab:1.0.1'
 
 
 

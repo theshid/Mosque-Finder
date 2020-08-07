@@ -1,3 +1,4 @@
+/*
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
@@ -232,8 +233,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                     getString(R.string.determine_route) + " " + placeName + "?"
                                 val title = placeName
 
-                                /*val avatar: String = mosqueLocation
-                                Log.d("Avatar", "avatar link $avatar")*/
+                                */
+/*val avatar: String = mosqueLocation
+                                Log.d("Avatar", "avatar link $avatar")*//*
+
                                 // int avatar = R.mipmap.icon; // set the default avatar
                                 val newClusterMarker =
                                     ClusterMarker(
@@ -285,7 +288,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         mClusterManager!!.cluster()
                     }
                     //Code to loop to get at most 60 mosque
-                    /*  if (response.body()!!.nextPageToken != ""){
+                    */
+/*  if (response.body()!!.nextPageToken != ""){
 
                           Handler().postDelayed(Runnable {
 
@@ -295,7 +299,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                           }, 3000)
                       } else{
                           Toast.makeText(applicationContext,"No more results",Toast.LENGTH_LONG).show()
-                      }*/
+                      }*//*
+
                 }
 
             })
@@ -348,8 +353,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                             )
                         Log.d("Map", "the id  is" + mosqueElem.documentId)
                         mMosqueList.add(mosqueElem)
-                        /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
-                         var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*/
+                        */
+/* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
+                         var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*//*
+
                         Log.d(TAG, "mosque position" + mosque.position.latitude)
                     }
                 }
@@ -357,7 +364,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     }
 
-    /**
+    */
+/**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
@@ -365,7 +373,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
-     */
+     *//*
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 //        mMap.addMarker(MarkerOptions().position(userPosition).title("Marker in Sydney"))
@@ -383,16 +392,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
         mMap.setOnPolylineClickListener(this)
-        /*mMap.setOnInfoWindowClickListener(object : GoogleMap.OnInfoWindowClickListener {
+        */
+/*mMap.setOnInfoWindowClickListener(object : GoogleMap.OnInfoWindowClickListener {
             override fun onInfoWindowClick(marker: Marker) {
-                *//*var lat = marker.position.latitude
+                *//*
+*/
+/*var lat = marker.position.latitude
                 var long = marker.position.longitude
                 var addPositions: LatLng
                 addPositions = LatLng(lat, long)*//*
+*/
+/*
 
                 Toast.makeText(applicationContext,"Youpiiiiii",Toast.LENGTH_LONG).show()
             }
-        })*/
+        })*//*
+
 
     }
 
@@ -423,8 +438,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         getString(R.string.determine_route) + " " + mosqueLocation.name + "?"
                     val title = mosqueLocation.name
 
-                    /*val avatar: String = mosqueLocation
-                    Log.d("Avatar", "avatar link $avatar")*/
+                    */
+/*val avatar: String = mosqueLocation
+                    Log.d("Avatar", "avatar link $avatar")*//*
+
                     // int avatar = R.mipmap.icon; // set the default avatar
                     val newClusterMarker =
                         ClusterMarker(
@@ -441,7 +458,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     markerCollectionForClusters2 = mClusterManager!!.markerCollection
 
                     //markerCollection.setOnInfoWindowClickListener(this)
-                    /*   markerCollection.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker: Marker? ->
+                    */
+/*   markerCollection.setOnInfoWindowClickListener(OnInfoWindowClickListener { marker: Marker? ->
                            Toast.makeText(applicationContext,"Yesssss",Toast.LENGTH_LONG).show()
                        })
                      markerCollection.setOnInfoWindowClickListener(object: GoogleMap.OnInfoWindowClickListener{
@@ -449,7 +467,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                              Toast.makeText(applicationContext,"Yesssss",Toast.LENGTH_LONG).show()
                          }
 
-                     })*/
+                     })*//*
+
                     mClusterMarkers.add(newClusterMarker)
 
 
@@ -479,12 +498,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 )
             mClusterManager!!.addItem(newClusterMarker2)
             mClusterMarkers.add(newClusterMarker2)
-            /*val avatar: String = mosqueLocation
-            Log.d("Avatar", "avatar link $avatar")*/
+            */
+/*val avatar: String = mosqueLocation
+            Log.d("Avatar", "avatar link $avatar")*//*
+
             // int avatar = R.mipmap.icon; // set the default avatar
 
-            /*
-            markerCollection.setOnInfoWindowClickListener(this)*/
+            */
+/*
+            markerCollection.setOnInfoWindowClickListener(this)*//*
+
 
         } catch (e: NullPointerException) {
             Log.e(
@@ -861,8 +884,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
                     for (location in locationResult.locations) {
-                        /* latTextView.text = location.latitude.toString()
-                         lngTextView.text = location.longitude.toString()*/
+                        */
+/* latTextView.text = location.latitude.toString()
+                         lngTextView.text = location.longitude.toString()*//*
+
                         userPosition = LatLng(location.latitude, location.longitude)
                         Log.d(TAG, "position=" + location.latitude + "" + location.longitude)
                     }
@@ -968,12 +993,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     title(getString(R.string.trip) + index)
                     snippet(getString(R.string.duree) + polylineData.leg.duration)
                 }
-                /* val marker: Marker = mMap.addMarker(
+                */
+/* val marker: Marker = mMap.addMarker(
                      MarkerOptions()
                          .position(endpoint)
                          .title(getString(R.string.trip) + index)
                          .snippet(getString(R.string.duree) + polylineData.leg.duration)
-                 )*/
+                 )*//*
+
                 marker.showInfoWindow()
                 mTripMarkers.add(marker)
                 markerCollection!!.setOnMarkerClickListener(object : OnMarkerClickListener {
@@ -1000,4 +1027,4 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
 
-}
+}*/

@@ -205,16 +205,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 /*val avatar: String = mosqueLocation
                                 Log.d("Avatar", "avatar link $avatar")*/
                                 // int avatar = R.mipmap.icon; // set the default avatar
-                                val newClusterMarker =
-                                    ClusterMarker(
 
-                                        lat,
-                                        lng,
-                                        title,
-                                        snippet,
-                                        "default",
-                                        true
-                                    )
 
                                 //markerCollectionForClusters = mClusterManager!!.markerCollection
 

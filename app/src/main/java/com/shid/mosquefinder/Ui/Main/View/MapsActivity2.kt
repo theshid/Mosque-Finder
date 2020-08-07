@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.bitvale.lavafab.Child
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -60,6 +61,8 @@ import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import kotlinx.android.synthetic.main.activity_maps.btn_reset_map
 import kotlinx.android.synthetic.main.activity_maps.startActivityButton
 import kotlinx.android.synthetic.main.activity_maps2.*
+import kotlinx.android.synthetic.main.activity_maps2.globalCasesView
+import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -75,6 +78,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         private const val TAG = "MapsActivity"
         var userPosition: LatLng? = null
         lateinit var position: LatLng
+        private const val RQ_SEARCH = 101
     }
 
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
@@ -84,6 +88,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private var markerCollectionForClusters: MarkerManager.Collection? = null
     private var markerCollectionForClusters2: MarkerManager.Collection? = null
     private var mMosqueList: MutableList<Mosque> = ArrayList()
+    private var sortedMosqueList: List<ClusterMarker> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
 
     private lateinit var mMapBoundary: LatLngBounds
@@ -93,7 +98,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
-
 
 
     @SuppressLint("MissingPermission")
@@ -125,7 +129,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     }
 
-    private fun setNetworkMonitor(){
+    private fun setNetworkMonitor() {
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
@@ -139,7 +143,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             moveTaskToBack(true)
         }
     }
-
 
 
     private fun setDrawerLayout() {
@@ -165,6 +168,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 R.id.nav_contact -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     sendEmail()
+                }
+                R.id.nav_exit -> {
+                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
+                    logOutDialog()
                 }
             }
             drawerLayout.closeDrawer(navigationView)
@@ -211,9 +218,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun setObserver() {
         mapViewModel.retrieveStatusMsg().observe(this, Observer {
-            when(it.status){
+            when (it.status) {
                 Status.SUCCESS -> {
-                   Toast.makeText(this,it.data,Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
                 }
                 Status.LOADING -> {
 
@@ -222,7 +229,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     //Handle Error
 
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Log.d(TAG,it.message)
+                    Log.d(TAG, it.message)
                 }
             }
         })
@@ -268,19 +275,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     override fun onStop() {
         super.onStop()
         firebaseAuth.removeAuthStateListener(this)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if (menuItem.itemId === R.id.sign_out_button) {
-            signOut()
-            return true
-        }
-        return super.onOptionsItemSelected(menuItem)
     }
 
 
@@ -408,14 +402,48 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun btnClickListeners() {
-        btn_reset_map.setOnClickListener {
-            addMapMarkers()
-
-        }
-        startActivityButton.setOnClickListener {
-            mosquePromptDialog()
+        card_first.setOnClickListener {
+            setCameraView(sortedMosqueList[1].position)
         }
 
+        card_second.setOnClickListener {
+            setCameraView(sortedMosqueList[2].position)
+        }
+
+        card_third.setOnClickListener {
+            setCameraView(sortedMosqueList[3].position)
+        }
+        with(lava_fab) {
+            //setLavaBackgroundResColor(R.color.fab_color)
+            setParentOnClickListener { lava_fab.trigger() }
+            setChildOnClickListener(Child.TOP) {
+                mosquePromptDialog()
+            }
+            setChildOnClickListener(Child.LEFT) { // some action }
+                addMapMarkers()
+                /* enableShadow()
+                 setParentIcon(R.drawable.ic_parent)
+                 setChildIcon(Child.TOP, R.drawable.ic_child_top)
+                 setChildIcon(Child.LEFT, R.drawable.ic_child_left)*/
+            }
+        }
+
+        menuButton.setOnClickListener {
+            //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_OPEN)
+            drawerLayout.openDrawer(navigationView)
+        }
+
+        searchText.setOnClickListener {
+            //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.HOME_OPEN_SEARCH)
+            goToSearch()
+        }
+
+
+    }
+
+    private fun goToSearch() {
+        val intent = Intent(this, SearchActivity::class.java)
+        startActivityForResult(intent, RQ_SEARCH)
     }
 
     private fun mosquePromptDialog() {
@@ -432,7 +460,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             negativeButton(text = "Cancel") { dialog ->
                 dialog.cancel()
             }
-            icon(R.drawable.logo)
+            icon(R.drawable.logo2)
         }
     }
 
@@ -452,7 +480,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             negativeButton(text = "Cancel") { dialog ->
                 dialog.cancel()
             }
-            icon(R.drawable.logo)
+            icon(R.drawable.logo2)
         }
     }
 
@@ -498,6 +526,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         addFirebaseMarkersToClusterManager()
         addGoogleFirebaseMarkersToClusterManager()
         addUserMarker()
+        sortClusterMarkerList()
+        setTextViews()
         markersClickListeners()
         for (i in mClusterMarkers) {
             Log.d("Map", i.title)
@@ -506,19 +536,38 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setCameraView()
     }
 
-    private fun setCameraView() {
+    private fun setTextViews() {
+        mosque_first_distance.text =
+            String.format(getString(R.string.km_test), sortedMosqueList[1].distanceFromUser)
+        mosque_second_distance.text =
+            String.format(getString(R.string.km_test), sortedMosqueList[2].distanceFromUser)
+        mosque_third_distance.text =
+            String.format(getString(R.string.km_test), sortedMosqueList[3].distanceFromUser)
+
+        mosque_un.text = sortedMosqueList[1].title
+        mosque_deux.text = sortedMosqueList[2].title
+        mosque_trois.text = sortedMosqueList[3].title
+    }
+
+    private fun sortClusterMarkerList() {
+        sortedMosqueList = mClusterMarkers.sortedWith(compareBy { it.distanceFromUser })
+    }
+
+    private fun setCameraView(position: LatLng) {
         // Set a boundary to start
-        val bottomBoundary: Double = userPosition!!.latitude - .009
-        val leftBoundary: Double = userPosition!!.longitude - .009
-        val topBoundary: Double = userPosition!!.latitude + .009
-        val rightBoundary: Double = userPosition!!.longitude + .009
+
+        val bottomBoundary: Double = position!!.latitude - .009
+        val leftBoundary: Double = position!!.longitude - .009
+        val topBoundary: Double = position!!.latitude + .009
+        val rightBoundary: Double = position!!.longitude + .009
 
         mMapBoundary = LatLngBounds(
             LatLng(bottomBoundary, leftBoundary),
             LatLng(topBoundary, rightBoundary)
         )
         try {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
+           // mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
         } catch (ise: IllegalStateException) {
             mMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
                 mMap.moveCamera(
@@ -526,6 +575,33 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 )
             })
         }
+
+
+    }
+
+    private fun setCameraView() {
+        // Set a boundary to start
+        if (userPosition != null) {
+            val bottomBoundary: Double = userPosition!!.latitude - .009
+            val leftBoundary: Double = userPosition!!.longitude - .009
+            val topBoundary: Double = userPosition!!.latitude + .009
+            val rightBoundary: Double = userPosition!!.longitude + .009
+
+            mMapBoundary = LatLngBounds(
+                LatLng(bottomBoundary, leftBoundary),
+                LatLng(topBoundary, rightBoundary)
+            )
+            try {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
+            } catch (ise: IllegalStateException) {
+                mMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
+                    mMap.moveCamera(
+                        CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0)
+                    )
+                })
+            }
+        }
+
     }
 
     private fun calculateDistanceBetweenUserAndMosque(position: LatLng): Double {
@@ -539,14 +615,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             for (mosqueLocation in mGoogleMosqueList) {
                 val mosqueLat: Double = mosqueLocation.latitude.toDouble()
                 val mosqueLg: Double = mosqueLocation.longitude.toDouble()
+                val distanceFromUser =
+                    calculateDistanceBetweenUserAndMosque(LatLng(mosqueLat, mosqueLg))
                 try {
                     val snippet =
-                        calculateDistanceBetweenUserAndMosque(
-                            LatLng(
-                                mosqueLat,
-                                mosqueLg
-                            )
-                        ).toString() +
+                        distanceFromUser.toString() +
                                 getString(R.string.km) + "from your position "
                     val title = mosqueLocation.placeName
 
@@ -558,7 +631,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                             title,
                             snippet,
                             "default",
-                            true
+                            true,
+                            distanceFromUser
                         )
                     mClusterMarkers.add(newClusterMarker)
                     mClusterManager!!.addItem(newClusterMarker)
@@ -579,18 +653,18 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         var newClusterMarker: ClusterMarker? = null
         if (mMosqueList != null) {
             for (mosqueLocation in mMosqueList) {
+                val distanceFromUser = calculateDistanceBetweenUserAndMosque(
+                    LatLng(
+                        mosqueLocation.position.latitude, mosqueLocation.position.longitude
+                    )
+                )
                 Log.d(
                     "Map",
                     "addMapMarkers: location: " + mosqueLocation.position.toString()
                 )
                 try {
                     val snippet =
-                        calculateDistanceBetweenUserAndMosque(
-                            LatLng(
-                                mosqueLocation.position.latitude,
-                                mosqueLocation.position.longitude
-                            )
-                        ).toString() +
+                        distanceFromUser.toString() +
                                 getString(R.string.km) + "from your position "
                     val title = mosqueLocation.name
 
@@ -605,9 +679,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                                 title,
                                 snippet,
                                 "verified",
-                                false
+                                false,
+                                distanceFromUser
                             )
-                    } else if (mosqueLocation.report == 0L || mosqueLocation.report == -1L || mosqueLocation.report == 1L){
+                    } else if (mosqueLocation.report == 0L || mosqueLocation.report == -1L || mosqueLocation.report == 1L) {
                         newClusterMarker =
                             ClusterMarker(
 
@@ -617,9 +692,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                                 title,
                                 snippet,
                                 "not_verified",
-                                false
+                                false,
+                                distanceFromUser
                             )
-                    } else if(mosqueLocation.report <= -2){
+                    } else if (mosqueLocation.report <= -2) {
                         newClusterMarker =
                             ClusterMarker(
 
@@ -629,7 +705,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                                 title,
                                 snippet,
                                 "false",
-                                false
+                                false,
+                                distanceFromUser
                             )
                     }
 
@@ -661,7 +738,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     "You",
                     snippet2,
                     "Me",
-                    false
+                    false,
+                    0.0
                 )
             mClusterManager!!.addItem(newClusterMarker2)
             mClusterMarkers.add(newClusterMarker2)
@@ -719,7 +797,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             customView(R.layout.dialog_layout, scrollable = true)
             title(text = "Mosque Finder")
 
-            icon(R.drawable.logo)
+            icon(R.drawable.logo2)
             btn_open_map.setOnClickListener {
                 this.cancel()
                 showDirectionInGoogleMapDialog(marker)
@@ -738,7 +816,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         MaterialDialog(this).show {
             title(text = "Mosque Finder")
             message(text = "Confirm or Report false location")
-            icon(R.drawable.logo)
+            icon(R.drawable.logo2)
 
 
             positiveButton(text = "Confirm Mosque") { dialog ->
@@ -752,19 +830,19 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
     }
 
-    private fun reportMosquePosition(marker: Marker,user:User) {
-        mapViewModel.reportFalseMosqueLocation(marker,user)
+    private fun reportMosquePosition(marker: Marker, user: User) {
+        mapViewModel.reportFalseMosqueLocation(marker, user)
     }
 
-    private fun confirmMosquePosition(marker: Marker,user:User) {
-        mapViewModel.confirmMosqueLocation(marker,user)
+    private fun confirmMosquePosition(marker: Marker, user: User) {
+        mapViewModel.confirmMosqueLocation(marker, user)
     }
 
     private fun showDirectionInGoogleMapDialog(marker: Marker) {
         MaterialDialog(this).show {
             title(text = "Mosque Finder")
             message(text = "Show Directions in Google Map?")
-            icon(R.drawable.logo)
+            icon(R.drawable.logo2)
 
 
             positiveButton(text = "Yes") { dialog ->
@@ -774,6 +852,24 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             negativeButton(text = "No") { dialog ->
                 dialog.cancel()
                 Toast.makeText(applicationContext, "Window closed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun logOutDialog(){
+        MaterialDialog(this).show {
+            title(text = "Mosque Finder")
+            message(text = "Are you sure you want to log out?")
+            icon(R.drawable.logo2)
+
+
+            positiveButton(text = "Yes") { dialog ->
+                dialog.cancel()
+                signOut()
+            }
+            negativeButton(text = "No") { dialog ->
+                dialog.cancel()
+
             }
         }
     }
@@ -827,6 +923,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     val lat = googlePlace.geometry!!.location!!.lat
                     val lng = googlePlace.geometry!!.location!!.lng
                     val placeName = googlePlace.name
+                    val distanceFromUser = calculateDistanceBetweenUserAndMosque(
+                        LatLng(lat, lng)
+                    )
 
                     Log.d(
                         "Map",
@@ -838,7 +937,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     )
                     try {
                         val snippet =
-                            calculateDistanceBetweenUserAndMosque(LatLng(lat, lng)).toString() +
+                            distanceFromUser.toString() +
                                     getString(R.string.km) + "from your position "
                         val title = placeName
 
@@ -854,7 +953,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                                 title,
                                 snippet,
                                 "default",
-                                true
+                                true,
+                                distanceFromUser
                             )
                         mClusterManager!!.addItem(newClusterMarker)
                         markerCollectionForClusters = mClusterManager!!.markerCollection
