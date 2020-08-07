@@ -21,4 +21,15 @@
     <string name="splash_message">Mosque Finder</string>
     <string name="splash_title">Mosque Finder</string>
     <string name="quote">"\“A busy life makes prayer harder,\n but prayer makes a busy life easier.\”"</string>
+    <string name="search_hint">Search</string>
+    <string name="home_bottom_dialog_title">Closest Mosque around you</string>
+    <string name="mosque_name">Mosque Name:</string>
+    <string name="quote_islam">Quotes</string>
+    <string name="menu_share">Share app</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_credits">Credits</string>
+    <string name="menu_contact">Contact</string>
+    <string name="email_message">Send email to mosquefinder@gmail.com</string>
+    <string name="share_app">Share App</string>
+    <string name="share_text">Find a mosque wherever you are</string>
 </resources>

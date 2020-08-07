@@ -113,6 +113,11 @@ dependencies {
     //Real time database
     implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
 
+    //Material Design
+    implementation 'com.google.android.material:material:1.2.0'
+
+    //Fab
+    implementation 'uk.co.markormesher:android-fab:2.5.0'
 
 
 

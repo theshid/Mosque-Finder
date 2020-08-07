@@ -1,8 +1,10 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +13,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -32,7 +35,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.SphericalUtil
@@ -54,6 +59,7 @@ import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import kotlinx.android.synthetic.main.activity_maps.btn_reset_map
 import kotlinx.android.synthetic.main.activity_maps.startActivityButton
+import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -88,12 +94,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
 
+
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps2)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getUserPositionFromOtherActivities()
+        setDrawerLayout()
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -104,12 +113,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
 
-
-
-        NetworkEvents.observe(this, Observer {
-            if (it is Event.ConnectivityEvent)
-                handleConnectivityChange()
-        })
+        setNetworkMonitor()
         setUpLocationListener()
         setupViewModel()
         initGoogleSignInClient()
@@ -119,6 +123,90 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setObserver()
 
 
+    }
+
+    private fun setNetworkMonitor(){
+        NetworkEvents.observe(this, Observer {
+            if (it is Event.ConnectivityEvent)
+                handleConnectivityChange()
+        })
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.closeDrawer(navigationView)
+        } else {
+            moveTaskToBack(true)
+        }
+    }
+
+
+
+    private fun setDrawerLayout() {
+        navigationView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_quotes -> {
+                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_GLOBAL_CASES)
+                    goToQuotes()
+                }
+
+                R.id.nav_share -> {
+                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_SHARE)
+                    goToShareApp()
+                }
+                R.id.nav_feedback -> {
+                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_FEEDBACK)
+                    goToFeedback()
+                }
+                R.id.nav_credits -> {
+                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CREDITS)
+                    goToCredits()
+                }
+                R.id.nav_contact -> {
+                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
+                    sendEmail()
+                }
+            }
+            drawerLayout.closeDrawer(navigationView)
+            true
+        }
+    }
+
+    private fun goToQuotes() {
+        val intent = Intent(this, QuotesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToShareApp() {
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+        shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text))
+        shareIntent.type = "text/plain"
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_app)))
+    }
+
+    private fun goToFeedback() {
+        startActivity(Intent(this, FeedbackActivity::class.java))
+    }
+
+    private fun goToCredits() {
+        startActivity(Intent(this, CreditsActivity::class.java))
+    }
+
+    private fun sendEmail() {
+        Toast.makeText(this, getString(R.string.email_message), Toast.LENGTH_LONG).show()
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.data = Uri.parse("mailto:")
+        emailIntent.type = "message/rfc822"
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("contact.covid19app@gmail.com"))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "CovidApp")
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello!")
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."))
+        } catch (ex: ActivityNotFoundException) {
+            // Empty
+        }
     }
 
     private fun setObserver() {
@@ -250,6 +338,21 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        mMap?.apply {
+            try {
+                val success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                        this@MapsActivity2, R.raw.map_style
+                    )
+                )
+                if (!success) {
+                    Log.e(this.javaClass.simpleName, "Style parsing failed.")
+                }
+            } catch (e: Resources.NotFoundException) {
+                Log.e(this.javaClass.simpleName, "Can't find style. Error: ", e)
+            }
+        }
 
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
