@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -511,16 +512,42 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (data != null) {
-            clusterMarkerFromIntent = data.extras?.get("search_result") as ClusterMarker
-            val latLngNow = clusterMarkerFromIntent?.position
+        if (resultCode == Activity.RESULT_OK){
+            if (data != null) {
+                clusterMarkerFromIntent = data.getParcelableExtra("search_result") as ClusterMarker
 
-            val location = CameraUpdateFactory.newLatLngZoom(
-                latLngNow, ZOOM_MAP
-            )
+                val latLngNow = clusterMarkerFromIntent?.position
 
-            mMap?.animateCamera(location)
+                // Set a boundary to start
+
+                    val bottomBoundary: Double = latLngNow!!.latitude - .009
+                    val leftBoundary: Double = latLngNow.longitude - .009
+                    val topBoundary: Double = latLngNow.latitude + .009
+                    val rightBoundary: Double = latLngNow.longitude + .009
+
+                    mMapBoundary = LatLngBounds(
+                        LatLng(bottomBoundary, leftBoundary),
+                        LatLng(topBoundary, rightBoundary)
+                    )
+                    try {
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
+                    } catch (ise: IllegalStateException) {
+                        mMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
+                            mMap.moveCamera(
+                                CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0)
+                            )
+                        })
+                    }
+
+
+                /*val location = CameraUpdateFactory.newLatLngZoom(
+                    latLngNow, ZOOM_MAP
+                )
+
+                mMap?.animateCamera(location)*/
+            }
         }
+
 
 
     }

@@ -210,7 +210,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/quicksand_medium"
+                            android:fontFamily="@font/quicksand_semibold"
                             android:gravity="center"
                             android:textColor="@color/colorGreen"
                             android:textSize="16sp"

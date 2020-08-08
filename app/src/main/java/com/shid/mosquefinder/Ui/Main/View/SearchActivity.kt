@@ -64,7 +64,9 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
             mMosqueList = searchViewmodel.getUsersMosqueFromRepository()
             getClusterMarkers()
             searchAdapter.list = mClusterMarkerList
+            searchAdapter.mosqueList = mClusterMarkerList
             searchAdapter.notifyDataSetChanged()
+            setSearch()
             Log.d(TAG,mMosqueList.size.toString())
 
             // addUserMarker()
@@ -72,7 +74,106 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         }, 5000)
     }
 
-    fun getClusterMarkers():MutableList<ClusterMarker>{
+
+
+    private fun setSearch() {
+        searchEdit.doOnTextChanged { text, _, _, _ ->
+            val search = text.toString()
+            searchAdapter.filter.filter(search)
+           /* if (search.isBlank()) {
+                //viewModel.getContries()
+            } else {
+               // viewModel.search(search)
+
+            }*/
+        }
+    }
+
+    private fun setObservers() {
+
+        searchViewmodel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+            when (it.status) {
+                Status.SUCCESS -> {
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                }
+                Status.LOADING -> {
+
+                }
+                Status.ERROR -> {
+                    //Handle Error
+
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                    Log.d("Search", it.message)
+                }
+            }
+        })
+
+
+    }
+
+
+
+    private fun setOnClick() {
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    private fun setRecycler() {
+        searchAdapter = SearchAdapter(this, this)
+        searchAdapter.setOnClickSearch {
+            val returnIntent = Intent()
+            returnIntent.putExtra(SEARCH_RESULT, it)
+            setResult(Activity.RESULT_OK, returnIntent)
+            finish()
+        }
+        searchRecycler.adapter = searchAdapter
+    }
+
+    private fun setViewModel() {
+        searchViewmodel = ViewModelProvider(
+            this,
+            SearchViewModelFactory(Common.googleApiService, application)
+        ).get(SearchViewModel::class.java)
+
+
+    }
+
+    private fun setNetworkMonitor() {
+        NetworkEvents.observe(this, androidx.lifecycle.Observer {
+
+            if (it is Event.ConnectivityEvent)
+                handleConnectivityChange()
+
+
+        })
+    }
+
+    private fun handleConnectivityChange() {
+        if (ConnectivityStateHolder.isConnected && !previousSate) {
+            // showSnackBar(textView, "The network is back !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle("Connected!!")
+                .setMessage("The network is back !")
+                .sneakSuccess()
+        }
+
+        if (!ConnectivityStateHolder.isConnected && previousSate) {
+            // showSnackBar(textView, "No Network !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle("Connection lost")
+                .setMessage("No Network!")
+                .sneakError()
+        }
+
+        previousSate = ConnectivityStateHolder.isConnected
+    }
+
+    override fun onClickSearch(clusterMarker: ClusterMarker) {
+
+    }
+
+    private fun getClusterMarkers():MutableList<ClusterMarker>{
         var newClusterMarker: ClusterMarker? = null
         var newClusterMarker2: ClusterMarker? = null
         for (mosqueLocation in mMosqueList) {
@@ -131,92 +232,5 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         Log.d("model",mGoogleMosqueList.size.toString())
 
         return mClusterMarkerList
-    }
-
-    private fun setObservers() {
-
-        searchViewmodel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
-            when (it.status) {
-                Status.SUCCESS -> {
-                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                }
-                Status.LOADING -> {
-
-                }
-                Status.ERROR -> {
-                    //Handle Error
-
-                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Log.d("Search", it.message)
-                }
-            }
-        })
-
-
-    }
-
-
-
-    private fun setOnClick() {
-        backButton.setOnClickListener {
-            onBackPressed()
-        }
-    }
-
-    private fun setRecycler() {
-        searchAdapter = SearchAdapter(this, this)
-        searchAdapter.setOnClickSearch {
-            val returnIntent = Intent()
-            returnIntent.putExtra(SEARCH_RESULT, it)
-            setResult(Activity.RESULT_OK, returnIntent)
-            finish()
-        }
-        searchRecycler.adapter = searchAdapter
-    }
-
-    private fun setViewModel() {
-        searchViewmodel = ViewModelProvider(
-            this,
-            SearchViewModelFactory(Common.googleApiService, application)
-        ).get(SearchViewModel::class.java)
-
-
-
-
-
-    }
-
-    private fun setNetworkMonitor() {
-        NetworkEvents.observe(this, androidx.lifecycle.Observer {
-
-            if (it is Event.ConnectivityEvent)
-                handleConnectivityChange()
-
-
-        })
-    }
-
-    private fun handleConnectivityChange() {
-        if (ConnectivityStateHolder.isConnected && !previousSate) {
-            // showSnackBar(textView, "The network is back !")
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connected!!")
-                .setMessage("The network is back !")
-                .sneakSuccess()
-        }
-
-        if (!ConnectivityStateHolder.isConnected && previousSate) {
-            // showSnackBar(textView, "No Network !")
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connection lost")
-                .setMessage("No Network!")
-                .sneakError()
-        }
-
-        previousSate = ConnectivityStateHolder.isConnected
-    }
-
-    override fun onClickSearch(clusterMarker: ClusterMarker) {
-
     }
 }

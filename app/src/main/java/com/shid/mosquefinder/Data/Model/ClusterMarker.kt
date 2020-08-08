@@ -1,47 +1,66 @@
 package com.shid.mosquefinder.Data.Model
 
+import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
-class ClusterMarker: ClusterItem ,Serializable{
-     val distanceFromUser:Double
-     val isMarkerFromGooglePlace: Boolean
-    private val mPosition: LatLng
-    private val mTitle: String
-    private val mSnippet: String
-     var mPic: String
+@Parcelize
+class ClusterMarker(
+    var lat: Double,
+    var lng: Double,
+    private var title: String,
+    private var snippet: String,
+    var pic: String,
+    var  place:Boolean,
+    var distance:Double
+): ClusterItem ,Parcelable{
+     val distanceFromUser:Double = distance
+     val isMarkerFromGooglePlace: Boolean = place
+    private val  mPosition: LatLng = LatLng(lat,lng)
+    private val mTitle: String = title
+    private val mSnippet: String = snippet
+     var mPic: String = pic
     get() = field
 
-    constructor(lat: Double, lng: Double) {
-        mPosition = LatLng(lat, lng)
-        mTitle = ""
-        mSnippet = ""
-        mPic = ""
-        isMarkerFromGooglePlace = false
-        distanceFromUser = 0.0
+    override fun getSnippet(): String? {
+        return mSnippet
     }
 
-    constructor(lat: Double, lng: Double, title: String, snippet: String, pic: String, place:Boolean,distance:Double) {
+    override fun getTitle(): String? {
+        return mTitle
+    }
+
+    /*  constructor(lat: Double, lng: Double) {
+          mPosition = LatLng(lat, lng)
+          mTitle = ""
+          mSnippet = ""
+          mPic = ""
+          isMarkerFromGooglePlace = false
+          distanceFromUser = 0.0
+      }*/
+
+   /* constructor(lat: Double, lng: Double, title: String, snippet: String, pic: String, place:Boolean,distance:Double) {
         mPosition = LatLng(lat, lng)
         mTitle = title
         mSnippet = snippet
         mPic = pic
         isMarkerFromGooglePlace = place
         distanceFromUser = distance
-    }
+    }*/
 
     override fun getPosition(): LatLng {
         return mPosition
     }
 
-    override fun getTitle(): String {
+   /* override fun getTitle(): String {
         return mTitle
     }
 
     override fun getSnippet(): String {
         return mSnippet
-    }
+    }*/
 
 
 
