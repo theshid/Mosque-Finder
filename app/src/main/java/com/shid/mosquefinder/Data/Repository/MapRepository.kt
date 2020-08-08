@@ -51,7 +51,8 @@ class MapRepository constructor(mService: ApiInterface, application: Application
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     init {
-
+        getGoogleMosqueFromFirebase()
+        getTotalMosquesFromFirebase()
 
     }
 
@@ -61,7 +62,12 @@ class MapRepository constructor(mService: ApiInterface, application: Application
             { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
                     Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
-                    statusMsg.postValue(Resource.error(firebaseFirestoreException.toString(),"could not load data, check internet"))
+                    statusMsg.postValue(
+                        Resource.error(
+                            firebaseFirestoreException.toString(),
+                            "could not load data, check internet"
+                        )
+                    )
                     return@EventListener
                 }
 
@@ -103,7 +109,12 @@ class MapRepository constructor(mService: ApiInterface, application: Application
             firebaseMosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
                     Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
-                    statusMsg.postValue(Resource.error(firebaseFirestoreException.toString(),"could not load data, check internet"))
+                    statusMsg.postValue(
+                        Resource.error(
+                            firebaseFirestoreException.toString(),
+                            "could not load data, check internet"
+                        )
+                    )
                     return@EventListener
                 }
 

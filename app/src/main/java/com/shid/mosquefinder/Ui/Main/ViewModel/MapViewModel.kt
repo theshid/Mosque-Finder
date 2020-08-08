@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Ui.Main.ViewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,7 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
     init {
 
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
+        Log.d("MapModel",mMosqueList.size.toString())
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()
         retrieveStatusMsg()
 
@@ -49,7 +51,7 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
     }
 
     fun getUsersMosqueFromRepository(): MutableList<Mosque> {
-
+        Log.d("MapModel",mMosqueList.size.toString())
         return mMosqueList
     }
 

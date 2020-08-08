@@ -10,16 +10,13 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.SearchViewModel
 
 class SearchViewModelFactory constructor(apiInterface: ApiInterface, application: Application) : ViewModelProvider.Factory  {
 
-    private val mApplication = application
+    val mApplication = application
     val mApiInterface = apiInterface
 
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            return SearchViewModel(
-                MapRepository(mApiInterface,mApplication),mApplication
-
-            ) as T
+            return SearchViewModel(MapRepository(mApiInterface,mApplication),mApplication) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

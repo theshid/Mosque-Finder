@@ -22,6 +22,7 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
 
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()
+        //getClusterMarkers()
 
         retrieveStatusMsg()
 
@@ -95,6 +96,10 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
                 )
             }
         }
+        Log.d("model",mClusterMarkerList.size.toString())
+        Log.d("model",mMosqueList.size.toString())
+        Log.d("model",mGoogleMosqueList.size.toString())
+
         return mClusterMarkerList
     }
 }

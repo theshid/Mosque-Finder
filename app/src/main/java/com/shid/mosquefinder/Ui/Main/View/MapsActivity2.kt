@@ -513,14 +513,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         super.onActivityResult(requestCode, resultCode, data)
         if (data != null) {
             clusterMarkerFromIntent = data.extras?.get("search_result") as ClusterMarker
+            val latLngNow = clusterMarkerFromIntent?.position
+
+            val location = CameraUpdateFactory.newLatLngZoom(
+                latLngNow, ZOOM_MAP
+            )
+
+            mMap?.animateCamera(location)
         }
-        val latLngNow = clusterMarkerFromIntent?.position
 
-        val location = CameraUpdateFactory.newLatLngZoom(
-            latLngNow, ZOOM_MAP
-        )
-
-        mMap?.animateCamera(location)
 
     }
 
