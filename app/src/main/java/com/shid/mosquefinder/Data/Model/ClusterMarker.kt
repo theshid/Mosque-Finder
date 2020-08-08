@@ -2,8 +2,9 @@ package com.shid.mosquefinder.Data.Model
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
+import java.io.Serializable
 
-class ClusterMarker: ClusterItem {
+class ClusterMarker: ClusterItem ,Serializable{
      val distanceFromUser:Double
      val isMarkerFromGooglePlace: Boolean
     private val mPosition: LatLng

@@ -79,6 +79,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         var userPosition: LatLng? = null
         lateinit var position: LatLng
         private const val RQ_SEARCH = 101
+        private const val ZOOM_MAP = 4.8f
     }
 
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
@@ -98,6 +99,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
+
+    private var clusterMarkerFromIntent:ClusterMarker?= null
 
 
     @SuppressLint("MissingPermission")
@@ -120,6 +123,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setNetworkMonitor()
         setUpLocationListener()
         setupViewModel()
+        setTransparentStatusBar()
         initGoogleSignInClient()
         setMessageForToast(user!!)
         btnClickListeners()
@@ -505,6 +509,20 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         ).get(MapViewModel::class.java)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data != null) {
+            clusterMarkerFromIntent = data.extras?.get("search_result") as ClusterMarker
+        }
+        val latLngNow = clusterMarkerFromIntent?.position
+
+        val location = CameraUpdateFactory.newLatLngZoom(
+            latLngNow, ZOOM_MAP
+        )
+
+        mMap?.animateCamera(location)
+
+    }
 
     private fun addMapMarkers() {
         resetMap()
