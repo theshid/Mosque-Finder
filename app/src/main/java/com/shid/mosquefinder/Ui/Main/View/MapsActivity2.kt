@@ -422,7 +422,18 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             //setLavaBackgroundResColor(R.color.fab_color)
             setParentOnClickListener { lava_fab.trigger() }
             setChildOnClickListener(Child.TOP) {
-                mosquePromptDialog()
+                setCameraView()
+                Handler().postDelayed(kotlinx.coroutines.Runnable {
+                    //anything you want to start after 3s
+
+                    mosquePromptDialog()
+
+
+                    // addUserMarker()
+
+                }, 2000)
+
+
             }
             setChildOnClickListener(Child.LEFT) { // some action }
                 addMapMarkers()
@@ -455,8 +466,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         MaterialDialog(this).show {
             title(text = "Mosque Finder")
             message(text = "Are you sure you want to add a mosque on this location?")
-            positiveButton(text = "Yes")
-            negativeButton(text = "Cancel")
             positiveButton(text = "Yes") { dialog ->
                 dialog.cancel()
                 userPosition?.let { mosqueInputDialog(it) }
@@ -831,6 +840,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 showDirectionInGoogleMapDialog(marker)
             }
             else -> {
+
                 showOptionsForUserInputMosquesDialog(marker)
                 //dialogOpenGoogleMap(marker)
                 //dialogForRoute(marker)
@@ -851,7 +861,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
             btn_report.setOnClickListener {
                 this.cancel()
+
                 showReportDialog(marker)
+                
 
 
             }

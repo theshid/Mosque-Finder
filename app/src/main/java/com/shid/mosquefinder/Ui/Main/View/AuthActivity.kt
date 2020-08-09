@@ -35,6 +35,7 @@ import com.shid.mosquefinder.Utils.Common.logErrorMessage
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_auth.*
 
 
@@ -67,6 +68,7 @@ class AuthActivity : AppCompatActivity() {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
+        setTransparentStatusBar()
         checkIfPermissionIsActive()
         initSignInButton()
         initAuthViewModel()

@@ -21,6 +21,7 @@ import com.shid.mosquefinder.Ui.Base.SplashViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.SplashViewModel
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.setTransparentStatusBar
 
 
 class SplashActivity : AppCompatActivity() {
@@ -33,6 +34,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        setTransparentStatusBar()
         initSplashViewModel();
         val handler = Handler()
         handler.postDelayed({
