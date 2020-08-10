@@ -17,6 +17,10 @@
 
     </style>
 
+    <style name="ToolbarTextAppearance">
+        <item name="android:fontFamily">@font/quicksand_medium</item>
+    </style>
+
     <style name="HomeTheme" parent="AppTheme">
         <item name="android:windowBackground">@color/colorWhite</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>

@@ -34,4 +34,12 @@
     <string name="share_app">Share App</string>
     <string name="share_text">Find a mosque wherever you are</string>
     <string name="menu_exit">Sign out</string>
+    <string name="feedback_send">Send</string>
+    <string name="feedback_hint_feedback">Write your feedback here</string>
+    <string name="feedback_hint_email">Email</string>
+    <string name="default_error_message">An error occurred, please try again.</string>
+    <string name="network_error_message">Please check your internet connection and try again.</string>
+    <string name="feedback_send_successful">Your feedback was sent. Thanks!</string>
+    <string name="feedback_email_error">Please enter a valid email</string>
+    <string name="feedback_feedback_error">Enter feedback</string>
 </resources>

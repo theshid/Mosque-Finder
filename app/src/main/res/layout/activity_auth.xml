@@ -4,21 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/back"
     tools:context=".Ui.Main.View.AuthActivity"
     >
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/logo2"
         android:id="@+id/logoApp"
         android:layout_above="@+id/google_sign_in_button"/>
 
 
-    <com.google.android.gms.common.SignInButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/google_sign_in_button"
+        android:drawableStart="@drawable/google_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorWhite"
+        android:textColor="@color/colorBlack"
+        android:text="Sign in with Google"
         android:layout_centerInParent="true"
         app:buttonSize="wide" />
 
@@ -26,6 +32,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:fontFamily="@font/people"
+    android:textColor="@color/colorWhite"
     android:textSize="20sp"
     android:text="@string/quote"
     android:layout_below="@+id/google_sign_in_button"
@@ -33,12 +40,7 @@
     android:layout_marginTop="50dp"
     android:id="@+id/quote"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ko"
-        android:id="@+id/img"
-        android:layout_below="@+id/quote"/>
+
 
 
 

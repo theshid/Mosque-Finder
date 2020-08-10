@@ -89,6 +89,7 @@ dependencies {
     //Firebase Auth
     implementation "com.google.firebase:firebase-auth:19.1.0"
     implementation "com.google.android.gms:play-services-auth:18.1.0"
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     def lifecycle_version = "2.2.0"
 

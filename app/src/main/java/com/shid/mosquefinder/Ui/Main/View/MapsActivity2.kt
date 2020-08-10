@@ -863,7 +863,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 this.cancel()
 
                 showReportDialog(marker)
-                
+
 
 
             }
