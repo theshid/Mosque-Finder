@@ -17,7 +17,7 @@
         android:layout_above="@+id/google_sign_in_button"/>
 
 
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/google_sign_in_button"
         android:drawableStart="@drawable/google_logo"
         android:layout_width="wrap_content"

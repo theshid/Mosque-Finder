@@ -10,6 +10,8 @@
     android:focusableInTouchMode="true"
     tools:context=".Ui.Main.View.MapsActivity2">
 
+
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -58,21 +60,7 @@
         </androidx.cardview.widget.CardView>
 
 
-        <com.bitvale.lavafab.LavaFab
-            android:id="@+id/lava_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginBottom="170dp"
-            android:layout_marginEnd="16dp"
-            android:foregroundGravity="bottom"
-            app:lavaBackgroundColor="@color/colorGreen"
-            app:lavaChild="left|top"
-            app:lavaParentSize="50dp"
-            app:lavaParentIcon="@drawable/ic_menu_open"
-            app:lavaLeftIcon="@drawable/ic_refresh"
-            app:lavaTopIcon="@drawable/ic_add"
-            app:lavaDrawShadow="true" />
+
 
 
 
@@ -273,7 +261,15 @@
         </LinearLayout>
 
 
+        <uk.co.markormesher.android_fab.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:buttonPosition="bottom|end"
+            app:buttonIcon="@drawable/ic_menu_open"
+            android:layout_marginBottom="140dp"
 
+            />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

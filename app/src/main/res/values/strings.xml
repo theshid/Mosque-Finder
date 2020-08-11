@@ -42,4 +42,6 @@
     <string name="feedback_send_successful">Your feedback was sent. Thanks!</string>
     <string name="feedback_email_error">Please enter a valid email</string>
     <string name="feedback_feedback_error">Enter feedback</string>
+    <string name="options_1">Your position</string>
+    <string name="options_2">Add mosque</string>
 </resources>

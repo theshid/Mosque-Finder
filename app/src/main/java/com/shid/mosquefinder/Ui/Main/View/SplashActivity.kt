@@ -2,6 +2,7 @@ package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,8 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.SplashViewModel
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.PermissionUtils
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
+import fr.quentinklein.slt.LocationTracker
+import fr.quentinklein.slt.ProviderError
 
 
 class SplashActivity : AppCompatActivity() {
@@ -29,7 +32,10 @@ class SplashActivity : AppCompatActivity() {
     private lateinit var splashViewModelFactory: SplashViewModelFactory
     companion object{
         var userPosition:LatLng?= null
+        var newUserPosition:LatLng?= null
+
     }
+    private val locationTracker = LocationTracker()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,7 @@ class SplashActivity : AppCompatActivity() {
             checkIfUserIsAuthenticated();
             if (PermissionUtils.isAccessFineLocationGranted(this)){
                 setUpLocationListener()
+                setUpNewLocationListener()
             }else{
                 Toast.makeText(this,"Noo Permission yet",Toast.LENGTH_LONG).show()
             }
@@ -50,12 +57,27 @@ class SplashActivity : AppCompatActivity() {
 
     }
 
+    private fun setUpNewLocationListener() {
+        locationTracker.addListener(object: LocationTracker.Listener {
+
+            override fun onLocationFound(location: Location) {
+                newUserPosition = LatLng(location.latitude,location.longitude)
+                Log.d("Splash","new position:"+ MapsActivity2.newUserPosition)
+                Log.d("Splash","accuracy"+ location.accuracy)
+            }
+
+            override fun onProviderError(providerError: ProviderError) {
+            }
+
+        });
+    }
+
     @SuppressLint("MissingPermission")
     fun setUpLocationListener() {
         val fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(application)
         // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+        val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(2000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
         fusedLocationProviderClient.requestLocationUpdates(
@@ -68,6 +90,7 @@ class SplashActivity : AppCompatActivity() {
                          lngTextView.text = location.longitude.toString()*/
                         userPosition = LatLng(location.latitude, location.longitude)
                         Log.d("Splash", "position=" + location.latitude + "" + location.longitude)
+                        Log.d("Splash","accuracy:"+location.accuracy)
                     }
                     // Few more things we can do here:
                     // For example: Update the location of user on server
@@ -106,11 +129,13 @@ class SplashActivity : AppCompatActivity() {
         val intent = Intent(this@SplashActivity, MapsActivity2::class.java)
         intent.putExtra(USER, user)
         startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToAuthInActivity() {
         val intent = Intent(this@SplashActivity, AuthActivity::class.java)
         startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun initSplashViewModel() {

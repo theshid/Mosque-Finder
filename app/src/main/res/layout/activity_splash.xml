@@ -70,6 +70,7 @@
         style="?android:attr/progressBarStyleSmallTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
         android:indeterminateOnly="true"
         android:indeterminateTint="@color/colorGreen"
         app:layout_constraintBottom_toBottomOf="parent"

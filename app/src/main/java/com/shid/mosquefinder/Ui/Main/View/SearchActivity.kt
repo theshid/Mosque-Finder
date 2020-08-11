@@ -25,6 +25,7 @@ import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.Status
+import com.shid.mosquefinder.Utils.getCountryCode
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.Observer
@@ -41,6 +42,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
     private var previousSate = true
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
+    private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
     private var mClusterMarkerList: MutableList<ClusterMarker> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,10 +61,15 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         setOnClick()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
+            if (getCountryCode(applicationContext) == "gh"){
+                mGoogleMosqueList = searchViewmodel.getGoogleMosqueFromRepository()
+                getClusterMarkers(mGoogleMosqueList)
+            } else if (getCountryCode(applicationContext) == "ne"){
+                mNigerGoogleMosqueList = searchViewmodel.getNigerGoogleMosqueFromRepository()
+                getClusterMarkers(mNigerGoogleMosqueList)
+            }
 
-            mGoogleMosqueList = searchViewmodel.getGoogleMosqueFromRepository()
             mMosqueList = searchViewmodel.getUsersMosqueFromRepository()
-            getClusterMarkers()
             searchAdapter.list = mClusterMarkerList
             searchAdapter.mosqueList = mClusterMarkerList
             searchAdapter.notifyDataSetChanged()
@@ -71,7 +78,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
             // addUserMarker()
 
-        }, 5000)
+        }, 2000)
     }
 
 
@@ -173,7 +180,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
     }
 
-    private fun getClusterMarkers():MutableList<ClusterMarker>{
+    private fun getClusterMarkers(googleList:MutableList<GoogleMosque>):MutableList<ClusterMarker>{
         var newClusterMarker: ClusterMarker? = null
         var newClusterMarker2: ClusterMarker? = null
         for (mosqueLocation in mMosqueList) {
@@ -198,7 +205,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         }
 
 
-        for (mosqueLocation in mGoogleMosqueList) {
+        for (mosqueLocation in googleList) {
             val mosqueLat: Double = mosqueLocation.latitude.toDouble()
             val mosqueLg: Double = mosqueLocation.longitude.toDouble()
 

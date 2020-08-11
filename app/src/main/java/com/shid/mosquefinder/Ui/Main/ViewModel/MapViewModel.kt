@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Ui.Main.ViewModel
 
 import android.app.Application
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,21 +15,27 @@ import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.Data.Repository.MapRepository
 import com.shid.mosquefinder.Ui.Main.View.MapsActivity2
 import com.shid.mosquefinder.Utils.Resource
+import fr.quentinklein.slt.LocationTracker
+import fr.quentinklein.slt.ProviderError
 import java.util.HashMap
 
-class MapViewModel( mapRepository: MapRepository, application: Application) :ViewModel() {
+class MapViewModel(mapRepository: MapRepository, application: Application) : ViewModel() {
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
+    private var mNigerGoogleMosqueList:MutableList<GoogleMosque> = ArrayList()
     private val mRepository = mapRepository
-    val position:LatLng = LatLng(5.6363262,-0.2349102)
-    private  var getPlace: MutableLiveData<Place>? = null
+    val position: LatLng = LatLng(5.6363262, -0.2349102)
+    private var getPlace: MutableLiveData<Place>? = null
+    val locationTracker = LocationTracker()
+    val newUserPosition:LatLng? = null
 
 
     init {
-
+        setUpNewLocationListener()
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
-        Log.d("MapModel",mMosqueList.size.toString())
+        Log.d("MapModel", mMosqueList.size.toString())
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()
+        mNigerGoogleMosqueList = mRepository.getNigerGoogleMosqueFromFirebase()
         retrieveStatusMsg()
 
 
@@ -38,7 +45,7 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
 
     }
 
-     fun retrieveStatusMsg():LiveData<Resource<String>> {
+    fun retrieveStatusMsg(): LiveData<Resource<String>> {
         return mRepository.returnStatusMsg()
     }
 
@@ -46,12 +53,16 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
         mRepository.inputMosqueInDatabase(userInput)
     }
 
-    fun getGoogleMosqueFromRepository():MutableList<GoogleMosque>{
+    fun getGoogleMosqueFromRepository(): MutableList<GoogleMosque> {
         return mGoogleMosqueList
     }
 
+    fun getNigerGoogleMosqueFromRepository():MutableList<GoogleMosque>{
+        return mNigerGoogleMosqueList
+    }
+
     fun getUsersMosqueFromRepository(): MutableList<Mosque> {
-        Log.d("MapModel",mMosqueList.size.toString())
+        Log.d("MapModel", mMosqueList.size.toString())
         return mMosqueList
     }
 
@@ -61,12 +72,29 @@ class MapViewModel( mapRepository: MapRepository, application: Application) :Vie
 
     }
 
-    fun confirmMosqueLocation(marker: Marker,user:User) {
-        mRepository.confirmMosqueLocation(marker,user)
+    fun confirmMosqueLocation(marker: Marker, user: User) {
+        mRepository.confirmMosqueLocation(marker, user)
     }
 
-    fun reportFalseMosqueLocation(marker: Marker,user:User) {
-        mRepository.reportFalseLocation(marker,user)
+    fun reportFalseMosqueLocation(marker: Marker, user: User) {
+        mRepository.reportFalseLocation(marker, user)
+    }
+
+    fun setUpNewLocationListener():MutableLiveData<LatLng>? {
+        var position:MutableLiveData<LatLng> = MutableLiveData()
+        locationTracker.addListener(object : LocationTracker.Listener {
+
+            override fun onLocationFound(location: Location) {
+                position = MutableLiveData(LatLng(location.latitude,location.latitude))
+                Log.d("MapsActivity2.TAG", "new position:" + MapsActivity2.newUserPosition)
+                Log.d("MapsActivity2.TAG", "accuracy" + location.accuracy)
+            }
+
+            override fun onProviderError(providerError: ProviderError) {
+            }
+
+        });
+        return  position
     }
 
 }

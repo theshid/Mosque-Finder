@@ -15,6 +15,7 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
 
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
+    private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
     private var mClusterMarkerList: MutableList<ClusterMarker> = ArrayList()
     private val mRepository = mapRepository
 
@@ -22,6 +23,7 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
 
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()
+        mNigerGoogleMosqueList = mRepository.getNigerGoogleMosqueFromFirebase()
         //getClusterMarkers()
 
         retrieveStatusMsg()
@@ -35,6 +37,10 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
 
     fun getGoogleMosqueFromRepository():MutableList<GoogleMosque>{
         return mGoogleMosqueList
+    }
+
+    fun getNigerGoogleMosqueFromRepository():MutableList<GoogleMosque>{
+        return mNigerGoogleMosqueList
     }
 
     fun getUsersMosqueFromRepository(): MutableList<Mosque> {

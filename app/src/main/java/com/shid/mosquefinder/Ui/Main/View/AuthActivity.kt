@@ -3,6 +3,7 @@ package com.shid.mosquefinder.Ui.Main.View
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -36,6 +37,8 @@ import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
+import fr.quentinklein.slt.LocationTracker
+import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_auth.*
 
 
@@ -46,8 +49,11 @@ class AuthActivity : AppCompatActivity() {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
         private const val TAG = "AuthActivity"
         var userPosition: LatLng? = null
+        var newUserPosition:LatLng?= null
 
     }
+
+    private val locationTracker = LocationTracker()
 
 
     private lateinit var authViewModel: AuthViewModel
@@ -107,12 +113,17 @@ class AuthActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onStop() {
+        super.onStop()
+
+    }
+
     @SuppressLint("MissingPermission")
     fun setUpLocationListener() {
         val fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(application)
         // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+        val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(2000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
         fusedLocationProviderClient.requestLocationUpdates(
@@ -134,6 +145,21 @@ class AuthActivity : AppCompatActivity() {
         )
     }
 
+    private fun setUpNewLocationListener() {
+        locationTracker.addListener(object: LocationTracker.Listener {
+
+            override fun onLocationFound(location: Location) {
+                newUserPosition = LatLng(location.latitude,location.longitude)
+                Log.d("Splash","new position:"+ MapsActivity2.newUserPosition)
+                Log.d("Splash","accuracy"+ location.accuracy)
+            }
+
+            override fun onProviderError(providerError: ProviderError) {
+            }
+
+        });
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -146,6 +172,7 @@ class AuthActivity : AppCompatActivity() {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
                             setUpLocationListener()
+                            setUpNewLocationListener()
                             //getUserPosition()
                         }
                         else -> {
@@ -273,6 +300,7 @@ class AuthActivity : AppCompatActivity() {
         val intent = Intent(this@AuthActivity, MapsActivity2::class.java)
         intent.putExtra(USER, user)
         startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         finish()
     }
 }
