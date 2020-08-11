@@ -61,6 +61,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         setOnClick()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
+            mMosqueList = searchViewmodel.getUsersMosqueFromRepository()
             if (getCountryCode(applicationContext) == "gh"){
                 mGoogleMosqueList = searchViewmodel.getGoogleMosqueFromRepository()
                 getClusterMarkers(mGoogleMosqueList)
@@ -69,7 +70,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
                 getClusterMarkers(mNigerGoogleMosqueList)
             }
 
-            mMosqueList = searchViewmodel.getUsersMosqueFromRepository()
+
             searchAdapter.list = mClusterMarkerList
             searchAdapter.mosqueList = mClusterMarkerList
             searchAdapter.notifyDataSetChanged()

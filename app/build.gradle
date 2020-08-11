@@ -81,8 +81,7 @@ dependencies {
     // Gson
     implementation "com.google.code.gson:gson:2.8.5"
 
-    //Picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
+
 
     //Dialog
     implementation 'com.afollestad.material-dialogs:input:3.3.0'
@@ -128,7 +127,7 @@ dependencies {
 
     //Fab
     implementation 'uk.co.markormesher:android-fab:2.5.0'
-    implementation 'com.bitvale:lavafab:1.0.1'
+
 
     //Location
     implementation 'com.github.quentin7b:android-location-tracker:4.0'

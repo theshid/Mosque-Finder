@@ -16,10 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
@@ -53,7 +50,8 @@ class AuthActivity : AppCompatActivity() {
 
     }
 
-    private val locationTracker = LocationTracker()
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
 
 
     private lateinit var authViewModel: AuthViewModel
@@ -108,6 +106,13 @@ class AuthActivity : AppCompatActivity() {
         handleConnectivityChange()
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (fusedLocationProviderClient != null){
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean("LOST_CONNECTION", previousSate)
         super.onSaveInstanceState(outState)
@@ -120,45 +125,33 @@ class AuthActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun setUpLocationListener() {
-        val fusedLocationProviderClient =
+         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(application)
         // for getting the current location update after every 2 seconds with high accuracy
         val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(2000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    for (location in locationResult.locations) {
-                        /* latTextView.text = location.latitude.toString()
-                         lngTextView.text = location.longitude.toString()*/
-                        userPosition = LatLng(location.latitude, location.longitude)
-                        Log.d(Common.TAG, "position=" + location.latitude + "" + location.longitude)
-                    }
-                    // Few more things we can do here:
-                    // For example: Update the location of user on server
+        locationCallback =  object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                for (location in locationResult.locations) {
+                    /* latTextView.text = location.latitude.toString()
+                     lngTextView.text = location.longitude.toString()*/
+                    SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
+                    Log.d("Splash", "position=" + location.latitude + "" + location.longitude)
+                    Log.d("Splash","accuracy:"+location.accuracy)
                 }
-            },
-            Looper.myLooper()
-        )
+                // Few more things we can do here:
+                // For example: Update the location of user on server
+            }
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,locationCallback,
+            Looper.myLooper())
     }
 
-    private fun setUpNewLocationListener() {
-        locationTracker.addListener(object: LocationTracker.Listener {
 
-            override fun onLocationFound(location: Location) {
-                newUserPosition = LatLng(location.latitude,location.longitude)
-                Log.d("Splash","new position:"+ MapsActivity2.newUserPosition)
-                Log.d("Splash","accuracy"+ location.accuracy)
-            }
-
-            override fun onProviderError(providerError: ProviderError) {
-            }
-
-        });
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -172,7 +165,7 @@ class AuthActivity : AppCompatActivity() {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
                             setUpLocationListener()
-                            setUpNewLocationListener()
+
                             //getUserPosition()
                         }
                         else -> {
