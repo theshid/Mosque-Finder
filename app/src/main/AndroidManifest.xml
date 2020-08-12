@@ -19,18 +19,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Ui.Main.View.SearchActivity"></activity>
-        <activity android:name=".Ui.Main.View.QuotesActivity" />
-        <activity android:name=".Ui.Main.View.CreditsActivity" />
-        <activity android:name=".Ui.Main.View.FeedbackActivity" />
-        <activity android:name=".Ui.Main.View.SplashActivity">
+        <activity android:name=".Ui.Main.View.SearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Ui.Main.View.QuotesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Ui.Main.View.CreditsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Ui.Main.View.FeedbackActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Ui.Main.View.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Ui.Main.View.AuthActivity" />
+        <activity android:name=".Ui.Main.View.AuthActivity"
+            android:screenOrientation="portrait"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -46,6 +52,7 @@
         <activity
             android:name=".Ui.Main.View.MapsActivity2"
             android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"
             android:theme="@style/HomeTheme" />
         <activity
             android:name=".Ui.Main.View.MapsActivity"
