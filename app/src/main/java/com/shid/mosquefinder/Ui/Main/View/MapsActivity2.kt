@@ -10,6 +10,7 @@ import android.content.res.Resources
 import android.graphics.Typeface
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -156,8 +157,13 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         override fun onPrepareItemLabel(context: Context, position: Int, label: TextView) {
             // make the first item bold if there are multiple items
             // (this isn't a design pattern, it's just to demo the functionality)
-            if (position == 0 && position == 1 && speedDialSize > 1) {
+            if ( speedDialSize > 0) {
                 label.setTypeface(label.typeface, Typeface.BOLD)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    label.setTextColor(resources.getColor(R.color.colorBlack,context.theme))
+                } else{
+                    label.setTextColor(resources.getColor(R.color.colorBlack))
+                }
             }
         }
 

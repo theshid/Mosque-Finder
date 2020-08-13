@@ -37,18 +37,22 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        initSplashViewModel()
         setTransparentStatusBar()
-        initSplashViewModel();
+
+
+        if (PermissionUtils.isAccessFineLocationGranted(this)){
+            setUpLocationListener()
+
+        }else{
+            Toast.makeText(this,"Noo Permission yet",Toast.LENGTH_LONG).show()
+        }
+
         val handler = Handler()
         handler.postDelayed({
 
             checkIfUserIsAuthenticated();
-            if (PermissionUtils.isAccessFineLocationGranted(this)){
-                setUpLocationListener()
 
-            }else{
-                Toast.makeText(this,"Noo Permission yet",Toast.LENGTH_LONG).show()
-            }
 
         }, 3000)
 

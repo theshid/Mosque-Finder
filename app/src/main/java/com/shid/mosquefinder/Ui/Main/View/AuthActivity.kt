@@ -72,10 +72,11 @@ class AuthActivity : AppCompatActivity() {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
+        initAuthViewModel()
         setTransparentStatusBar()
         checkIfPermissionIsActive()
         initSignInButton()
-        initAuthViewModel()
+
         initGoogleSignInClient()
     }
 
