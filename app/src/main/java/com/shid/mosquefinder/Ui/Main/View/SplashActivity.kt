@@ -45,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
             setUpLocationListener()
 
         }else{
-            Toast.makeText(this,"Noo Permission yet",Toast.LENGTH_LONG).show()
+            Toast.makeText(this,getString(R.string.toast_permission),Toast.LENGTH_LONG).show()
         }
 
         val handler = Handler()

@@ -1,9 +1,77 @@
 <resources>
     <string name="app_name">MosqueFinder</string>
 
+    //Auth Activity
+    <string name="quote">"\“A busy life makes prayer harder,\n but prayer makes a busy life easier.\”"</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+
+    //Splash Activity
+    <string name="splash_title">Mosque Finder</string>
+    <string name="splash_message">Find a mosque at all times</string>
+    <string name="brought_you_by_shidtech">UniSoft</string>
+
+    //Toast
+    <string name="location_permission_not_granted">Location Permission not granted</string>
+    <string name="toast_auth_salutation">Hi %1$s !\nYour account was successfully created.</string>
+    <string name="toast_permission">Please accept Permissions</string>
+    <string name="email_message">Send email to mosquefinder@gmail.com</string>
+    <string name="toast_log_in_msg">You are logged in as: %1$s</string>
+    <string name="toast_marker">Drag the marker to where the mosque is</string>
+
+    //Snackbar
+    <string name="sneaker_connected">Connected!!</string>
+    <string name="sneaker_msg_network">The network is back!!😁</string>
+    <string name="sneaker_disconnected">Connection lost</string>
+    <string name="sneaker_msg_network_lost">No Network!🧐</string>
+
+    //Map Activity
+    <string name="search_hint">Search</string>
+    <string name="home_bottom_dialog_title">Closest Mosque around you</string>
+    <string name="mosque_name">Mosque Name:</string>
+    <string name="share_text">Find a mosque wherever you are</string>
+    <string name="share_app">Share App</string>
+    <string name="send_mail">Send mail...</string>
+    <string name="offline">Please activate Internet or refresh to use offline mode</string>
+    <string name="title_dialog">Mosque Finder</string>
+    <string name="dialog_prompt_location">Are you sure you want to add a mosque?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_input_title">Enter the name of the mosque</string>
+    <string name="dialog_save">Save Mosque</string>
+    <string name="you">This is you</string>
+    <string name="dialog_confirm">Confirm or Report location</string>
+    <string name="confirm_mosque">Confirm Mosque</string>
+    <string name="report_mosque">Report Mosque</string>
+    <string name="dialog_msg_google_map">Show Directions in Google Map?</string>
+    <string name="dialog_log_out">Are you sure you want to log out?</string>
+    <string name="map_error">Download Google Map</string>
+
+    //Fab menu
+    <string name="options_1">Reset Map</string>
+    <string name="options_2">Add mosque</string>
+    <string name="options_3">My position</string>
+
+    //Feedback Activity
+
+    <string name="feedback_send">Send</string>
+    <string name="feedback_hint_feedback">Write your feedback here</string>
+    <string name="feedback_hint_email">Email</string>
+    <string name="feedback_send_successful">Your feedback was sent. Thanks!</string>
+    <string name="feedback_email_error">Please enter a valid email</string>
+    <string name="feedback_feedback_error">Enter feedback</string>
+
+    //Navigation drawer menu
+    <string name="quote_islam">Quotes</string>
+    <string name="menu_share">Share app</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_credits">Credits</string>
+    <string name="menu_contact">Contact</string>
+    <string name="menu_exit">Sign out</string>
+
     <string name="required_for_this_app">Required for this app</string>
     <string name="enable_now">Enable Now</string>
-    <string name="location_permission_not_granted">Location Permission not granted</string>
+
     <string name="enable_gps">Enable GPS</string>
     <string name="title_activity_maps">Map</string>
     <string name="determine_route">Determine route to </string>
@@ -13,35 +81,26 @@
     <string name="trip">Trip # </string>
     <string name="title_activity_maps2">Map</string>
     <string name="open_google_map">Open Google Maps?</string>
-    <string name="map_error">Couldn\'t open map</string>
-    <string name="yes">This is you</string>
-    <string name="no">No</string>
-    <string name="you">This is you</string>
-    <string name="sign_out_button">sign ouit</string>
-    <string name="brought_you_by_shidtech">UniSoft</string>
-    <string name="splash_message">Mosque Finder</string>
-    <string name="splash_title">Mosque Finder</string>
-    <string name="quote">"\“A busy life makes prayer harder,\n but prayer makes a busy life easier.\”"</string>
-    <string name="search_hint">Search</string>
-    <string name="home_bottom_dialog_title">Closest Mosque around you</string>
-    <string name="mosque_name">Mosque Name:</string>
-    <string name="quote_islam">Quotes</string>
-    <string name="menu_share">Share app</string>
-    <string name="menu_feedback">Feedback</string>
-    <string name="menu_credits">Credits</string>
-    <string name="menu_contact">Contact</string>
-    <string name="email_message">Send email to mosquefinder@gmail.com</string>
-    <string name="share_app">Share App</string>
-    <string name="share_text">Find a mosque wherever you are</string>
-    <string name="menu_exit">Sign out</string>
-    <string name="feedback_send">Send</string>
-    <string name="feedback_hint_feedback">Write your feedback here</string>
-    <string name="feedback_hint_email">Email</string>
+
+
+
+    <string name="sign_out_button">sign out</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
     <string name="default_error_message">An error occurred, please try again.</string>
     <string name="network_error_message">Please check your internet connection and try again.</string>
-    <string name="feedback_send_successful">Your feedback was sent. Thanks!</string>
-    <string name="feedback_email_error">Please enter a valid email</string>
-    <string name="feedback_feedback_error">Enter feedback</string>
-    <string name="options_1">Your position</string>
-    <string name="options_2">Add mosque</string>
+
+
+
 </resources>

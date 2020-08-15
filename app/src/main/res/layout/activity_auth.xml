@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorWhite"
         android:textColor="@color/colorBlack"
-        android:text="Sign in with Google"
+        android:text="@string/sign_in_with_google"
         android:layout_centerInParent="true"
         app:buttonSize="wide" />
 

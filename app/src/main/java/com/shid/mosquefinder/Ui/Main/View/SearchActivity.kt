@@ -161,16 +161,16 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
             // showSnackBar(textView, "The network is back !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connected!!")
-                .setMessage("The network is back !")
+                .setTitle(getString(R.string.sneaker_connected))
+                .setMessage(getString(R.string.sneaker_msg_network))
                 .sneakSuccess()
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
             // showSnackBar(textView, "No Network !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connection lost")
-                .setMessage("No Network!")
+                .setTitle(getString(R.string.sneaker_disconnected))
+                .setMessage(getString(R.string.sneaker_msg_network_lost))
                 .sneakError()
         }
 

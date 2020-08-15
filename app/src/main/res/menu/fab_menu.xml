@@ -18,5 +18,10 @@
         android:icon="@drawable/ic_add"
         android:title="@string/options_2" />
 
+    <item
+        android:id="@+id/option3"
+        android:icon="@drawable/ic_my_location"
+        android:title="@string/options_3" />
+
 
 </menu>

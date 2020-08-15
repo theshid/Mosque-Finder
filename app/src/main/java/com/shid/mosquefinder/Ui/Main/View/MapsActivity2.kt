@@ -34,10 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
@@ -68,7 +65,8 @@ import uk.co.markormesher.android_fab.SpeedDialMenuOpenListener
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener {
+class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener
+{
 
     private lateinit var mMap: GoogleMap
 
@@ -79,25 +77,29 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         private const val TAG = "MapsActivity"
         var userPosition: LatLng? = null
         var newUserPosition: LatLng? = null
-        lateinit var position: LatLng
         private const val RQ_SEARCH = 101
-        private const val ZOOM_MAP = 4.8f
+
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
     }
 
+    //Markers
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
     private var mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
     private var mClusterManagerRenderer: MyClusterManagerRenderer? = null
     private var markerCollection: MarkerManager.Collection? = null
+    private var markerManager:MarkerManager ?= null
     private var markerCollectionForClusters: MarkerManager.Collection? = null
     private var markerCollectionForClusters2: MarkerManager.Collection? = null
+    private var clusterMarkerFromIntent: ClusterMarker? = null
+
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var sortedMosqueList: List<ClusterMarker> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
     private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
+
 
     private lateinit var mMapBoundary: LatLngBounds
 
@@ -109,7 +111,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-
     val locationTracker = LocationTracker()
 
     private var buttonIcon = 0
@@ -117,7 +118,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private val speedDialSizeOptions = arrayOf(
         Pair("None", 0),
         Pair("1 item", 1),
-        Pair("2 items", 2)
+        Pair("2 items", 2),
+        Pair("3 items", 3)
 
     )
     private val speedDialMenuAdapter = object : SpeedDialMenuAdapter() {
@@ -125,8 +127,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
         override fun getMenuItem(context: Context, position: Int): SpeedDialMenuItem =
             when (position) {
-                0 -> SpeedDialMenuItem(context, R.drawable.ic_refresh, "Your position")
-                1 -> SpeedDialMenuItem(context, R.drawable.ic_add, "Add new Mosque")
+                0 -> SpeedDialMenuItem(context, R.drawable.ic_refresh, getString(R.string.options_1))
+                1 -> SpeedDialMenuItem(context, R.drawable.ic_add, getString(R.string.options_2))
+                2 -> SpeedDialMenuItem(context, R.drawable.ic_my_location, getString(R.string.options_3))
                 else -> throw IllegalArgumentException("No menu item: $position")
             }
 
@@ -150,6 +153,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     // addUserMarker()
 
                 }, 2000)
+            } else{
+                setCameraView()
             }
             return true
         }
@@ -172,7 +177,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
 
-    private var clusterMarkerFromIntent: ClusterMarker? = null
+
 
 
     @SuppressLint("MissingPermission")
@@ -200,7 +205,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         initGoogleSignInClient()
         setMessageForToast(user!!)
         btnClickListeners()
-        testLocation()
         setObserver()
 
 
@@ -298,12 +302,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.data = Uri.parse("mailto:")
         emailIntent.type = "message/rfc822"
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("contact.covid19app@gmail.com"))
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "CovidApp")
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("mosquefinder@gmail.com"))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello!")
 
         try {
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."))
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.send_mail)))
         } catch (ex: ActivityNotFoundException) {
             // Empty
         }
@@ -328,17 +332,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         })
     }
 
-    private fun testLocation() {
-        AppLocationProvider().getLocation(this, object : AppLocationProvider.LocationCallBack {
-            override fun locationResult(location: Location?) {
-                if (location != null) {
-                    position = LatLng(location.latitude, location.longitude)
-                    Log.d(TAG, "new position:$position")
-                    Log.d(TAG, "accuracy:" + location.accuracy)
-                } // use location, this might get called in a different thread if a location is a last known location. In that case, you can post location on main thread
-            }
-        })
-    }
 
     override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
         val firebaseUser = firebaseAuth.currentUser
@@ -372,9 +365,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
 
     private fun setMessageForToast(user: User) {
-        val message = "You are logged in as: " + user.name
+        //val message = "You are logged in as: " + user.name
         // messageTextView!!.text = message
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        Toast.makeText(this,String.format(resources.getString(R.string.toast_log_in_msg,user.name)), Toast.LENGTH_LONG).show()
     }
 
     private fun goToAuthInActivity() {
@@ -397,16 +390,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         if (ConnectivityStateHolder.isConnected && !previousSate) {
             // showSnackBar(textView, "The network is back !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connected!!")
-                .setMessage("The network is back !")
+                .setTitle(getString(R.string.sneaker_connected))
+                .setMessage(getString(R.string.sneaker_msg_network))
                 .sneakSuccess()
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
             // showSnackBar(textView, "No Network !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connection lost")
-                .setMessage("No Network!")
+                .setTitle(getString(R.string.sneaker_disconnected))
+                .setMessage(getString(R.string.sneaker_msg_network_lost))
                 .sneakError()
         }
 
@@ -431,6 +424,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+
         mMap?.apply {
             try {
                 val success = googleMap.setMapStyle(
@@ -446,12 +440,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
         }
 
+
+
+
         if (newUserPosition != null) {
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
 
 
                 addMapMarkers(newUserPosition!!)
+
 
 
                 // addUserMarker()
@@ -463,6 +461,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 //anything you want to start after 3s
 
                 addMapMarkers(userPosition!!)
+                /*markerUser = mMap.addMarker(
+                    MarkerOptions()
+                        .position(userPosition!!)
+                        .draggable(true)
+                        .title("usee this marker to display position")
+                        .zIndex(1.0f)
+                )
+                mMap.setOnMarkerDragListener(this)*/
 
 
                 // addUserMarker()
@@ -471,10 +477,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         } else{
             //Toast.makeText(this,"Please activate Internet",Toast.LENGTH_LONG).show()
             val rootView = findViewById<View>(android.R.id.content)
-            Snackbar.make(rootView,"Please activate Internet or refresh to use offline mode",Snackbar.LENGTH_LONG).show()
+            Snackbar.make(rootView,getString(R.string.offline),Snackbar.LENGTH_LONG).show()
 
 
         }
+
+
+
+
 
 
     }
@@ -598,36 +608,84 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun mosquePromptDialog() {
         MaterialDialog(this).show {
-            title(text = "Mosque Finder")
-            message(text = "Are you sure you want to add a mosque on this location?")
-            positiveButton(text = "Yes") { dialog ->
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_prompt_location))
+            positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 //userPosition?.let { mosqueInputDialog(it) }
-                userPosition?.let { mosqueInputDialog(it) }
+
+                prepareMapForInput()
 
             }
-            negativeButton(text = "Cancel") { dialog ->
+            negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
             }
             icon(R.drawable.logo2)
         }
     }
 
+    private fun prepareMapForInput(){
+        resetMap()
+        Toast.makeText(this,getString(R.string.toast_marker),Toast.LENGTH_LONG).show()
+        addSingleMarker()
+
+    }
+
+    private fun addSingleMarker(){
+        markerManager = MarkerManager(mMap)
+        markerCollection = markerManager!!.newCollection()
+        markerCollection!!.addMarker(MarkerOptions()
+            .position(userPosition!!)
+            .draggable(true)
+            .zIndex(1.0f))
+        var listener:GoogleMap.OnMarkerDragListener = object : GoogleMap.OnMarkerDragListener{
+            override fun onMarkerDragEnd(marker: Marker?) {
+                if (marker != null) {
+                    Log.d(TAG,"onMarkerDragEnd"+ marker.position)
+                }
+
+            }
+
+            override fun onMarkerDragStart(p0: Marker?) {
+                Log.d(TAG,"onMarkerDragStart")
+            }
+
+            override fun onMarkerDrag(p0: Marker?) {
+                Log.d(TAG,"onMarkerDragStart")
+            }
+        }
+
+        markerCollection!!.setOnMarkerDragListener(listener)
+        markerCollection!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener{
+            override fun onMarkerClick(marker: Marker?): Boolean {
+                //userPosition?.let { mosqueInputDialog(it) }
+                if (marker != null) {
+                    Log.d(TAG,"onMarkerClickListener"+ marker.position)
+                }
+                marker?.let { mosqueInputDialog(LatLng(it.position.latitude,it.position.longitude)) }
+                return true
+            }
+
+        })
+    }
+
     private fun mosqueInputDialog(userPosition: LatLng) {
 
         MaterialDialog(this).show {
-            input(hint = "Enter the name of the mosque")
+            input(hint = getString(R.string.dialog_input_title))
             // input(inputType = type)
-            title(text = "Mosque Finder")
-            message(text = "Are you sure you want to add a mosque on this location?")
-            positiveButton(text = "Save Mosque") { dialog ->
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_prompt_location))
+            positiveButton(text = getString(R.string.dialog_save)) { dialog ->
                 val inputField = dialog.getInputField().text.toString()
 
                 dialog.cancel()
                 saveMosqueInputInDatabase(userPosition, inputField)
+                addMapMarkers(newUserPosition!!)
             }
-            negativeButton(text = "Cancel") { dialog ->
+            negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
+                addMapMarkers(newUserPosition!!)
             }
             icon(R.drawable.logo2)
         }
@@ -705,6 +763,20 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun addMapMarkers(userLocation: LatLng) {
         resetMap()
+        /*mMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener{
+            override fun onMarkerDragEnd(p0: Marker?) {
+                Log.d(TAG,"onMarkerDragEnd")
+            }
+
+            override fun onMarkerDragStart(p0: Marker?) {
+                Log.d(TAG,"onMarkerDragStart")
+            }
+
+            override fun onMarkerDrag(p0: Marker?) {
+                Log.d(TAG,"onMarkerDragStart")
+            }
+        })*/
+
 
         if (mClusterManager == null) {
             mClusterManager = ClusterManager(this, mMap)
@@ -1047,7 +1119,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun showOptionsForUserInputMosquesDialog(marker: Marker) {
         MaterialDialog(this).show {
             customView(R.layout.dialog_layout, scrollable = true)
-            title(text = "Mosque Finder")
+            title(text = getString(R.string.title_dialog))
 
             icon(R.drawable.logo2)
             btn_open_map.setOnClickListener {
@@ -1067,16 +1139,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun showReportDialog(marker: Marker) {
         MaterialDialog(this).show {
-            title(text = "Mosque Finder")
-            message(text = "Confirm or Report false location")
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_confirm))
             icon(R.drawable.logo2)
 
 
-            positiveButton(text = "Confirm Mosque") { dialog ->
+            positiveButton(text = getString(R.string.confirm_mosque)) { dialog ->
                 dialog.cancel()
                 user?.let { confirmMosquePosition(marker, it) }
             }
-            negativeButton(text = "Report Mosque") { dialog ->
+            negativeButton(text = getString(R.string.report_mosque)) { dialog ->
                 dialog.cancel()
                 user?.let { reportMosquePosition(marker, it) }
             }
@@ -1093,34 +1165,34 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun showDirectionInGoogleMapDialog(marker: Marker) {
         MaterialDialog(this).show {
-            title(text = "Mosque Finder")
-            message(text = "Show Directions in Google Map?")
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_msg_google_map))
             icon(R.drawable.logo2)
 
 
-            positiveButton(text = "Yes") { dialog ->
+            positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 intentToGoogleMap(marker)
             }
-            negativeButton(text = "No") { dialog ->
+            negativeButton(text = getString(R.string.no)) { dialog ->
                 dialog.cancel()
-                Toast.makeText(applicationContext, "Window closed", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(applicationContext, "Window closed", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun logOutDialog() {
         MaterialDialog(this).show {
-            title(text = "Mosque Finder")
-            message(text = "Are you sure you want to log out?")
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_log_out))
             icon(R.drawable.logo2)
 
 
-            positiveButton(text = "Yes") { dialog ->
+            positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 signOut()
             }
-            negativeButton(text = "No") { dialog ->
+            negativeButton(text = getString(R.string.no)) { dialog ->
                 dialog.cancel()
 
             }
@@ -1287,4 +1359,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
         }
     }
+
+
 }

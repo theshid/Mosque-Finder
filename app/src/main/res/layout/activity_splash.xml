@@ -56,7 +56,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="20dp"
         android:gravity="center"
-        android:text="Find a mosque at all times"
+        android:text="@string/splash_message"
         android:textColor="@color/colorBlack"
         android:textSize="16sp"
         app:fontFamily="@font/quicksand_light"

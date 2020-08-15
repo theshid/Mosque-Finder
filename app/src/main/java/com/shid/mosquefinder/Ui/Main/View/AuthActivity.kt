@@ -188,8 +188,8 @@ class AuthActivity : AppCompatActivity() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
             //showSnackBar(textView, "The network is back !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connected!!")
-                .setMessage("The network is back !")
+                .setTitle(getString(R.string.sneaker_connected))
+                .setMessage(getString(R.string.sneaker_msg_network))
                 .sneakSuccess()
             google_sign_in_button.isClickable = true
         }
@@ -197,8 +197,8 @@ class AuthActivity : AppCompatActivity() {
         if (!ConnectivityStateHolder.isConnected && previousSate) {
             //showSnackBar(textView, "No Network !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle("Connection lost")
-                .setMessage("No Network!")
+                .setTitle(getString(R.string.sneaker_disconnected))
+                .setMessage(getString(R.string.sneaker_msg_network_lost))
                 .sneakError()
             google_sign_in_button.isClickable = false
         }
@@ -285,7 +285,7 @@ class AuthActivity : AppCompatActivity() {
     private fun toastMessage(name: String) {
         Toast.makeText(
             this,
-            "Hi $name!\nYour account was successfully created.",
+            String.format(resources.getString(R.string.toast_auth_salutation,name)),
             Toast.LENGTH_LONG
         ).show()
     }

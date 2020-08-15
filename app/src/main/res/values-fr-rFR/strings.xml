@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MosqueFinder</string>
+
+    //Auth Activity
+    <string name="quote">"\“A busy life makes prayer harder,\n but prayer makes a busy life easier.\”"</string>
+    <string name="sign_in_with_google">Se connecter avec Google</string>
+
+    //Splash Activity
+    <string name="splash_title">Mosque Finder</string>
+    <string name="splash_message">Trouvez une Mosquée en tout temps</string>
+    <string name="brought_you_by_shidtech">UniSoft</string>
+
+    //Toast
+    <string name="location_permission_not_granted">Permission de localisation non accordé</string>
+    <string name="toast_auth_salutation">Bonjour %1$s !\n Votre compte a été crée!.</string>
+    <string name="toast_permission">Veuillez accepter les autorisations</string>
+    <string name="email_message">Envoyer un email à mosquefinder@gmail.com</string>
+    <string name="toast_log_in_msg">Vous êtes connecté en tant que: %1$s</string>
+    <string name="toast_marker">Déplacez le marqueur a l\'endroit ou se trouve la mosquée</string>
+
+    //Snackbar
+    <string name="sneaker_connected">Connecté!!</string>
+    <string name="sneaker_msg_network">De nouveau connecté!!😁</string>
+    <string name="sneaker_disconnected">Connexion perdue</string>
+    <string name="sneaker_msg_network_lost">Pas de connexion 🧐</string>
+
+    //Map Activity
+    <string name="search_hint">Rechercher</string>
+    <string name="home_bottom_dialog_title">Mosquée les plus proches de vous</string>
+    <string name="mosque_name">Nom Mosqueé:</string>
+    <string name="share_text">Trouvez une mosquée ou que vous soyez</string>
+    <string name="share_app">Partager Application</string>
+    <string name="send_mail">Envoyer mail...</string>
+    <string name="offline">Veuillez vous connecter ou raffraichir la carte pour activer le mode hors ligne</string>
+    <string name="title_dialog">Mosque Finder</string>
+    <string name="dialog_prompt_location">Êtes vous sur de vouloir ajouter une mosquée?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="cancel">Annuler</string>
+    <string name="dialog_input_title">Entrer le nom de la mosquée</string>
+    <string name="dialog_save">Sauvegarder Mosquée</string>
+    <string name="you">Vous</string>
+    <string name="dialog_confirm">Confirmer ou Signaler une position</string>
+    <string name="confirm_mosque">Confirmer Mosquée</string>
+    <string name="report_mosque">Signaler Mosquée</string>
+    <string name="dialog_msg_google_map">Montrer l\'itinéraire sur Google Map</string>
+    <string name="dialog_log_out">Êtes-vous sûr de vouloir vous déconnecter?</string>
+    <string name="map_error">Télécharger Google Map</string>
+
+    //Fab menu
+    <string name="options_1">Actualiser Carte</string>
+    <string name="options_2">Ajouter mosquée</string>
+    <string name="options_3">Ma position</string>
+
+    //Feedback Activity
+
+    <string name="feedback_send">Envoyer</string>
+    <string name="feedback_hint_feedback">Écrivez votre feedback ici</string>
+    <string name="feedback_hint_email">Email</string>
+    <string name="feedback_send_successful">Votre a bien été envoyé. Merci!</string>
+    <string name="feedback_email_error">Veuillez entrer une addresse email valide</string>
+    <string name="feedback_feedback_error">Saissisez votre feedback</string>
+
+    //Navigation drawer menu
+    <string name="quote_islam">Citations</string>
+    <string name="menu_share">Partager application</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_credits">Credits</string>
+    <string name="menu_contact">Contact</string>
+    <string name="menu_exit">Se Déconnecter</string>
+
+
+
+    <string name="default_error_message">An error occurred, please try again.</string>
+    <string name="network_error_message">Please check your internet connection and try again.</string>
+
+
+
+    <string name="required_for_this_app">Required for this app</string>
+    <string name="enable_now">Enable Now</string>
+
+    <string name="enable_gps">Enable GPS</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="determine_route">Determine route to </string>
+    <string name="km">km </string>
+    <string name="km_test">%1$s km</string>
+    <string name="duree">Duration: </string>
+    <string name="trip">Trip # </string>
+    <string name="title_activity_maps2">Map</string>
+    <string name="open_google_map">Open Google Maps?</string>
+
+
+
+    <string name="sign_out_button">sign out</string>
+</resources>
