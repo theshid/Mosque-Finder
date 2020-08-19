@@ -50,7 +50,7 @@ class AuthActivity : AppCompatActivity() {
 
     }
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private  var fusedLocationProviderClient: FusedLocationProviderClient ?= null
     private lateinit var locationCallback: LocationCallback
 
 
@@ -110,7 +110,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         if (fusedLocationProviderClient != null){
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
         }
     }
 
@@ -147,7 +147,7 @@ class AuthActivity : AppCompatActivity() {
             }
         }
 
-        fusedLocationProviderClient.requestLocationUpdates(
+        fusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest,locationCallback,
             Looper.myLooper())
     }

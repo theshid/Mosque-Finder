@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Typeface
 import android.location.Location
 import android.net.Uri
@@ -114,7 +115,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     val locationTracker = LocationTracker()
 
     private var buttonIcon = 0
-    private var speedDialSize = 2
+    private var speedDialSize = 3
     private val speedDialSizeOptions = arrayOf(
         Pair("None", 0),
         Pair("1 item", 1),
@@ -132,6 +133,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 2 -> SpeedDialMenuItem(context, R.drawable.ic_my_location, getString(R.string.options_3))
                 else -> throw IllegalArgumentException("No menu item: $position")
             }
+
+        override fun getBackgroundColour(position: Int): Int {
+
+            return Color.argb(255, 255, 255, 255)
+        }
 
         override fun onMenuItemClick(position: Int): Boolean {
             if (position == 0) {
@@ -165,9 +171,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             if ( speedDialSize > 0) {
                 label.setTypeface(label.typeface, Typeface.BOLD)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    label.setTextColor(resources.getColor(R.color.colorBlack,context.theme))
+                    label.setTextColor(resources.getColor(R.color.colorWhite,context.theme))
                 } else{
-                    label.setTextColor(resources.getColor(R.color.colorBlack))
+                    label.setTextColor(resources.getColor(R.color.colorWhite))
                 }
             }
         }
@@ -589,7 +595,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
         fab.speedDialMenuAdapter = speedDialMenuAdapter
         fab.contentCoverEnabled = true
-        fab.setContentCoverColour(0xccffffff.toInt())
+        fab.setContentCoverColour(0xcc000000.toInt())
 
         fab.setOnSpeedDialMenuOpenListener(object : SpeedDialMenuOpenListener {
 

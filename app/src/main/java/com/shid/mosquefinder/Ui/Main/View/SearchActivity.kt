@@ -1,7 +1,6 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,7 +9,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.ClusterMarker
@@ -19,7 +19,6 @@ import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.SearchViewModelFactory
 import com.shid.mosquefinder.Ui.Main.Adapter.SearchAdapter
-import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
 import com.shid.mosquefinder.Ui.Main.ViewModel.SearchViewModel
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Network.Event
@@ -28,7 +27,8 @@ import com.shid.mosquefinder.Utils.Status
 import com.shid.mosquefinder.Utils.getCountryCode
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_search.*
-import java.util.Observer
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
@@ -38,12 +38,14 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
     }
 
     private lateinit var searchAdapter: SearchAdapter
-    private lateinit var searchViewmodel: SearchViewModel
+    private lateinit var searchViewModel: SearchViewModel
     private var previousSate = true
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
     private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
     private var mClusterMarkerList: MutableList<ClusterMarker> = ArrayList()
+    private var userPosition = SplashActivity.userPosition
+    private var sortedMosqueList :List<ClusterMarker> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,18 +63,20 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         setOnClick()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
-            mMosqueList = searchViewmodel.getUsersMosqueFromRepository()
+            mMosqueList = searchViewModel.getUsersMosqueFromRepository()
             if (getCountryCode(applicationContext) == "gh"){
-                mGoogleMosqueList = searchViewmodel.getGoogleMosqueFromRepository()
+                mGoogleMosqueList = searchViewModel.getGoogleMosqueFromRepository()
                 getClusterMarkers(mGoogleMosqueList)
+                sortClusterMarkerList()
             } else if (getCountryCode(applicationContext) == "ne"){
-                mNigerGoogleMosqueList = searchViewmodel.getNigerGoogleMosqueFromRepository()
+                mNigerGoogleMosqueList = searchViewModel.getNigerGoogleMosqueFromRepository()
                 getClusterMarkers(mNigerGoogleMosqueList)
+                sortClusterMarkerList()
             }
 
 
-            searchAdapter.list = mClusterMarkerList
-            searchAdapter.mosqueList = mClusterMarkerList
+            searchAdapter.list = sortedMosqueList as MutableList<ClusterMarker>
+            searchAdapter.mosqueList = sortedMosqueList as MutableList<ClusterMarker>
             searchAdapter.notifyDataSetChanged()
             setSearch()
             Log.d(TAG,mMosqueList.size.toString())
@@ -99,7 +103,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
     private fun setObservers() {
 
-        searchViewmodel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+        searchViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
             when (it.status) {
                 Status.SUCCESS -> {
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
@@ -119,6 +123,18 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
     }
 
+    private fun sortClusterMarkerList() {
+        sortedMosqueList = mClusterMarkerList.sortedWith(compareBy { it.distanceFromUser })
+    }
+
+    private fun calculateDistanceBetweenUserAndMosque(
+        position: LatLng,
+        userLocation: LatLng
+    ): Double {
+        val distanceInKm: Double =
+            SphericalUtil.computeDistanceBetween(userLocation, position) * 0.001
+        return BigDecimal(distanceInKm).setScale(2, RoundingMode.HALF_EVEN).toDouble()
+    }
 
 
     private fun setOnClick() {
@@ -139,7 +155,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
     }
 
     private fun setViewModel() {
-        searchViewmodel = ViewModelProvider(
+        searchViewModel = ViewModelProvider(
             this,
             SearchViewModelFactory(Common.googleApiService, application)
         ).get(SearchViewModel::class.java)
@@ -188,7 +204,12 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
             val title = mosqueLocation.name
             val snippet = ""
-            val distanceFromUser = 0.0
+            var distanceFromUser = 0.0
+            if (userPosition!=null) {
+                distanceFromUser = calculateDistanceBetweenUserAndMosque(
+                    LatLng(mosqueLocation.position.latitude,mosqueLocation.position.longitude), userPosition!!
+                )
+            }
             newClusterMarker =
                 ClusterMarker(
 
@@ -213,7 +234,15 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
             try {
                 val snippet =""
                 val title = mosqueLocation.placeName
-                val distanceFromUser = 0.0
+                var distanceFromUser = 0.0
+                if (userPosition !=null) {
+                    distanceFromUser = calculateDistanceBetweenUserAndMosque(
+                        LatLng(mosqueLat, mosqueLg),
+                        userPosition!!
+                    )
+                }
+
+
 
                 newClusterMarker2 =
                     ClusterMarker(

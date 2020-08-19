@@ -89,7 +89,7 @@
         android:fontFamily="@font/quicksand_medium"
         android:text="@string/feedback_send"
         android:textAllCaps="false"
-        app:backgroundTint="@color/redAccent"
+        app:backgroundTint="@color/colorPrimary"
         app:cornerRadius="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="parent"

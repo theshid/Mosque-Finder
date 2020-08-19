@@ -9,6 +9,7 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.Main.View.SplashActivity
 import kotlinx.android.synthetic.main.item_search.view.*
 import java.io.Serializable
 import java.util.*
@@ -19,6 +20,7 @@ Filterable{
     var list: MutableList<ClusterMarker>? = null
     var mosqueList: MutableList<ClusterMarker>? = null
     var onClickSearch: OnClickSearch? = null
+
 
 
 

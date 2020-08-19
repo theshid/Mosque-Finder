@@ -72,15 +72,15 @@
 
 
 
-    <string name="default_error_message">An error occurred, please try again.</string>
-    <string name="network_error_message">Please check your internet connection and try again.</string>
+    <string name="default_error_message">Une erreur s\'est produite. Veuillez réessayer.</string>
+    <string name="network_error_message">Veuillez vérifier votre connexion Internet. Réessayer ensuite.</string>
 
 
 
-    <string name="required_for_this_app">Required for this app</string>
+    <string name="required_for_this_app">Reuis pour cette application</string>
     <string name="enable_now">Enable Now</string>
 
-    <string name="enable_gps">Enable GPS</string>
+    <string name="enable_gps">Activer GPS</string>
     <string name="title_activity_maps">Map</string>
     <string name="determine_route">Determine route to </string>
     <string name="km">km </string>

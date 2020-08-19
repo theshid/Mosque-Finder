@@ -27,7 +27,7 @@ import fr.quentinklein.slt.ProviderError
 class SplashActivity : AppCompatActivity() {
     private lateinit var splashViewModel: SplashViewModel
     private lateinit var splashViewModelFactory: SplashViewModelFactory
-    private lateinit var fusedLocationProviderClient:FusedLocationProviderClient
+    private  var fusedLocationProviderClient:FusedLocationProviderClient ?= null
     private lateinit var locationCallback: LocationCallback
 
     companion object{
@@ -83,7 +83,7 @@ class SplashActivity : AppCompatActivity() {
             }
         }
 
-        fusedLocationProviderClient.requestLocationUpdates(
+        fusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest,locationCallback,
             Looper.myLooper())
     }
@@ -97,7 +97,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         if (fusedLocationProviderClient != null){
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
         }
 
     }
