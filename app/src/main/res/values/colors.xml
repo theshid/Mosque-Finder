@@ -17,4 +17,6 @@
     <color name="blueGrayDark">#263238</color>
     <color name="redAccent">#FF1A4B</color>
     <color name="blackOpacity50">#80121212</color>
+
+    <color name="color1">#424549</color>
 </resources>

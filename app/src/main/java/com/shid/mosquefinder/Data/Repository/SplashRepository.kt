@@ -2,6 +2,7 @@ package com.shid.mosquefinder.Data.Repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -24,7 +25,7 @@ class SplashRepository {
         val firebaseUser = firebaseAuth.currentUser
         if (firebaseUser == null) {
             user.isAuthenticated = false
-            Log.d("Error",user.isAuthenticated.toString())
+            Log.d("Error", user.isAuthenticated.toString())
             isUserAuthenticateInFirebaseMutableLiveData.setValue(user)
         } else {
             user.uid = firebaseUser.uid
@@ -48,6 +49,8 @@ class SplashRepository {
                     logErrorMessage(userTask.exception!!.message)
                     Log.d("Error", userTask.exception!!.message!!)
                 }
+            }.addOnFailureListener {
+                Crashlytics.logException(it)
             }
         return userMutableLiveData
     }

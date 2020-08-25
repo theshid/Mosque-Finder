@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -38,7 +39,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
     private val firebaseNigerGoogleMosqueRef: CollectionReference = database.collection("niamey")
     private lateinit var mGoogleMosqueListEventListener: ListenerRegistration
     var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
-    var mNigerGoogleMosqueList:MutableList<GoogleMosque> = ArrayList()
+    var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
 
     private val TAG: String = "Map Repository"
     private val mApp: Application = application
@@ -103,6 +104,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                     }
                 }
             })
+
         Log.d(TAG, "Mosque firebase" + mMosqueList.isEmpty().toString())
         return mNigerGoogleMosqueList
     }
@@ -276,6 +278,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
 
 
                             } catch (e: NullPointerException) {
+                                Crashlytics.logException(e)
                                 Log.e(
                                     "Map",
                                     "addMapMarkers: NullPointerException: " + e.message
@@ -305,6 +308,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error writing document", e)
+                Crashlytics.logException(e)
                 statusMsg.postValue(
                     Resource.error(
                         e.localizedMessage,
@@ -335,7 +339,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
                             }
                             .addOnFailureListener {
-
+                                Crashlytics.logException(it)
                             }
 
 
@@ -347,6 +351,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 "You already made a choice "
                             )
                         )
+                        Crashlytics.logException(it)
                     }
 
 
@@ -370,7 +375,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
                             }
                             .addOnFailureListener {
-
+                                Crashlytics.logException(it)
                                 Log.d(
                                     "Error",
                                     it.message.toString() + it.localizedMessage.toString()
@@ -384,6 +389,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 "You already reported this location "
                             )
                         )
+                        Crashlytics.logException(it)
                     }
 
 

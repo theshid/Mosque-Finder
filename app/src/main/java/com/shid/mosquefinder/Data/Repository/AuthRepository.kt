@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Data.Repository
 
 import androidx.lifecycle.MutableLiveData
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
@@ -36,6 +37,7 @@ class AuthRepository {
                     }
                 } else {
                     logErrorMessage(authTask.exception!!.message)
+                    Crashlytics.logException(authTask.exception!!)
                 }
             }
         return authenticatedUserMutableLiveData
@@ -64,6 +66,7 @@ class AuthRepository {
                     }
                 } else {
                     logErrorMessage(uidTask.exception!!.message)
+                    Crashlytics.logException(uidTask.exception)
                 }
             }
         return newUserMutableLiveData
