@@ -2,23 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
         android:layout_margin="8dp">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="500dp">
 
             <TextView
                 android:id="@+id/quote_text"
                 android:background="@color/color1"
-                android:scaleType="centerCrop"
                 android:textColor="@color/colorWhite"
-                android:fontFamily="@font/people"
+                android:fontFamily="@font/exo2_bold"
                 android:text="Quotes"
                 android:gravity="center"
                 android:textSize="20sp"
@@ -33,6 +34,8 @@
                 android:layout_marginLeft="16dp"
                 android:text="Author"
                 android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="@font/quicksand_medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

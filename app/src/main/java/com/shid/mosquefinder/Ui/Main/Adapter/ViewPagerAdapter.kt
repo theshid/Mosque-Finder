@@ -1,46 +1,40 @@
 package com.shid.mosquefinder.Ui.Main.Adapter
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.viewpager.widget.PagerAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.shid.mosquefinder.Data.Model.Quotes
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.item_pager.view.*
 
-class ViewPagerAdapter(var list: List<Quotes>, var context: Context): PagerAdapter() {
+class ViewPagerAdapter(var list: MutableList<Quotes>, var context: Context) :
+    RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
 
-private lateinit var layoutInflater:LayoutInflater
-    override fun getCount(): Int = list.size
+    private lateinit var layoutInflater: LayoutInflater
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view == `object`
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerAdapter.ViewHolder {
+        layoutInflater = LayoutInflater.from(context)
+        val view: View = layoutInflater.inflate(R.layout.item_pager, parent, false)
+
+        return ViewHolder(view)
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        layoutInflater = LayoutInflater.from(context)
-        val view: View = layoutInflater.inflate(R.layout.item_pager, container, false)
+    override fun onBindViewHolder(holder: ViewPagerAdapter.ViewHolder, position: Int) {
+        list[position].run { holder.bind(this) }
+    }
 
-        view.author.text = list[position].author
-        view.quote_text.text = list[position].quote
+    override fun getItemCount(): Int = list.size
 
-
-        view.setOnClickListener {
-            /*val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra("param", models.get(position).getTitle())
-            context.startActivity(intent)*/
-            // finish();
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(quotes: Quotes) {
+            itemView.apply {
+                author.text = quotes.author
+                quote_text.text = " ''" + quotes.quote + "'' "
+            }
         }
 
-        container.addView(view, 0)
-        return view
-    }
-
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object`as View)
     }
 }
