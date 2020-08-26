@@ -63,6 +63,7 @@
 
     //Navigation drawer menu
     <string name="quote_islam">Quotes</string>
+    <string name="beautiful_mosque">Most Beautiful Mosques</string>
     <string name="menu_share">Share app</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_credits">Credits</string>
@@ -83,24 +84,12 @@
     <string name="open_google_map">Open Google Maps?</string>
 
 
-
     <string name="sign_out_button">sign out</string>
-
-
-
-
-
-
-
-
-
-
-
 
 
     <string name="default_error_message">An error occurred, please try again.</string>
     <string name="network_error_message">Please check your internet connection and try again.</string>
-
+    <string name="menu_quote">Islamic Quotes</string>
 
 
 </resources>

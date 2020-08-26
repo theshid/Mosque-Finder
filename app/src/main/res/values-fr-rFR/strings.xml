@@ -64,6 +64,7 @@
 
     //Navigation drawer menu
     <string name="quote_islam">Citations</string>
+    <string name="beautiful_mosque">Les plus belles Mosquées</string>
     <string name="menu_share">Partager application</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_credits">Credits</string>
@@ -93,4 +94,6 @@
 
 
     <string name="sign_out_button">sign out</string>
+
+    <string name="menu_quote">Citations Islamiques</string>
 </resources>

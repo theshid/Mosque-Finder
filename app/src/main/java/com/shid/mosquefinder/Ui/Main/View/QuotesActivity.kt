@@ -4,17 +4,25 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
+import com.irozon.sneaker.Sneaker
+import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.Quotes
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.QuotesViewModelFactory
 import com.shid.mosquefinder.Ui.Main.Adapter.ViewPagerAdapter
 import com.shid.mosquefinder.Ui.Main.ViewModel.QuotesViewModel
+import com.shid.mosquefinder.Utils.Network.Event
+import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
+import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.android.synthetic.main.activity_feedback.*
 import kotlinx.android.synthetic.main.activity_quotes.*
+import kotlinx.android.synthetic.main.activity_quotes.toolbar
 
 class QuotesActivity : AppCompatActivity() {
 
@@ -22,21 +30,66 @@ class QuotesActivity : AppCompatActivity() {
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var viewModel: QuotesViewModel
     private lateinit var viewModelFactory: QuotesViewModelFactory
+    private var previousSate = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quotes)
 
+        savedInstanceState?.let {
+            previousSate = it.getBoolean("LOST_CONNECTION")
+        }
+
+
+        NetworkEvents.observe(this, Observer {
+            if (it is Event.ConnectivityEvent)
+                handleConnectivityChange()
+        })
         setTransparentStatusBar()
         setViewModel()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             mQuoteList = viewModel.getQuotesFromRepository()
+            mQuoteList.shuffle()
             setUpViewPager()
         }, 2000)
+        setOnClick()
         //setUpViewPager()
     }
 
+    override fun onResume() {
+        super.onResume()
+        handleConnectivityChange()
+    }
+
+    private fun setOnClick() {
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    private fun handleConnectivityChange() {
+        if (ConnectivityStateHolder.isConnected && !previousSate) {
+            //showSnackBar(textView, "The network is back !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle(getString(R.string.sneaker_connected))
+                .setMessage(getString(R.string.sneaker_msg_network))
+                .sneakSuccess()
+
+        }
+
+        if (!ConnectivityStateHolder.isConnected && previousSate) {
+            //showSnackBar(textView, "No Network !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle(getString(R.string.sneaker_disconnected))
+                .setMessage(getString(R.string.sneaker_msg_network_lost))
+                .sneakError()
+
+        }
+
+        previousSate = ConnectivityStateHolder.isConnected
+    }
+
     private fun setUpViewPager() {
-        viewPager2.setPadding(60, 0, 60, 0)
+        viewPager2.setPadding(100, 0, 100, 0)
         viewPagerAdapter = ViewPagerAdapter(mQuoteList, this)
 
         viewPager2.adapter = viewPagerAdapter

@@ -86,7 +86,10 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         }, 2000)
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        handleConnectivityChange()
+    }
 
     private fun setSearch() {
         searchEdit.doOnTextChanged { text, _, _, _ ->

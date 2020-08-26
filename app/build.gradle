@@ -132,6 +132,9 @@ dependencies {
     //Location
     implementation 'com.github.quentin7b:android-location-tracker:4.0'
 
+    //Transformation layout
+    implementation "com.github.skydoves:transformationlayout:1.0.5"
+
 
 
 

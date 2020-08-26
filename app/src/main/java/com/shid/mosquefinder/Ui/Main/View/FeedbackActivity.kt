@@ -8,23 +8,43 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.irozon.sneaker.Sneaker
+import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.FeedbackViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.FeedbackViewModel
+import com.shid.mosquefinder.Utils.Network.Event
+import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.hideKeyboard
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
+import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_feedback.*
 
 class FeedbackActivity : AppCompatActivity() {
     private lateinit var feedbackViewModel: FeedbackViewModel
     private lateinit var feedbackViewModelFactory: FeedbackViewModelFactory
+    private var previousSate = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feedback)
 
+        savedInstanceState?.let {
+            previousSate = it.getBoolean("LOST_CONNECTION")
+        }
+
+
+        NetworkEvents.observe(this, Observer {
+            if (it is Event.ConnectivityEvent)
+                handleConnectivityChange()
+        })
+
         setTransparentStatusBar()
         setViewModel()
         setOnClick()
+    }
+    override fun onResume() {
+        super.onResume()
+        handleConnectivityChange()
     }
 
     private fun setOnClick() {
@@ -34,6 +54,28 @@ class FeedbackActivity : AppCompatActivity() {
         sendButton.setOnClickListener {
             sendFeedback()
         }
+    }
+
+    private fun handleConnectivityChange() {
+        if (ConnectivityStateHolder.isConnected && !previousSate) {
+            //showSnackBar(textView, "The network is back !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle(getString(R.string.sneaker_connected))
+                .setMessage(getString(R.string.sneaker_msg_network))
+                .sneakSuccess()
+
+        }
+
+        if (!ConnectivityStateHolder.isConnected && previousSate) {
+            //showSnackBar(textView, "No Network !")
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle(getString(R.string.sneaker_disconnected))
+                .setMessage(getString(R.string.sneaker_msg_network_lost))
+                .sneakError()
+
+        }
+
+        previousSate = ConnectivityStateHolder.isConnected
     }
 
     private fun sendFeedback() {

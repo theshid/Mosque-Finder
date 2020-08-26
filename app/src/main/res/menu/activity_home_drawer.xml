@@ -6,6 +6,11 @@
         android:title="@string/quote_islam" />
 
     <item
+        android:id="@+id/nav_mosques"
+        android:icon="@drawable/ic_mosque"
+        android:title="@string/beautiful_mosque" />
+
+    <item
         android:id="@+id/nav_share"
         android:icon="@drawable/ic_share"
         android:title="@string/menu_share" />
