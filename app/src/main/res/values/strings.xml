@@ -90,6 +90,7 @@
     <string name="default_error_message">An error occurred, please try again.</string>
     <string name="network_error_message">Please check your internet connection and try again.</string>
     <string name="menu_quote">Islamic Quotes</string>
+    <string name="menu_detail">Detail on Mosque</string>
 
 
 </resources>

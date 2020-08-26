@@ -49,14 +49,14 @@ class BeautifulMosquesRepository {
                         //var mosqueId: String = quote.documentId
 
 
-                        var BeautyElem: BeautifulMosques =
+                        var beautyElem: BeautifulMosques =
                             BeautifulMosques(
                                 mosqueName,
                                 description,
                                 link
                             )
                         //Log.d(TAG, "the id  is" + QuoteElem.documentId)
-                        mBeautyList.add(BeautyElem)
+                        mBeautyList.add(beautyElem)
                         /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
                          var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*/
                         //Log.d(TAG, "mosque position" + quote.position.latitude)

@@ -1,4 +1,10 @@
 package com.shid.mosquefinder.Data.Model
 
-class BeautifulMosques(var name:String="",var description:String="", var link:String="") {
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+import java.io.Serializable
+
+@Parcelize
+class BeautifulMosques(var name:String="",var description:String="", var link:String="") :
+    Parcelable {
 }

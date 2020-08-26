@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.BeautifulMosques
@@ -25,7 +26,10 @@ import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.getCountryCode
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import com.skydoves.transformationlayout.TransformationCompat.startActivity
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
+import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar
+import kotlinx.android.synthetic.main.activity_feedback.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.item_mosque.*
 
@@ -34,8 +38,10 @@ class BeautifulMosquesActivity : AppCompatActivity() {
     private lateinit var mosqueViewModel: BeautifulMosquesViewModel
     private var previousSate = true
     private var onClickedTime = System.currentTimeMillis()
+    private lateinit var layoutManager: GridLayoutManager
     private var mMosqueList: MutableList<BeautifulMosques> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
+        onTransformationStartContainer()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beautiful_mosques)
 
@@ -43,12 +49,14 @@ class BeautifulMosquesActivity : AppCompatActivity() {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
         setViewModel()
-        setRecycler()
+
+        setOnClick()
         setTransparentStatusBar()
         setNetworkMonitor()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
             mMosqueList = mosqueViewModel.getMosquesFromRepository()
+            setRecycler()
             mosqueAdapter.notifyDataSetChanged()
             // addUserMarker()
 
@@ -56,25 +64,25 @@ class BeautifulMosquesActivity : AppCompatActivity() {
     }
 
     private fun setOnClick() {
-        backButton.setOnClickListener {
+        toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
     }
 
     private fun setRecycler() {
+        layoutManager = GridLayoutManager(this,2)
+        mosque_recycler.layoutManager = layoutManager
         mosqueAdapter = MosqueAdapter(mMosqueList, this)
-        mosqueAdapter.setOnClickMosque {
+        mosque_recycler.adapter = mosqueAdapter
+        /*mosqueAdapter.setOnClickMosque {
             val currentTime = System.currentTimeMillis()
             if (currentTime - onClickedTime > transformationLayout.duration) {
                 onClickedTime = currentTime
-                DetailActivity.startActivity(transformationLayout, item)
+                DetailActivity.startActivity(transformationLayout, it)
             }
-            val returnIntent = Intent()
-            returnIntent.putExtra(SearchActivity.SEARCH_RESULT, it)
-            setResult(Activity.RESULT_OK, returnIntent)
-            finish()
-        }
-        mosque_recycler.adapter = mosqueAdapter
+
+        }*/
+
     }
 
     private fun setViewModel() {

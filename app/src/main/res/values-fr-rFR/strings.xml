@@ -96,4 +96,5 @@
     <string name="sign_out_button">sign out</string>
 
     <string name="menu_quote">Citations Islamiques</string>
+    <string name="menu_detail">Détail sur la Mosquée</string>
 </resources>

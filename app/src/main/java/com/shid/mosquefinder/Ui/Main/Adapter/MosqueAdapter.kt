@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.api.load
 import com.shid.mosquefinder.Data.Model.BeautifulMosques
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.View.DetailActivity
 import com.skydoves.transformationlayout.TransformationCompat.startActivity
+import kotlinx.android.synthetic.main.item_mosque.*
 import kotlinx.android.synthetic.main.item_mosque.view.*
 import kotlinx.android.synthetic.main.item_pager.view.*
 
@@ -36,9 +38,18 @@ class MosqueAdapter(var list: MutableList<BeautifulMosques>, var context: Contex
         fun bind(mosque: BeautifulMosques) {
             itemView.apply {
                 name.text = mosque.name
-                setOnClickListener {
-                    onClickMosque?.onClickSearch(mosque)
+                image.load(mosque.link)
+
+                rootView.setOnClickListener {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - onClickedTime > transformationLayout.duration) {
+                        onClickedTime = currentTime
+                        DetailActivity.startActivity(transformationLayout, mosque)
+                    }
                 }
+               /* setOnClickListener {
+                    onClickMosque?.onClickSearch(mosque)
+                }*/
 
             }
         }
