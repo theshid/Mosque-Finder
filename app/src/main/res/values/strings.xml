@@ -46,6 +46,7 @@
     <string name="dialog_msg_google_map">Show Directions in Google Map?</string>
     <string name="dialog_log_out">Are you sure you want to log out?</string>
     <string name="map_error">Download Google Map</string>
+    <string name="refresh_map">Please refresh map or check your Internet</string>
 
     //Fab menu
     <string name="options_1">Reset Map</string>

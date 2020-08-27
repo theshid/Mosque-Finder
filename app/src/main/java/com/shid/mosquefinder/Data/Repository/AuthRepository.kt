@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.Data.Repository
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Task
@@ -11,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.Utils.Common.USERS
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
+import com.shid.mosquefinder.Utils.Resource
 
 
 class AuthRepository {
@@ -18,6 +20,7 @@ class AuthRepository {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val rootRef = FirebaseFirestore.getInstance()
     private val usersRef = rootRef.collection(USERS)
+    private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     fun firebaseSignInWithGoogle(googleAuthCredential: AuthCredential?): MutableLiveData<User>? {
         val authenticatedUserMutableLiveData: MutableLiveData<User> = MutableLiveData<User>()
@@ -38,6 +41,12 @@ class AuthRepository {
                 } else {
                     logErrorMessage(authTask.exception!!.message)
                     Crashlytics.logException(authTask.exception!!)
+                    statusMsg.postValue(
+                        Resource.error(
+                            authTask.exception.toString(),
+                            "could not authenticate, check internet"
+                        )
+                    )
                 }
             }
         return authenticatedUserMutableLiveData
@@ -67,8 +76,18 @@ class AuthRepository {
                 } else {
                     logErrorMessage(uidTask.exception!!.message)
                     Crashlytics.logException(uidTask.exception)
+                    statusMsg.postValue(
+                        Resource.error(
+                            uidTask.exception.toString(),
+                            "could not register, check internet"
+                        )
+                    )
                 }
             }
         return newUserMutableLiveData
+    }
+
+    fun returnStatusMsg(): LiveData<Resource<String>> {
+        return statusMsg
     }
 }

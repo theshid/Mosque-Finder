@@ -3,6 +3,8 @@ package com.shid.mosquefinder.Ui.Main.View
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +20,7 @@ import com.shid.mosquefinder.Ui.Main.Adapter.ViewPagerAdapter
 import com.shid.mosquefinder.Ui.Main.ViewModel.QuotesViewModel
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
+import com.shid.mosquefinder.Utils.Status
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_feedback.*
@@ -49,9 +52,11 @@ class QuotesActivity : AppCompatActivity() {
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             mQuoteList = viewModel.getQuotesFromRepository()
             mQuoteList.shuffle()
+            progressBar.visibility = View.GONE
             setUpViewPager()
         }, 2000)
         setOnClick()
+        setObservers()
         //setUpViewPager()
     }
 
@@ -64,6 +69,28 @@ class QuotesActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    private fun setObservers() {
+
+        viewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+            when (it.status) {
+                Status.SUCCESS -> {
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                }
+                Status.LOADING -> {
+
+                }
+                Status.ERROR -> {
+                    //Handle Error
+
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                    Log.d("Search", it.message)
+                }
+            }
+        })
+
+
     }
 
     private fun handleConnectivityChange() {
@@ -91,6 +118,7 @@ class QuotesActivity : AppCompatActivity() {
     private fun setUpViewPager() {
         viewPager2.setPadding(100, 0, 100, 0)
         viewPagerAdapter = ViewPagerAdapter(mQuoteList, this)
+        indicator.attachToViewPager2(viewPager2)
 
         viewPager2.adapter = viewPagerAdapter
 

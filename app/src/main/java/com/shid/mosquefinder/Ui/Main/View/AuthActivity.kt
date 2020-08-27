@@ -33,6 +33,7 @@ import com.shid.mosquefinder.Utils.Common.logErrorMessage
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.Status
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import fr.quentinklein.slt.LocationTracker
 import fr.quentinklein.slt.ProviderError
@@ -76,6 +77,7 @@ class AuthActivity : AppCompatActivity() {
         setTransparentStatusBar()
         checkIfPermissionIsActive()
         initSignInButton()
+        setObservers()
 
         initGoogleSignInClient()
     }
@@ -121,6 +123,28 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+
+    }
+
+    private fun setObservers() {
+
+        authViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+            when (it.status) {
+                Status.SUCCESS -> {
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                }
+                Status.LOADING -> {
+
+                }
+                Status.ERROR -> {
+                    //Handle Error
+
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                    Log.d("Search", it.message)
+                }
+            }
+        })
+
 
     }
 

@@ -135,6 +135,9 @@ dependencies {
     //Transformation layout
     implementation "com.github.skydoves:transformationlayout:1.0.5"
 
+    //Pager Indicator
+    implementation 'com.github.rbro112:Android-Indefinite-Pager-Indicator:1.3'
+
 
 
 

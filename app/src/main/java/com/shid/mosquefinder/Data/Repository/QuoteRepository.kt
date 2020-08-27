@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Data.Repository
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.shid.mosquefinder.Data.Model.Mosque
@@ -19,6 +20,10 @@ class QuoteRepository {
 
     init {
         getQuotesFromFirebase()
+    }
+
+    fun returnStatusMsg(): LiveData<Resource<String>> {
+        return statusMsg
     }
 
     fun getQuotesFromFirebase(): MutableList<Quotes> {

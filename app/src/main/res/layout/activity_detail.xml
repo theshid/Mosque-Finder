@@ -63,9 +63,8 @@
             android:id="@+id/cardView"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:background="@color/colorBlack"
-            android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="@color/colorWhite"
             app:cardCornerRadius="14dp"
             app:cardElevation="4dp"
@@ -98,6 +97,22 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="gone" />-->
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@color/colorBlack"
+            app:cardBackgroundColor="@color/colorWhite"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name">
+
+
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description"
             style="@style/TextStyle"
@@ -114,7 +129,7 @@
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="24.0 KG" />
 
-
+        </com.google.android.material.card.MaterialCardView>
         <!--<androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/weight_title"
             android:layout_width="wrap_content"

@@ -47,6 +47,7 @@
     <string name="dialog_msg_google_map">Montrer l\'itinéraire sur Google Map</string>
     <string name="dialog_log_out">Êtes-vous sûr de vouloir vous déconnecter?</string>
     <string name="map_error">Télécharger Google Map</string>
+    <string name="refresh_map">Veuillez rafraichir la carte et vérifier votre connexion Internet</string>
 
     //Fab menu
     <string name="options_1">Actualiser Carte</string>

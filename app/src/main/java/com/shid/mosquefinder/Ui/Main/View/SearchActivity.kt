@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
@@ -63,6 +64,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         setOnClick()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
+            progressBar.visibility = View.GONE
             mMosqueList = searchViewModel.getUsersMosqueFromRepository()
             if (getCountryCode(applicationContext) == "gh"){
                 mGoogleMosqueList = searchViewModel.getGoogleMosqueFromRepository()

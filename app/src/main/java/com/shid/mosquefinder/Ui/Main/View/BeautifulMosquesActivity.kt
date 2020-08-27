@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.irozon.sneaker.Sneaker
@@ -23,6 +25,7 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.SearchViewModel
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
+import com.shid.mosquefinder.Utils.Status
 import com.shid.mosquefinder.Utils.getCountryCode
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import com.skydoves.transformationlayout.TransformationCompat.startActivity
@@ -53,9 +56,11 @@ class BeautifulMosquesActivity : AppCompatActivity() {
         setOnClick()
         setTransparentStatusBar()
         setNetworkMonitor()
+        setObservers()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
             mMosqueList = mosqueViewModel.getMosquesFromRepository()
+            progressBar2.visibility = View.GONE
             setRecycler()
             mosqueAdapter.notifyDataSetChanged()
             // addUserMarker()
@@ -90,6 +95,28 @@ class BeautifulMosquesActivity : AppCompatActivity() {
             this,
             BeautifulMosquesViewModelFactory()
         ).get(BeautifulMosquesViewModel::class.java)
+
+
+    }
+
+    private fun setObservers() {
+
+        mosqueViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+            when (it.status) {
+                Status.SUCCESS -> {
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                }
+                Status.LOADING -> {
+
+                }
+                Status.ERROR -> {
+                    //Handle Error
+
+                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                    Log.d("Search", it.message)
+                }
+            }
+        })
 
 
     }

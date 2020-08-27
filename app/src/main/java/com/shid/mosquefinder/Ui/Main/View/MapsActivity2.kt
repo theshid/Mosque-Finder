@@ -112,6 +112,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     val locationTracker = LocationTracker()
+    private var sharePref: SharePref? = null
 
     private var buttonIcon = 0
     private var speedDialSize = 3
@@ -218,6 +219,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setObserver()
 
 
+
+    }
+
+    private fun checkPref() {
+        sharePref = SharePref(this)
+        userPosition = sharePref!!.loadSavedPosition()
     }
 
     private fun setUpNewLocationListener() {
@@ -290,13 +297,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun goToBeautifulMosques() {
-        val intent = Intent(this,BeautifulMosquesActivity::class.java)
+        val intent = Intent(this, BeautifulMosquesActivity::class.java)
         startActivity(intent)
     }
 
     private fun goToQuotes() {
         val intent = Intent(this, QuotesActivity::class.java)
         startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToShareApp() {
@@ -305,14 +313,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text))
         shareIntent.type = "text/plain"
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_app)))
+
     }
 
     private fun goToFeedback() {
         startActivity(Intent(this, FeedbackActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToCredits() {
         startActivity(Intent(this, CreditsActivity::class.java))
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun sendEmail() {
@@ -395,6 +406,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun goToAuthInActivity() {
         val intent = Intent(this@MapsActivity2, AuthActivity::class.java)
         startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun getUserFromIntent(): User? {
@@ -482,20 +494,18 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 //anything you want to start after 3s
 
                 addMapMarkers(userPosition!!)
-                /*markerUser = mMap.addMarker(
-                    MarkerOptions()
-                        .position(userPosition!!)
-                        .draggable(true)
-                        .title("usee this marker to display position")
-                        .zIndex(1.0f)
-                )
-                mMap.setOnMarkerDragListener(this)*/
 
-
-                // addUserMarker()
 
             }, 2000)
         } else {
+            checkPref()
+            Handler().postDelayed(kotlinx.coroutines.Runnable {
+                //anything you want to start after 3s
+
+                userPosition?.let { addMapMarkers(it) }
+
+
+            }, 2000)
             //Toast.makeText(this,"Please activate Internet",Toast.LENGTH_LONG).show()
             val rootView = findViewById<View>(android.R.id.content)
             Snackbar.make(rootView, getString(R.string.offline), Snackbar.LENGTH_LONG).show()
@@ -510,9 +520,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun getUserPositionFromOtherActivities() {
         if (AuthActivity.userPosition != null) {
             userPosition = AuthActivity.userPosition!!
+            savePositionToSharePref(userPosition!!)
         } else if (SplashActivity.userPosition != null) {
             userPosition = SplashActivity.userPosition!!
+            savePositionToSharePref(userPosition!!)
         }
+    }
+
+    private fun savePositionToSharePref(position:LatLng){
+        sharePref = SharePref(this)
+        sharePref!!.saveUserPosition(position)
     }
 
     override fun onPause() {
@@ -556,15 +573,30 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun btnClickListeners() {
         card_first.setOnClickListener {
-            setCameraView(sortedMosqueList[1].position)
+            if (sortedMosqueList.isNotEmpty()) {
+                setCameraView(sortedMosqueList[1].position)
+            } else {
+                Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
+            }
+
         }
 
         card_second.setOnClickListener {
-            setCameraView(sortedMosqueList[2].position)
+            if (sortedMosqueList.isNotEmpty()) {
+                setCameraView(sortedMosqueList[2].position)
+            } else {
+                Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
+            }
+
         }
 
         card_third.setOnClickListener {
-            setCameraView(sortedMosqueList[3].position)
+            if (sortedMosqueList.isNotEmpty()) {
+                setCameraView(sortedMosqueList[3].position)
+            } else {
+                Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
+            }
+
         }
 
 
@@ -621,6 +653,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun goToSearch() {
         val intent = Intent(this, SearchActivity::class.java)
         startActivityForResult(intent, RQ_SEARCH)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun mosquePromptDialog() {
