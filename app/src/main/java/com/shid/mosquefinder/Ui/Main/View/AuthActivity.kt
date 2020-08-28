@@ -26,6 +26,7 @@ import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
+import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingActivity
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
@@ -301,7 +302,7 @@ class AuthActivity : AppCompatActivity() {
             if (it.isCreated!!) {
                 toastMessage(it.name!!)
             }
-            goToMapActivity(it)
+            goToOnBoardingActivity(it)
         })
 
     }
@@ -312,6 +313,14 @@ class AuthActivity : AppCompatActivity() {
             String.format(resources.getString(R.string.toast_auth_salutation,name)),
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    private fun goToOnBoardingActivity(user: User){
+        val intent = Intent(this@AuthActivity, OnBoardingActivity::class.java)
+        intent.putExtra(USER, user)
+        startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        finish()
     }
 
     private fun goToMapActivity(user: User) {

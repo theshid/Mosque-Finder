@@ -42,6 +42,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
+            android:theme="@style/AppTheme.OnBoarding">
+
+        </activity>
         <activity
             android:name=".Ui.Main.View.AuthActivity"
             android:screenOrientation="portrait" />

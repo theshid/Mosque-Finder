@@ -93,5 +93,40 @@
     <string name="menu_quote">Islamic Quotes</string>
     <string name="menu_detail">Detail on Mosque</string>
 
+    //OnBoarding Activity
+    <string name="onboarding_slide1_title">Welcome to Mosque Finder</string>
+    <string name="onboarding_slide1_subtitle">Find all nearby Mosque in your area </string>
+    <string name="onboarding_slide1_desc">Users can add mosques that are not on the map.</string>
+
+    <string name="onboarding_slide2_title">Type of Mosque</string>
+    <string name="onboarding_slide2_subtitle">There are four types of mosques</string>
+    <string name="onboarding_slide2_desc">Verified mosques, non verified, and mosques which position
+    are inaccurate</string>
+
+    <string name="onboarding_slide3_title">See the mosque closest to you</string>
+    <string name="onboarding_slide3_subtitle">Mosque Finder</string>
+    <string name="onboarding_slide3_desc">By clicking on the squares the camera will show you the
+        corresponding mosque.</string>
+
+    <string name="onboarding_slide4_title">Get Mosque Direction</string>
+    <string name="onboarding_slide4_subtitle">Click on the mosques</string>
+    <string name="onboarding_slide4_desc">By clicking on the mosque and on the name displayed, you
+        can have the direction to the mosque displayed on Google Map.</string>
+
+    <string name="onboarding_slide5_title">Adding a mosque to the Map</string>
+    <string name="onboarding_slide5_subtitle">Click on the blue button menu</string>
+    <string name="onboarding_slide5_desc">By clicking on button on the right, choose "Add Mosque"
+    then click on the marker, or press and drag it on the position of the mosque</string>
+
+    <string name="onboarding_slide6_title">Confirm the position of Mosques</string>
+    <string name="onboarding_slide6_subtitle">Help other users by confirming or reporting false
+    location</string>
+    <string name="onboarding_slide6_desc">By clicking on the mosque and on the name displayed, you
+        can confirm or report a location by following the menu.</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="get_started">Get started</string>
+    <string name="previous">previous</string>
+
 
 </resources>

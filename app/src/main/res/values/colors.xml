@@ -20,6 +20,10 @@
     <color name="redAccent">#FF1A4B</color>
     <color name="blackOpacity50">#80121212</color>
     <color name="whiteTransparent">#00FFFFFF</color>
+    <color name="colorPurple">#6c63ff</color>
+    <color name="colorIndigo">#303F9F</color>
+    <color name="colorBlueMidnight">#003366</color>
+    <color name="colorGrey">#C9C9C9</color>
 
     <color name="color1">#424549</color>
 </resources>

@@ -118,9 +118,8 @@ class QuotesActivity : AppCompatActivity() {
     private fun setUpViewPager() {
         viewPager2.setPadding(100, 0, 100, 0)
         viewPagerAdapter = ViewPagerAdapter(mQuoteList, this)
-        indicator.attachToViewPager2(viewPager2)
-
         viewPager2.adapter = viewPagerAdapter
+        worm_dots_indicator.setViewPager2(viewPager2)
 
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrolled(
