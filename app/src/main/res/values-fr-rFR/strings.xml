@@ -47,7 +47,25 @@
     <string name="dialog_msg_google_map">Montrer l\'itinéraire sur Google Map</string>
     <string name="dialog_log_out">Êtes-vous sûr de vouloir vous déconnecter?</string>
     <string name="map_error">Télécharger Google Map</string>
-    <string name="refresh_map">Veuillez rafraichir la carte et vérifier votre connexion Internet</string>
+    <string name="refresh_map">Veuillez vérifier votre connexion Internet et rafraichir la carte.</string>
+    <string name="bubble1">Les Mosquées les plus priches de vous</string>
+    <string name="description1">En cliquant sur les icônes, la carte s\'orientera vers la mosquée en
+        question.</string>
+    <string name="bubble2">Option Menu</string>
+    <string name="description2">En cliquanr sur ce boutton trois options seront visibles ,\n -Actualiser Carte
+        (dans les cas où votre connexion est instable vous pourrez rafraichir la carte)\n -Ajouter
+    mosquée (vous permet d\'ajouter une mosquée sur la carte, pour déplacer le marqueur, maintenez le
+        et déplacé le à la position désiré, pour confirmer la position appuyez sur le marqueur rouge) \n
+        -Ma position (repositionne la caméra sur votre position)</string>
+    <string name="bubble3">Rechercher une Mosquée</string>
+    <string name="description3">Vous pouvez rechercher une mosquée en cliquant sur la bar de recherche, the mosques
+    les mosquées sont classées en fonction de leur distance par rapport à vous.</string>
+    <string name="bubble4">Menu de navigation</string>
+    <string name="description4">Vous pouvez accéder au menu en cliquant sur ce boutton ou en glissant
+        votre doight de la gauche vers la droite. Des fonctionalités supplémentaires sont displonibles
+        telles que des citations et des informations sur les mosquées les plus connus. Jettez-y un
+        coup d\'oeil 😁</string>
+    <string name="bubble">Bienvenue à Mosque Finder</string>
 
     //Fab menu
     <string name="options_1">Actualiser Carte</string>
@@ -70,6 +88,7 @@
     <string name="menu_feedback">Feedback</string>
     <string name="menu_credits">Credits</string>
     <string name="menu_contact">Contact</string>
+    <string name="menu_help">Aide</string>
     <string name="menu_exit">Se Déconnecter</string>
 
 
@@ -96,41 +115,53 @@
 
     <string name="sign_out_button">sign out</string>
 
-    <string name="menu_quote">Citations Islamiques</string>
+    <string name="menu_quote">Citations </string>
     <string name="menu_detail">Détail sur la Mosquée</string>
 
     //OnBoarding Activity
-    <string name="onboarding_slide1_title">Welcome to Mosque Finder</string>
-    <string name="onboarding_slide1_subtitle">Find all nearby Mosque in your area </string>
-    <string name="onboarding_slide1_desc">Users can add mosques that are not on the map.</string>
+    <string name="onboarding_slide1_title">Bienvenue à Mosque Finder</string>
+    <string name="onboarding_slide1_subtitle">Trouver toutes les Mosquées à proximité </string>
+    <string name="onboarding_slide1_desc">Ne rater jamais une prière lorsque vous êtes sur la
+        route.</string>
 
-    <string name="onboarding_slide2_title">Type of Mosque</string>
-    <string name="onboarding_slide2_subtitle">There are four types of mosques</string>
-    <string name="onboarding_slide2_desc">Verified mosques, non verified, and mosques which position
-    are inaccurate</string>
+    <string name="onboarding_slide2_title">Type de Mosquée</string>
+    <string name="onboarding_slide2_subtitle">Il y a quatre types de Mosquées</string>
+    <string name="onboarding_slide2_desc">Les Mosquées qui ont été vérifiées, celles qui ne l\'ont
+     pas été et celles dont la position ont été signalées comme étant erronées. Les Mosquées sont
+    vérifiées par vous et les autres utilisateurs.</string>
 
-    <string name="onboarding_slide3_title">See the mosque closest to you</string>
+    <string name="onboarding_slide3_title">Localiser les Mosquées environnantes</string>
     <string name="onboarding_slide3_subtitle">Mosque Finder</string>
-    <string name="onboarding_slide3_desc">By clicking on the squares the camera will show you the
-        corresponding mosque.</string>
+    <string name="onboarding_slide3_desc">Les Trois Mosquées les plus proches de vous seront
+    indiquées sur l\'écran principal, ainsi de leur distance par rapport à vous</string>
 
-    <string name="onboarding_slide4_title">Get Mosque Direction</string>
-    <string name="onboarding_slide4_subtitle">Click on the mosques</string>
-    <string name="onboarding_slide4_desc">By clicking on the mosque and on the name displayed, you
-        can have the direction to the mosque displayed on Google Map.</string>
+    <string name="onboarding_slide4_title">Obtenez l\'itinéraire de votre Mosquée</string>
+    <string name="onboarding_slide4_subtitle">Cliquez sur les Mosquées</string>
+    <string name="onboarding_slide4_desc">En cliquant sur la Mosquée de votre choix, puis sur son
+    nom, vous pourrez avoir l\'itinéraire vers la Mosquée en question.</string>
 
-    <string name="onboarding_slide5_title">Adding a mosque to the Map</string>
-    <string name="onboarding_slide5_subtitle">Click on the blue button menu</string>
-    <string name="onboarding_slide5_desc">By clicking on button on the right, choose "Add Mosque"
-    then click on the marker, or press and drag it on the position of the mosque</string>
+    <string name="onboarding_slide5_title">Ajouter une Mosquée à la carte.</string>
+    <string name="onboarding_slide5_subtitle">Contribuer à la communauté</string>
+    <string name="onboarding_slide5_desc">Pas toutes les mosquées sont sur la carte. Vous pouvez
+    contribuer en ajoutant les mosquées que vous fréquentez et qui ne sont pas sur la carte. en
+    appuyant sur le bouton bleu sur l\'écran principal.</string>
 
-    <string name="onboarding_slide6_title">Confirm the position of Mosques</string>
-    <string name="onboarding_slide6_subtitle">Help other users by confirming or reporting false
-    location</string>
-    <string name="onboarding_slide6_desc">By clicking on the mosque and on the name displayed, you
-        can confirm or report a location by following the menu.</string>
-    <string name="next">Next</string>
-    <string name="skip">Skip</string>
-    <string name="get_started">Get started</string>
+    <string name="onboarding_slide6_title">Confirmez ou Signalez la position d\'une Mosquée</string>
+    <string name="onboarding_slide6_subtitle">Aidez les autres en confirmant ou en signalant la
+    position des mosquées.</string>
+    <string name="onboarding_slide6_desc">En Cliquant sur une mosquée et sur le nom affiché, vous
+    pouvez confirmer ou signaler sa position en suivant le menu qui s\'affichera.</string>
+    <string name="next">Suivant</string>
+    <string name="skip">Passer</string>
+    <string name="get_started">Commencer</string>
     <string name="previous">previous</string>
+
+    //Map Repository
+    <string name="location_after_report">Merci d\'avoir signalé la position.</string>
+    <string name="location_already_report">Vous avez déjà signalé cette position. </string>
+    <string name="location_already_confirm">Vous avez déjà effectué cette action.</string>
+    <string name="location_after_confirm">Merci d\'avoir confirmé la position.</string>
+    <string name="mosque_not_added">La mosquée n\'a pas été ajouté veuillez vérifier votre connexion internet</string>
+    <string name="mosque_added">Merci! Veuillez confirmer la position un fois la mosquée sur la carte ou signaler en cas
+    d\'erreur.</string>
 </resources>

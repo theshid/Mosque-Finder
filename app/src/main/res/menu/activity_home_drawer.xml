@@ -27,6 +27,10 @@
         android:icon="@drawable/ic_contact"
         android:title="@string/menu_contact" />
     <item
+        android:id="@+id/nav_help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/menu_help" />
+    <item
         android:id="@+id/nav_exit"
         android:icon="@drawable/ic_exit"
         android:title="@string/menu_exit" />

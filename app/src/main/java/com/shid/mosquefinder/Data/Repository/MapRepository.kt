@@ -54,6 +54,8 @@ class MapRepository constructor(mService: ApiInterface, application: Application
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     init {
+
+
         getGoogleMosqueFromFirebase()
         getTotalMosquesFromFirebase()
         getNigerGoogleMosqueFromFirebase()
@@ -302,7 +304,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
             .set(userInput)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully written!")
-                statusMsg.postValue(Resource.success("Thank you for confirming location"))
+                statusMsg.postValue(Resource.success(mApp.getString(R.string.mosque_added)))
                 //addMapMarkers()
 
             }
@@ -312,7 +314,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                 statusMsg.postValue(
                     Resource.error(
                         e.localizedMessage,
-                        "Mosque has not been added check internet"
+                        mApp.getString(R.string.mosque_not_added)
                     )
                 )
 
@@ -332,7 +334,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                 realDatabase.child("votes").child(mosque.documentId)
                     .child(user.uid).setValue(1L)
                     .addOnSuccessListener {
-                        statusMsg.postValue(Resource.success("Thank you for confirming location"))
+                        statusMsg.postValue(Resource.success(mApp.getString(R.string.location_after_confirm)))
                         database.collection("mosques").document(mosque.documentId)
                             .update("report", FieldValue.increment(1))
                             .addOnSuccessListener {
@@ -348,7 +350,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                         statusMsg.postValue(
                             Resource.error(
                                 it.localizedMessage,
-                                "You already made a choice "
+                                mApp.getString(R.string.location_already_confirm)
                             )
                         )
                         Crashlytics.logException(it)
@@ -368,7 +370,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                 realDatabase.child("votes").child(mosque.documentId)
                     .child(user.uid).setValue(-1L)
                     .addOnSuccessListener {
-                        statusMsg.postValue(Resource.success("Thank you for reporting location"))
+                        statusMsg.postValue(Resource.success(mApp.getString(R.string.location_after_report)))
                         database.collection("mosques").document(mosque.documentId)
                             .update("report", FieldValue.increment(-1))
                             .addOnSuccessListener {
@@ -386,7 +388,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                         statusMsg.postValue(
                             Resource.error(
                                 it.localizedMessage,
-                                "You already reported this location "
+                                mApp.getString(R.string.location_already_report)
                             )
                         )
                         Crashlytics.logException(it)

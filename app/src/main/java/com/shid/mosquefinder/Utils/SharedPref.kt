@@ -14,14 +14,20 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
+    fun setHelp(firstTime:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean("first_time",firstTime)
+        editor.apply()
+    }
+
     fun loadSavedPosition(): LatLng {
     val position:LatLng = LatLng(mySharePref.getFloat("position_lat",15F).toDouble(),
     mySharePref.getFloat("position_lon",15F).toDouble())
         return position
     }
 
-    fun loadNightMode(): Boolean {
-        return mySharePref.getBoolean("NightMode", false)
+    fun loadHelpPref(): Boolean {
+        return mySharePref.getBoolean("first_time", true)
     }
 
     init {

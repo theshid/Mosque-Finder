@@ -139,6 +139,9 @@ dependencies {
     implementation 'com.github.rbro112:Android-Indefinite-Pager-Indicator:1.3'
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
 
+    //Showcase
+    implementation 'com.elconfidencial.bubbleshowcase:bubbleshowcase:1.3.1'
+
 
 
 
