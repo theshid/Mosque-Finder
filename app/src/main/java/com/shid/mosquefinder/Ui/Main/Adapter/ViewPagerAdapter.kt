@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.shid.mosquefinder.Data.Model.Quotes
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.item_pager.view.*
+import java.util.*
 
 class ViewPagerAdapter(var list: MutableList<Quotes>, var context: Context) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
@@ -32,7 +33,12 @@ class ViewPagerAdapter(var list: MutableList<Quotes>, var context: Context) :
         fun bind(quotes: Quotes) {
             itemView.apply {
                 author.text = quotes.author
-                quote_text.text = " ''" + quotes.quote + "'' "
+                if (Locale.getDefault().language == "fr"){
+                    quote_text.text = " ''" + quotes.quote_fr + "'' "
+                }else{
+                    quote_text.text = " ''" + quotes.quote + "'' "
+                }
+
             }
         }
 

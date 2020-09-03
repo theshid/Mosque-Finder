@@ -16,7 +16,7 @@
     <string name="toast_permission">Please accept Permissions</string>
     <string name="email_message">Send email to mosquefinder@gmail.com</string>
     <string name="toast_log_in_msg">You are logged in as: %1$s</string>
-    <string name="toast_marker">Drag the marker to where the mosque is</string>
+    <string name="toast_marker">Hold and drag the marker to where the mosque is, then press on the marker</string>
 
     //Snackbar
     <string name="sneaker_connected">Connected!!</string>
@@ -33,7 +33,7 @@
     <string name="send_mail">Send mail...</string>
     <string name="offline">Please activate Internet or refresh to use offline mode</string>
     <string name="title_dialog">Mosque Finder</string>
-    <string name="dialog_prompt_location">Are you sure you want to add a mosque?</string>
+    <string name="dialog_prompt_location">Are you sure you want to add a mosque in this location?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
@@ -50,10 +50,10 @@
     <string name="bubble1">See the closest Mosque around you</string>
     <string name="description1">By clicking the tiles, you will be able to see the position of the mosque.</string>
     <string name="bubble2">Menu Option</string>
-    <string name="description2">By clicking this button, three options will be displayed,\n -Reset the map
-        (in case there is an Internet issue)\n -Add a mosque (enables you to add a mosque on the map,
-        to move to marker hold and drag, to confirm the position just press on the red marker) \n
-        -My position (relocates the camera to your position)</string>
+    <string name="description2">By clicking this button, three options will be displayed,\n 1.Reset the map:\n
+        -In case there is an Internet issue, you can refresh the map\n 2.Add a mosque:\n -Enables you to add a mosque on the map,
+        to move to marker hold and drag, to confirm the position just press on the red marker. \n
+        3.My position:\n -Relocates the camera to your position</string>
     <string name="bubble3">Search all Mosques</string>
     <string name="description3">You can search any mosque by clicking the search bar, the mosques
     are classified by distance related to your position</string>
@@ -62,6 +62,9 @@
     swiping the screen from left to right. Additional features are available like motivational quotes
     and information on the most famous mosques. Check them out 😁</string>
     <string name="bubble">Welcome to Mosque Finder</string>
+    <string name="dialog_rate_app">Thank you for using Mosque Finder. If you like it please rate us!</string>
+    <string name="rate">Rate App</string>
+    <string name="from_position">from your position</string>
 
     //Fab menu
     <string name="options_1">Reset Map</string>
@@ -110,35 +113,34 @@
     <string name="menu_detail">Detail on Mosque</string>
 
     //OnBoarding Activity
-    <string name="onboarding_slide1_title">Welcome to Mosque Finder</string>
-    <string name="onboarding_slide1_subtitle">Find all nearby Mosque in your area </string>
+    <string name="onboarding_slide1_title">Welcome to Mosque Finder.</string>
+    <string name="onboarding_slide1_subtitle">Find all nearby Mosque in your area. </string>
     <string name="onboarding_slide1_desc">Never miss a prayer while on the road.</string>
 
-    <string name="onboarding_slide2_title">Types of Mosque</string>
-    <string name="onboarding_slide2_subtitle">There are four types of Mosques </string>
-    <string name="onboarding_slide2_desc">Verified mosques, non verified, and mosques which position
-    are inaccurate. Mosques are verified by you and other users.</string>
+    <string name="onboarding_slide2_title">Mosques are verified by you and other users.</string>
+    <string name="onboarding_slide2_subtitle">There are four types of Mosques. </string>
+    <string name="onboarding_slide2_desc">Verified mosques (2 types), non verified, and mosques which position
+    are inaccurate. </string>
 
-    <string name="onboarding_slide3_title">See the mosque closest to you</string>
-    <string name="onboarding_slide3_subtitle">Mosque Finder</string>
+    <string name="onboarding_slide3_title">See the mosque closest to you.</string>
+    <string name="onboarding_slide3_subtitle">Mosque Finder.</string>
     <string name="onboarding_slide3_desc">Mosque Finder shows you the three closest mosque to you on the
     main screen.</string>
 
-    <string name="onboarding_slide4_title">Get Mosque Direction</string>
-    <string name="onboarding_slide4_subtitle">Click on the Mosques</string>
-    <string name="onboarding_slide4_desc">By clicking on the mosque and on the name displayed, you
+    <string name="onboarding_slide4_title">Get Mosque Direction.</string>
+    <string name="onboarding_slide4_subtitle">Click on the Mosques.</string>
+    <string name="onboarding_slide4_desc">By clicking on the mosque, you
         can have the direction to the mosque displayed via Google Map.</string>
 
-    <string name="onboarding_slide5_title">Adding a mosque to the Map</string>
-    <string name="onboarding_slide5_subtitle">Contribute to the Community</string>
+    <string name="onboarding_slide5_title">Adding a mosque to the Map.</string>
+    <string name="onboarding_slide5_subtitle">Contribute to the Community.</string>
     <string name="onboarding_slide5_desc">Not all mosques are on the map, you can contribute by
-    adding your locals mosques that are not displayed on the map by pressing the blue button
-    on the main screen</string>
+    adding your locals mosques that are not displayed on the map.</string>
 
     <string name="onboarding_slide6_title">Confirm or Report the position of Mosques</string>
     <string name="onboarding_slide6_subtitle">Help other users by confirming or reporting false
     location</string>
-    <string name="onboarding_slide6_desc">By clicking on the mosque and on the name displayed, you
+    <string name="onboarding_slide6_desc">By clicking on the mosque, you
         can confirm or report a location by following the menu.</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
@@ -153,7 +155,9 @@
     <string name="location_after_confirm">Thank you for confirming location.</string>
     <string name="mosque_not_added">Mosque has not been added check internet</string>
     <string name="mosque_added">Thank you! Please confirm the position or report in case of error.</string>
-
+    <string name="marker_verified">(Verified)</string>
+    <string name="marker_not_verified">(Not verified)</string>
+    <string name="marker_false_position">(False position)</string>
 
 
 </resources>

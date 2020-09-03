@@ -54,17 +54,20 @@ class MyClusterManagerRenderer constructor(
             "verified" -> {
                 imageView!!.setImageResource(R.drawable.verified)
                 val icon = iconGenerator.makeIcon()
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title + " "+
+                mContext.getString(R.string.marker_verified))
             }
             "not_verified" ->{
                 imageView!!.setImageResource(R.drawable.not_verified)
                 val icon = iconGenerator.makeIcon()
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title + " "+
+                        mContext.getString(R.string.marker_not_verified))
             }
             "false" -> {
                 imageView!!.setImageResource(R.drawable.false_location)
                 val icon = iconGenerator.makeIcon()
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title + " "+
+                        mContext.getString(R.string.marker_false_position))
             }
             else -> {
                 imageView!!.setImageResource(R.drawable.user_pic)

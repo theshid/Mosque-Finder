@@ -49,14 +49,16 @@ class QuoteRepository {
                         //quote.documentId = doc.id
 
                         var quoteAuthor: String = doc.get("author") as String
-                        var quote_text: String = doc.get("quote") as String
+                        var quoteText: String = doc.get("quote") as String
+                        var quoteFr:String = doc.get("quote_fr") as String
                         //var mosqueId: String = quote.documentId
 
 
                         var QuoteElem: Quotes =
                             Quotes(
                                 quoteAuthor,
-                                quote_text
+                                quoteText,
+                                quoteFr
                             )
                         //Log.d(TAG, "the id  is" + QuoteElem.documentId)
                         mQuoteList.add(QuoteElem)

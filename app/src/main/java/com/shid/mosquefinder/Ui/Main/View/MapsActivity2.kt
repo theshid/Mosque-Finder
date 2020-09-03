@@ -2,6 +2,7 @@ package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.SharedElementCallback
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -27,7 +28,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import com.elconfidencial.bubbleshowcase.BubbleShowCase
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -116,7 +116,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private lateinit var locationCallback: LocationCallback
     val locationTracker = LocationTracker()
     private var sharePref: SharePref? = null
-    private var isFirstTime:Boolean? = null
+    private var isFirstTime: Boolean? = null
+    private  var useCount: Int = 0
+    private var didUserRate: Boolean? = null
 
     private var buttonIcon = 0
     private var speedDialSize = 3
@@ -200,7 +202,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps2)
 
-        if (checkPrefFirstTime()){
+        useCount = loadUseCount()
+        didUserRate = loadIfUserRated()
+        useCount++
+        setUserCount(useCount)
+        if (useCount != 0 && didUserRate == false){
+            if (useCount.rem(5) ==0){
+                dialogRateApp(didUserRate!!)
+            }
+        }
+
+        if (checkPrefFirstTime()) {
             activateShowcase()
             isFirstTime = false
             setFirstTimePref(isFirstTime!!)
@@ -232,13 +244,53 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     }
 
-    private fun checkPrefFirstTime():Boolean{
+    private fun loadUseCount(): Int {
+        sharePref = SharePref(this)
+        return sharePref!!.loadUseCount()
+    }
+
+    private fun loadIfUserRated(): Boolean {
+        sharePref = SharePref(this)
+        return sharePref!!.loadIfUserRated()
+    }
+
+    private fun checkPrefFirstTime(): Boolean {
         sharePref = SharePref(this)
         isFirstTime = sharePref!!.loadHelpPref()
         return isFirstTime!!
     }
 
-    private fun setFirstTimePref(value:Boolean){
+    private fun dialogRateApp(valueRate:Boolean) {
+        MaterialDialog(this).show {
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_rate_app))
+            positiveButton(text = getString(R.string.rate)) { dialog ->
+                dialog.cancel()
+                //userPosition?.let { mosqueInputDialog(it) }
+                didUserRate = true
+                setIfUserRated(valueRate)
+
+            }
+            negativeButton(text = getString(R.string.cancel)) { dialog ->
+                dialog.cancel()
+                didUserRate = false
+                setIfUserRated(valueRate)
+            }
+            icon(R.drawable.logo2)
+        }
+    }
+
+    private fun setIfUserRated( didUserRate: Boolean) {
+        sharePref = SharePref(this)
+        sharePref!!.saveIfUserRated( didUserRate)
+    }
+
+    private fun setUserCount(use_count:Int){
+        sharePref = SharePref(this)
+        sharePref!!.saveUseCount(use_count)
+    }
+
+    private fun setFirstTimePref(value: Boolean) {
         sharePref = SharePref(this)
         sharePref!!.setHelp(value)
     }
@@ -304,10 +356,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_FEEDBACK)
                     goToFeedback()
                 }
-                R.id.nav_credits -> {
+               /* R.id.nav_credits -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CREDITS)
                     goToCredits()
-                }
+                }*/
                 R.id.nav_contact -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     sendEmail()
@@ -327,77 +379,49 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun activateShowcase() {
-       /* val first: BubbleShowCase = BubbleShowCaseBuilder(this) //Activity instance
-            .title(getString(R.string.bubble1)) //Any title for the bubble view
-            .targetView(card_map) //View to point out
-            .description(getString(R.string.description1))
-            .backgroundColorResourceId(R.color.colorPrimary)
-            .imageResourceId(R.drawable.logo2)
-            .textColorResourceId(R.color.colorWhite)
-            .show() //Display the ShowCase
-
-        val second: BubbleShowCase = BubbleShowCaseBuilder(this) //Activity instance
-            .title(getString(R.string.bubble2)) //Any title for the bubble view
-            .targetView(fab) //View to point out
-            .description(getString(R.string.description2))
-            .backgroundColorResourceId(R.color.colorPrimary)
-            .imageResourceId(R.drawable.logo2)
-            .textColorResourceId(R.color.colorWhite)
-            .show() //Display the ShowCase
-
-        val third: BubbleShowCase = BubbleShowCaseBuilder(this) //Activity instance
-            .title(getString(R.string.bubble3)) //Any title for the bubble view
-            .targetView(searchText) //View to point out
-            .description(getString(R.string.description3))
-            .backgroundColorResourceId(R.color.colorPrimary)
-            .imageResourceId(R.drawable.logo2)
-            .textColorResourceId(R.color.colorWhite)
-            .show() //Display the ShowCase
-
-        val fourth: BubbleShowCase = BubbleShowCaseBuilder(this) //Activity instance
-            .title(getString(R.string.bubble4)) //Any title for the bubble view
-            .targetView(menuButton) //View to point out
-            .description(getString(R.string.description4))
-            .backgroundColorResourceId(R.color.colorPrimary)
-            .imageResourceId(R.drawable.logo2)
-            .textColorResourceId(R.color.colorWhite)
-            .show() //Display the ShowCase*/
-
         BubbleShowCaseSequence()
-            .addShowCase(BubbleShowCaseBuilder(this) //Activity instance
-                .title(getString(R.string.bubble)) //Any title for the bubble view
-                .backgroundColorResourceId(R.color.colorPrimary)
-                .imageResourceId(R.drawable.logo2)
-                .textColorResourceId(R.color.colorWhite)) //First BubbleShowCase to show
-            .addShowCase(BubbleShowCaseBuilder(this) //Activity instance
-                .title(getString(R.string.bubble1)) //Any title for the bubble view
-                .targetView(card_map) //View to point out
-                .description(getString(R.string.description1))
-                .backgroundColorResourceId(R.color.colorPrimary)
-                .imageResourceId(R.drawable.logo2)
-                .textColorResourceId(R.color.colorWhite)) //First BubbleShowCase to show
-            .addShowCase(BubbleShowCaseBuilder(this) //Activity instance
-                .title(getString(R.string.bubble2)) //Any title for the bubble view
-                .targetView(fab1) //View to point out
-                .description(getString(R.string.description2))
-                .backgroundColorResourceId(R.color.colorPrimary)
-                .imageResourceId(R.drawable.logo2)
-                .textColorResourceId(R.color.colorWhite)) // This one will be showed when firstShowCase is dismissed
-            .addShowCase(BubbleShowCaseBuilder(this) //Activity instance
-                .title(getString(R.string.bubble3)) //Any title for the bubble view
-                .targetView(searchText) //View to point out
-                .description(getString(R.string.description3))
-                .backgroundColorResourceId(R.color.colorPrimary)
-                .imageResourceId(R.drawable.logo2)
-                .textColorResourceId(R.color.colorWhite)
-                )
-            .addShowCase(BubbleShowCaseBuilder(this) //Activity instance
-                .title(getString(R.string.bubble4)) //Any title for the bubble view
-                .targetView(menuButton) //View to point out
-                .description(getString(R.string.description4))
-                .backgroundColorResourceId(R.color.colorPrimary)
-                .imageResourceId(R.drawable.logo2)
-                .textColorResourceId(R.color.colorWhite)
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble)) //Any title for the bubble view
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            ) //First BubbleShowCase to show
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble1)) //Any title for the bubble view
+                    .targetView(card_map) //View to point out
+                    .description(getString(R.string.description1))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            ) //First BubbleShowCase to show
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble2)) //Any title for the bubble view
+                    .targetView(fab1) //View to point out
+                    .description(getString(R.string.description2))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            ) // This one will be showed when firstShowCase is dismissed
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble3)) //Any title for the bubble view
+                    .targetView(searchText) //View to point out
+                    .description(getString(R.string.description3))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            )
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble4)) //Any title for the bubble view
+                    .targetView(menuButton) //View to point out
+                    .description(getString(R.string.description4))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
             )
             .show() //Display the ShowCaseSequence
     }
@@ -424,11 +448,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun goToFeedback() {
         startActivity(Intent(this, FeedbackActivity::class.java))
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-    }
-
-    private fun initSplashScreen(){
-        startActivity(Intent(this,SplashActivity::class.java))
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
@@ -532,11 +551,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
             // showSnackBar(textView, "The network is back !")
@@ -598,11 +612,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         if (newUserPosition != null) {
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
-
-
                 addMapMarkers(newUserPosition!!)
-
-
                 // addUserMarker()
 
             }, 2000)
@@ -626,7 +636,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
             }, 2000)
             //Toast.makeText(this,"Please activate Internet",Toast.LENGTH_LONG).show()
-
 
 
         }
@@ -693,7 +702,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun btnClickListeners() {
         card_first.setOnClickListener {
-            if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size >5) {
+            if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
                 setCameraView(sortedMosqueList[1].position)
             } else {
                 Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
@@ -702,7 +711,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         card_second.setOnClickListener {
-            if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size >5) {
+            if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
                 setCameraView(sortedMosqueList[2].position)
             } else {
                 Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
@@ -711,7 +720,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         card_third.setOnClickListener {
-            if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size >5) {
+            if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
                 setCameraView(sortedMosqueList[3].position)
             } else {
                 Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
@@ -872,7 +881,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun saveMosqueInputInDatabase(userPosition: LatLng, inputField: String) {
         val mosqueLocation: GeoPoint = GeoPoint(userPosition.latitude, userPosition.longitude)
-        val userMosqueInput = hashMapOf(
+        val userMosqueInput:HashMap<String,Comparable<*>> = hashMapOf(
             "name" to inputField,
             "position" to mosqueLocation,
             "documentId" to "0",
@@ -1001,8 +1010,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun setTextViews() {
-        if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5){
-            Log.d(TAG,sortedMosqueList[2].title)
+        if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
+            Log.d(TAG, sortedMosqueList[2].title)
             mosque_first_distance.text =
                 String.format(getString(R.string.km_test), sortedMosqueList[1].distanceFromUser)
             mosque_second_distance.text =
@@ -1091,7 +1100,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 try {
                     val snippet =
                         distanceFromUser.toString() + " " +
-                                getString(R.string.km) + " " + "from your position "
+                                getString(R.string.km) + " " + getString(R.string.from_position)
                     val title = mosqueLocation.placeName
 
                     val newClusterMarker =
@@ -1130,7 +1139,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 try {
                     val snippet =
                         distanceFromUser.toString() + " " +
-                                getString(R.string.km) + " " + "from your position "
+                                getString(R.string.km) + " " + getString(R.string.from_position)
                     val title = mosqueLocation.placeName
 
                     val newClusterMarker =
@@ -1175,7 +1184,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 try {
                     val snippet =
                         distanceFromUser.toString() + " " +
-                                getString(R.string.km) + " " + "from your position "
+                                getString(R.string.km) + " " + getString(R.string.from_position)
                     val title = mosqueLocation.name
 
 

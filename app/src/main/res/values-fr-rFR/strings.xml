@@ -17,7 +17,8 @@
     <string name="toast_permission">Veuillez accepter les autorisations</string>
     <string name="email_message">Envoyer un email à mosquefinder@gmail.com</string>
     <string name="toast_log_in_msg">Vous êtes connecté en tant que: %1$s</string>
-    <string name="toast_marker">Déplacez le marqueur a l\'endroit ou se trouve la mosquée</string>
+    <string name="toast_marker">Déplacez le marqueur a l\'endroit ou se trouve la mosquée,
+    si vous vous trouvez sur place appuyez sur le marqueur rouge</string>
 
     //Snackbar
     <string name="sneaker_connected">Connecté!!</string>
@@ -34,7 +35,7 @@
     <string name="send_mail">Envoyer mail...</string>
     <string name="offline">Veuillez vous connecter ou raffraichir la carte pour activer le mode hors ligne</string>
     <string name="title_dialog">Mosque Finder</string>
-    <string name="dialog_prompt_location">Êtes vous sur de vouloir ajouter une mosquée?</string>
+    <string name="dialog_prompt_location">Êtes vous sur de vouloir ajouter une mosquée à cet endroit?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="cancel">Annuler</string>
@@ -48,24 +49,28 @@
     <string name="dialog_log_out">Êtes-vous sûr de vouloir vous déconnecter?</string>
     <string name="map_error">Télécharger Google Map</string>
     <string name="refresh_map">Veuillez vérifier votre connexion Internet et rafraichir la carte.</string>
-    <string name="bubble1">Les Mosquées les plus priches de vous</string>
+    <string name="bubble1">Les Mosquées les plus proches de vous</string>
     <string name="description1">En cliquant sur les icônes, la carte s\'orientera vers la mosquée en
         question.</string>
     <string name="bubble2">Option Menu</string>
-    <string name="description2">En cliquanr sur ce boutton trois options seront visibles ,\n -Actualiser Carte
-        (dans les cas où votre connexion est instable vous pourrez rafraichir la carte)\n -Ajouter
-    mosquée (vous permet d\'ajouter une mosquée sur la carte, pour déplacer le marqueur, maintenez le
-        et déplacé le à la position désiré, pour confirmer la position appuyez sur le marqueur rouge) \n
-        -Ma position (repositionne la caméra sur votre position)</string>
+    <string name="description2">En cliquanr sur ce boutton trois options seront visibles ,\n 1.Actualiser Carte:\n
+        -Dans les cas où votre connexion est instable vous pourrez rafraichir la carte\n 2.Ajouter
+    mosquée:\n -Vous permet d\'ajouter une mosquée sur la carte, pour déplacer le marqueur, maintenez le
+        et déplacez le à la position désirée, pour confirmer la position appuyez sur le marqueur rouge \n
+        3.Ma position:\n -Repositionne la caméra sur votre position</string>
     <string name="bubble3">Rechercher une Mosquée</string>
-    <string name="description3">Vous pouvez rechercher une mosquée en cliquant sur la bar de recherche, the mosques
+    <string name="description3">Vous pouvez rechercher une mosquée en cliquant sur la barre de recherche,
     les mosquées sont classées en fonction de leur distance par rapport à vous.</string>
     <string name="bubble4">Menu de navigation</string>
     <string name="description4">Vous pouvez accéder au menu en cliquant sur ce boutton ou en glissant
-        votre doight de la gauche vers la droite. Des fonctionalités supplémentaires sont displonibles
-        telles que des citations et des informations sur les mosquées les plus connus. Jettez-y un
+        votre doigt de la gauche vers la droite. Des fonctionalités supplémentaires sont disponibles
+        telles que des citations et des informations sur les belles mosquées. Jettez-y un
         coup d\'oeil 😁</string>
     <string name="bubble">Bienvenue à Mosque Finder</string>
+    <string name="marker_verified">(Position vérifié!)</string>
+    <string name="marker_not_verified">(Position non vérifié!)</string>
+    <string name="marker_false_position">(Position erronée!)</string>
+    <string name="from_position">de votre position</string>
 
     //Fab menu
     <string name="options_1">Actualiser Carte</string>
@@ -121,32 +126,31 @@
     //OnBoarding Activity
     <string name="onboarding_slide1_title">Bienvenue à Mosque Finder</string>
     <string name="onboarding_slide1_subtitle">Trouver toutes les Mosquées à proximité </string>
-    <string name="onboarding_slide1_desc">Ne rater jamais une prière lorsque vous êtes sur la
+    <string name="onboarding_slide1_desc">Ne ratez jamais une prière lorsque vous êtes sur la
         route.</string>
 
-    <string name="onboarding_slide2_title">Type de Mosquée</string>
-    <string name="onboarding_slide2_subtitle">Il y a quatre types de Mosquées</string>
-    <string name="onboarding_slide2_desc">Les Mosquées qui ont été vérifiées, celles qui ne l\'ont
-     pas été et celles dont la position ont été signalées comme étant erronées. Les Mosquées sont
+    <string name="onboarding_slide2_title"> Les Mosquées sont
     vérifiées par vous et les autres utilisateurs.</string>
+    <string name="onboarding_slide2_subtitle">Il y a quatre types de Mosquées.</string>
+    <string name="onboarding_slide2_desc">Les Mosquées qui ont été vérifiées(2 types), celles qui ne l\'ont
+     pas été et celles dont les positions ont été signalées comme étant erronées.</string>
 
-    <string name="onboarding_slide3_title">Localiser les Mosquées environnantes</string>
-    <string name="onboarding_slide3_subtitle">Mosque Finder</string>
+    <string name="onboarding_slide3_title">Localiser les Mosquées environnantes.</string>
+    <string name="onboarding_slide3_subtitle">Mosque Finder.</string>
     <string name="onboarding_slide3_desc">Les Trois Mosquées les plus proches de vous seront
-    indiquées sur l\'écran principal, ainsi de leur distance par rapport à vous</string>
+    indiquées sur l\'écran principal.</string>
 
-    <string name="onboarding_slide4_title">Obtenez l\'itinéraire de votre Mosquée</string>
-    <string name="onboarding_slide4_subtitle">Cliquez sur les Mosquées</string>
-    <string name="onboarding_slide4_desc">En cliquant sur la Mosquée de votre choix, puis sur son
-    nom, vous pourrez avoir l\'itinéraire vers la Mosquée en question.</string>
+    <string name="onboarding_slide4_title">Obtenez l\'itinéraire de votre Mosquée.</string>
+    <string name="onboarding_slide4_subtitle">Cliquez sur les Mosquées.</string>
+    <string name="onboarding_slide4_desc">En cliquant sur la Mosquée de votre choix,
+        vous pourrez avoir l\'itinéraire vers la Mosquée en question via Google Map.</string>
 
-    <string name="onboarding_slide5_title">Ajouter une Mosquée à la carte.</string>
-    <string name="onboarding_slide5_subtitle">Contribuer à la communauté</string>
+    <string name="onboarding_slide5_title">Ajoutez une Mosquée à la carte.</string>
+    <string name="onboarding_slide5_subtitle">Contribuez à la communauté.</string>
     <string name="onboarding_slide5_desc">Pas toutes les mosquées sont sur la carte. Vous pouvez
-    contribuer en ajoutant les mosquées que vous fréquentez et qui ne sont pas sur la carte. en
-    appuyant sur le bouton bleu sur l\'écran principal.</string>
+    contribuer en ajoutant celles que vous fréquentez si elles ne sont pas sur la carte.</string>
 
-    <string name="onboarding_slide6_title">Confirmez ou Signalez la position d\'une Mosquée</string>
+    <string name="onboarding_slide6_title">Confirmez ou Signalez la position d\'une Mosquée.</string>
     <string name="onboarding_slide6_subtitle">Aidez les autres en confirmant ou en signalant la
     position des mosquées.</string>
     <string name="onboarding_slide6_desc">En Cliquant sur une mosquée et sur le nom affiché, vous
@@ -164,4 +168,7 @@
     <string name="mosque_not_added">La mosquée n\'a pas été ajouté veuillez vérifier votre connexion internet</string>
     <string name="mosque_added">Merci! Veuillez confirmer la position un fois la mosquée sur la carte ou signaler en cas
     d\'erreur.</string>
+    <string name="dialog_rate_app">Merci d\'utiliser Mosque Finder. Si vous appréciez, prenez quelques
+        secondes pour donner une note sur Google Play Store.</string>
+    <string name="rate">Notez</string>
 </resources>

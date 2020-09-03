@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorWhite"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="32dp"
         android:descendantFocusability="blocksDescendants">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -38,21 +37,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="36dp"
+            android:fontFamily="@font/exo2_bold"
             android:text="Mosques Al Rashid"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textColor="@color/colorBlack"
             android:textSize="20sp"
-            android:fontFamily="@font/exo2_bold"
             android:translationZ="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/indicator"
             tools:text="Beautiful Mosque" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="260dp"
+            android:layout_height="380dp"
             android:background="@color/whiteTransparent"
             android:elevation="9dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,19 +60,20 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_marginTop="30dp"
             android:background="@color/colorBlack"
-            app:cardBackgroundColor="@color/colorWhite"
+            app:cardBackgroundColor="@color/colorPrimary"
             app:cardCornerRadius="14dp"
             app:cardElevation="4dp"
             app:layout_constraintBottom_toBottomOf="@+id/header"
             app:layout_constraintEnd_toEndOf="@+id/header"
-            app:layout_constraintStart_toStartOf="@id/appBar">
+            app:layout_constraintStart_toStartOf="@id/appBar"
+            app:layout_constraintStart_toEndOf="@+id/appBar">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/image"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="center"
@@ -83,8 +83,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CardView" />
 
-        </com.google.android.material.card.MaterialCardView>
 
+        </com.google.android.material.card.MaterialCardView>
 
 
         <!--<ProgressBar
@@ -101,7 +101,6 @@
             android:id="@+id/cardView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
             android:background="@color/colorBlack"
             app:cardBackgroundColor="@color/colorWhite"
             app:cardCornerRadius="14dp"
@@ -112,22 +111,21 @@
             app:layout_constraintTop_toBottomOf="@+id/name">
 
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/description"
-            style="@style/TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorBlack"
-            android:layout_marginTop="8dp"
-            android:text="Description"
-            android:textSize="18sp"
-            android:fontFamily="@font/quicksand_medium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name"
-            tools:text="24.0 KG" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/description"
+                style="@style/TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/quicksand_medium"
+                android:text="Description"
+                android:textColor="@color/colorBlack"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/name"
+                tools:text="24.0 KG" />
 
         </com.google.android.material.card.MaterialCardView>
         <!--<androidx.appcompat.widget.AppCompatTextView
@@ -140,7 +138,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weight"
             tools:text="Weight" />-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/indicator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header">
 
+            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                android:id="@+id/worm_dots_indicator2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                app:dotsColor="@color/colorPrimary"
+                app:dotsStrokeColor="@color/colorPrimary"
+                app:dotsCornerRadius="8dp"
+                app:dotsSize="8dp"
+                app:dotsSpacing="2dp"
+                app:dotsStrokeWidth="1dp"
+                />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

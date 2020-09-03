@@ -77,6 +77,7 @@ class BeautifulMosquesActivity : AppCompatActivity() {
     private fun setRecycler() {
         layoutManager = GridLayoutManager(this,2)
         mosque_recycler.layoutManager = layoutManager
+        mMosqueList.shuffle()
         mosqueAdapter = MosqueAdapter(mMosqueList, this)
         mosque_recycler.adapter = mosqueAdapter
         /*mosqueAdapter.setOnClickMosque {

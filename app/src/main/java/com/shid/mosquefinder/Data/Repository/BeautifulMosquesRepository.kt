@@ -48,9 +48,13 @@ class BeautifulMosquesRepository {
 
                         //quote.documentId = doc.id
 
-                        var mosqueName: String = doc.get("name") as String
-                        var description: String = doc.get("description") as String
-                        var link: String = doc.get("link") as String
+                        val mosqueName: String = doc.get("name") as String
+                        val description: String = doc.get("description") as String
+                        val link: String = doc.get("link") as String
+                        val pic:String = doc.get("pic") as String
+                        val pic2:String = doc.get("pic2") as String
+                        val pic3:String = doc.get("pic3") as String
+                        val descriptionFr:String = doc.get("description_fr") as String
                         //var mosqueId: String = quote.documentId
 
 
@@ -58,7 +62,11 @@ class BeautifulMosquesRepository {
                             BeautifulMosques(
                                 mosqueName,
                                 description,
-                                link
+                                link,
+                                pic,
+                                pic2,
+                                pic3,
+                                descriptionFr
                             )
                         //Log.d(TAG, "the id  is" + QuoteElem.documentId)
                         mBeautyList.add(beautyElem)
