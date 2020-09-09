@@ -16,6 +16,10 @@ MosqueFinder is an Android application 📱 that display nearby mosques(Currentl
 - User can send live feedback
 - User can see the most beautiful mosque
 
+## Architecture Pattern : MVVM 🛠
+
+<img src="images/mvvm.png" width="700" height="500">
+
 ## Built With 🛠
 
 - Kotlin
