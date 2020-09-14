@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import coil.api.load
 import com.omni.onboardingscreen.feature.onboarding.entity.OnBoardingPage
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.onboarding_page_item.view.*
@@ -33,7 +34,8 @@ class PagerViewHolder(private val root: View) : RecyclerView.ViewHolder(root) {
         root.titleTv?.text = res.getString(onBoardingPage.titleResource)
         root.subTitleTv?.text = res.getString(onBoardingPage.subTitleResource)
         root.descTV?.text = res.getString(onBoardingPage.descriptionResource)
-        root.img.setImageResource(onBoardingPage.logoResource)
+        //root.img.setImageResource(onBoardingPage.logoResource)
+        root.img.load(onBoardingPage.logoResource)
     }
 
     companion object {

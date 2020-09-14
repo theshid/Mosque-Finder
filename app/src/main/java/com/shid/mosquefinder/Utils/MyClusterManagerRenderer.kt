@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.view.ViewGroup
 import android.widget.ImageView
 import coil.ImageLoader
+import coil.api.load
 import coil.request.LoadRequest
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -47,30 +48,35 @@ class MyClusterManagerRenderer constructor(
     override fun onBeforeClusterItemRendered(item: ClusterMarker, markerOptions: MarkerOptions) {
         when (item.mPic) {
             "default" -> {
-                imageView!!.setImageResource(R.drawable.google)
+                imageView!!.setImageResource(R.drawable.google_fr)
+                //imageView!!.load(R.drawable.google_fr)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             }
             "verified" -> {
-                imageView!!.setImageResource(R.drawable.verified)
+                imageView!!.setImageResource(R.drawable.verifiee)
+                //imageView!!.load(R.drawable.verifiee)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title + " "+
                 mContext.getString(R.string.marker_verified))
             }
             "not_verified" ->{
-                imageView!!.setImageResource(R.drawable.not_verified)
+                imageView!!.setImageResource(R.drawable.non_verifiee)
+                //imageView!!.load(R.drawable.non_verifiee)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title + " "+
                         mContext.getString(R.string.marker_not_verified))
             }
             "false" -> {
-                imageView!!.setImageResource(R.drawable.false_location)
+                imageView!!.setImageResource(R.drawable.fausse_position)
+                //imageView!!.load(R.drawable.fausse_position)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title + " "+
                         mContext.getString(R.string.marker_false_position))
             }
             else -> {
-                imageView!!.setImageResource(R.drawable.user_pic)
+               imageView!!.setImageResource(R.drawable.user_pic)
+                //imageView!!.load(R.drawable.user_pic)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
 

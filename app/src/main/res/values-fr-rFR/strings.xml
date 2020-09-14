@@ -3,7 +3,7 @@
     <string name="app_name">MosqueFinder</string>
 
     //Auth Activity
-    <string name="quote">"\“A busy life makes prayer harder,\n but prayer makes a busy life easier.\”"</string>
+    <string name="quote">"\“Une vie bien remplie rend la prière plus difficile,\n mais la prière rend une vie bien remplie plus facile.\”"</string>
     <string name="sign_in_with_google">Se connecter avec Google</string>
 
     //Splash Activity

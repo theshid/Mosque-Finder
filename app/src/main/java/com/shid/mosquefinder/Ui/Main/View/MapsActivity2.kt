@@ -2,7 +2,6 @@ package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.SharedElementCallback
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -28,7 +27,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.elconfidencial.bubbleshowcase.BubbleShowCase
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseListener
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -40,6 +41,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.review.ReviewInfo
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.SphericalUtil
@@ -117,8 +121,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     val locationTracker = LocationTracker()
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
-    private  var useCount: Int = 0
+    private var useCount: Int = 0
     private var didUserRate: Boolean? = null
+
+    lateinit var manager: ReviewManager
+    var reviewInfo: ReviewInfo? = null
 
     private var buttonIcon = 0
     private var speedDialSize = 3
@@ -174,7 +181,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
                 }, 2000)
             } else {
-                setCameraView()
+                if (userPosition != null) {
+                    setCameraView(userPosition!!)
+                } else if (newUserPosition != null) {
+                    setCameraView(newUserPosition!!)
+                } else {
+                    setCameraView()
+                }
+
+
             }
             return true
         }
@@ -200,14 +215,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkIfPermissionIsActive()
         setContentView(R.layout.activity_maps2)
+
+        initReviews()
 
         useCount = loadUseCount()
         didUserRate = loadIfUserRated()
         useCount++
         setUserCount(useCount)
-        if (useCount != 0 && didUserRate == false){
-            if (useCount.rem(5) ==0){
+        if (useCount != 0 && didUserRate == false) {
+            if (useCount.rem(5) == 0) {
                 dialogRateApp(didUserRate!!)
             }
         }
@@ -244,6 +262,18 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     }
 
+    private fun checkIfPermissionIsActive() {
+        when {
+            PermissionUtils.isAccessFineLocationGranted(this) -> {
+
+            }
+            else -> {
+                val intent:Intent = Intent(this,AuthActivity::class.java)
+                startActivity(intent)
+            }
+        }
+    }
+
     private fun loadUseCount(): Int {
         sharePref = SharePref(this)
         return sharePref!!.loadUseCount()
@@ -260,15 +290,42 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         return isFirstTime!!
     }
 
-    private fun dialogRateApp(valueRate:Boolean) {
+    private fun askForReview(valueRate: Boolean) {
+        if (reviewInfo != null) {
+            manager.launchReviewFlow(this, reviewInfo!!).addOnFailureListener {
+                // Log error and continue with the flow
+            }.addOnCompleteListener { _ ->
+                // Log success and continue with the flow
+                didUserRate = true
+                setIfUserRated(true)
+
+            }
+        }
+    }
+
+    // Call this method asap, for example in onCreate()
+    private fun initReviews() {
+        manager = ReviewManagerFactory.create(this)
+        manager.requestReviewFlow().addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                reviewInfo = request.result
+            } else {
+                // Log error
+            }
+        }
+    }
+
+    private fun dialogRateApp(valueRate: Boolean) {
         MaterialDialog(this).show {
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_rate_app))
             positiveButton(text = getString(R.string.rate)) { dialog ->
                 dialog.cancel()
                 //userPosition?.let { mosqueInputDialog(it) }
-                didUserRate = true
-                setIfUserRated(valueRate)
+                //askForReview(valueRate)
+                goToStore()
+                setIfUserRated(true)
+
 
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
@@ -280,12 +337,25 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
     }
 
-    private fun setIfUserRated( didUserRate: Boolean) {
-        sharePref = SharePref(this)
-        sharePref!!.saveIfUserRated( didUserRate)
+    private fun goToStore(){
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setData(Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
+        try {
+            startActivity(
+                Intent(intent)
+                    .setPackage("com.android.vending")
+            )
+        } catch (exception: ActivityNotFoundException) {
+            startActivity(intent)
+        }
     }
 
-    private fun setUserCount(use_count:Int){
+    private fun setIfUserRated(didUserRate: Boolean) {
+        sharePref = SharePref(this)
+        sharePref!!.saveIfUserRated(didUserRate)
+    }
+
+    private fun setUserCount(use_count: Int) {
         sharePref = SharePref(this)
         sharePref!!.saveUseCount(use_count)
     }
@@ -356,10 +426,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_FEEDBACK)
                     goToFeedback()
                 }
-               /* R.id.nav_credits -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CREDITS)
-                    goToCredits()
-                }*/
+                /* R.id.nav_credits -> {
+                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CREDITS)
+                     goToCredits()
+                 }*/
                 R.id.nav_contact -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     sendEmail()
@@ -422,6 +492,35 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     .backgroundColorResourceId(R.color.colorPrimary)
                     .imageResourceId(R.drawable.logo2)
                     .textColorResourceId(R.color.colorWhite)
+                    .listener(object : BubbleShowCaseListener {
+                        override fun onBackgroundDimClick(bubbleShowCase: BubbleShowCase) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onBubbleClick(bubbleShowCase: BubbleShowCase) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onCloseActionImageClick(bubbleShowCase: BubbleShowCase) {
+                            if (userPosition != null) {
+                                addMapMarkers(userPosition!!)
+                            } else if (newUserPosition != null) {
+                                addMapMarkers(newUserPosition!!)
+                            } else {
+                                Toast.makeText(
+                                    this@MapsActivity2,
+                                    getString(R.string.offline),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+                        }
+
+                        override fun onTargetClick(bubbleShowCase: BubbleShowCase) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
             )
             .show() //Display the ShowCaseSequence
     }
@@ -451,10 +550,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
-    private fun goToCredits() {
-        startActivity(Intent(this, CreditsActivity::class.java))
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-    }
 
     private fun sendEmail() {
         Toast.makeText(this, getString(R.string.email_message), Toast.LENGTH_LONG).show()
@@ -627,7 +722,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }, 2000)
         } else {
             val rootView = findViewById<View>(android.R.id.content)
-            Snackbar.make(rootView, getString(R.string.offline), Snackbar.LENGTH_LONG).show()
+            //Snackbar.make(rootView, getString(R.string.offline), Snackbar.LENGTH_LONG).show()
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
                 checkPref()
@@ -881,7 +976,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun saveMosqueInputInDatabase(userPosition: LatLng, inputField: String) {
         val mosqueLocation: GeoPoint = GeoPoint(userPosition.latitude, userPosition.longitude)
-        val userMosqueInput:HashMap<String,Comparable<*>> = hashMapOf(
+        val userMosqueInput: HashMap<String, Comparable<*>> = hashMapOf(
             "name" to inputField,
             "position" to mosqueLocation,
             "documentId" to "0",
