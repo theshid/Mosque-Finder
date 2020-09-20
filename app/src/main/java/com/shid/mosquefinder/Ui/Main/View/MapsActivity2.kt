@@ -40,7 +40,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -76,6 +75,8 @@ import java.math.RoundingMode
 class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener {
 
     private lateinit var mMap: GoogleMap
+
+    private var testPlaces: List<PlacesSearchResult>? = null
 
     private lateinit var mapViewModel: MapViewModel
 
@@ -163,8 +164,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         override fun onMenuItemClick(position: Int): Boolean {
             if (position == 0) {
                 if (newUserPosition != null) {
+                    mosqueeDePlace(newUserPosition!!)
                     addMapMarkers(newUserPosition!!)
                 } else {
+                    mosqueeDePlace(userPosition!!)
                     addMapMarkers(userPosition!!)
                 }
 
@@ -218,7 +221,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         checkIfPermissionIsActive()
         setContentView(R.layout.activity_maps2)
 
-        initReviews()
+
+
+        //initReviews()
 
         useCount = loadUseCount()
         didUserRate = loadIfUserRated()
@@ -248,13 +253,31 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         savedInstanceState?.let {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
-
+        setTransparentStatusBar()
         setNetworkMonitor()
         setUpLocationListener()
         setUpNewLocationListener()
         setupViewModel()
-        setTransparentStatusBar()
+        when {
+            userPosition != null -> {
+                mosqueeDePlace(userPosition!!)
+            }
+            SplashActivity.userPosition != null -> {
+                mosqueeDePlace(SplashActivity.userPosition!!)
+            }
+            else -> {
+                checkPref()
+                if(userPosition!= null){
+                    mosqueeDePlace(userPosition!!)
+                }
+
+
+            }
+        }
         initGoogleSignInClient()
+
+
+
         setMessageForToast(user!!)
         btnClickListeners()
         setObserver()
@@ -268,7 +291,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
             }
             else -> {
-                val intent:Intent = Intent(this,AuthActivity::class.java)
+                val intent: Intent = Intent(this, AuthActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -337,7 +360,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
     }
 
-    private fun goToStore(){
+    private fun goToStore() {
         val intent = Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))
         try {
@@ -708,28 +731,32 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
                 addMapMarkers(newUserPosition!!)
+                //getMosquesFromGoogleMap(newUserPosition!!)
                 // addUserMarker()
 
-            }, 2000)
+            }, 3000)
 
         } else if (userPosition != null) {
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
 
                 addMapMarkers(userPosition!!)
+                //getMosquesFromGoogleMap(userPosition!!)
 
 
-            }, 2000)
+            }, 3000)
         } else {
             val rootView = findViewById<View>(android.R.id.content)
             //Snackbar.make(rootView, getString(R.string.offline), Snackbar.LENGTH_LONG).show()
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
                 checkPref()
-                userPosition?.let { addMapMarkers(it) }
+                userPosition?.let {
+                    addMapMarkers(it)
+                }
 
 
-            }, 2000)
+            }, 3000)
             //Toast.makeText(this,"Please activate Internet",Toast.LENGTH_LONG).show()
 
 
@@ -964,10 +991,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
                 dialog.cancel()
                 saveMosqueInputInDatabase(userPosition, inputField)
+                mosqueeDePlace(newUserPosition!!)
                 addMapMarkers(newUserPosition!!)
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
+                mosqueeDePlace(newUserPosition!!)
                 addMapMarkers(newUserPosition!!)
             }
             icon(R.drawable.logo2)
@@ -1044,21 +1073,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     }
 
+
     private fun addMapMarkers(userLocation: LatLng) {
         resetMap()
-        /*mMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener{
-            override fun onMarkerDragEnd(p0: Marker?) {
-                Log.d(TAG,"onMarkerDragEnd")
-            }
-
-            override fun onMarkerDragStart(p0: Marker?) {
-                Log.d(TAG,"onMarkerDragStart")
-            }
-
-            override fun onMarkerDrag(p0: Marker?) {
-                Log.d(TAG,"onMarkerDragStart")
-            }
-        })*/
 
 
         if (mClusterManager == null) {
@@ -1072,19 +1089,19 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             )
             mClusterManager!!.renderer = mClusterManagerRenderer
         }
+        //getMosquesFromGoogleMap(userLocation)
         //getMosquesFromGoogleMap()
+        if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
+            putPlacesInCluster(userLocation)
+        }
+
         getMosqueFromFirebase()
         getGoogleMosqueFromFirebase()
         addGoogleFirebaseMarkersToClusterManager(userLocation)
         getNigerGoogleMosqueFromFirebase()
+
         addNigerGoogleFirebaseMarkersToClusterManager(userLocation)
-        /*if (getCountryCode(applicationContext) == "gh") {
-            getGoogleMosqueFromFirebase()
-            addGoogleFirebaseMarkersToClusterManager(userLocation)
-        } else if (getCountryCode(applicationContext) == "ne") {
-            getNigerGoogleMosqueFromFirebase()
-            addNigerGoogleFirebaseMarkersToClusterManager(userLocation)
-        }*/
+
 
 
         addFirebaseMarkersToClusterManager(userLocation)
@@ -1374,12 +1391,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         markerCollectionForClusters?.setOnInfoWindowClickListener { marker ->
+            Log.d(TAG, "you clicked info window")
             for (i in mClusterMarkers) {
+                Log.d(TAG, marker.title)
+                Log.d(TAG, i.title!!)
                 //We check if the marker comes from Google Place or FireStore
                 if (i.isMarkerFromGooglePlace && i.title == marker.title) {
                     showDirectionInGoogleMapDialog(marker)
 
                 } else if (i.title == marker.title && !i.isMarkerFromGooglePlace) {
+                    Log.d(TAG, "you clicked info window ,access granted")
                     showOptionsDialog(marker)
                 }
             }
@@ -1530,91 +1551,139 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         Log.d(TAG, mNigerGoogleMosqueList.size.toString())
     }
 
-    private fun getMosquesFromGoogleMap(userLocation: LatLng) {
+    private fun mosqueeDePlace(userLocation: LatLng) {
+        if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
+            mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
+                ?.observe(this, Observer {
+                    val places: List<PlacesSearchResult>? = it?.results
+                    testPlaces = places
+                })
+        }
 
-        mapViewModel.getGoogleMapMosqueFromRepository()?.observe(this, Observer {
-            val places: List<PlacesSearchResult>? = it?.results
-            if (places != null) {
-                for (i in places.indices) {
-                    val googlePlace = it!!.results!![i]
-                    val lat = googlePlace.geometry!!.location!!.lat
-                    val lng = googlePlace.geometry!!.location!!.lng
-                    val placeName = googlePlace.name
-                    val distanceFromUser = calculateDistanceBetweenUserAndMosque(
-                        LatLng(lat, lng), userLocation
-                    )
+    }
 
-                    Log.d(
-                        "Map",
-                        "addMapMarkers: location: " + googlePlace.geometry.location.toString()
-                    )
-                    Log.d(
-                        "Map",
-                        "addMapMarkers: name: " + googlePlace.name
-                    )
-                    try {
-                        val snippet =
-                            distanceFromUser.toString() +
-                                    getString(R.string.km) + "from your position "
-                        val title = placeName
+    private fun putPlacesInCluster(userLocation: LatLng) {
+        if (testPlaces != null) {
+            for (i in testPlaces!!.indices) {
+                val googlePlace = testPlaces!![i]
+                val lat = googlePlace.geometry!!.location!!.lat
+                val lng = googlePlace.geometry!!.location!!.lng
+                val placeName = googlePlace.name
+                val distanceFromUser = calculateDistanceBetweenUserAndMosque(
+                    LatLng(lat, lng), userLocation
+                )
 
-                        /*val avatar: String = mosqueLocation
-                            Log.d("Avatar", "avatar link $avatar")*/
-                        // int avatar = R.mipmap.icon; // set the default avatar
-                        val newClusterMarker =
-                            ClusterMarker(
+                Log.d(
+                    "Map",
+                    "addMapMarkers: location: " + googlePlace.geometry.location.toString()
+                )
+                Log.d(
+                    "Map",
+                    "addMapMarkers: name: " + googlePlace.name
+                )
+                try {
+                    val snippet =
+                        distanceFromUser.toString() +
+                                getString(R.string.km) + "from your position "
 
-                                lat,
-                                lng,
-                                title,
-                                snippet,
-                                "default",
-                                true,
-                                distanceFromUser
-                            )
-                        mClusterManager!!.addItem(newClusterMarker)
-                        markerCollectionForClusters = mClusterManager!!.markerCollection
+                    /*val avatar: String = mosqueLocation
+                        Log.d("Avatar", "avatar link $avatar")*/
+                    // int avatar = R.mipmap.icon; // set the default avatar
+                    val newClusterMarker =
+                        ClusterMarker(
 
-                        mClusterMarkers.add(newClusterMarker)
-                        for (i in mClusterMarkers) {
-                            Log.d(TAG, i.title)
-                        }
-
-
-                    } catch (e: NullPointerException) {
-                        Log.e(
-                            "Map",
-                            "addMapMarkers: NullPointerException: " + e.message
+                            lat,
+                            lng,
+                            placeName,
+                            snippet,
+                            "default",
+                            true,
+                            distanceFromUser
                         )
+                    mClusterManager!!.addItem(newClusterMarker)
+                    markerCollectionForClusters = mClusterManager!!.markerCollection
+
+                    mClusterMarkers.add(newClusterMarker)
+                    for (i in mClusterMarkers) {
+                        Log.d(TAG, i.title)
                     }
 
+
+                } catch (e: NullPointerException) {
+                    Log.e(
+                        "Map",
+                        "addMapMarkers: NullPointerException: " + e.message
+                    )
                 }
+
             }
-            /* markerCollectionForClusters?.setOnMarkerClickListener { marker ->
-                 Log.d(TAG, "you clicked")
-                 marker.showInfoWindow()
+        }
+    }
 
-                 true
-             }
+    private fun getMosquesFromGoogleMap(userLocation: LatLng) {
 
-             markerCollectionForClusters?.setOnInfoWindowClickListener(object :
-                 GoogleMap.OnInfoWindowClickListener {
-                 override fun onInfoWindowClick(marker: Marker) {
-                     for (i in mClusterMarkers) {
-                         if (i.isMarkerFromGooglePlace && i.title == marker.title) {
-                             showDirectionInGoogleMapDialog(marker)
+        mapViewModel.getGoogleMapMosqueFromRepository(LatLng(14.707626, -17.450015))
+            ?.observe(this, Observer {
+                val places: List<PlacesSearchResult>? = it?.results
+                if (places != null) {
+                    for (i in places.indices) {
+                        val googlePlace = it!!.results!![i]
+                        val lat = googlePlace.geometry!!.location!!.lat
+                        val lng = googlePlace.geometry!!.location!!.lng
+                        val placeName = googlePlace.name
+                        val distanceFromUser = calculateDistanceBetweenUserAndMosque(
+                            LatLng(lat, lng), userLocation
+                        )
 
-                         } else if (i.title == marker.title && !i.isMarkerFromGooglePlace) {
-                             showOptionsDialog(marker)
-                         }
-                     }
-                 }
+                        Log.d(
+                            "Map",
+                            "addMapMarkers: location: " + googlePlace.geometry.location.toString()
+                        )
+                        Log.d(
+                            "Map",
+                            "addMapMarkers: name: " + googlePlace.name
+                        )
+                        try {
+                            val snippet =
+                                distanceFromUser.toString() +
+                                        getString(R.string.km) + "from your position "
 
-             })*/
-            // mClusterManager!!.cluster()
-        })
+                            /*val avatar: String = mosqueLocation
+                                Log.d("Avatar", "avatar link $avatar")*/
+                            // int avatar = R.mipmap.icon; // set the default avatar
+                            val newClusterMarker =
+                                ClusterMarker(
 
-        //mClusterManager?.cluster()
+                                    lat,
+                                    lng,
+                                    placeName,
+                                    snippet,
+                                    "default",
+                                    true,
+                                    distanceFromUser
+                                )
+                            mClusterManager!!.addItem(newClusterMarker)
+                            markerCollectionForClusters = mClusterManager!!.markerCollection
+
+                            mClusterMarkers.add(newClusterMarker)
+                            for (i in mClusterMarkers) {
+                                Log.d(TAG, i.title)
+                            }
+
+
+                        } catch (e: NullPointerException) {
+                            Log.e(
+                                "Map",
+                                "addMapMarkers: NullPointerException: " + e.message
+                            )
+                        }
+
+                    }
+                }
+
+            })
+
+        // mClusterManager?.cluster()
     }
 
     override fun onRequestPermissionsResult(

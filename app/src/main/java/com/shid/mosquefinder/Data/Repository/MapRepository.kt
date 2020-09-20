@@ -21,6 +21,7 @@ import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
 import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.Main.View.SplashActivity
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Resource
 import retrofit2.Call
@@ -59,6 +60,9 @@ class MapRepository constructor(mService: ApiInterface, application: Application
         getGoogleMosqueFromFirebase()
         getTotalMosquesFromFirebase()
         getNigerGoogleMosqueFromFirebase()
+       /* if (SplashActivity.userPosition != null){
+            googlePlaceNearbyMosques("mosque",SplashActivity.userPosition!!)
+        }*/
 
     }
 
@@ -246,56 +250,19 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                 }
 
                 override fun onResponse(call: Call<Place>, response: Response<Place>) {
-                    val mosqueInArea = response.body()
+                    Log.d(TAG, "Api Mosque" + response.isSuccessful)
 
                     if (response.isSuccessful) { //for(i in 0 until response.body()!!.results!!.size)
                         placeData?.value = response.body()
-                        for (i in mosqueInArea!!.results.indices) {
+                        placeData.postValue(response.body())
 
-                            val markerOptions = MarkerOptions()
-                            val googlePlace = mosqueInArea!!.results!![i]
-                            val lat = googlePlace.geometry!!.location!!.lat
-                            val lng = googlePlace.geometry!!.location!!.lng
-                            val placeName = googlePlace.name
-                            val latLng = LatLng(lat, lng)
-
-                            Log.d(
-                                "Map",
-                                "addMapMarkers: location: " + googlePlace.geometry.location.toString()
-                            )
-                            try {
-                                val snippet =
-                                    mApp.getString(R.string.determine_route) + " " + placeName + "?"
-                                val title = placeName
-
-                                /*val avatar: String = mosqueLocation
-                                Log.d("Avatar", "avatar link $avatar")*/
-                                // int avatar = R.mipmap.icon; // set the default avatar
-
-
-                                //markerCollectionForClusters = mClusterManager!!.markerCollection
-
-
-                                //mClusterMarkers.add(newClusterMarker)
-
-
-                            } catch (e: NullPointerException) {
-                                Crashlytics.logException(e)
-                                Log.e(
-                                    "Map",
-                                    "addMapMarkers: NullPointerException: " + e.message
-                                )
-                            }
-
-
-                        }
 
                     }
 
                 }
 
             })
-        Log.d(TAG, "Api Mosque" + mClusterMarkers.isEmpty().toString())
+
         return placeData
     }
 
