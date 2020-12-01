@@ -1,8 +1,9 @@
 
-<img src="images/logo.png" width="150" height="150">
+<img src="images/logo.png" width="150" height="150">                                       <img src="images/store.jpg" width="300" height="150">
 # Mosque-Finder
 
-MosqueFinder is an Android application 📱 that display nearby mosques(Currently onlly for Ghana and Niger).
+MosqueFinder is an Android application 📱 that display nearby mosques.
+Download the app [here](https://play.google.com/store/apps/details?id=com.shid.mosquefinder)
 
 | Main Screen     |  Map Screen |  Quote Screen | Most beautiful Mosques  |Detail Screen  |
 | ----------- | ----------- |----------- |----------- |----------- |
