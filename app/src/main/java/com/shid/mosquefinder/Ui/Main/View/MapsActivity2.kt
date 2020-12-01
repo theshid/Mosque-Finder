@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.Ui.Main.View
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -21,6 +22,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
@@ -117,9 +119,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    val locationTracker = LocationTracker()
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var locationCallback: LocationCallback? = null
+    private var locationRequest:LocationRequest ?= null
+    var locationTracker: LocationTracker? = null
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
     private var useCount: Int = 0
@@ -165,10 +168,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             if (position == 0) {
                 if (newUserPosition != null) {
                     mosqueeDePlace(newUserPosition!!)
-                    addMapMarkers(newUserPosition!!)
+                    Handler().postDelayed(Runnable {
+                        addMapMarkers(newUserPosition!!)
+                    }, 2000)
+
                 } else {
                     mosqueeDePlace(userPosition!!)
-                    addMapMarkers(userPosition!!)
+                    Handler().postDelayed(Runnable {
+                        addMapMarkers(userPosition!!)
+                    }, 2000)
+
                 }
 
             } else if (position == 1) {
@@ -221,8 +230,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         checkIfPermissionIsActive()
         setContentView(R.layout.activity_maps2)
 
-
-
+        locationTracker = LocationTracker()
         //initReviews()
 
         useCount = loadUseCount()
@@ -255,7 +263,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
         setTransparentStatusBar()
         setNetworkMonitor()
-        setUpLocationListener()
+        //setUpLocationListener()
         setUpNewLocationListener()
         setupViewModel()
         when {
@@ -267,7 +275,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
             else -> {
                 checkPref()
-                if(userPosition!= null){
+                if (userPosition != null) {
                     mosqueeDePlace(userPosition!!)
                 }
 
@@ -394,7 +402,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun setUpNewLocationListener() {
-        locationTracker.addListener(object : LocationTracker.Listener {
+        locationTracker?.addListener(object : LocationTracker.Listener {
 
             override fun onLocationFound(location: Location) {
                 newUserPosition = LatLng(location.latitude, location.longitude)
@@ -692,12 +700,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
-
+        //mMap.isMyLocationEnabled = true
         handleConnectivityChange()
-        if (fusedLocationProviderClient != null) {
-            setUpLocationListener()
+
+        //setUpLocationListener()
+
+        if (locationTracker == null) {
+            locationTracker = LocationTracker()
+            setUpNewLocationListener()
         }
-        locationTracker.startListening(this)
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -781,46 +793,56 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         sharePref!!.saveUserPosition(position)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onPause() {
         super.onPause()
 
         if (fusedLocationProviderClient != null) {
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
+
         }
-        locationTracker.stopListening()
+        fusedLocationProviderClient = null
+        locationCallback = null
+        locationTracker?.stopListening()
+        locationTracker = null
+        locationRequest = null
+
+
 
     }
 
 
-    @SuppressLint("MissingPermission")
+   /* @SuppressLint("MissingPermission")
     fun setUpLocationListener() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(application)
         // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
+         locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
+                locationResult ?: return
                 for (location in locationResult.locations) {
-                    /* latTextView.text = location.latitude.toString()
-                     lngTextView.text = location.longitude.toString()*/
+                    *//* latTextView.text = location.latitude.toString()
+                     lngTextView.text = location.longitude.toString()*//*
                     SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
-                    Log.d("Splash", "position=" + location.latitude + "" + location.longitude)
-                    Log.d("Splash", "accuracy:" + location.accuracy)
+                    Log.d("MapActivity", "position=" + location.latitude + "" + location.longitude)
+                    Log.d("MapActivity", "accuracy:" + location.accuracy)
                 }
+
+
                 // Few more things we can do here:
                 // For example: Update the location of user on server
             }
         }
 
-        fusedLocationProviderClient.requestLocationUpdates(
+        fusedLocationProviderClient?.requestLocationUpdates(
             locationRequest, locationCallback,
             Looper.myLooper()
         )
-    }
+    }*/
 
     private fun btnClickListeners() {
         card_first.setOnClickListener {
@@ -903,6 +925,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun goToSearch() {
         val intent = Intent(this, SearchActivity::class.java)
+        val bundle = Bundle()
+        val list = arrayListOf<ClusterMarker>()
+        list.addAll(mClusterMarkers)
+        bundle.putParcelableArrayList("test", list)
+        intent.putExtras(bundle)
         startActivityForResult(intent, RQ_SEARCH)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
@@ -1023,13 +1050,13 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             MapViewModelFactory(Common.googleApiService, application)
         ).get(MapViewModel::class.java)
 
-        mapViewModel.setUpNewLocationListener()?.observe(this, Observer {
+        /*mapViewModel.setUpNewLocationListener()?.observe(this, Observer {
             if (it != null) {
                 newUserPosition = it
 
             }
 
-        })
+        })*/
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1091,17 +1118,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
         //getMosquesFromGoogleMap(userLocation)
         //getMosquesFromGoogleMap()
-        if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
+        /*if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
             putPlacesInCluster(userLocation)
-        }
+        }*/
+        putPlacesInCluster(userLocation)
 
         getMosqueFromFirebase()
-        getGoogleMosqueFromFirebase()
-        addGoogleFirebaseMarkersToClusterManager(userLocation)
-        getNigerGoogleMosqueFromFirebase()
+        //getGoogleMosqueFromFirebase()
+        //addGoogleFirebaseMarkersToClusterManager(userLocation)
+        // getNigerGoogleMosqueFromFirebase()
 
-        addNigerGoogleFirebaseMarkersToClusterManager(userLocation)
-
+        // addNigerGoogleFirebaseMarkersToClusterManager(userLocation)
 
 
         addFirebaseMarkersToClusterManager(userLocation)
@@ -1552,17 +1579,24 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun mosqueeDePlace(userLocation: LatLng) {
-        if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
-            mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
-                ?.observe(this, Observer {
-                    val places: List<PlacesSearchResult>? = it?.results
-                    testPlaces = places
-                })
-        }
+        /* if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
+             mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
+                 ?.observe(this, Observer {
+                     val places: List<PlacesSearchResult>? = it?.results
+                     testPlaces = places
+                 })
+         }*/
+
+        mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
+            ?.observe(this, Observer {
+                val places: List<PlacesSearchResult>? = it?.results
+                testPlaces = places
+            })
 
     }
 
     private fun putPlacesInCluster(userLocation: LatLng) {
+        Log.d("Map", "value of places $testPlaces")
         if (testPlaces != null) {
             for (i in testPlaces!!.indices) {
                 val googlePlace = testPlaces!![i]
@@ -1697,7 +1731,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
-                            setUpLocationListener()
+                            //setUpLocationListener()
+                            setUpNewLocationListener()
                             //getUserPosition()
                         }
                         else -> {

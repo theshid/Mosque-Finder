@@ -47,6 +47,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
     private var mClusterMarkerList: MutableList<ClusterMarker> = ArrayList()
     private var userPosition = SplashActivity.userPosition
     private var sortedMosqueList :List<ClusterMarker> = ArrayList()
+    private var listFromApi =  arrayListOf<ClusterMarker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,10 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
         savedInstanceState?.let {
             previousSate = it.getBoolean("LOST_CONNECTION")
+        }
+        val bundle = intent.extras
+        if (bundle != null) {
+            listFromApi = bundle.getParcelableArrayList<ClusterMarker>("test") as ArrayList<ClusterMarker>
         }
         setViewModel()
         setRecycler()
@@ -65,8 +70,8 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
             progressBar.visibility = View.GONE
-            mMosqueList = searchViewModel.getUsersMosqueFromRepository()
-            if (getCountryCode(applicationContext) == "gh"){
+            //mMosqueList = searchViewModel.getUsersMosqueFromRepository()
+            /*if (getCountryCode(applicationContext) == "gh"){
                 mGoogleMosqueList = searchViewModel.getGoogleMosqueFromRepository()
                 getClusterMarkers(mGoogleMosqueList)
                 sortClusterMarkerList()
@@ -74,8 +79,8 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
                 mNigerGoogleMosqueList = searchViewModel.getNigerGoogleMosqueFromRepository()
                 getClusterMarkers(mNigerGoogleMosqueList)
                 sortClusterMarkerList()
-            }
-
+            }*/
+            sortClusterMarkerList()
 
             searchAdapter.list = sortedMosqueList as MutableList<ClusterMarker>
             searchAdapter.mosqueList = sortedMosqueList as MutableList<ClusterMarker>
@@ -129,7 +134,8 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
     }
 
     private fun sortClusterMarkerList() {
-        sortedMosqueList = mClusterMarkerList.sortedWith(compareBy { it.distanceFromUser })
+       // sortedMosqueList = mClusterMarkerList.sortedWith(compareBy { it.distanceFromUser })
+        sortedMosqueList = listFromApi.sortedWith(compareBy { it.distanceFromUser })
     }
 
     private fun calculateDistanceBetweenUserAndMosque(

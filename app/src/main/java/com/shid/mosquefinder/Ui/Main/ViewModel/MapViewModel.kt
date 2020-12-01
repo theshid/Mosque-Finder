@@ -35,7 +35,7 @@ class MapViewModel(mapRepository: MapRepository, var application: Application) :
 
 
     init {
-        setUpNewLocationListener()
+        //setUpNewLocationListener()
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
         Log.d("MapModel", mMosqueList.size.toString())
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()

@@ -53,7 +53,8 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private  var fusedLocationProviderClient: FusedLocationProviderClient ?= null
-    private lateinit var locationCallback: LocationCallback
+    private var locationCallback: LocationCallback ?= null
+    private var locationRequest:LocationRequest ?= null
 
 
     private lateinit var authViewModel: AuthViewModel
@@ -108,6 +109,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         handleConnectivityChange()
+        setUpLocationListener()
     }
 
     override fun onPause() {
@@ -115,6 +117,9 @@ class AuthActivity : AppCompatActivity() {
         if (fusedLocationProviderClient != null){
             fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
         }
+        fusedLocationProviderClient = null
+        locationCallback = null
+        locationRequest = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -154,7 +159,7 @@ class AuthActivity : AppCompatActivity() {
          fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(application)
         // for getting the current location update after every 2 seconds with high accuracy
-        val locationRequest = LocationRequest().setInterval(10000).setFastestInterval(2000)
+         locationRequest = LocationRequest().setInterval(10000).setFastestInterval(2000)
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
         locationCallback =  object : LocationCallback() {
@@ -164,8 +169,8 @@ class AuthActivity : AppCompatActivity() {
                     /* latTextView.text = location.latitude.toString()
                      lngTextView.text = location.longitude.toString()*/
                     SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
-                    Log.d("Splash", "position=" + location.latitude + "" + location.longitude)
-                    Log.d("Splash","accuracy:"+location.accuracy)
+                    Log.d("AuthActivity", "position=" + location.latitude + "" + location.longitude)
+                    Log.d("AuthActivity","accuracy:"+location.accuracy)
                 }
                 // Few more things we can do here:
                 // For example: Update the location of user on server
