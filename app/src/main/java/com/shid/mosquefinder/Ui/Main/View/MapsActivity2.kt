@@ -1,6 +1,5 @@
 package com.shid.mosquefinder.Ui.Main.View
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -15,14 +14,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
@@ -232,7 +229,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
         locationTracker = LocationTracker()
         //initReviews()
-
+        searchText.isClickable = false
         useCount = loadUseCount()
         didUserRate = loadIfUserRated()
         useCount++
@@ -283,14 +280,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
         }
         initGoogleSignInClient()
-
-
-
         setMessageForToast(user!!)
         btnClickListeners()
         setObserver()
-
-
     }
 
     private fun checkIfPermissionIsActive() {
@@ -611,7 +603,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     //Handle Error
 
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Log.d(TAG, it.message)
+                    Log.d(TAG, it.message.toString())
                 }
             }
         })
@@ -743,6 +735,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             Handler().postDelayed(kotlinx.coroutines.Runnable {
                 //anything you want to start after 3s
                 addMapMarkers(newUserPosition!!)
+                searchText.isClickable = true
                 //getMosquesFromGoogleMap(newUserPosition!!)
                 // addUserMarker()
 
@@ -753,6 +746,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 //anything you want to start after 3s
 
                 addMapMarkers(userPosition!!)
+                searchText.isClickable = true
                 //getMosquesFromGoogleMap(userPosition!!)
 
 
@@ -765,6 +759,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 checkPref()
                 userPosition?.let {
                     addMapMarkers(it)
+                    searchText.isClickable = true
                 }
 
 
@@ -806,8 +801,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         locationTracker?.stopListening()
         locationTracker = null
         locationRequest = null
-
-
 
     }
 
@@ -1006,7 +999,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         })
     }
 
-    private fun mosqueInputDialog(userPosition: LatLng) {
+    private fun mosqueInputDialog(userPositionToAdd: LatLng) {
 
         MaterialDialog(this).show {
             input(hint = getString(R.string.dialog_input_title))
@@ -1017,14 +1010,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 val inputField = dialog.getInputField().text.toString()
 
                 dialog.cancel()
-                saveMosqueInputInDatabase(userPosition, inputField)
-                mosqueeDePlace(newUserPosition!!)
-                addMapMarkers(newUserPosition!!)
+                saveMosqueInputInDatabase(userPositionToAdd, inputField)
+                mosqueeDePlace(userPositionToAdd)
+                userPosition?.let { addMapMarkers(it) }
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
-                mosqueeDePlace(newUserPosition!!)
-                addMapMarkers(newUserPosition!!)
+                mosqueeDePlace(userPositionToAdd)
+                userPosition?.let { addMapMarkers(it) }
             }
             icon(R.drawable.logo2)
         }
@@ -1063,7 +1056,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                clusterMarkerFromIntent = data.getParcelableExtra("search_result") as ClusterMarker
+                clusterMarkerFromIntent = data.getParcelableExtra("search_result")!!
 
                 val latLngNow = clusterMarkerFromIntent?.position
 
@@ -1142,7 +1135,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setTextViews()
         markersClickListeners()
         for (i in mClusterMarkers) {
-            Log.d("Map", i.title)
+            Log.d("Map", i.title.toString())
         }
         mClusterManager!!.cluster()
         setCameraView()
@@ -1150,7 +1143,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun setTextViews() {
         if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
-            Log.d(TAG, sortedMosqueList[2].title)
+            Log.d(TAG, sortedMosqueList[2].title.toString())
             mosque_first_distance.text =
                 String.format(getString(R.string.km_test), sortedMosqueList[1].distanceFromUser)
             mosque_second_distance.text =
@@ -1639,7 +1632,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
                     mClusterMarkers.add(newClusterMarker)
                     for (i in mClusterMarkers) {
-                        Log.d(TAG, i.title)
+                        Log.d(TAG, i.title.toString())
                     }
 
 
@@ -1701,7 +1694,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
                             mClusterMarkers.add(newClusterMarker)
                             for (i in mClusterMarkers) {
-                                Log.d(TAG, i.title)
+                                Log.d(TAG, i.title.toString())
                             }
 
 

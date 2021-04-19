@@ -85,7 +85,7 @@ class QuotesActivity : AppCompatActivity() {
                     //Handle Error
 
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Log.d("Search", it.message)
+                    Log.d("Search", it.message.toString())
                 }
             }
         })

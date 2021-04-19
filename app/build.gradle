@@ -7,15 +7,15 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "com.shid.mosquefinder"
         minSdkVersion 22
-        targetSdkVersion 29
-        versionCode 12
-        versionName "2.53"
+        targetSdkVersion 30
+        versionCode 14
+        versionName "2.56"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
