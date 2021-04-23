@@ -28,7 +28,8 @@
     <string name="search_hint">Search</string>
     <string name="home_bottom_dialog_title">Closest Mosque around you</string>
     <string name="mosque_name">Mosque Name:</string>
-    <string name="share_text">Find a mosque wherever you are</string>
+    <string name="share_text">Find a mosque wherever you are. Download MosqueFinder at
+    https://cutt.ly/8vGgm54</string>
     <string name="share_app">Share App</string>
     <string name="send_mail">Send mail...</string>
     <string name="offline">Please activate Internet or refresh to use offline mode</string>

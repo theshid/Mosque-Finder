@@ -230,6 +230,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         locationTracker = LocationTracker()
         //initReviews()
         searchText.isClickable = false
+        searchText.isEnabled = false
         useCount = loadUseCount()
         didUserRate = loadIfUserRated()
         useCount++
@@ -736,6 +737,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 //anything you want to start after 3s
                 addMapMarkers(newUserPosition!!)
                 searchText.isClickable = true
+                searchText.isEnabled = true
                 //getMosquesFromGoogleMap(newUserPosition!!)
                 // addUserMarker()
 
@@ -747,6 +749,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
                 addMapMarkers(userPosition!!)
                 searchText.isClickable = true
+                searchText.isEnabled = true
                 //getMosquesFromGoogleMap(userPosition!!)
 
 
@@ -760,6 +763,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 userPosition?.let {
                     addMapMarkers(it)
                     searchText.isClickable = true
+                    searchText.isEnabled = true
                 }
 
 
