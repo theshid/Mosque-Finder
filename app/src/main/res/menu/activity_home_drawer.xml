@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/nav_quran"
+        android:icon="@drawable/ic_quran"
+        android:title="@string/quran" />
+
+    <item
         android:id="@+id/nav_quotes"
         android:icon="@drawable/ic_global"
         android:title="@string/quote_islam" />

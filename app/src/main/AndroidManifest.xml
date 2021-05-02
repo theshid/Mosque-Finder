@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Ui.Main.View.TestActivity"></activity>
+        <activity android:name=".Ui.Main.View.SurahActivity"></activity>
+        <activity android:name=".Ui.Main.View.TestActivity" />
         <activity android:name=".Ui.Main.View.DetailActivity" />
         <activity android:name=".Ui.Main.View.BeautifulMosquesActivity" />
         <activity
@@ -45,7 +46,7 @@
         </activity>
         <activity
             android:name=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
-            android:theme="@style/AppTheme.OnBoarding"></activity>
+            android:theme="@style/AppTheme.OnBoarding" />
         <activity
             android:name=".Ui.Main.View.AuthActivity"
             android:screenOrientation="portrait" />
