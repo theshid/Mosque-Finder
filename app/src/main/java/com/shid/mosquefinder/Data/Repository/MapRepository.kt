@@ -20,6 +20,9 @@ import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.Pojo.Place
 import com.shid.mosquefinder.Data.Model.User
+import com.shid.mosquefinder.Data.database.QuranDao
+import com.shid.mosquefinder.Data.database.QuranDatabase
+import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.View.SplashActivity
 import com.shid.mosquefinder.Utils.Common
@@ -60,11 +63,15 @@ class MapRepository constructor(mService: ApiInterface, application: Application
         getGoogleMosqueFromFirebase()
         getTotalMosquesFromFirebase()
         getNigerGoogleMosqueFromFirebase()
+
        /* if (SplashActivity.userPosition != null){
             googlePlaceNearbyMosques("mosque",SplashActivity.userPosition!!)
         }*/
 
     }
+
+
+
 
     fun getNigerGoogleMosqueFromFirebase(): MutableList<GoogleMosque> {
         mGoogleMosqueListEventListener =

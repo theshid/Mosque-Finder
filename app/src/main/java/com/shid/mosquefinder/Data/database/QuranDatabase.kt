@@ -61,7 +61,6 @@ abstract class QuranDatabase: RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     val teaDao = database.surahDao()
-                    //prePopulateDatabase(teaDao)
                     fillWithStartingData(teaDao)
 
                 }

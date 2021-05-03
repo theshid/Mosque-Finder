@@ -19,4 +19,10 @@ interface QuranDao {
 
     @get:Query("SELECT * FROM ayahs ORDER BY RANDOM() LIMIT 1")
     val randomAyah: Ayah
+
+    @Query("SELECT * FROM surahs ORDER BY number")
+    fun getSurahs():List<Surah>
+
+    @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber)")
+    fun getAyah(surahNumber:Int):List<Ayah>
 }
