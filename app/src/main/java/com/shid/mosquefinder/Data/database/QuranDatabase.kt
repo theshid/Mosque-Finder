@@ -44,7 +44,7 @@ abstract class QuranDatabase: RoomDatabase() {
                     QuranDatabase::class.java,
                     "quran_database"
                 )
-                    .addCallback(TeaDatabaseCallback(coroutineScope, resources))
+                    .addCallback(QuranDatabaseCallback(coroutineScope, resources))
                     .build()
                 INSTANCE = instance
                 return instance
@@ -52,7 +52,7 @@ abstract class QuranDatabase: RoomDatabase() {
         }
     }
 
-    private class TeaDatabaseCallback(
+    private class QuranDatabaseCallback(
         private val scope: CoroutineScope,
         private val resources: Resources
     ) : RoomDatabase.Callback() {

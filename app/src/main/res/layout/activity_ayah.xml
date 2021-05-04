@@ -6,15 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".Ui.Main.View.AyahActivity">
 
+    <LinearLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="@+id/ayahRecycler"
+        app:layout_constraintStart_toStartOf="@+id/ayahRecycler"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/surah_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_semibold"
+            android:gravity="center"
+            tools:text="Al-Fatiha"
+            android:textColor="@color/colorWhite"/>
+
+        <TextView
+            android:id="@+id/verse_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/quicksand_regular"
+            android:gravity="center"
+            tools:text="7 Ayah"
+            android:textColor="@color/colorWhite"/>
+
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/ayahRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:itemCount="20"
         tools:listitem="@layout/item_quran_ayah" />
 

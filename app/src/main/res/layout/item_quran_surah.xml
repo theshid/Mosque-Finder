@@ -8,8 +8,8 @@
     android:layout_marginEnd="20dp">
 
     <TextView
-        android:id="@+id/tv_item_surah_verse"
-        style="@style/TextAppearance.AppCompat.Item"
+        android:id="@+id/tv_item_surah_number"
+        style="@style/TextAppearance.AppCompat.Item.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -27,14 +27,14 @@
         android:layout_marginStart="15dp"
         android:gravity="start"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_item_surah_verse"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_item_surah_number"
         app:layout_constraintEnd_toStartOf="@+id/tv_item_surah_arab"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_surah_verse"
-        app:layout_constraintTop_toTopOf="@+id/tv_item_surah_verse">
+        app:layout_constraintStart_toEndOf="@+id/tv_item_surah_number"
+        app:layout_constraintTop_toTopOf="@+id/tv_item_surah_number">
 
         <TextView
             android:id="@+id/tv_item_surah_surah"
-            style="@style/TextAppearance.AppCompat.Item"
+            style="@style/TextAppearance.AppCompat.Item.White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/quicksand_semibold"
@@ -56,9 +56,10 @@
 
             <TextView
                 android:id="@+id/tv_item_surah_total_ayah"
+                android:textColor="@color/colorWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="1dp"
+                android:layout_marginStart="5dp"
                 android:fontFamily="@font/quicksand_regular"
                 tools:text="7 Ayah" />
 
@@ -69,7 +70,7 @@
 
     <TextView
         android:id="@+id/tv_item_surah_arab"
-        style="@style/TextAppearance.AppCompat.Item"
+        style="@style/TextAppearance.AppCompat.Item.White"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/kemenag"

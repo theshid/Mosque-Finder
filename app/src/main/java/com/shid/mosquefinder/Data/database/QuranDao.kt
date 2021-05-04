@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.Data.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -22,6 +23,9 @@ interface QuranDao {
 
     @Query("SELECT * FROM surahs ORDER BY number")
     fun getSurahs():List<Surah>
+
+    @Query("SELECT * FROM surahs WHERE number IN (:surahNumber)")
+    fun getSurahByNumber(surahNumber: Int):Surah
 
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber)")
     fun getAyah(surahNumber:Int):List<Ayah>

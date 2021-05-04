@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class Ayah(
     @PrimaryKey(autoGenerate = true)  val id:Long,
     @ColumnInfo(name = "surah_number") val surah_number: Int,
-    @ColumnInfo(name = "verse_number") val name: Int,
-    @ColumnInfo(name = "text") val transliteration: String,
+    @ColumnInfo(name = "verse_number") val verse_number: Int,
+    @ColumnInfo(name = "text") val originalText: String,
     @ColumnInfo(name = "translation") val translation: String
 )

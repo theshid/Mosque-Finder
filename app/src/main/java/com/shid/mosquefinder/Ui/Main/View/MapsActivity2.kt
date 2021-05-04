@@ -118,7 +118,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var locationCallback: LocationCallback? = null
-    private var locationRequest:LocationRequest ?= null
+    private var locationRequest: LocationRequest? = null
     var locationTracker: LocationTracker? = null
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
@@ -434,6 +434,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun setDrawerLayout() {
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
+
+                R.id.nav_quran -> {
+                    goToQuran()
+                }
+
                 R.id.nav_quotes -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_GLOBAL_CASES)
                     goToQuotes()
@@ -547,6 +552,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     })
             )
             .show() //Display the ShowCaseSequence
+    }
+
+    private fun goToQuran() {
+        val intent = Intent(this, SurahActivity::class.java)
+        startActivity(intent)
     }
 
     private fun goToBeautifulMosques() {
@@ -809,20 +819,20 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
 
-   /* @SuppressLint("MissingPermission")
-    fun setUpLocationListener() {
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(application)
-        // for getting the current location update after every 2 seconds with high accuracy
-         locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+    /* @SuppressLint("MissingPermission")
+     fun setUpLocationListener() {
+         fusedLocationProviderClient =
+             LocationServices.getFusedLocationProviderClient(application)
+         // for getting the current location update after every 2 seconds with high accuracy
+          locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
+             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    *//* latTextView.text = location.latitude.toString()
+         locationCallback = object : LocationCallback() {
+             override fun onLocationResult(locationResult: LocationResult) {
+                 locationResult ?: return
+                 for (location in locationResult.locations) {
+                     *//* latTextView.text = location.latitude.toString()
                      lngTextView.text = location.longitude.toString()*//*
                     SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
                     Log.d("MapActivity", "position=" + location.latitude + "" + location.longitude)
