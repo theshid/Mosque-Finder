@@ -3,14 +3,20 @@ package com.shid.mosquefinder.Ui.Main.Adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.item_quran_surah.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
-class SurahAdapter(private val surahList: List<Surah>) :
-    RecyclerView.Adapter<SurahAdapter.SurahViewHolder>() {
+class SurahAdapter(private var surahList: List<Surah>) :
+    RecyclerView.Adapter<SurahAdapter.SurahViewHolder>(),Filterable {
     lateinit var onClickSurah: OnClickSurah
+     var list:MutableList<Surah>?=null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurahViewHolder {
         val view =
@@ -37,6 +43,8 @@ class SurahAdapter(private val surahList: List<Surah>) :
        onClickSurah = mOnClickSurah
     }
 
+
+
     inline fun setOnClickSurah(crossinline onClickSurah: (surah: Surah) -> Unit) {
         this.onClickSurah = object : OnClickSurah {
             override fun onClickSurah(surah: Surah) {
@@ -59,6 +67,38 @@ class SurahAdapter(private val surahList: List<Surah>) :
             }
         }
 
+    }
+
+    override fun getFilter(): Filter {
+        return object:Filter(){
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+                if (charSearch.isEmpty()) {
+                    if (list?.isNotEmpty()!!){
+                        surahList = list!!
+                    }
+
+                } else {
+                    val resultList = ArrayList<Surah>()
+                    for (row in list!!) {
+                        if (row.transliteration!!.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(
+                                Locale.ROOT))) {
+                            resultList.add(row)
+                        }
+                    }
+                    surahList = resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = surahList
+                return filterResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                surahList = results?.values as List<Surah>
+                notifyDataSetChanged()
+            }
+
+        }
     }
 
 

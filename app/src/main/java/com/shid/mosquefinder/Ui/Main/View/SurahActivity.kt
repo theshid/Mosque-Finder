@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,7 +21,10 @@ import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
+import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_surah.*
+import kotlinx.android.synthetic.main.activity_surah.backButton
+import kotlinx.android.synthetic.main.activity_surah.searchEdit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -30,13 +34,23 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
     private var previousSate = true
     private lateinit var surahList: List<Surah>
     private lateinit var surahAdapter: SurahAdapter
+    private var listSearch: List<Surah> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_surah)
         setViewModel()
         setUI()
+        setOnClick()
+        setSearch()
         setTransparentStatusBar()
         setNetworkMonitor()
+    }
+
+    private fun setSearch() {
+        searchEdit.doOnTextChanged { text, _, _, _ ->
+            val search = text.toString()
+            surahAdapter.filter.filter(search)
+        }
     }
 
     private fun setViewModel() {
@@ -53,18 +67,24 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
     private fun setRecycler() {
         viewModel.getSurahs()
         viewModel.surahList.observe(this, Observer {
-            if (it.isNotEmpty()){
+            if (it.isNotEmpty()) {
+                surahList = it
                 surahAdapter = SurahAdapter(it)
                 surahAdapter.setItemClick(this@SurahActivity)
                 surahRecycler.adapter = surahAdapter
+                surahAdapter.list = surahList as MutableList<Surah>
                 surahAdapter.notifyDataSetChanged()
             }
 
         })
 
 
+    }
 
-
+    private fun setOnClick() {
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun setNetworkMonitor() {
