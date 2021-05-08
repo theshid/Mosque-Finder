@@ -13,10 +13,17 @@ import kotlinx.android.synthetic.main.item_quran_surah.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SurahAdapter(private var surahList: List<Surah>) :
+class SurahAdapter() :
     RecyclerView.Adapter<SurahAdapter.SurahViewHolder>(),Filterable {
     lateinit var onClickSurah: OnClickSurah
      var list:MutableList<Surah>?=null
+    private var listData  = ArrayList<Surah>()
+
+    fun setData(newListData: List<Surah>) {
+        listData.clear()
+        listData.addAll(newListData)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurahViewHolder {
         val view =
@@ -25,14 +32,14 @@ class SurahAdapter(private var surahList: List<Surah>) :
     }
 
     override fun onBindViewHolder(holder: SurahViewHolder, position: Int) {
-        surahList[position].run { holder.bind(this) }
+        listData[position].run { holder.bind(this) }
         holder.itemView.setOnClickListener(View.OnClickListener {
-            surahList[position].let { it -> onClickSurah.onClickSurah(it) }
+            listData[position].let { it -> onClickSurah.onClickSurah(it) }
         })
     }
 
     override fun getItemCount(): Int {
-        return surahList.size
+        return listData.size
     }
 
     interface OnClickSurah {
@@ -43,15 +50,6 @@ class SurahAdapter(private var surahList: List<Surah>) :
        onClickSurah = mOnClickSurah
     }
 
-
-
-    inline fun setOnClickSurah(crossinline onClickSurah: (surah: Surah) -> Unit) {
-        this.onClickSurah = object : OnClickSurah {
-            override fun onClickSurah(surah: Surah) {
-                onClickSurah(surah)
-            }
-        }
-    }
 
 
     inner class SurahViewHolder(itemView: View) :
@@ -75,7 +73,7 @@ class SurahAdapter(private var surahList: List<Surah>) :
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
                     if (list?.isNotEmpty()!!){
-                        surahList = list!!
+                        listData = list as ArrayList<Surah>
                     }
 
                 } else {
@@ -86,15 +84,15 @@ class SurahAdapter(private var surahList: List<Surah>) :
                             resultList.add(row)
                         }
                     }
-                    surahList = resultList
+                    listData = resultList
                 }
                 val filterResults = FilterResults()
-                filterResults.values = surahList
+                filterResults.values = listData
                 return filterResults
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                surahList = results?.values as List<Surah>
+                listData = results?.values as ArrayList<Surah>
                 notifyDataSetChanged()
             }
 

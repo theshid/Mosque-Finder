@@ -27,6 +27,9 @@ interface QuranDao {
     @Query("SELECT * FROM surahs WHERE number IN (:surahNumber)")
     fun getSurahByNumber(surahNumber: Int):Surah
 
+    @Query("SELECT * FROM surahs WHERE number < :surahNumber")
+    fun getSurahList(surahNumber: Int):List<Surah>
+
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber)")
     fun getAyah(surahNumber:Int):List<Ayah>
 }

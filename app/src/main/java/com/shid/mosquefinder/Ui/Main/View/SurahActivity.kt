@@ -32,9 +32,7 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
 
     private lateinit var viewModel: SurahViewModel
     private var previousSate = true
-    private lateinit var surahList: List<Surah>
     private lateinit var surahAdapter: SurahAdapter
-    private var listSearch: List<Surah> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_surah)
@@ -61,6 +59,7 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
     }
 
     private fun setUI() {
+        surahAdapter = SurahAdapter()
         setRecycler()
     }
 
@@ -68,11 +67,11 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         viewModel.getSurahs()
         viewModel.surahList.observe(this, Observer {
             if (it.isNotEmpty()) {
-                surahList = it
-                surahAdapter = SurahAdapter(it)
+
+                surahAdapter.setData(it)
                 surahAdapter.setItemClick(this@SurahActivity)
                 surahRecycler.adapter = surahAdapter
-                surahAdapter.list = surahList as MutableList<Surah>
+                surahAdapter.list = it as MutableList<Surah>
                 surahAdapter.notifyDataSetChanged()
             }
 

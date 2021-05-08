@@ -13,6 +13,7 @@ object Common {
     var USER_LG = "user_lg"
     var TAG = "FirebaseAuthAppTag"
 
+
     fun logErrorMessage(errorMessage: String?) {
         Log.d(TAG, errorMessage.toString())
     }

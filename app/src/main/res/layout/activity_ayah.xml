@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:layout_marginTop="?attr/actionBarSize"
             android:id="@+id/surah_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,6 +28,7 @@
             android:textColor="@color/colorWhite"/>
 
         <TextView
+            android:layout_marginTop="5dp"
             android:id="@+id/verse_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,5 +51,24 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:itemCount="20"
         tools:listitem="@layout/item_quran_ayah" />
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exoplayerView"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/ayahRecycler">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+
+    </com.google.android.exoplayer2.ui.PlayerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

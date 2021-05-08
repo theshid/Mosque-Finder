@@ -11,4 +11,6 @@ class SurahRepository(private val quranDao: QuranDao) {
     }
 
     suspend fun getSurahByNumber(surahNumber:Int):Surah = quranDao.getSurahByNumber(surahNumber)
+
+    fun getListSurahs(surahNumber: Int):List<Surah> = quranDao.getSurahList(surahNumber)
 }

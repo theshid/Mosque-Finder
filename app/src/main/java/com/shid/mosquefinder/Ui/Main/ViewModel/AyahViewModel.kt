@@ -22,6 +22,10 @@ class AyahViewModel(private val application: Application) : ViewModel() {
     val surah: LiveData<Surah>
         get() = _surah
 
+    private var _listSurah = MutableLiveData<List<Surah>>()
+    val listSurah: LiveData<List<Surah>>
+        get() = _listSurah
+
     private var repository: AyahRepository
     private var surahRepository: SurahRepository
 
@@ -30,6 +34,13 @@ class AyahViewModel(private val application: Application) : ViewModel() {
             QuranDatabase.getDatabase(application, viewModelScope, application.resources).surahDao()
         repository = AyahRepository(dao)
         surahRepository = SurahRepository(dao)
+    }
+
+    fun getSurahList(surahNumber: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            val list = surahRepository.getListSurahs(surahNumber)
+            _listSurah.postValue(list)
+        }
     }
 
 
