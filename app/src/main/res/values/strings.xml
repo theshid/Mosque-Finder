@@ -160,6 +160,7 @@
     <string name="marker_not_verified">(Not verified)</string>
     <string name="marker_false_position">(False position)</string>
     <string name="quran">Quran</string>
+    <string name="internet_ayah">You need Internet connection to play the Ayah</string>
 
 
 </resources>

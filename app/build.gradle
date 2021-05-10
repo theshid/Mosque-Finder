@@ -156,6 +156,8 @@ dependencies {
     //ExoPLayer
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
 
+    implementation 'com.github.GwonHyeok:StickySwitch:0.0.16'
+
 
 
 

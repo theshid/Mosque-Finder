@@ -6,36 +6,57 @@
     android:layout_height="match_parent"
     tools:context=".Ui.Main.View.AyahActivity">
 
+
+
     <LinearLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
         android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@+id/ayahRecycler"
         app:layout_constraintStart_toStartOf="@+id/ayahRecycler"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:layout_marginTop="?attr/actionBarSize"
             android:id="@+id/surah_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:fontFamily="@font/quicksand_semibold"
             android:gravity="center"
-            tools:text="Al-Fatiha"
-            android:textColor="@color/colorWhite"/>
+            android:textColor="@color/colorWhite"
+            tools:text="Al-Fatiha" />
 
         <TextView
-            android:layout_marginTop="5dp"
             android:id="@+id/verse_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/quicksand_regular"
             android:gravity="center"
-            tools:text="7 Ayah"
-            android:textColor="@color/colorWhite"/>
+            android:textColor="@color/colorWhite"
+            tools:text="7 Ayah" />
+
+        <io.ghyeok.stickyswitch.widget.StickySwitch
+            android:id="@+id/switch_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:ss_animationDuration="600"
+            app:ss_iconPadding="18dp"
+            app:ss_iconSize="22dp"
+            app:ss_leftIcon="@drawable/ic_play"
+            app:ss_leftText="Play"
+            app:ss_rightIcon="@drawable/ic_pause"
+            app:ss_rightText="Pause"
+            app:ss_selectedTextSize="14sp"
+            app:ss_sliderBackgroundColor="@color/colorPrimary"
+            app:ss_switchColor="@color/blue_default"
+            app:ss_textColor="@color/colorWhite"
+            app:ss_textSize="12sp"
+            app:ss_animationType="line"/>
 
 
     </LinearLayout>
@@ -46,9 +67,9 @@
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_title"
         tools:itemCount="20"
         tools:listitem="@layout/item_quran_ayah" />
 
@@ -56,11 +77,11 @@
         android:id="@+id/exoplayerView"
         android:layout_width="0dp"
         android:layout_height="100dp"
-        android:visibility="gone"
         android:background="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ayahRecycler"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/ayahRecycler">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ProgressBar
             android:id="@+id/progressBar"

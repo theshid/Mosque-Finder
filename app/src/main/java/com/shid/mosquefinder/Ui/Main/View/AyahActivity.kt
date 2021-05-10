@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -28,7 +29,9 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.AyahViewModel
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
+import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*
+import org.jetbrains.annotations.NotNull
 import java.io.File
 
 class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventListener {
@@ -40,6 +43,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var playbackPosition: Long = 0
     private var ayahNumber = 1
     private var baseNumber = 0
+    private lateinit var switch: StickySwitch
     private val baseUrl = "https://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayahNumber.mp3"
 
 
@@ -93,6 +97,20 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
             verse_number.text = it.totalVerses.toString() + " " + "Ayah"
         })
 
+        switch = findViewById(R.id.switch_control)
+        switch.visibility = View.GONE
+        switch.onSelectedChangeListener = object : StickySwitch.OnSelectedChangeListener {
+            override fun onSelectedChange(direction: StickySwitch.Direction, text: String) {
+                Log.d("TAG", "Now Selected : " + direction.name + ", Current Text : " + text);
+                if (direction == StickySwitch.Direction.LEFT) {
+                    simpleExoplayer.pause()
+                } else {
+                    simpleExoplayer.play()
+                }
+            }
+
+        }
+
 
     }
 
@@ -137,12 +155,32 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
 
         val verseNumber = baseNumber + ayah.verse_number
         Log.d("Test", "ayaNum:$verseNumber")
-        initializePlayer(verseNumber)
+        switch.visibility = View.VISIBLE
+        switch.setDirection(StickySwitch.Direction.RIGHT)
+
+        if (simpleExoplayer.isPlaying) {
+            simpleExoplayer.stop()
+            initializePlayer(verseNumber)
+        } else {
+            initializePlayer(verseNumber)
+        }
+
+        if (!ConnectivityStateHolder.isConnected && previousSate) {
+            // showSnackBar(textView, "No Network !")
+            // Toast.makeText(this,getString(R.string.internet_ayah),Toast.LENGTH_LONG).show()
+            Sneaker.with(this) // Activity, Fragment or ViewGroup
+                .setTitle(getString(R.string.sneaker_disconnected))
+                .setMessage(getString(R.string.internet_ayah))
+                .sneakError()
+
+            exoplayerView.visibility = View.GONE
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
-
+        simpleExoplayer = SimpleExoPlayer.Builder(this).build()
     }
 
     override fun onStop() {
@@ -151,11 +189,13 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     }
 
     private fun initializePlayer(ayaNum: Int) {
-        simpleExoplayer = SimpleExoPlayer.Builder(this).build()
+
         val link = "https://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayaNum.mp3"
+        val linkSurah = ""
+
         preparePlayer(link, "default")
         exoplayerView.player = simpleExoplayer
-        exoplayerView.visibility = View.VISIBLE
+        //exoplayerView.visibility = View.VISIBLE
         exoplayerView.controllerShowTimeoutMs = 0;
         exoplayerView.controllerHideOnTouch = false;
         simpleExoplayer.playWhenReady = true
@@ -165,25 +205,24 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     }
 
 
-
     private fun buildMediaItem(uri: Uri, type: String): MediaItem {
         return MediaItem.fromUri(uri)
     }
 
     private fun preparePlayer(videoUrl: String, type: String) {
         val uri = Uri.parse(videoUrl)
-       /* val evictor = LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong())
-        val databaseProvider: DatabaseProvider = ExoDatabaseProvider(this)
+        /* val evictor = LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong())
+         val databaseProvider: DatabaseProvider = ExoDatabaseProvider(this)
 
-        val simpleCache = SimpleCache(File(this.cacheDir, "media"), evictor, databaseProvider)
+         val simpleCache = SimpleCache(File(this.cacheDir, "media"), evictor, databaseProvider)
 
 
-        val mediaSource = ProgressiveMediaSource.Factory(
-            simpleCache?.let {
-                CacheDataSource.Factory().setCache(it)
-            }
-        )
-            .createMediaSource(MediaItem.fromUri(Uri.parse(videoUrl)))*/
+         val mediaSource = ProgressiveMediaSource.Factory(
+             simpleCache?.let {
+                 CacheDataSource.Factory().setCache(it)
+             }
+         )
+             .createMediaSource(MediaItem.fromUri(Uri.parse(videoUrl)))*/
         val mediaItem = buildMediaItem(uri, type)
         //simpleExoplayer.setMediaSource(mediaSource)
         simpleExoplayer.setMediaItem(mediaItem)
@@ -203,9 +242,13 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         if (playbackState == Player.STATE_BUFFERING)
             progressBar.visibility = View.VISIBLE
-        else if (playbackState == Player.STATE_READY || playbackState == Player.STATE_ENDED)
+        else if (playbackState == Player.STATE_READY)
             progressBar.visibility = View.INVISIBLE
-        else if (playbackState == Player.STATE_ENDED)
+        else if (playbackState == Player.STATE_ENDED) {
+            progressBar.visibility = View.INVISIBLE
             exoplayerView.visibility = View.GONE
+            switch.visibility = View.GONE
+        }
+
     }
 }
