@@ -439,6 +439,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     goToQuran()
                 }
 
+                R.id.nav_names -> {
+                    goToNames()
+                }
+
+                R.id.nav_azkhar -> {
+                    goToCategories()
+                }
+
                 R.id.nav_quotes -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_GLOBAL_CASES)
                     goToQuotes()
@@ -475,6 +483,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             drawerLayout.closeDrawer(navigationView)
             true
         }
+    }
+
+    private fun goToNames() {
+        val intent = Intent(this,NamesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToCategories() {
+        val intent = Intent(this,CategoriesActivity::class.java)
+        startActivity(intent)
     }
 
     private fun activateShowcase() {

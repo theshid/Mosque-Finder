@@ -24,9 +24,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            style="@style/TextAppearance.AppCompat.Item.White"
             android:fontFamily="@font/quicksand_semibold"
             android:gravity="center"
-            android:textColor="@color/colorWhite"
             tools:text="Al-Fatiha" />
 
         <TextView

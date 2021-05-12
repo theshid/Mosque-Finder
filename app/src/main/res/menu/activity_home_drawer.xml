@@ -6,6 +6,16 @@
         android:title="@string/quran" />
 
     <item
+        android:id="@+id/nav_names"
+        android:icon="@drawable/ic__9"
+        android:title="@string/_99_names_of_allah"/>
+
+    <item
+        android:id="@+id/nav_azkhar"
+        android:icon="@drawable/ic_dua"
+        android:title="@string/azkar"/>
+
+    <item
         android:id="@+id/nav_quotes"
         android:icon="@drawable/ic_global"
         android:title="@string/quote_islam" />

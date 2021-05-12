@@ -174,4 +174,6 @@
     <string name="rate">Notez</string>
     <string name="quran">Quran</string>
     <string name="internet_ayah">Une connexion Internet est nécéssaire pour jouer l\'audio</string>
+    <string name="azkar">Azkar</string>
+    <string name="_99_names_of_allah">Les 99 Noms d\'Allah</string>
 </resources>

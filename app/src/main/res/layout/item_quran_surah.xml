@@ -7,18 +7,29 @@
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp">
 
-    <TextView
-        android:id="@+id/tv_item_surah_number"
-        style="@style/TextAppearance.AppCompat.Item.White"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:minWidth="50dp"
-        android:textAlignment="center"
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/layout_number"
+        android:background="@drawable/ic_contour"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="114" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_item_surah_number"
+            style="@style/TextAppearance.AppCompat.Item.White"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:minWidth="50dp"
+            android:textAlignment="center"
+
+            tools:text="114" />
+
+    </RelativeLayout>
+
+
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -27,10 +38,10 @@
         android:layout_marginStart="15dp"
         android:gravity="start"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_item_surah_number"
+        app:layout_constraintBottom_toBottomOf="@+id/layout_number"
         app:layout_constraintEnd_toStartOf="@+id/tv_item_surah_arab"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_surah_number"
-        app:layout_constraintTop_toTopOf="@+id/tv_item_surah_number">
+        app:layout_constraintStart_toEndOf="@+id/layout_number"
+        app:layout_constraintTop_toTopOf="@+id/layout_number">
 
         <TextView
             android:id="@+id/tv_item_surah_surah"

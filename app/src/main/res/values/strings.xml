@@ -161,6 +161,8 @@
     <string name="marker_false_position">(False position)</string>
     <string name="quran">Quran</string>
     <string name="internet_ayah">You need Internet connection to play the Ayah</string>
+    <string name="azkar">Azkar</string>
+    <string name="_99_names_of_allah">99 Names of Allah</string>
 
 
 </resources>
