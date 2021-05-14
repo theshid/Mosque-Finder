@@ -19,13 +19,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Ui.Main.View.NamesActivity"></activity>
-        <activity android:name=".Ui.Main.View.CategoriesActivity" />
-        <activity android:name=".Ui.Main.View.AyahActivity" />
-        <activity android:name=".Ui.Main.View.SurahActivity" />
-        <activity android:name=".Ui.Main.View.TestActivity" />
-        <activity android:name=".Ui.Main.View.DetailActivity" />
-        <activity android:name=".Ui.Main.View.BeautifulMosquesActivity" />
+        <activity android:name=".Ui.Main.View.PrayerActivity"></activity>
+        <activity
+            android:name=".Ui.Main.View.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.NamesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.CategoriesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.AyahActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.SurahActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.TestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.DetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.BeautifulMosquesActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Ui.Main.View.SearchActivity"
             android:screenOrientation="portrait" />

@@ -53,6 +53,7 @@
                 android:layout_margin="5dp"
                 android:fontFamily="@font/kemenag"
                 style="@style/TextAppearance.AppCompat.Item.White"
+                android:textSize="20sp"
                 android:textIsSelectable="true"
                 android:textStyle="bold" />
 

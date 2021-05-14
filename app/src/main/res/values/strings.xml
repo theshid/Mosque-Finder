@@ -159,10 +159,19 @@
     <string name="marker_verified">(Verified)</string>
     <string name="marker_not_verified">(Not verified)</string>
     <string name="marker_false_position">(False position)</string>
-    <string name="quran">Quran</string>
     <string name="internet_ayah">You need Internet connection to play the Ayah</string>
     <string name="azkar">Azkar</string>
     <string name="_99_names_of_allah">99 Names of Allah</string>
+    <string name="mosques">Mosques</string>
+    <string name="find_nearby_mosques_in_your_area">Find Nearby Mosques in your area.</string>
+    <string name="quran">Quran</string>
+    <string name="get_to_know_the_99_names_of_allah">Get to know the 99 names of Allah</string>
+    <string name="explore_and_learn_new_daily_azkhars">Explore and learn new daily azkhars</string>
+    <string name="prayer_description">Check the time of Prayer in your area</string>
+    <string name="prayer_time">Prayer Time</string>
+    <string name="quran_description">Read and Listen to the Holy Quran</string>
+    <string name="beauty_mosque_home">Find and Explore the most beautiful mosque on the globe.</string>
+    <string name="quotes_from_great_personalities">Quotes from great personalities</string>
 
 
 </resources>
