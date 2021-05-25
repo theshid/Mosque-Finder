@@ -173,5 +173,9 @@
     <string name="beauty_mosque_home">Find and Explore the most beautiful mosque on the globe.</string>
     <string name="quotes_from_great_personalities">Quotes from great personalities</string>
 
+    <string name="channel_name" translatable="false">channel_name</string>
+    <string name="channel_desc" translatable="false">channel_desc</string>
+    <string name="play_surah">Play Surah</string>
+
 
 </resources>

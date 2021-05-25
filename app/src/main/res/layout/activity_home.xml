@@ -61,14 +61,15 @@
                             style="@style/TextAppearance.AppCompat.Header1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Prayer Time" />
+                             />
 
                         <TextView
-                            android:id="@+id/tv_home_salat_ago"
+                            android:id="@+id/tv_prayer_time"
                             style="@style/TextAppearance.AppCompat.Header2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Again" />
+                            android:text="Asr"
+                             />
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>

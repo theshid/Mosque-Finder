@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.Ui.Main.View
 
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -43,6 +44,8 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var playbackPosition: Long = 0
     private var ayahNumber = 1
     private var baseNumber = 0
+    private var surahName: String? = null
+    private var surahNumber: Int? = null
     private lateinit var switch: StickySwitch
     private val baseUrl = "https://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayahNumber.mp3"
 
@@ -53,10 +56,10 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         savedInstanceState?.let {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
-        val surahNumber = intent.getIntExtra("surah_number", 1)
+        surahNumber = intent.getIntExtra("surah_number", 1)
 
         setViewModel()
-        setUI(surahNumber)
+        setUI(surahNumber!!)
 
         setTransparentStatusBar()
         setNetworkMonitor()
@@ -94,6 +97,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         })
         viewModel.surah.observe(this, Observer {
             surah_title.text = it.transliteration
+            surahName = it.transliteration
             verse_number.text = it.totalVerses.toString() + " " + "Ayah"
         })
 
@@ -111,6 +115,21 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
 
         }
 
+        txt_play_all.setOnClickListener(View.OnClickListener {
+            sendDataToPlayer()
+        })
+
+        play_all.setOnClickListener(View.OnClickListener {
+            sendDataToPlayer()
+        })
+
+    }
+
+    private fun sendDataToPlayer() {
+        val intent = Intent(this, MusicActivity::class.java)
+        intent.putExtra("surah_name", surahName)
+        intent.putExtra("surah_number", surahNumber)
+        startActivity(intent)
 
     }
 

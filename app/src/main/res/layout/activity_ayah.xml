@@ -19,14 +19,16 @@
         app:layout_constraintStart_toStartOf="@+id/ayahRecycler"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <TextView
             android:id="@+id/surah_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             style="@style/TextAppearance.AppCompat.Item.White"
             android:fontFamily="@font/quicksand_semibold"
             android:gravity="center"
+            android:textSize="20sp"
             tools:text="Al-Fatiha" />
 
         <TextView
@@ -38,6 +40,22 @@
             android:gravity="center"
             android:textColor="@color/colorWhite"
             tools:text="7 Ayah" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play"
+            android:layout_marginTop="10dp"
+            android:id="@+id/play_all"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_play_all"
+            android:text="@string/play_surah"
+            android:textColor="@color/colorWhite"
+            android:fontFamily="@font/quicksand_regular"/>
 
         <io.ghyeok.stickyswitch.widget.StickySwitch
             android:id="@+id/switch_control"

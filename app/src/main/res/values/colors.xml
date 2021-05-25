@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#303C5A</color>
     <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">@color/redAccent</color>
+    <color name="colorAccent">@color/colorPrimary</color>
     <color name="grey">#c3c3c3 </color>
     <color name="unicef">#4bd5e1</color>
     <color name="md_amber_700">#FFA000</color>
