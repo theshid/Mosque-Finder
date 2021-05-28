@@ -212,7 +212,7 @@ class MusicActivity : AppCompatActivity() {
     private fun checkIfFileExist():Boolean{
         val fileName = "$surahNumber-$surahName.mp3"
         val file = File(this.getExternalFilesDir(null).toString()+"/surahs/"+fileName)
-        Log.d("Test",this.getExternalFilesDir(null).toString())
+        //Log.d("Test",this.getExternalFilesDir(null).toString())
         return file.exists()
     }
 

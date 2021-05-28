@@ -125,9 +125,21 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         })
 
         fab.setOnClickListener(View.OnClickListener {
-            downloadDialog()
+            if (checkIfFileExist()){
+                Toast.makeText(this,getString(R.string.dl_available),Toast.LENGTH_LONG).show()
+            } else{
+                downloadDialog()
+            }
+
         })
 
+    }
+
+    private fun checkIfFileExist():Boolean{
+        val fileName = "$surahNumber-$surahName.mp3"
+        val file = File(this.getExternalFilesDir(null).toString()+"/surahs/"+fileName)
+        //Log.d("Test",this.getExternalFilesDir(null).toString())
+        return file.exists()
     }
 
     private fun downloadDialog() {
@@ -157,10 +169,10 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         intent.putExtra("surah", surahName)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             startForegroundService(intent)
-            Toast.makeText(this, "Download started, check notification", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.dl_started), Toast.LENGTH_LONG).show()
         } else {
             startService(intent)
-            Toast.makeText(this, "Download started, check notification", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.dl_started), Toast.LENGTH_LONG).show()
         }
     }
 

@@ -176,4 +176,18 @@
     <string name="internet_ayah">Une connexion Internet est nécéssaire pour jouer l\'audio</string>
     <string name="azkar">Azkar</string>
     <string name="_99_names_of_allah">Les 99 Noms d\'Allah</string>
+    <string name="mosques">Mosquées</string>
+    <string name="find_nearby_mosques_in_your_area">Trouvez les mosquées à proximité.</string>
+    <string name="get_to_know_the_99_names_of_allah">Apprenez à connaitre les 99 noms d\'Allah</string>
+    <string name="explore_and_learn_new_daily_azkhars">Explorez et apprenez de nouveaux azdkhar</string>
+    <string name="prayer_description">Vérifiez l\'heure de prière dans votre zone</string>
+    <string name="prayer_time">Heure de Prière</string>
+    <string name="quran_description">Écoutez et lisez le Saint Coran</string>
+    <string name="beauty_mosque_home">Trouvez et Explorez les plus belle mosquées du monde.</string>
+    <string name="quotes_from_great_personalities">Citation de grandes personnalités</string>
+
+    <string name="play_surah">Jouer la Sourate</string>
+    <string name="download_surah">Télécharger la Sourate</string>
+    <string name="dl_available">Cette Sourate est déjà disponible hors ligne</string>
+    <string name="dl_started">Téléchargement entamé, vérifiez la bar de notification</string>
 </resources>

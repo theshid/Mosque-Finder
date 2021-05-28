@@ -58,6 +58,7 @@ class SurahDLService : Service() {
                 if (progress.percent().toInt() == 100){
                     helper.notificationBuilder.setProgress(0,0,false)
                         .setOngoing(false)
+                        .setAutoCancel(true)
                     helper.updateNotification("Download Completed!")
                 }}
             .launchIn(GlobalScope) // using lifecycleScope

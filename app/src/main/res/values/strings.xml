@@ -177,6 +177,8 @@
     <string name="channel_desc" translatable="false">channel_desc</string>
     <string name="play_surah">Play Surah</string>
     <string name="download_surah">Download Surah</string>
+    <string name="dl_available">This Surah is already available offline</string>
+    <string name="dl_started">Download started, check notification</string>
 
 
 </resources>
