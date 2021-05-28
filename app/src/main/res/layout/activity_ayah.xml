@@ -110,4 +110,19 @@
 
     </com.google.android.exoplayer2.ui.PlayerView>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_dl"
+        android:backgroundTint="@color/colorPrimary"
+        app:tint="@color/white"
+        android:background="@color/colorPrimary"
+        android:foregroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/exoplayerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/download_surah" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

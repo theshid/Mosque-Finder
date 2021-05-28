@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.lifecycle.LiveData
@@ -20,7 +21,9 @@ import androidx.lifecycle.Observer
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.services.MusicService
 import com.shid.mosquefinder.Utils.formatTimeInMillisToString
+import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_music.*
+import java.io.File
 
 class MusicActivity : AppCompatActivity() {
 
@@ -116,9 +119,17 @@ class MusicActivity : AppCompatActivity() {
                         surahNumber.toString()
                     }
                 }
+                sendSurahToService()
                 val surahUrl =
-                    "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/mishary-rashid-alafasy/mishary-rashid-alafasy-$formatNumber-muslimcentral.com.mp3"
-                mediaController!!.transportControls.playFromUri(Uri.parse(surahUrl), null)
+                    "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com" +
+                            "/mishary-rashid-alafasy/mishary-rashid-alafasy-$formatNumber-muslimcentral.com.mp3"
+                if (checkIfFileExist()){
+                    val filePath = this.getExternalFilesDir(null).toString()+"/surahs/$surahNumber-$surahName.mp3"
+                    mediaController!!.transportControls.playFromUri(Uri.fromFile(File(filePath)),null)
+                    Toast.makeText(this,"Reading File",Toast.LENGTH_LONG).show()
+                }else{
+                    mediaController!!.transportControls.playFromUri(Uri.parse(surahUrl), null)
+                }
                 playPauseButton.setImageResource(R.drawable.ic_pause_vector)
                 song_player_progress_bar.visibility = View.GONE
 
@@ -150,13 +161,20 @@ class MusicActivity : AppCompatActivity() {
         surahNumber = intent.getIntExtra("surah_number",1)
         setUI()
         setMediaBrowser()
-        setTranslucent(true)
+        setTransparentStatusBar(true)
         statePlayer = intent.getBooleanExtra("state_player",false)
         Log.d("Test", "value of state:$statePlayer")
         setPlayPauseBtnFromIntent(statePlayer)
         setClickListeners()
         trackTimeObserver()
 
+
+    }
+
+    private fun sendSurahToService(){
+        val b = Bundle()
+        b.putString("surah",surahName)
+        mediaController?.sendCommand("surah",b,null)
     }
 
     private fun trackTimeObserver() {
@@ -189,6 +207,13 @@ class MusicActivity : AppCompatActivity() {
         } else if (!statePlayer){
             playPauseButton.setImageResource(R.drawable.ic_play_vector)
         }
+    }
+
+    private fun checkIfFileExist():Boolean{
+        val fileName = "$surahNumber-$surahName.mp3"
+        val file = File(this.getExternalFilesDir(null).toString()+"/surahs/"+fileName)
+        Log.d("Test",this.getExternalFilesDir(null).toString())
+        return file.exists()
     }
 
     private fun setMediaBrowser() {

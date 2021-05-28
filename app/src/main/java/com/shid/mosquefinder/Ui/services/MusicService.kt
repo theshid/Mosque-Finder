@@ -6,6 +6,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.*
 import android.support.v4.media.MediaBrowserCompat
@@ -14,6 +15,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.shid.mosquefinder.Ui.Main.View.MusicActivity
 import com.shid.mosquefinder.R
@@ -34,6 +36,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
     private var channelId = "channelId"
     private var mExoPlayer: SimpleExoPlayer? = null
     private var oldUri: Uri? = null
+    private var surahName:String = "test"
 
 
     private val mMediaSessionCallback = object : MediaSessionCompat.Callback() {
@@ -65,6 +68,8 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
                 } else {
                     mExoPlayer?.repeatMode = Player.REPEAT_MODE_OFF
                 }
+            } else if (command == "surah"){
+                surahName = extras?.getString("surah")!!
             }
         }
 
@@ -178,12 +183,12 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
 
                 //pass description here
                 override fun getCurrentContentText(player: Player): String? {
-                    return "Description"
+                    return "Mishary bin Rashid Alafasy"
                 }
 
                 //pass title (mostly playing audio name)
                 override fun getCurrentContentTitle(player: Player): String {
-                    return "Title"
+                    return surahName!!
                 }
 
                 // pass image as bitmap
@@ -191,7 +196,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
                     player: Player,
                     callback: PlayerNotificationManager.BitmapCallback
                 ): Bitmap? {
-                    return null
+                    return BitmapFactory.decodeResource(resources,R.drawable.logo2)
                 }
             },
             object : PlayerNotificationManager.NotificationListener {
@@ -248,6 +253,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
 
     private fun stop() {
         // release the resources when the service is destroyed
+        playerNotificationManager.setPlayer(null)
         mExoPlayer?.playWhenReady = false
         mExoPlayer?.release()
         mExoPlayer = null

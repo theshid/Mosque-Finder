@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -27,6 +28,7 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.AyahViewModelFactory
 import com.shid.mosquefinder.Ui.Main.Adapter.AyahAdapter
 import com.shid.mosquefinder.Ui.Main.ViewModel.AyahViewModel
+import com.shid.mosquefinder.Ui.services.SurahDLService
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
@@ -47,7 +49,6 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var surahName: String? = null
     private var surahNumber: Int? = null
     private lateinit var switch: StickySwitch
-    private val baseUrl = "https://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayahNumber.mp3"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,6 +124,60 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
             sendDataToPlayer()
         })
 
+        fab.setOnClickListener(View.OnClickListener {
+            downloadDialog()
+        })
+
+    }
+
+    private fun downloadDialog() {
+        MaterialDialog(this).show {
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.dialog_rate_app))
+            positiveButton(text = getString(R.string.rate)) { dialog ->
+                dialog.cancel()
+                initializeService()
+            }
+            negativeButton(text = getString(R.string.cancel)) { dialog ->
+                dialog.cancel()
+
+            }
+            icon(R.drawable.logo2)
+        }
+    }
+
+    private fun initializeService() {
+        val number = formatSurahNumber()
+        val surahUrl =
+            "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/mishary" +
+                    "-rashid-alafasy/mishary-rashid-alafasy-$number-muslimcentral.com.mp3"
+        val intent = Intent(this, SurahDLService::class.java)
+        intent.putExtra("link", surahUrl)
+        intent.putExtra("number", surahNumber)
+        intent.putExtra("surah", surahName)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+            Toast.makeText(this, "Download started, check notification", Toast.LENGTH_LONG).show()
+        } else {
+            startService(intent)
+            Toast.makeText(this, "Download started, check notification", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun formatSurahNumber(): String {
+        var formatNumber: String? = null
+        formatNumber = when {
+            surahNumber!! in 1..9 -> {
+                "00$surahNumber"
+            }
+            surahNumber!! in 10..99 -> {
+                "0$surahNumber"
+            }
+            else -> {
+                surahNumber.toString()
+            }
+        }
+        return formatNumber
     }
 
     private fun sendDataToPlayer() {

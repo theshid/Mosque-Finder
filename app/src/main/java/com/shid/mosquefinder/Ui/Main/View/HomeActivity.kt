@@ -29,6 +29,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        Log.d("Testing",this.getExternalFilesDir(null).toString())
         setUpNewLocationListener()
         user = getUserFromIntent()
         setClickListeners()

@@ -176,6 +176,7 @@
     <string name="channel_name" translatable="false">channel_name</string>
     <string name="channel_desc" translatable="false">channel_desc</string>
     <string name="play_surah">Play Surah</string>
+    <string name="download_surah">Download Surah</string>
 
 
 </resources>
