@@ -60,6 +60,7 @@ class SurahDLService : Service() {
                         .setOngoing(false)
                         .setAutoCancel(true)
                     helper.updateNotification("Download Completed!")
+                    stopService()
                 }}
             .launchIn(GlobalScope) // using lifecycleScope
 
