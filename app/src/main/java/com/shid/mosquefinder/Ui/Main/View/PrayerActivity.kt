@@ -17,6 +17,7 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.SharePref
 import kotlinx.android.synthetic.main.activity_prayer.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -30,27 +31,41 @@ class PrayerActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest:LocationRequest
+    private lateinit var sharedPref:SharePref
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest()
+        setLocationUtils()
+        setUI()
+        clickListeners()
+    }
 
-        permissionCheck()
-        setDate()
-        //setCity()
+
+
+    private fun setUI() {
+        sharedPref = SharePref(this)
+        userPosition = sharedPref.loadSavedPosition()
         timeZone = getTimeZone()
-
+        calculatePrayerTime(userPosition!!)
+        findCity(userPosition!!.latitude,userPosition!!.longitude)
+        setDate()
+    }
+    private fun clickListeners() {
         button.setOnClickListener(View.OnClickListener {
             goToMapActivity()
+        })
+
+        btn_location.setOnClickListener(View.OnClickListener {
+            permissionCheck()
         })
     }
 
     override fun onResume() {
         super.onResume()
         if (PermissionUtils.isAccessFineLocationGranted(this)){
+
             startLocationUpdates()
         }
 
@@ -60,6 +75,12 @@ class PrayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         stopLocationUpdates()
+    }
+
+    private fun setLocationUtils(){
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest = LocationRequest()
+        retrieveLocation()
     }
 
     private fun stopLocationUpdates() {
@@ -141,7 +162,8 @@ class PrayerActivity : AppCompatActivity() {
                             )
                         } // Got last known location. In some rare situations this can be null.
                     userPosition?.let { calculatePrayerTime(it)
-                    findCity(it.latitude,it.longitude)}
+                    findCity(it.latitude,it.longitude)
+                    sharedPref.saveUserPosition(LatLng(it.latitude,it.longitude))}
                 }
 
            if (userPosition == null){
@@ -160,6 +182,7 @@ class PrayerActivity : AppCompatActivity() {
                     userPosition = LatLng(location.latitude,location.longitude)
                     calculatePrayerTime(userPosition!!)
                     findCity(userPosition!!.latitude,userPosition!!.longitude)
+                    sharedPref.saveUserPosition(userPosition!!)
                     // Update UI with location data
                     // ...
                 }

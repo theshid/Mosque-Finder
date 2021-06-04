@@ -3,7 +3,8 @@ package com.shid.mosquefinder.Utils
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.android.gms.maps.model.LatLng
-
+const val defaultLat = 33.97159194946289F
+const val defaultLng = -6.849812984466553F
 class SharePref(context: Context) {
     private val mySharePref: SharedPreferences
 
@@ -39,8 +40,8 @@ class SharePref(context: Context) {
         return mySharePref.getBoolean("rate",false)
     }
     fun loadSavedPosition(): LatLng {
-    val position:LatLng = LatLng(mySharePref.getFloat("position_lat",15F).toDouble(),
-    mySharePref.getFloat("position_lon",15F).toDouble())
+    val position:LatLng = LatLng(mySharePref.getFloat("position_lat", defaultLat).toDouble(),
+    mySharePref.getFloat("position_lon", defaultLng).toDouble())
         return position
     }
 
