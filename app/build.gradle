@@ -164,6 +164,8 @@ dependencies {
 
     implementation "com.github.ssseasonnn:DownloadX:1.0.2"
 
+    implementation 'com.github.mumayank:AirLocation:2.5.2'
+
 
 
 
