@@ -181,6 +181,7 @@
     <string name="dl_started">Download started, check notification</string>
     <string name="find_nearby_mosque">Find Nearby Mosque</string>
     <string name="refresh">Refresh</string>
+    <string name="next_prayer">Next Prayer</string>
 
 
 </resources>

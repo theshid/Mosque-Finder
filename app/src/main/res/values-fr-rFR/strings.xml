@@ -190,4 +190,7 @@
     <string name="download_surah">Télécharger la Sourate</string>
     <string name="dl_available">Cette Sourate est déjà disponible hors ligne</string>
     <string name="dl_started">Téléchargement entamé, vérifiez la bar de notification</string>
+    <string name="find_nearby_mosque">Mosquées à proximité</string>
+    <string name="refresh">Actualisez</string>
+    <string name="next_prayer">Prochaine Prière</string>
 </resources>

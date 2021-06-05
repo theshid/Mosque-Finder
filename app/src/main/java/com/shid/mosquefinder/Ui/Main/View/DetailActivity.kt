@@ -34,7 +34,7 @@ class DetailActivity : AppCompatActivity() {
         onTransformationEndContainerApplyParams()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        setTransparentStatusBar()
+
         setNetworkMonitor()
         setOnClick()
         val mosqueItem: BeautifulMosques = requireNotNull(intent.getParcelableExtra(EXTRA_MOSQUE))

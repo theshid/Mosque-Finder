@@ -161,7 +161,7 @@ class MusicActivity : AppCompatActivity() {
         surahNumber = intent.getIntExtra("surah_number",1)
         setUI()
         setMediaBrowser()
-        setTransparentStatusBar(true)
+
         statePlayer = intent.getBooleanExtra("state_player",false)
         Log.d("Test", "value of state:$statePlayer")
         setPlayPauseBtnFromIntent(statePlayer)

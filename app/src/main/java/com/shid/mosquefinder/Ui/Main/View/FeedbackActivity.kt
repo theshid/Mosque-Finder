@@ -38,7 +38,7 @@ class FeedbackActivity : AppCompatActivity() {
                 handleConnectivityChange()
         })
 
-        setTransparentStatusBar()
+
         setViewModel()
         setOnClick()
     }

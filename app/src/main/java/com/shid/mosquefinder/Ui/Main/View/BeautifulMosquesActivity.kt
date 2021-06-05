@@ -43,7 +43,7 @@ class BeautifulMosquesActivity : AppCompatActivity() {
         setViewModel()
 
         setOnClick()
-        setTransparentStatusBar()
+
         setNetworkMonitor()
         setObservers()
         Handler().postDelayed(kotlinx.coroutines.Runnable {

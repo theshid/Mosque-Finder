@@ -9,7 +9,14 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/colorBlack</item>
         <item name="android:windowAnimationStyle">@null</item>
+
+        <item name="toolbarNavigationButtonStyle">@style/TintedNavigation</item>
+
+    </style>
+    <style name="TintedNavigation" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+    <item name="tint">@color/colorWhite</item>
     </style>
 
     <style name="myDialog" parent="Theme.AppCompat.Dialog">

@@ -45,7 +45,7 @@ class AuthActivity : AppCompatActivity() {
 
 
     companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 999
+        const val LOCATION_PERMISSION_REQUEST_CODE = 999
         private const val TAG = "AuthActivity"
         var userPosition: LatLng? = null
         var newUserPosition:LatLng?= null
@@ -76,7 +76,7 @@ class AuthActivity : AppCompatActivity() {
                 handleConnectivityChange()
         })
         initAuthViewModel()
-        setTransparentStatusBar()
+
         checkIfPermissionIsActive()
         initSignInButton()
         setObservers()

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/home_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -55,6 +56,14 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="30dp"
                         android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_next_prayer"
+                            style="@style/TextAppearance.AppCompat.Header2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/next_prayer"
+                            />
 
                         <TextView
                             android:id="@+id/tv_home_salat_time"

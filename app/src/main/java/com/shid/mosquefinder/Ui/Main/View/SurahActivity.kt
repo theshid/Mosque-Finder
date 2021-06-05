@@ -40,7 +40,7 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         setUI()
         setOnClick()
         setSearch()
-        setTransparentStatusBar()
+        //setTransparentStatusBar()
         setNetworkMonitor()
     }
 

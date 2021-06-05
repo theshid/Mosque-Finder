@@ -1,19 +1,17 @@
 package com.shid.mosquefinder.Ui.Main.View
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.Ui.Base.AyahViewModelFactory
 import com.shid.mosquefinder.Ui.Base.NameViewModelFactory
 import com.shid.mosquefinder.Ui.Main.Adapter.NameAdapter
-import com.shid.mosquefinder.Ui.Main.ViewModel.AyahViewModel
 import com.shid.mosquefinder.Ui.Main.ViewModel.NameViewModel
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import dev.kosrat.muslimdata.models.Language
 import dev.kosrat.muslimdata.repository.MuslimRepository
+import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
 import kotlinx.android.synthetic.main.activity_names.*
 import kotlinx.coroutines.launch
 
@@ -27,7 +25,8 @@ class NamesActivity : AppCompatActivity() {
 
         setViewModel()
         setUI()
-        setTransparentStatusBar()
+        setOnClick()
+       //setTransparentStatusBar()
     }
 
     private fun setUI() {
@@ -38,8 +37,16 @@ class NamesActivity : AppCompatActivity() {
             nameAdapter.setData(names)
             nameRecycler.adapter = nameAdapter
         }
+        val view: View = toolbar_detail.getChildAt(0)
+        view.setOnClickListener(View.OnClickListener {
+            onBackPressed()
+        })
 
-
+    }
+    private fun setOnClick() {
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun setViewModel() {

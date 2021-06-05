@@ -47,7 +47,7 @@ class QuotesActivity : AppCompatActivity() {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
-        setTransparentStatusBar()
+
         setViewModel()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             mQuoteList = viewModel.getQuotesFromRepository()

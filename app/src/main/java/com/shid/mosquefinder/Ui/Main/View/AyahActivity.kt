@@ -62,7 +62,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         setViewModel()
         setUI(surahNumber!!)
 
-        setTransparentStatusBar()
+
         setNetworkMonitor()
     }
 

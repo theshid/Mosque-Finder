@@ -202,11 +202,11 @@ class PrayerActivity : AppCompatActivity() {
             )
             val azan = Azan(location, Method.EGYPT_SURVEY)
             val prayerTimes = azan.getPrayerTimes(date)
-            tv_pray_time_fajr.text = prayerTimes.fajr().toString()
-            tv_pray_time_dhuhr.text = prayerTimes.thuhr().toString()
-            tv_pray_time_asr.text = prayerTimes.assr().toString()
-            tv_pray_time_maghrib.text = prayerTimes.maghrib().toString()
-            tv_pray_time_isha.text = prayerTimes.ishaa().toString()
+            tv_pray_time_fajr.text = prayerTimes.fajr().toString().dropLast(3)
+            tv_pray_time_dhuhr.text = prayerTimes.thuhr().toString().dropLast(3)
+            tv_pray_time_asr.text = prayerTimes.assr().toString().dropLast(3)
+            tv_pray_time_maghrib.text = prayerTimes.maghrib().toString().dropLast(3)
+            tv_pray_time_isha.text = prayerTimes.ishaa().toString().dropLast(3)
 
         }
 
