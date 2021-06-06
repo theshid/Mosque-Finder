@@ -25,7 +25,7 @@ class NamesActivity : AppCompatActivity() {
 
         setViewModel()
         setUI()
-        setOnClick()
+
        //setTransparentStatusBar()
     }
 
@@ -43,11 +43,7 @@ class NamesActivity : AppCompatActivity() {
         })
 
     }
-    private fun setOnClick() {
-        toolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
-    }
+
 
     private fun setViewModel() {
         viewModel = ViewModelProvider(

@@ -36,7 +36,6 @@ class HomeActivity : AppCompatActivity() {
     private var user: User? = null
     var userPosition: LatLng? = null
     private var timeZone: Double? = null
-    private lateinit var view:View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -55,10 +54,7 @@ class HomeActivity : AppCompatActivity() {
         setClickListeners()
 
         //setTransparentStatusBar()
-        view = findViewById(R.id.home_container)
-        view.fitsSystemWindows = false
-        view.setPadding(0,0,0,0)
-        setUI()
+
     }
 
     private fun checkIfPermissionIsActive() {
@@ -168,18 +164,6 @@ class HomeActivity : AppCompatActivity() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun setUI() {
-
-        /*val today = SimpleDate(GregorianCalendar())
-        val locationPrayer = Location(5.6361298, -0.2344183, 0.0, 0)
-        val azan = Azan(locationPrayer, Method.MUSLIM_LEAGUE)
-        val prayerTimes = azan.getPrayerTimes(today)
-        tv_home_salat_time.text = prayerTimes.fajr().toString()*/
-
-
-
-
-    }
 
     private fun initializePrayerDate(time:String):Date{
         val simpleDateFormat = SimpleDateFormat("HH:mm")
@@ -209,7 +193,7 @@ class HomeActivity : AppCompatActivity() {
         } else if (nowTime.after(maghrib) && nowTime.before(isha)){
             tv_prayer_time.text = "Isha"
             tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
-        } else if (nowTime.after(isha) && nowTime.before(fajr)){
+        } else if (nowTime.after(isha)){
             tv_prayer_time.text = "Fajr"
             tv_home_salat_time.text = prayerTimes.fajr().toString().dropLast(3)
         }

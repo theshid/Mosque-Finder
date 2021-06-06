@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_back"
-            app:title="Prayer times"
+            app:title="@string/prayer_time"
             app:titleTextAppearance="@style/ToolbarTextAppearance"
             app:titleTextColor="@android:color/white" />
 

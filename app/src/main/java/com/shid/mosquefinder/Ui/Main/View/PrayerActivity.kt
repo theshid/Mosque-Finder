@@ -15,10 +15,14 @@ import com.azan.Method
 import com.azan.astrologicalCalc.SimpleDate
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.PermissionUtils
 import com.shid.mosquefinder.Utils.SharePref
+import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
 import kotlinx.android.synthetic.main.activity_prayer.*
+import kotlinx.android.synthetic.main.activity_prayer.toolbar
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,6 +36,7 @@ class PrayerActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest:LocationRequest
     private lateinit var sharedPref:SharePref
+    private var user: User? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +50,7 @@ class PrayerActivity : AppCompatActivity() {
 
 
     private fun setUI() {
+        user = getUserFromIntent()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
         timeZone = getTimeZone()
@@ -60,7 +66,12 @@ class PrayerActivity : AppCompatActivity() {
         btn_location.setOnClickListener(View.OnClickListener {
             permissionCheck()
         })
+
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -130,7 +141,9 @@ class PrayerActivity : AppCompatActivity() {
 
     private fun goToMapActivity(){
         val intent = Intent(this,MapsActivity2::class.java)
+        intent.putExtra(Common.USER, user)
         startActivity(intent)
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun getTimeZone(): Double {
@@ -210,6 +223,10 @@ class PrayerActivity : AppCompatActivity() {
 
         }
 
+
+    private fun getUserFromIntent(): User? {
+        return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.Data.Model.User
+    }
 
 
 

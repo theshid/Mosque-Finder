@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -49,6 +50,10 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var surahName: String? = null
     private var surahNumber: Int? = null
     private lateinit var switch: StickySwitch
+    companion object{
+        val STATE_SURAH = "state"
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +62,21 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         savedInstanceState?.let {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
-        surahNumber = intent.getIntExtra("surah_number", 1)
+
+
+
+        // Check whether we're recreating a previously destroyed instance
+        if (savedInstanceState != null) {
+            with(savedInstanceState) {
+                // Restore value of members from saved state
+                surahNumber = getInt(STATE_SURAH)
+
+            }
+        } else {
+            // Probably initialize members with default values for a new instance
+            surahNumber = intent.getIntExtra("surah_number", 1)
+        }
+
 
         setViewModel()
         setUI(surahNumber!!)
@@ -66,6 +85,28 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         setNetworkMonitor()
     }
 
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        outState.run {
+            surahNumber?.let { putInt(STATE_SURAH, it) }
+
+        }
+
+        super.onSaveInstanceState(outState, outPersistentState)
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // Restore state members from saved instance
+        savedInstanceState?.run {
+            surahNumber = getInt(STATE_SURAH)
+
+        }
+
+    }
 
     private fun setViewModel() {
         viewModel = ViewModelProvider(

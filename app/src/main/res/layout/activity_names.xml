@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:elevation="0dp"
+        android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,7 +20,7 @@
             android:id="@+id/toolbar_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="@color/colorPrimary"
             app:navigationIcon="@drawable/ic_back">
 
             <LinearLayout
@@ -32,9 +33,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/quicksand_medium"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/colorWhite"
                     android:text="@string/_99_names_of_allah"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
