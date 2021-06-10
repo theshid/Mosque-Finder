@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
-    android:background="#fcfcfc"
+    android:background="@color/colorPrimary"
     android:gravity="center"
     android:id="@+id/ll">
     <LinearLayout

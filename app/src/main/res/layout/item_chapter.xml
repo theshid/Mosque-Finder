@@ -33,6 +33,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txt_chapter"
+                android:fontFamily="@font/quicksand_semibold"
+                android:textColor="@color/colorPrimary"
                 android:layout_marginTop="10dp"
                 android:text="Nature"
                 android:textStyle="bold" />

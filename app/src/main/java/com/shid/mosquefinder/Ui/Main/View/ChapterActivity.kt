@@ -12,7 +12,7 @@ import dev.kosrat.muslimdata.repository.MuslimRepository
 import kotlinx.android.synthetic.main.activity_chapter.*
 import kotlinx.coroutines.launch
 
-class ChapterActivity : AppCompatActivity() {
+class ChapterActivity : AppCompatActivity(),ChapterAdapter.ItemAction {
     private lateinit var adapter: ChapterAdapter
     private var categorNum: Int? = null
 
@@ -21,17 +21,18 @@ class ChapterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chapter)
 
         categorNum = intent.getIntExtra("category", 1)
-        adapter = ChapterAdapter { categorNum?.let { it1 -> goToItemActivity(it1) } }
+        adapter = ChapterAdapter {  it1 -> goToItemActivity(it1) }
         setUI()
     }
 
     private fun setUI() {
         rv_chapter.adapter = adapter
+        adapter.setItemClickAction(this)
         categorNum?.let { getChapters(it) }
     }
 
     private fun goToItemActivity(chapterNum: Int) {
-        val intent = Intent(this, ItemActivity::class.java)
+        val intent = Intent(applicationContext, ItemActivity::class.java)
         intent.putExtra("chapter", chapterNum)
         startActivity(intent)
     }
@@ -46,5 +47,9 @@ class ChapterActivity : AppCompatActivity() {
             Log.i("azkarChapters", "$azkarChapters")
             Log.i("azkarChapters", "${azkarChapters?.size}")
         }
+    }
+
+    override fun clickItemAction(chapterId: Int) {
+        goToItemActivity(chapterId)
     }
 }
