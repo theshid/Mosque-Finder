@@ -72,6 +72,32 @@
             android:fontFamily="@font/quicksand_regular"
             tools:text="Dengan nama Allah Yang Maha Pengasih, Maha Penyayang."/>
 
+        <View
+            android:id="@+id/line_below_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="3dp"
+            android:background="@color/colorPrimary"
+             />
+
+        <TextView
+            android:id="@+id/tv_item_translate_french"
+            style="@style/TextAppearance.AppCompat.Item2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@font/quicksand_regular"
+            tools:text="Dengan nama Allah Yang Maha Pengasih, Maha Penyayang."/>
+
+        <View
+            android:id="@+id/line_below_title2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="3dp"
+            android:background="@color/colorPrimary"
+            />
+
         <TextView
             android:id="@+id/tv_item_source"
             style="@style/TextAppearance.AppCompat.Item2"
