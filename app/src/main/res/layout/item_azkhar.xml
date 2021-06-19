@@ -72,13 +72,19 @@
             android:fontFamily="@font/quicksand_regular"
             tools:text="Dengan nama Allah Yang Maha Pengasih, Maha Penyayang."/>
 
-        <View
-            android:id="@+id/line_below_title"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="3dp"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
             android:background="@color/colorPrimary"
-             />
+            android:fontFamily="@font/kemenag"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout1" />
+
+
+
 
         <TextView
             android:id="@+id/tv_item_translate_french"
@@ -90,14 +96,18 @@
             android:fontFamily="@font/quicksand_regular"
             tools:text="Dengan nama Allah Yang Maha Pengasih, Maha Penyayang."/>
 
-        <View
-            android:id="@+id/line_below_title2"
+        <TextView
+            android:id="@+id/line"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="3dp"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
             android:background="@color/colorPrimary"
-            />
-
+            android:fontFamily="@font/kemenag"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout1" />
         <TextView
             android:id="@+id/tv_item_source"
             style="@style/TextAppearance.AppCompat.Item2"
@@ -107,6 +117,14 @@
             android:textColor="@color/colorBlack"
             android:fontFamily="@font/people"
             tools:text="Dengan nama Allah Yang Maha Pengasih, Maha Penyayang."/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/translate_in_french"
+            android:layout_gravity="center"
+            android:id="@+id/btn_translate"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/textView5"

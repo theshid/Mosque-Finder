@@ -6,6 +6,7 @@ import com.shid.mosquefinder.Data.Model.Api.ApiInterface
 
 object Common {
     private const val GOOGLE_API_URL = "https://maps.googleapis.com/"
+    private const val DEEPL_API_URL = " https://api-free.deepl.com/"
     var RC_SIGN_IN = 123
     var USER = "user"
     var USERS = "users"
@@ -21,4 +22,7 @@ object Common {
 
     val googleApiService: ApiInterface
         get() = ApiClient.getClient(GOOGLE_API_URL).create(ApiInterface::class.java)
+
+    val deeplApiService: ApiInterface
+    get() = ApiClient.getClient(DEEPL_API_URL).create(ApiInterface::class.java)
 }

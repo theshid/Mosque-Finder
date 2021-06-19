@@ -182,6 +182,8 @@
     <string name="find_nearby_mosque">Find Nearby Mosque</string>
     <string name="refresh">Refresh</string>
     <string name="next_prayer">Next Prayer</string>
+    <string name="translate_in_french">Translate in French</string>
+    <string name="internet_msg">You need Internet to perform this action</string>
 
 
 </resources>

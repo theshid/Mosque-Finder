@@ -193,5 +193,6 @@
     <string name="find_nearby_mosque">Mosquées à proximité</string>
     <string name="refresh">Actualisez</string>
     <string name="next_prayer">Prochaine Prière</string>
-
+    <string name="translate_in_french">Traduire en Français</string>
+    <string name="internet_msg">Internet est nécessaire pour effectuer cette action</string>
 </resources>
