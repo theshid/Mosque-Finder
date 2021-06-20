@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.activity_categories.*
+import kotlinx.android.synthetic.main.activity_categories.toolbar
+import kotlinx.android.synthetic.main.activity_chapter.*
 
 class CategoriesActivity : AppCompatActivity() {
 
@@ -51,6 +53,10 @@ class CategoriesActivity : AppCompatActivity() {
         cardSickness.setOnClickListener(View.OnClickListener {
             goToChapterActivity(11)
         })
+
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun goToChapterActivity(categoryNum:Int){

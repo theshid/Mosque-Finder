@@ -36,7 +36,7 @@ class PrayerActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest:LocationRequest
     private lateinit var sharedPref:SharePref
-    private var user: User? = null
+   // private var user: User? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,7 @@ class PrayerActivity : AppCompatActivity() {
 
 
     private fun setUI() {
-        user = getUserFromIntent()
+       // user = getUserFromIntent()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
         timeZone = getTimeZone()
@@ -141,7 +141,7 @@ class PrayerActivity : AppCompatActivity() {
 
     private fun goToMapActivity(){
         val intent = Intent(this,MapsActivity2::class.java)
-        intent.putExtra(Common.USER, user)
+       // intent.putExtra(Common.USER, user)
         startActivity(intent)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }

@@ -184,6 +184,8 @@
     <string name="next_prayer">Next Prayer</string>
     <string name="translate_in_french">Translate in French</string>
     <string name="internet_msg">You need Internet to perform this action</string>
+    <string name="chapter">Chapter</string>
+    <string name="categories">Categories</string>
 
 
 </resources>

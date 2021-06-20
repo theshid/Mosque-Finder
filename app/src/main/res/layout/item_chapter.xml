@@ -36,6 +36,7 @@
                 android:fontFamily="@font/quicksand_semibold"
                 android:textColor="@color/colorPrimary"
                 android:layout_marginTop="10dp"
+                android:gravity="center"
                 android:text="Nature"
                 android:textStyle="bold" />
 

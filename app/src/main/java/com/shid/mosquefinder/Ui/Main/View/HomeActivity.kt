@@ -48,6 +48,7 @@ class HomeActivity : AppCompatActivity() {
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
+       
         setLocationUtils()
         checkIfPermissionIsActive()
         user = getUserFromIntent()
@@ -193,7 +194,7 @@ class HomeActivity : AppCompatActivity() {
         } else if (nowTime.after(maghrib) && nowTime.before(isha)){
             tv_prayer_time.text = "Isha"
             tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
-        } else if (nowTime.after(isha)){
+        } else {
             tv_prayer_time.text = "Fajr"
             tv_home_salat_time.text = prayerTimes.fajr().toString().dropLast(3)
         }

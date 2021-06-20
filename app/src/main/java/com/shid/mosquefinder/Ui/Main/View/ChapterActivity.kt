@@ -10,6 +10,8 @@ import com.shid.mosquefinder.Ui.Main.Adapter.ChapterAdapter
 import dev.kosrat.muslimdata.models.Language
 import dev.kosrat.muslimdata.repository.MuslimRepository
 import kotlinx.android.synthetic.main.activity_chapter.*
+import kotlinx.android.synthetic.main.activity_chapter.toolbar
+import kotlinx.android.synthetic.main.activity_item.*
 import kotlinx.coroutines.launch
 
 class ChapterActivity : AppCompatActivity(),ChapterAdapter.ItemAction {
@@ -23,12 +25,19 @@ class ChapterActivity : AppCompatActivity(),ChapterAdapter.ItemAction {
         categorNum = intent.getIntExtra("category", 1)
         adapter = ChapterAdapter {  it1 -> goToItemActivity(it1) }
         setUI()
+        setOnClick()
     }
 
     private fun setUI() {
         rv_chapter.adapter = adapter
         adapter.setItemClickAction(this)
         categorNum?.let { getChapters(it) }
+    }
+
+    private fun setOnClick() {
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun goToItemActivity(chapterNum: Int) {

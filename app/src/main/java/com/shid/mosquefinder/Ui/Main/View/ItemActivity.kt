@@ -11,7 +11,9 @@ import com.shid.mosquefinder.Ui.Main.Adapter.ItemAdapter
 import com.shid.mosquefinder.Ui.Main.ViewModel.AzkharViewModel
 import dev.kosrat.muslimdata.models.Language
 import dev.kosrat.muslimdata.repository.MuslimRepository
+import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
 import kotlinx.android.synthetic.main.activity_item.*
+import kotlinx.android.synthetic.main.activity_item.toolbar
 import kotlinx.coroutines.launch
 
 class ItemActivity : AppCompatActivity() {
@@ -26,6 +28,7 @@ class ItemActivity : AppCompatActivity() {
         chapterId = intent.getIntExtra("chapter",1)
         adapter = ItemAdapter(viewModel,this)
         setUI()
+        setOnClick()
 
     }
 
@@ -37,6 +40,12 @@ class ItemActivity : AppCompatActivity() {
     private fun setUI() {
         rv_azkhar.adapter = adapter
         chapterId?.let { getItem(it) }
+    }
+
+    private fun setOnClick() {
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 
     private fun getItem(chapterNum:Int) {

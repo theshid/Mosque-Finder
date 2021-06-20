@@ -172,7 +172,7 @@
     <string name="dialog_rate_app">Merci d\'utiliser Mosque Finder. Si vous appréciez, prenez quelques
         secondes pour donner une note sur Google Play Store.</string>
     <string name="rate">Notez</string>
-    <string name="quran">Quran</string>
+    <string name="quran">Coran</string>
     <string name="internet_ayah">Une connexion Internet est nécéssaire pour jouer l\'audio</string>
     <string name="azkar">Azkar</string>
     <string name="_99_names_of_allah">Les 99 Noms d\'Allah</string>
@@ -195,4 +195,6 @@
     <string name="next_prayer">Prochaine Prière</string>
     <string name="translate_in_french">Traduire en Français</string>
     <string name="internet_msg">Internet est nécessaire pour effectuer cette action</string>
+    <string name="chapter">Chapitre</string>
+    <string name="categories">Catégories</string>
 </resources>

@@ -4,10 +4,7 @@ import com.shid.mosquefinder.Data.Model.Pojo.DeepL
 import com.shid.mosquefinder.Data.Model.Pojo.Place
 import com.shid.mosquefinder.Data.Model.Pojo.Translation
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
-import retrofit2.http.Url
+import retrofit2.http.*
 
 
 interface ApiInterface {
@@ -21,5 +18,8 @@ interface ApiInterface {
         @Query("text") inputText:String,
         @Query("target_lang") targetLg:String
     ): Call<DeepL>
+
+    @GET("v1/surah/{surahNumber}/fr.hamidullah")
+    fun getFrenchSurah(@Path("surahNumber") numSurah:Int)
 
 }
