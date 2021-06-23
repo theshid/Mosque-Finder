@@ -6,11 +6,11 @@ import com.shid.mosquefinder.Data.database.entities.Surah
 
 class SurahRepository(private val quranDao: QuranDao) {
 
-    suspend fun getAllSurahs():List<Surah>{
+    fun getAllSurahs(): List<Surah> {
         return quranDao.getSurahs()
     }
 
-    suspend fun getSurahByNumber(surahNumber:Int):Surah = quranDao.getSurahByNumber(surahNumber)
+    fun getSurahByNumber(surahNumber: Int): Surah = quranDao.getSurahByNumber(surahNumber)
 
-    fun getListSurahs(surahNumber: Int):List<Surah> = quranDao.getSurahList(surahNumber)
+    fun getListSurahs(surahNumber: Int): List<Surah> = quranDao.getSurahList(surahNumber)
 }

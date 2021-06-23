@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class AyahViewModel(private val application: Application) : ViewModel() {
     private var _ayah = MutableLiveData<List<Ayah>>()
+
     val ayah: LiveData<List<Ayah>>
         get() = _ayah
 
@@ -28,6 +29,7 @@ class AyahViewModel(private val application: Application) : ViewModel() {
 
     private var repository: AyahRepository
     private var surahRepository: SurahRepository
+
 
     init {
         val dao =
@@ -43,6 +45,10 @@ class AyahViewModel(private val application: Application) : ViewModel() {
         }
     }
 
+    fun getFrenchTrans():String{
+        return repository.translation.value!!
+    }
+
 
     fun getSurahInfo(surahNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,5 +62,9 @@ class AyahViewModel(private val application: Application) : ViewModel() {
             val ayahs = repository.getAyah(surahNumber)
             _ayah.postValue(ayahs)
         }
+    }
+
+    fun fetchFrenchAyah(ayahId:Long){
+        repository.getFrenchAyah(ayahId)
     }
 }

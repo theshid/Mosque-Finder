@@ -116,7 +116,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     }
 
     private fun setUI(number_surah: Int) {
-        ayahAdapter = AyahAdapter()
+        ayahAdapter = AyahAdapter(viewModel)
         viewModel.getSurahList(number_surah)
         viewModel.getAllAyah(number_surah)
         viewModel.getSurahInfo(number_surah)

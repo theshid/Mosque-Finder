@@ -3,7 +3,6 @@ package com.shid.mosquefinder.Ui.Main.View
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -27,7 +26,6 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
 import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingActivity
-import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
@@ -35,9 +33,6 @@ import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
 import com.shid.mosquefinder.Utils.Status
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
-import fr.quentinklein.slt.LocationTracker
-import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_auth.*
 
 
@@ -294,7 +289,7 @@ class AuthActivity : AppCompatActivity() {
             if (it.isNew!!) {
                 createNewUser(it)
             } else {
-                goToMapActivity(it)
+                goToHomeActivity(it)
             }
         })
 
@@ -328,8 +323,8 @@ class AuthActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun goToMapActivity(user: User) {
-        val intent = Intent(this@AuthActivity, MapsActivity2::class.java)
+    private fun goToHomeActivity(user: User) {
+        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
         intent.putExtra(USER, user)
         startActivity(intent)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)

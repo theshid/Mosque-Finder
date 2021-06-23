@@ -1,8 +1,6 @@
 package com.shid.mosquefinder.Data.Model.Api
 
-import com.shid.mosquefinder.Data.Model.Pojo.DeepL
-import com.shid.mosquefinder.Data.Model.Pojo.Place
-import com.shid.mosquefinder.Data.Model.Pojo.Translation
+import com.shid.mosquefinder.Data.Model.Pojo.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -19,7 +17,7 @@ interface ApiInterface {
         @Query("target_lang") targetLg:String
     ): Call<DeepL>
 
-    @GET("v1/surah/{surahNumber}/fr.hamidullah")
-    fun getFrenchSurah(@Path("surahNumber") numSurah:Int)
+    @GET("v1/ayah/{ayahNumber}/fr.hamidullah")
+    fun getFrenchSurah(@Path("ayahNumber") numAyah:Long):Call<Root>
 
 }

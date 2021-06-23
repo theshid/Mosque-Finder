@@ -9,6 +9,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
+    ndkVersion "21.0.6113669"
 
     defaultConfig {
         applicationId "com.shid.mosquefinder"
@@ -19,6 +20,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+
 
     buildTypes {
         release {
@@ -167,6 +170,11 @@ dependencies {
     implementation "com.github.ssseasonnn:DownloadX:1.0.2"
 
     implementation 'com.github.mumayank:AirLocation:2.5.2'
+
+    /*debugImplementation 'com.facebook.flipper:flipper:0.94.1'
+    debugImplementation 'com.facebook.soloader:soloader:0.10.1'
+
+    releaseImplementation 'com.facebook.flipper:flipper-noop:0.94.1'*/
 
 
 

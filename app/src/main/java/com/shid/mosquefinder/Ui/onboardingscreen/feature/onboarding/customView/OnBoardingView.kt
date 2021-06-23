@@ -9,12 +9,11 @@ import android.widget.FrameLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.omni.onboardingscreen.feature.onboarding.OnBoardingPagerAdapter
 import com.omni.onboardingscreen.feature.onboarding.entity.OnBoardingPage
-import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.Main.View.HomeActivity
 import com.shid.mosquefinder.Ui.Main.View.MapsActivity2
 import com.shid.mosquefinder.Ui.onboardingscreen.domain.OnBoardingPrefManager
 import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingActivity
-import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingActivity.Companion.user
 import com.shid.mosquefinder.Utils.Common
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 import kotlinx.android.synthetic.main.onboarding_view.view.*
@@ -67,11 +66,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         nextBtn.setOnClickListener { navigateToNextSlide() }
         skipBtn.setOnClickListener {
             setFirstTimeLaunchToFalse()
-            navigateToMapActivity(context)
+            navigateToHomeActivity(context)
         }
         startBtn.setOnClickListener {
             setFirstTimeLaunchToFalse()
-            navigateToMapActivity(context)
+            navigateToHomeActivity(context)
         }
     }
 
@@ -84,8 +83,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         slider?.setCurrentItem(nextSlidePos, true)
     }
 
-    private fun navigateToMapActivity(context: Context) {
-        val intent:Intent = Intent(context,MapsActivity2::class.java)
+    private fun navigateToHomeActivity(context: Context) {
+        val intent:Intent = Intent(context,HomeActivity::class.java)
         intent.putExtra(Common.USER,OnBoardingActivity.user)
         context.startActivity(intent)
 

@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import com.azan.Azan
 import com.azan.AzanTimes
 import com.azan.Method
@@ -19,7 +20,10 @@ import com.azan.astrologicalCalc.SimpleDate
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.Data.Model.User
+import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.Base.SurahViewModelFactory
+import com.shid.mosquefinder.Ui.Main.ViewModel.SurahViewModel
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.PermissionUtils
 import com.shid.mosquefinder.Utils.SharePref
@@ -27,6 +31,7 @@ import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import fr.quentinklein.slt.LocationTracker
 import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_surah.*
 import okhttp3.internal.notify
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,6 +41,7 @@ class HomeActivity : AppCompatActivity() {
     private var user: User? = null
     var userPosition: LatLng? = null
     private var timeZone: Double? = null
+    private lateinit var viewModel: SurahViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -44,17 +50,30 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         Log.d("Testing", this.getExternalFilesDir(null).toString())
-
+        setViewModel()
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
-       
+
         setLocationUtils()
         checkIfPermissionIsActive()
         user = getUserFromIntent()
         setClickListeners()
 
         //setTransparentStatusBar()
+
+    }
+
+    private fun setViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            SurahViewModelFactory(application)
+        ).get(SurahViewModel::class.java)
+
+        viewModel.getSurahs()
+        viewModel.surahList.observe(this, androidx.lifecycle.Observer {
+            Log.d("Home", "value of :$it")
+        })
 
     }
 

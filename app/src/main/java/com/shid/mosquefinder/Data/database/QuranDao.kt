@@ -32,4 +32,7 @@ interface QuranDao {
 
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber)")
     fun getAyah(surahNumber:Int):List<Ayah>
+
+    @Query("UPDATE ayahs SET french_text=:french WHERE id = :verseId")
+    fun updateAyah(french:String, verseId:Long)
 }
