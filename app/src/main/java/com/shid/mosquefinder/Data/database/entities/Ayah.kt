@@ -11,5 +11,5 @@ data class Ayah(
     @ColumnInfo(name = "verse_number") val verse_number: Int,
     @ColumnInfo(name = "text") val originalText: String,
     @ColumnInfo(name = "translation") val translation: String,
-    @ColumnInfo(name = "french_text") var frenchTranslation:String = "empty"
+    @ColumnInfo(name = "french_text") var frenchTranslation:String ?= "empty"
 )

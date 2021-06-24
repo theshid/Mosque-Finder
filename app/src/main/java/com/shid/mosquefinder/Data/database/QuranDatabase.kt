@@ -21,7 +21,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-@Database(entities = [Surah::class, Ayah::class], version = 1,exportSchema = true)
+@Database(entities = [Surah::class, Ayah::class], version = 2,exportSchema = true)
 abstract class QuranDatabase: RoomDatabase() {
 
     abstract fun surahDao(): QuranDao

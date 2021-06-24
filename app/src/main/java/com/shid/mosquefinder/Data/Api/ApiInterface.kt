@@ -17,7 +17,7 @@ interface ApiInterface {
         @Query("target_lang") targetLg:String
     ): Call<DeepL>
 
-    @GET("v1/ayah/{ayahNumber}/fr.hamidullah")
-    fun getFrenchSurah(@Path("ayahNumber") numAyah:Long):Call<Root>
+    @GET("v1/surah/{surahNumber}/fr.hamidullah")
+    fun getFrenchSurah(@Path("surahNumber") numSurah:Int):Call<Root>
 
 }

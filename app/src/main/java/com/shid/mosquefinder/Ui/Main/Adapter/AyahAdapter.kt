@@ -1,14 +1,14 @@
 package com.shid.mosquefinder.Ui.Main.Adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.shid.mosquefinder.Data.Model.Pojo.Verse
 import com.shid.mosquefinder.Data.database.entities.Ayah
-import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AyahViewModel
-import kotlinx.android.synthetic.main.item_azkhar.view.*
 import kotlinx.android.synthetic.main.item_quran_ayah.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,6 +21,7 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
     RecyclerView.Adapter<AyahAdapter.AyahViewHolder>() {
 
     private var listData = ArrayList<Ayah>()
+    private var frenchList = ArrayList<Verse>()
     lateinit var onClickAyah: OnClickAyah
 
     interface OnClickAyah {
@@ -35,6 +36,11 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
         listData.clear()
         listData.addAll(newListData)
         notifyDataSetChanged()
+    }
+
+    fun setNetworkList(list: List<Verse>){
+        frenchList.clear()
+        frenchList.addAll(list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AyahViewHolder {
@@ -59,30 +65,34 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
         RecyclerView.ViewHolder(itemView) {
         fun bind(ayah: Ayah) {
             if(Locale.getDefault().language.contentEquals("fr")){
-                if (ayah.frenchTranslation.equals("empty")){
-                    GlobalScope.launch(Dispatchers.Main){
-                        viewmodel.fetchFrenchAyah(ayah.id)
-                        itemView.apply {
-                            tv_item_ayah_verse.text = ayah.verse_number.toString()
-                            tv_item_ayah_arab.text = ayah.originalText
+                itemView.apply {
+                    tv_item_ayah_verse.text = ayah.verse_number.toString()
+                    tv_item_ayah_arab.text = ayah.originalText
+                }
+               for (item in frenchList){
+                   Log.d("Adapter","item number:" + item.numInSurah)
+                   Log.d("Adapter","ayah number:" + ayah.verse_number)
+                   if (item.numInSurah == ayah.verse_number){
+                       itemView.tv_item_ayah_translate.text = item.trans
+                       viewmodel.updateAyah(item.trans,ayah.id)
+                   }
+               }
 
 
-                        }
-                        delay(2000)
+                    /*GlobalScope.launch(Dispatchers.IO){
 
-                        itemView.tv_item_ayah_translate.text = viewmodel.getFrenchTrans()
 
-                    }
+                    }*/
 
                 }
-            } else{
+             /*else{
                 itemView.apply {
                     tv_item_ayah_verse.text = ayah.verse_number.toString()
                     tv_item_ayah_arab.text = ayah.originalText
                     tv_item_ayah_translate.text = ayah.translation
 
                 }
-            }
+            }*/
 
         }
 

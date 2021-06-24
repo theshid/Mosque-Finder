@@ -10,6 +10,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
@@ -23,6 +25,9 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
+import com.shid.mosquefinder.Data.Model.Pojo.Verse
+import com.shid.mosquefinder.Data.Repository.AyahRepository
+import com.shid.mosquefinder.Data.database.QuranDatabase
 import com.shid.mosquefinder.Data.database.entities.Ayah
 import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
@@ -50,6 +55,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var surahName: String? = null
     private var surahNumber: Int? = null
     private lateinit var switch: StickySwitch
+    private var verseList: List<Verse> ?= null
     companion object{
         val STATE_SURAH = "state"
     }
@@ -109,17 +115,26 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     }
 
     private fun setViewModel() {
+        val dao =
+            QuranDatabase.getDatabase(application, lifecycleScope, application.resources).surahDao()
         viewModel = ViewModelProvider(
             this,
-            AyahViewModelFactory(application)
+            AyahViewModelFactory(application, AyahRepository(dao))
         ).get(AyahViewModel::class.java)
     }
 
     private fun setUI(number_surah: Int) {
         ayahAdapter = AyahAdapter(viewModel)
+        viewModel.getFrenchSurah(number_surah)
         viewModel.getSurahList(number_surah)
         viewModel.getAllAyah(number_surah)
         viewModel.getSurahInfo(number_surah)
+        viewModel.translation.observe(this , Observer {
+            if (it.isNotEmpty()){
+                ayahAdapter.setNetworkList(it)
+            }
+        })
+        Thread.sleep(2000)
         viewModel.listSurah.observe(this, Observer {
             surahList = it
             Log.d("Test", it.size.toString())
@@ -130,10 +145,9 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         })
         viewModel.ayah.observe(this, Observer {
             if (it.isNotEmpty()) {
+                ayahRecycler.adapter = ayahAdapter
                 ayahAdapter.setData(it)
                 ayahAdapter.setOnItemClick(this)
-                ayahRecycler.adapter = ayahAdapter
-                ayahAdapter.notifyDataSetChanged()
             }
 
         })
@@ -142,6 +156,8 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
             surahName = it.transliteration
             verse_number.text = it.totalVerses.toString() + " " + "Ayah"
         })
+
+
 
         switch = findViewById(R.id.switch_control)
         switch.visibility = View.GONE
