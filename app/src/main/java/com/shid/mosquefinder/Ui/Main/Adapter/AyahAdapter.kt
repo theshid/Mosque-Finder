@@ -69,22 +69,30 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
                     tv_item_ayah_verse.text = ayah.verse_number.toString()
                     tv_item_ayah_arab.text = ayah.originalText
                 }
-               for (item in frenchList){
-                   Log.d("Adapter","item number:" + item.numInSurah)
-                   Log.d("Adapter","ayah number:" + ayah.verse_number)
-                   if (item.numInSurah == ayah.verse_number){
-                       itemView.tv_item_ayah_translate.text = item.trans
-                       viewmodel.updateAyah(item.trans,ayah.id)
-                   }
-               }
+                if(ayah.frenchTranslation == null || ayah.frenchTranslation.equals("empty")){
+                    for (item in frenchList){
+                        Log.d("Adapter","item number:" + item.numInSurah)
+                        Log.d("Adapter","ayah number:" + ayah.verse_number)
+                        if (item.numInSurah == ayah.verse_number){
+                            itemView.tv_item_ayah_translate.text = item.trans
+                            viewmodel.updateAyah(item.trans,ayah.id)
+                            break
+                        }
+                    }
+                }
 
-
-                    /*GlobalScope.launch(Dispatchers.IO){
-
-
-                    }*/
+                else{
+                    itemView.tv_item_ayah_translate.text = ayah.frenchTranslation
 
                 }
+
+            } else{
+                itemView.apply {
+                    tv_item_ayah_verse.text = ayah.verse_number.toString()
+                    tv_item_ayah_arab.text = ayah.originalText
+                    tv_item_ayah_translate.text = ayah.translation
+                }
+            }
              /*else{
                 itemView.apply {
                     tv_item_ayah_verse.text = ayah.verse_number.toString()

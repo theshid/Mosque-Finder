@@ -3,6 +3,7 @@ package com.shid.mosquefinder.Ui.Main.View
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -37,6 +38,7 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_surah)
         setViewModel()
+        hideSoftKeyboard()
         setUI()
         setOnClick()
         setSearch()
@@ -56,6 +58,10 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
             this,
             SurahViewModelFactory(application)
         ).get(SurahViewModel::class.java)
+    }
+
+    private fun hideSoftKeyboard() {
+        this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     }
 
     private fun setUI() {

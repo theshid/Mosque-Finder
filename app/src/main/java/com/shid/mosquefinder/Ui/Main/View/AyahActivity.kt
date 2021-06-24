@@ -2,27 +2,21 @@ package com.shid.mosquefinder.Ui.Main.View
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.database.DatabaseProvider
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.Pojo.Verse
@@ -37,11 +31,13 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.AyahViewModel
 import com.shid.mosquefinder.Ui.services.SurahDLService
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*
-import org.jetbrains.annotations.NotNull
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
+
 
 class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventListener {
     private lateinit var viewModel: AyahViewModel
@@ -123,18 +119,16 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         ).get(AyahViewModel::class.java)
     }
 
+
+
     private fun setUI(number_surah: Int) {
         ayahAdapter = AyahAdapter(viewModel)
-        viewModel.getFrenchSurah(number_surah)
+
         viewModel.getSurahList(number_surah)
         viewModel.getAllAyah(number_surah)
         viewModel.getSurahInfo(number_surah)
-        viewModel.translation.observe(this , Observer {
-            if (it.isNotEmpty()){
-                ayahAdapter.setNetworkList(it)
-            }
-        })
-        Thread.sleep(2000)
+
+
         viewModel.listSurah.observe(this, Observer {
             surahList = it
             Log.d("Test", it.size.toString())
@@ -145,12 +139,30 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         })
         viewModel.ayah.observe(this, Observer {
             if (it.isNotEmpty()) {
+                if (it[0].frenchTranslation == null || it[0].frenchTranslation.equals("empty")){
+                    lifecycleScope.launch(Dispatchers.Main){
+                        viewModel.getFrenchSurah(number_surah)
+                        delay(2000)
+                        viewModel.translation.observe(this@AyahActivity , Observer {
+                            if (it.isNotEmpty()){
+                                ayahAdapter.setNetworkList(it)
+                            }
+                        })
+                        ayahRecycler.adapter = ayahAdapter
+                        ayahAdapter.setData(it)
+                        ayahAdapter.setOnItemClick(this@AyahActivity)
+                    }
+
+                }
                 ayahRecycler.adapter = ayahAdapter
                 ayahAdapter.setData(it)
-                ayahAdapter.setOnItemClick(this)
+                ayahAdapter.setOnItemClick(this@AyahActivity)
+
+
             }
 
         })
+
         viewModel.surah.observe(this, Observer {
             surah_title.text = it.transliteration
             surahName = it.transliteration
@@ -188,6 +200,10 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
                 downloadDialog()
             }
 
+        })
+
+        btn_back.setOnClickListener(View.OnClickListener {
+            onBackPressed()
         })
 
     }
