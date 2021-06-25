@@ -7,6 +7,8 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +44,7 @@ class PrayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
+
         setLocationUtils()
         setUI()
         clickListeners()
@@ -70,6 +73,10 @@ class PrayerActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+
+        menu_settings.setOnClickListener(View.OnClickListener {
+            goToSettings()
+        })
     }
 
 
@@ -223,6 +230,25 @@ class PrayerActivity : AppCompatActivity() {
 
         }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_prayer,menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_settings -> {
+                goToSettings()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun goToSettings() {
+        val intent = Intent(this,SettingsActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun getUserFromIntent(): User? {
         return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.Data.Model.User

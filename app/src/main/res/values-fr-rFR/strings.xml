@@ -197,4 +197,5 @@
     <string name="internet_msg">Internet est nécessaire pour effectuer cette action</string>
     <string name="chapter">Chapitre</string>
     <string name="categories">Catégories</string>
+    <string name="home">Accueil</string>
 </resources>

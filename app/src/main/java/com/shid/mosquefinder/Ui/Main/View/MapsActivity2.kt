@@ -435,6 +435,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
 
+                R.id.nav_home -> {
+                    goToHome()
+                }
+
                 R.id.nav_quran -> {
                     goToQuran()
                 }
@@ -455,6 +459,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 R.id.nav_mosques -> {
                     goToBeautifulMosques()
                 }
+
+                R.id.nav_settings -> {
+                    goToSettings()
+                }
+
                 R.id.nav_share -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_SHARE)
                     goToShareApp()
@@ -483,6 +492,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             drawerLayout.closeDrawer(navigationView)
             true
         }
+    }
+
+    private fun goToSettings() {
+        val intent = Intent(this,HomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToHome() {
+        val intent = Intent(this,HomeActivity::class.java)
+        intent.putExtra("user",user)
+        startActivity(intent)
     }
 
     private fun goToNames() {
@@ -653,6 +673,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun singOutFirebase() {
         firebaseAuth.signOut()
+        firebaseAuth.currentUser?.delete()
     }
 
     private fun signOutGoogle() {

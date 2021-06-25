@@ -37,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.*
 
 
 class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventListener {
@@ -139,21 +140,24 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         })
         viewModel.ayah.observe(this, Observer {
             if (it.isNotEmpty()) {
-                if (it[0].frenchTranslation == null || it[0].frenchTranslation.equals("empty")){
-                    lifecycleScope.launch(Dispatchers.Main){
-                        viewModel.getFrenchSurah(number_surah)
-                        delay(2000)
-                        viewModel.translation.observe(this@AyahActivity , Observer {
-                            if (it.isNotEmpty()){
-                                ayahAdapter.setNetworkList(it)
-                            }
-                        })
-                        ayahRecycler.adapter = ayahAdapter
-                        ayahAdapter.setData(it)
-                        ayahAdapter.setOnItemClick(this@AyahActivity)
-                    }
+                if(Locale.getDefault().language.contentEquals("fr")){
+                    if (it[0].frenchTranslation == null || it[0].frenchTranslation.equals("empty")){
+                        lifecycleScope.launch(Dispatchers.Main){
+                            viewModel.getFrenchSurah(number_surah)
+                            delay(2000)
+                            viewModel.translation.observe(this@AyahActivity , Observer {
+                                if (it.isNotEmpty()){
+                                    ayahAdapter.setNetworkList(it)
+                                }
+                            })
+                            ayahRecycler.adapter = ayahAdapter
+                            ayahAdapter.setData(it)
+                            ayahAdapter.setOnItemClick(this@AyahActivity)
+                        }
 
+                    }
                 }
+
                 ayahRecycler.adapter = ayahAdapter
                 ayahAdapter.setData(it)
                 ayahAdapter.setOnItemClick(this@AyahActivity)

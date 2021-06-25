@@ -13,6 +13,8 @@ import com.shid.mosquefinder.Data.database.entities.Ayah
 import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
@@ -82,57 +84,60 @@ abstract class QuranDatabase: RoomDatabase() {
 
 
         private suspend fun fillWithStartingData(surahDao: QuranDao) {
+            GlobalScope.launch(Dispatchers.IO){
+                val surahs = loadSurahsJsonArray()
+                try {
+                    for (i in 0 until surahs!!.length()) {
+                        val surah = surahs.getJSONObject(i)
 
-            val surahs = loadSurahsJsonArray()
-            val ayahs = loadAyahsJsonArray()
-
-            try {
-                for (i in 0 until ayahs!!.length()) {
-                    val ayah = ayahs.getJSONObject(i)
-
-                    try {
-                        Log.d("Db","insertion ayah")
-                        surahDao.insertAyah(
-                            Ayah(0,
-                                ayah.getInt("surah_number"), ayah.getInt("verse_number"),
-                                ayah.getString("text"),
-                                ayah.getString("translation")
-
+                        try {
+                            Log.d("Db","insertion surah")
+                            surahDao.insertSurah(
+                                Surah(
+                                    surah.getInt("number"), surah.getString("name"),
+                                    surah.getString("transliteration_en"),
+                                    surah.getString("translation_en"),
+                                    surah.getInt("total_verses"),
+                                    surah.getString("revelation_type")
+                                )
                             )
-                        )
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+
+
                     }
-
-
+                } catch (e: JSONException) {
+                    e.printStackTrace()
                 }
-            } catch (e: JSONException) {
-                e.printStackTrace()
             }
 
-            try {
-                for (i in 0 until surahs!!.length()) {
-                    val surah = surahs.getJSONObject(i)
+            GlobalScope.launch(Dispatchers.IO){
+                val ayahs = loadAyahsJsonArray()
 
-                    try {
-                        Log.d("Db","insertion surah")
-                        surahDao.insertSurah(
-                            Surah(
-                                surah.getInt("number"), surah.getString("name"),
-                                surah.getString("transliteration_en"),
-                                surah.getString("translation_en"),
-                                surah.getInt("total_verses"),
-                                surah.getString("revelation_type")
+                try {
+                    for (i in 0 until ayahs!!.length()) {
+                        val ayah = ayahs.getJSONObject(i)
+
+                        try {
+                            Log.d("Db","insertion ayah")
+                            surahDao.insertAyah(
+                                Ayah(0,
+                                    ayah.getInt("surah_number"), ayah.getInt("verse_number"),
+                                    ayah.getString("text"),
+                                    ayah.getString("translation")
+
+                                )
                             )
-                        )
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+
+
                     }
-
-
+                } catch (e: JSONException) {
+                    e.printStackTrace()
                 }
-            } catch (e: JSONException) {
-                e.printStackTrace()
             }
 
         }

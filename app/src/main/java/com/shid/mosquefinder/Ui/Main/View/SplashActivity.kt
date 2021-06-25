@@ -172,6 +172,7 @@ class SplashActivity : AppCompatActivity() {
             this,
             Observer { user: User? ->
                 goToHomeActivity(user)
+                Log.d("Splash","user:"+user?.email)
                 finish()
             }
         )

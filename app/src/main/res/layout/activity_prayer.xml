@@ -22,7 +22,17 @@
             app:navigationIcon="@drawable/ic_back"
             app:title="@string/prayer_time"
             app:titleTextAppearance="@style/ToolbarTextAppearance"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white" >
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_settings_basic"
+                android:id="@+id/menu_settings"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="end"
+                app:tint="@color/colorWhite" />
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

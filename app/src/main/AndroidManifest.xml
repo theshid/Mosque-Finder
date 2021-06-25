@@ -20,9 +20,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Ui.Main.View.ItemActivity"></activity>
+        android:theme="@style/AppTheme.NoActionBar"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Ui.Main.View.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity android:name=".Ui.Main.View.ItemActivity" />
         <activity android:name=".Ui.Main.View.ChapterActivity" />
 
         <service

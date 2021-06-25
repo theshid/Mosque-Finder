@@ -264,6 +264,15 @@ class HomeActivity : AppCompatActivity() {
         cardPrayerTime.setOnClickListener(View.OnClickListener {
             goToPrayerActivity()
         })
+
+        btn_settings.setOnClickListener(View.OnClickListener {
+            goToSettings()
+        })
+    }
+
+    private fun goToSettings() {
+        val intent = Intent(this,SettingsActivity::class.java)
+        startActivity(intent)
     }
 
     private fun goToMapActivity() {
@@ -305,6 +314,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun goToPrayerActivity() {
         val intent = Intent(this, PrayerActivity::class.java)
+        intent.putExtra("user",user)
         startActivity(intent)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
