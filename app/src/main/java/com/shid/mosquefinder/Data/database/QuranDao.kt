@@ -35,4 +35,7 @@ interface QuranDao {
 
     @Query("UPDATE ayahs SET french_text=:french WHERE id = :verseId")
     fun updateAyah(french:String, verseId:Long)
+
+    @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber) ORDER BY RANDOM() LIMIT 1")
+    fun getRandomAyah(surahNumber:Int):Ayah
 }

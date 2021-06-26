@@ -3,10 +3,13 @@ package com.shid.mosquefinder.Utils
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.android.gms.maps.model.LatLng
+import com.shid.mosquefinder.R
+
 const val defaultLat = 33.97159194946289F
 const val defaultLng = -6.849812984466553F
 class SharePref(context: Context) {
     private val mySharePref: SharedPreferences
+    val mContext = context
 
     fun saveUserPosition(savedPosition: LatLng) {
         val editor = mySharePref.edit()
@@ -31,6 +34,17 @@ class SharePref(context: Context) {
         val editor = mySharePref.edit()
         editor.putBoolean("first_time",firstTime)
         editor.apply()
+    }
+
+    fun saveSwitchState(state:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean(mContext.getString(R.string.pref_notification_key),state)
+        editor.apply()
+    }
+
+    fun loadSwitchState():Boolean{
+        val state = mySharePref.getBoolean(mContext.getString(R.string.pref_notification_key),false)
+        return state
     }
 
     fun loadUseCount():Int{

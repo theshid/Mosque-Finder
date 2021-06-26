@@ -187,7 +187,14 @@
     <string name="chapter">Chapter</string>
     <string name="categories">Categories</string>
     <string name="home">Home</string>
+    <string name="notification_title">Daily Ayah</string>
+
+    <string name="pref_notification_key" translatable="false">notification</string>
+    <string name="pref_notification_title">Notification</string>
+    <string name="pref_notification_summary">An Ayah is displayed daily.</string>
+
     <string name="title_activity_settings">SettingsActivity</string>
+
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>

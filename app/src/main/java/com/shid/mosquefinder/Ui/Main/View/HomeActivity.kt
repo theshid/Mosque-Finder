@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.azan.Azan
 import com.azan.AzanTimes
 import com.azan.Method
@@ -24,6 +27,7 @@ import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.SurahViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.SurahViewModel
+import com.shid.mosquefinder.Ui.notification.NotificationWorker
 import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.PermissionUtils
 import com.shid.mosquefinder.Utils.SharePref
@@ -33,8 +37,10 @@ import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_surah.*
 import okhttp3.internal.notify
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 class HomeActivity : AppCompatActivity() {
@@ -46,6 +52,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var sharedPref: SharePref
+    lateinit var workManager: WorkManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -54,7 +61,7 @@ class HomeActivity : AppCompatActivity() {
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
-
+        setWorkManagerNotification()
         setLocationUtils()
         checkIfPermissionIsActive()
         user = getUserFromIntent()
@@ -62,6 +69,19 @@ class HomeActivity : AppCompatActivity() {
 
         //setTransparentStatusBar()
 
+    }
+
+    private fun setWorkManagerNotification() {
+        workManager = WorkManager.getInstance(this)
+        val saveRequest: PeriodicWorkRequest =
+            PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.MINUTES)
+                .addTag("notification")
+                .build()
+        if (sharedPref.loadSwitchState()) {
+            workManager.enqueue(saveRequest)
+        } else {
+            workManager.cancelAllWorkByTag(SettingsActivity.SettingsFragment.WORKER_TAG)
+        }
     }
 
     private fun setViewModel() {
@@ -72,7 +92,7 @@ class HomeActivity : AppCompatActivity() {
 
         viewModel.getSurahs()
         viewModel.surahList.observe(this, androidx.lifecycle.Observer {
-            Log.d("Home", "value of :$it")
+            Timber.d("value of :$it")
         })
 
     }

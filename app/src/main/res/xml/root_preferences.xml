@@ -1,11 +1,15 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="Notification">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:id="@+id/notification"
+            android:key="@string/pref_notification_key"
+            android:title="@string/pref_notification_title"
+            android:summary="@string/pref_notification_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false"/>
 
         <ListPreference
             app:defaultValue="reply"
@@ -17,7 +21,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="@string/prayer_time">
 
         <SwitchPreferenceCompat
             app:key="sync"

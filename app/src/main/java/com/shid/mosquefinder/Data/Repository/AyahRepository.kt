@@ -33,6 +33,10 @@ class AyahRepository(private val quranDao: QuranDao) {
         quranDao.updateAyah(text,ayahId)
     }
 
+    fun getRandomAyah(surahNumber: Int):Ayah{
+        return quranDao.getRandomAyah(surahNumber)
+    }
+
    /* fun getFrenchSurah(ayahId: Int) {
         service.getFrenchSurah(ayahId).enqueue(object : Callback<Root> {
             override fun onResponse(call: Call<Root>, response: Response<Root>) {

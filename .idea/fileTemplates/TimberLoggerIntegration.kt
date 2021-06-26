@@ -1,4 +1,5 @@
-package com.shid.mosquefinder
+package ${PACKAGE_NAME}
+
 
 import android.app.Application
 import android.content.Context
@@ -54,3 +55,8 @@ class App : Application() {
         }
     }
 }
+
+//Dependencies
+//implementation 'com.orhanobut:logger:2.2.0'
+//implementation 'com.jakewharton.timber:timber:4.7.1'
+

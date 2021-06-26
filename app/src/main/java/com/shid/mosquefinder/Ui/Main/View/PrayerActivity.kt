@@ -62,9 +62,9 @@ class PrayerActivity : AppCompatActivity() {
         setDate()
     }
     private fun clickListeners() {
-        button.setOnClickListener(View.OnClickListener {
+        /*button.setOnClickListener(View.OnClickListener {
             goToMapActivity()
-        })
+        })*/
 
         btn_location.setOnClickListener(View.OnClickListener {
             permissionCheck()
