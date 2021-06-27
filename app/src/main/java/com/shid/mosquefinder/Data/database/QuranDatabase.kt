@@ -3,15 +3,14 @@ package com.shid.mosquefinder.Data.database
 import android.content.Context
 import android.content.res.Resources
 import android.util.Log
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.shid.mosquefinder.Data.database.entities.Ayah
-import com.shid.mosquefinder.Data.database.entities.Surah
+import com.shid.mosquefinder.Data.database.entities.*
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Utils.loadJsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -19,16 +18,17 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
-@Database(entities = [Surah::class, Ayah::class], version = 2,exportSchema = true)
+@Database(entities = [Surah::class, Ayah::class, Category::class, Chapter::class, DivineName::class,
+                     Item::class], version = 3,exportSchema = true)
 abstract class QuranDatabase: RoomDatabase() {
 
     abstract fun surahDao(): QuranDao
-
-
+    abstract fun azkharDao(): AzkharDao
 
     companion object {
 
@@ -45,6 +45,23 @@ abstract class QuranDatabase: RoomDatabase() {
                     database.execSQL("ALTER TABLE ayahs ADD COLUMN french_text TEXT" )
                 }
             }
+
+            val MIGRATION_2_3 = object : Migration(2, 3) {
+                override fun migrate(database: SupportSQLiteDatabase) {
+                    database.execSQL("CREATE TABLE `category` (`id` INTEGER NOT NULL," +
+                            " `category_name` TEXT NOT NULL, " +
+                            "PRIMARY KEY(`id`))");
+                    database.execSQL("CREATE TABLE `chapter` (`id` INTEGER NOT NULL," +
+                            " `chapter_name` TEXT NOT NULL, " +
+                            " `category_id` INTEGER NOT NULL, PRIMARY KEY(`id`))");
+                    database.execSQL("CREATE TABLE `item` (`id` INTEGER NOT NULL, " +
+                            "`item_translation` TEXT NOT NULL, " +
+                            "`chapter_id` INTEGER NOT NULL, PRIMARY KEY(`id`))");
+                    database.execSQL("CREATE TABLE `noms` (`id` INTEGER NOT NULL," +
+                            " `name` TEXT NOT NULL, " +
+                            "PRIMARY KEY(`id`))")
+                }
+            }
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
@@ -57,7 +74,8 @@ abstract class QuranDatabase: RoomDatabase() {
                     "quran_database"
                 )
                     .addCallback(QuranDatabaseCallback(coroutineScope, resources))
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2,MIGRATION_2_3)
+                    .setJournalMode(JournalMode.AUTOMATIC)
                     .build()
                 INSTANCE = instance
                 return instance
@@ -75,8 +93,9 @@ abstract class QuranDatabase: RoomDatabase() {
             super.onCreate(db)
             INSTANCE?.let { database ->
                 scope.launch {
-                    val teaDao = database.surahDao()
-                    fillWithStartingData(teaDao)
+                    val surahDao = database.surahDao()
+                    //val azkharDao = database.azkharDao()
+                    fillWithStartingData(surahDao)
 
                 }
             }
@@ -113,6 +132,79 @@ abstract class QuranDatabase: RoomDatabase() {
             }
 
             GlobalScope.launch(Dispatchers.IO){
+                val categories = loadJsonArray(resources,R.raw.category,"categories")
+
+                try {
+                    for (i in 0 until categories!!.length()) {
+                        val category = categories.getJSONObject(i)
+
+                        try {
+                            Timber.d("Db:insertion ayah")
+                            surahDao.insertCategory(
+                                Category(0,
+                                    category.getString("category_name")
+
+                                )
+                            )
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+
+
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+                val chapters = loadJsonArray(resources,R.raw.chapter,"chapters")
+
+                try {
+                    for (i in 0 until chapters!!.length()) {
+                        val chapter = chapters.getJSONObject(i)
+
+                        try {
+                            Timber.d("Db: insertion chapters")
+                            surahDao.insertChapter(
+                                Chapter(0,
+                                    chapter.getString("chapter_name"),
+                                    chapter.getInt("category_id")
+                                )
+                            )
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+
+
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+                val divineNames = loadJsonArray(resources,R.raw.noms,"noms")
+                try {
+                    for (i in 0 until divineNames!!.length()) {
+                        val divineName = divineNames.getJSONObject(i)
+
+                        try {
+                            Timber.d("Db: insertion divine names")
+                            surahDao.insertDivineName(
+                                DivineName(0,
+                                    divineName.getString("name")
+                                )
+                            )
+                        } catch (e: JSONException) {
+                            e.printStackTrace()
+                        }
+
+
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }
+
+
+            GlobalScope.launch(Dispatchers.IO){
                 val ayahs = loadAyahsJsonArray()
 
                 try {
@@ -120,7 +212,7 @@ abstract class QuranDatabase: RoomDatabase() {
                         val ayah = ayahs.getJSONObject(i)
 
                         try {
-                            Log.d("Db","insertion ayah")
+                            Timber.d("Db: insertion ayah")
                             surahDao.insertAyah(
                                 Ayah(0,
                                     ayah.getInt("surah_number"), ayah.getInt("verse_number"),
@@ -183,7 +275,9 @@ abstract class QuranDatabase: RoomDatabase() {
             }
             return null
         }
+
     }
+
 
 
 }

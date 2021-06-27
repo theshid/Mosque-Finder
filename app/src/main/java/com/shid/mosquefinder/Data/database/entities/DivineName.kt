@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "categories")
+@Entity(tableName = "noms")
 data class DivineName(
-    @PrimaryKey(autoGenerate = true)  val id:Long,
+    @PrimaryKey(autoGenerate = true)  val id:Int,
     @ColumnInfo(name = "name") val name: String
 )
