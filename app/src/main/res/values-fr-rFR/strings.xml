@@ -201,4 +201,15 @@
     <string name="notification_title">Ayah du Jour</string>
     <string name="pref_notification_title">Notification</string>
     <string name="pref_notification_summary">Un Ayah est publié quotidiennement</string>
+    <string name="nature">Nature</string>
+    <string name="home_family">Maison et famille</string>
+    <string name="food_drink">Alimentation et boissons</string>
+    <string name="joy_distress">Joie et Détresse></string>
+    <string name="travel">Voyage</string>
+    <string name="prayer">Prière</string>
+    <string name="praising_allah">Louer Allah</string>
+    <string name="hajj_umrah">Hajj et Oumrah</string>
+    <string name="good_etiquette">Les bonnes manières</string>
+    <string name="sickeness_death">Maladie et décès</string>
+    <string name="morning_evening">Matin et soir</string>
 </resources>

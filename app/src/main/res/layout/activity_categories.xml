@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Morning-Evening"/>
+                    android:text="@string/morning_evening"/>
 
 
             </LinearLayout>
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Home &amp; Family"/>
+                    android:text="@string/home_family"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -123,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Food &amp; Drink"/>
+                    android:text="@string/food_drink"/>
 
 
             </LinearLayout>
@@ -153,7 +153,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Joy &amp; Distress"
+                    android:text="@string/joy_distress"
                     android:textStyle="bold" />
 
 
@@ -190,7 +190,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Travel"/>
+                    android:text="@string/travel"/>
 
 
             </LinearLayout>
@@ -218,7 +218,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Prayer"/>
+                    android:text="@string/prayer"/>
 
 
             </LinearLayout>
@@ -254,7 +254,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Praising Allah"/>
+                    android:text="@string/praising_allah"/>
 
 
             </LinearLayout>
@@ -284,7 +284,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Hajj &amp; Umrah"
+                    android:text="@string/hajj_umrah"
                     android:textStyle="bold" />
 
 
@@ -322,7 +322,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Good Etiquette"/>
+                    android:text="@string/good_etiquette"/>
 
 
             </LinearLayout>
@@ -352,7 +352,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Nature"
+                    android:text="@string/nature"
                     android:textStyle="bold" />
 
 
@@ -391,7 +391,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Sickeness &amp; Death"/>
+                    android:text="@string/sickeness_death"/>
 
 
             </LinearLayout>

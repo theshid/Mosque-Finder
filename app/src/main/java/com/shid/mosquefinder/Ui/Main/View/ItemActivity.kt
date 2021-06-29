@@ -55,8 +55,8 @@ class ItemActivity : AppCompatActivity() {
             if (azkarItems != null){
                 adapter.setData(azkarItems)
             }
-            Log.i("azkarItems", "$azkarItems")
-            Log.i("azkarItems", "${azkarItems?.size}")
+            /*Log.i("azkarItems", "$azkarItems")
+            Log.i("azkarItems", "${azkarItems?.size}")*/
         }
     }
 }
