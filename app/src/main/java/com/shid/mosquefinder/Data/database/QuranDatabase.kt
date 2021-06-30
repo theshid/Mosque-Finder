@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Data.database
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.util.Log
 import androidx.room.Database
@@ -10,6 +11,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.Data.database.entities.*
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.Main.View.LoadingActivity
 import com.shid.mosquefinder.Utils.loadJsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,18 +64,22 @@ abstract class QuranDatabase: RoomDatabase() {
                             "PRIMARY KEY(`id`))")
                 }
             }
+            Timber.d("inside DB")
+            val intent = Intent(LoadingActivity.FILTER)
+            context.sendBroadcast(intent)
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
             }
 
             synchronized(this) {
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     QuranDatabase::class.java,
                     "quran_database"
                 )
-                    .addCallback(QuranDatabaseCallback(coroutineScope, resources))
+                    .addCallback(QuranDatabaseCallback(coroutineScope, resources,context))
                     .addMigrations(MIGRATION_1_2,MIGRATION_2_3)
                     .setJournalMode(JournalMode.AUTOMATIC)
                     .build()
@@ -87,7 +93,8 @@ abstract class QuranDatabase: RoomDatabase() {
 
     private class QuranDatabaseCallback(
         private val scope: CoroutineScope,
-        private val resources: Resources
+        private val resources: Resources,
+        private val mContext:Context
     ) : RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
@@ -95,14 +102,14 @@ abstract class QuranDatabase: RoomDatabase() {
                 scope.launch {
                     val surahDao = database.surahDao()
                     //val azkharDao = database.azkharDao()
-                    fillWithStartingData(surahDao)
+                    fillWithStartingData(surahDao,mContext)
 
                 }
             }
         }
 
 
-        private suspend fun fillWithStartingData(surahDao: QuranDao) {
+        private suspend fun fillWithStartingData(surahDao: QuranDao,context: Context) {
             GlobalScope.launch(Dispatchers.IO){
                 val surahs = loadSurahsJsonArray()
                 try {
@@ -224,8 +231,8 @@ abstract class QuranDatabase: RoomDatabase() {
                         } catch (e: JSONException) {
                             e.printStackTrace()
                         }
-
-
+                    val intent = Intent(LoadingActivity.FILTER)
+                    context.sendBroadcast(intent)
                     }
                 } catch (e: JSONException) {
                     e.printStackTrace()

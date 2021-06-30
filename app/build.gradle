@@ -45,21 +45,21 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.1'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.core:core-ktx:1.5.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    implementation 'com.google.firebase:firebase-firestore:21.6.0'
+    implementation 'com.google.firebase:firebase-firestore:23.0.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.room:room-runtime:2.3.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // Google play services for location information
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.firebase:firebase-analytics:19.0.0'
 
     //Google map utility
     implementation 'com.google.maps.android:android-maps-utils:2.0.1'
@@ -67,10 +67,10 @@ dependencies {
     implementation 'com.google.maps.android:maps-ktx:1.8.0'
 
     //Kotlin coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
 
     //coin
-    implementation("io.coil-kt:coil:0.11.0")
+    implementation("io.coil-kt:coil:1.1.1")
 
     //Google Direction API
     implementation 'com.google.maps:google-maps-services:0.14.0'
@@ -95,14 +95,14 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:3.3.0'
 
     //Firebase Auth
-    implementation "com.google.firebase:firebase-auth:19.1.0"
-    implementation "com.google.android.gms:play-services-auth:18.1.0"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation "com.google.firebase:firebase-auth:21.0.1"
+    implementation "com.google.android.gms:play-services-auth:19.0.0"
+
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics-ktx:17.4.4'
+    implementation 'com.google.firebase:firebase-analytics-ktx:19.0.0'
     def room_version ="2.4.0-alpha01"
     // Add the Firebase Crashlytics SDK.
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.1.0'
     //annotationProcessor 'androidx.room:room-compiler:2.3.0'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -131,7 +131,7 @@ dependencies {
     implementation 'com.irozon.sneaker:sneaker:2.0.0'
 
     //Real time database
-    implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.0'
 
     //Material Design
     /*implementation 'com.google.android.material:material:1.2.0'*/
@@ -154,13 +154,13 @@ dependencies {
     implementation 'com.elconfidencial.bubbleshowcase:bubbleshowcase:1.3.1'
 
     //App review api
-    implementation 'com.google.android.play:core:1.8.0'
+    implementation 'com.google.android.play:core:1.10.0'
 
     def activity_version = "1.2.2"
     implementation "androidx.activity:activity-ktx:$activity_version"
 
     //ExoPLayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
+    implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
 
     implementation 'com.github.GwonHyeok:StickySwitch:0.0.16'
 

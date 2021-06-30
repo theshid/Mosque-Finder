@@ -310,7 +310,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun checkPrefFirstTime(): Boolean {
         sharePref = SharePref(this)
-        isFirstTime = sharePref!!.loadHelpPref()
+        isFirstTime = sharePref!!.loadIsFirstTimePref()
         return isFirstTime!!
     }
 
@@ -386,7 +386,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun setFirstTimePref(value: Boolean) {
         sharePref = SharePref(this)
-        sharePref!!.setHelp(value)
+        sharePref!!.setIsFirstTime(value)
     }
 
     private fun checkPref() {

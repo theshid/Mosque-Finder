@@ -30,15 +30,27 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
-    fun setHelp(firstTime:Boolean){
+    fun setIsFirstTime(firstTime:Boolean){
         val editor = mySharePref.edit()
         editor.putBoolean("first_time",firstTime)
+        editor.apply()
+    }
+
+    fun setFirstTime(firstTime:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean("first_time_bis",firstTime)
         editor.apply()
     }
 
     fun saveSwitchState(state:Boolean){
         val editor = mySharePref.edit()
         editor.putBoolean(mContext.getString(R.string.pref_notification_key),state)
+        editor.apply()
+    }
+
+    fun saveUser(user:String){
+        val editor = mySharePref.edit()
+        editor.putString("user",user)
         editor.apply()
     }
 
@@ -59,8 +71,16 @@ class SharePref(context: Context) {
         return position
     }
 
-    fun loadHelpPref(): Boolean {
+    fun loadIsFirstTimePref(): Boolean {
         return mySharePref.getBoolean("first_time", true)
+    }
+
+    fun loadFirstTime():Boolean{
+        return mySharePref.getBoolean("first_time_bis", true)
+    }
+
+    fun loadUser():String{
+        return mySharePref.getString("user","")!!
     }
 
     init {

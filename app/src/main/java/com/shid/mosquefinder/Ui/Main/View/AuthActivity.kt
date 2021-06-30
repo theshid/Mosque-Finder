@@ -29,11 +29,14 @@ import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingAc
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
+import com.shid.mosquefinder.Utils.GsonParser
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.SharePref
 import com.shid.mosquefinder.Utils.Status
 import kotlinx.android.synthetic.main.activity_auth.*
+import timber.log.Timber
 
 
 class AuthActivity : AppCompatActivity() {
@@ -57,6 +60,9 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private var previousSate = true
 
+    private var sharePref: SharePref? = null
+    private var isFirstTime: Boolean? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -65,6 +71,8 @@ class AuthActivity : AppCompatActivity() {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
 
+        sharePref = SharePref(this)
+        isFirstTime = sharePref!!.loadFirstTime()
 
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
@@ -164,8 +172,8 @@ class AuthActivity : AppCompatActivity() {
                     /* latTextView.text = location.latitude.toString()
                      lngTextView.text = location.longitude.toString()*/
                     SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
-                    Log.d("AuthActivity", "position=" + location.latitude + "" + location.longitude)
-                    Log.d("AuthActivity","accuracy:"+location.accuracy)
+                    Timber.d("position=" + location.latitude + "" + location.longitude)
+                    Timber.d("accuracy:"+location.accuracy)
                 }
                 // Few more things we can do here:
                 // For example: Update the location of user on server
@@ -324,10 +332,22 @@ class AuthActivity : AppCompatActivity() {
     }
 
     private fun goToHomeActivity(user: User) {
-        val intent = Intent(this@AuthActivity, HomeActivity::class.java)
-        intent.putExtra(USER, user)
-        startActivity(intent)
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        finish()
+        val convertUserJson = GsonParser.gsonParser?.toJson(user)
+        if (convertUserJson != null) {
+            sharePref?.saveUser(convertUserJson)
+        }
+        if (isFirstTime == true){
+            val intent = Intent(this,LoadingActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+            finish()
+        }else{
+            val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+            //intent.putExtra(USER, user)
+            startActivity(intent)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+            finish()
+        }
+
     }
 }

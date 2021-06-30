@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.shid.mosquefinder">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -22,9 +23,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
+        <receiver
+            android:name=".Ui.broadcast_receiver.DbReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <activity android:name=".Ui.Main.View.LoadingActivity" />
         <activity
             android:name=".Ui.Main.View.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
         <activity android:name=".Ui.Main.View.ItemActivity" />
         <activity android:name=".Ui.Main.View.ChapterActivity" />
 
