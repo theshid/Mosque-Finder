@@ -3,13 +3,11 @@ package com.shid.mosquefinder.Data.Repository
 
 import android.app.Application
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.*
@@ -48,12 +46,11 @@ class MapRepository constructor(mService: ApiInterface, application: Application
     private val TAG: String = "Map Repository"
     private val mApp: Application = application
     private val service = Common.googleApiService
+    val crashlytics = FirebaseCrashlytics.getInstance()
 
-    private var mClusterMarkers: MutableList<ClusterMarker> = ArrayList()
     var mMosqueList: MutableList<Mosque> = ArrayList()
-    val apiService: ApiInterface = mService
     val placeData: MutableLiveData<Place> =
-        MutableLiveData<com.shid.mosquefinder.Data.Model.Pojo.Place>()
+        MutableLiveData<Place>()
 
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
@@ -284,7 +281,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error writing document", e)
-                Crashlytics.logException(e)
+                crashlytics.recordException(e)
                 statusMsg.postValue(
                     Resource.error(
                         e.localizedMessage,
@@ -315,7 +312,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
                             }
                             .addOnFailureListener {
-                                Crashlytics.logException(it)
+                                crashlytics.recordException(it)
                             }
 
 
@@ -327,7 +324,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 mApp.getString(R.string.location_already_confirm)
                             )
                         )
-                        Crashlytics.logException(it)
+                        crashlytics.recordException(it)
                     }
 
 
@@ -351,7 +348,8 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 //Toast.makeText(this@MapsActivity, "Thanks", Toast.LENGTH_LONG).show()
                             }
                             .addOnFailureListener {
-                                Crashlytics.logException(it)
+
+                                crashlytics.recordException(it)
                                 Log.d(
                                     "Error",
                                     it.message.toString() + it.localizedMessage.toString()
@@ -365,7 +363,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                                 mApp.getString(R.string.location_already_report)
                             )
                         )
-                        Crashlytics.logException(it)
+                        crashlytics.recordException(it)
                     }
 
 

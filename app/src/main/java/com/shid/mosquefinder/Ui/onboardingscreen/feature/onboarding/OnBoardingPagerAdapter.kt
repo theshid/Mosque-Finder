@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
+import coil.load
 import com.omni.onboardingscreen.feature.onboarding.entity.OnBoardingPage
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.onboarding_page_item.view.*

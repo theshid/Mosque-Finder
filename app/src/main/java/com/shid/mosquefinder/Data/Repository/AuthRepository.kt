@@ -2,11 +2,11 @@ package com.shid.mosquefinder.Data.Repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.Data.Model.User
@@ -21,6 +21,8 @@ class AuthRepository {
     private val rootRef = FirebaseFirestore.getInstance()
     private val usersRef = rootRef.collection(USERS)
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
+    val crashlytics = FirebaseCrashlytics.getInstance()
+
 
     fun firebaseSignInWithGoogle(googleAuthCredential: AuthCredential?): MutableLiveData<User>? {
         val authenticatedUserMutableLiveData: MutableLiveData<User> = MutableLiveData<User>()
@@ -40,7 +42,7 @@ class AuthRepository {
                     }
                 } else {
                     logErrorMessage(authTask.exception!!.message)
-                    Crashlytics.logException(authTask.exception!!)
+                    crashlytics.recordException(authTask.exception!!)
                     statusMsg.postValue(
                         Resource.error(
                             authTask.exception.toString(),
@@ -75,7 +77,7 @@ class AuthRepository {
                     }
                 } else {
                     logErrorMessage(uidTask.exception!!.message)
-                    Crashlytics.logException(uidTask.exception)
+                    crashlytics.recordException(uidTask.exception!!)
                     statusMsg.postValue(
                         Resource.error(
                             uidTask.exception.toString(),
