@@ -98,6 +98,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="determine_route">Determine route to </string>
     <string name="km">km </string>
+    <string name="position">from your position</string>
     <string name="km_test">%1$s km</string>
     <string name="duree">Duration: </string>
     <string name="trip">Trip # </string>

@@ -52,11 +52,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var sharedPref: SharePref
-    lateinit var workManager: WorkManager
+    private lateinit var workManager: WorkManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        Log.d("Testing", this.getExternalFilesDir(null).toString())
         setViewModel()
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
@@ -148,7 +147,12 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setLocationUtils() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest()
+        locationRequest = LocationRequest.create().apply {
+            interval = 5000
+            fastestInterval = 50
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            maxWaitTime= 5000
+        }
         retrieveLocation()
     }
 

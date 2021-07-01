@@ -561,11 +561,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     .textColorResourceId(R.color.colorWhite)
                     .listener(object : BubbleShowCaseListener {
                         override fun onBackgroundDimClick(bubbleShowCase: BubbleShowCase) {
-                            TODO("Not yet implemented")
+
                         }
 
                         override fun onBubbleClick(bubbleShowCase: BubbleShowCase) {
-                            TODO("Not yet implemented")
+
                         }
 
                         override fun onCloseActionImageClick(bubbleShowCase: BubbleShowCase) {
@@ -584,7 +584,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         }
 
                         override fun onTargetClick(bubbleShowCase: BubbleShowCase) {
-                            TODO("Not yet implemented")
+
                         }
 
                     })
@@ -1726,7 +1726,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         try {
                             val snippet =
                                 distanceFromUser.toString() +
-                                        getString(R.string.km) + "from your position "
+                                        getString(R.string.km) + " " +getString(R.string.position)
 
                             /*val avatar: String = mosqueLocation
                                 Log.d("Avatar", "avatar link $avatar")*/
