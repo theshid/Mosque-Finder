@@ -18,7 +18,7 @@ class SurahDLService : Service() {
     // Binder given to clients
     private val binder = LocalBinder()
     /*private val path = "/storage/emulated/0/Android/data/com.shid.mosquefinder/files/surahs/"*/
-    private val path = this.getExternalFilesDir(null).toString() + "/surahs"
+    private var path :String ?= null
     private var surahNumber:Int ?= null
 
 
@@ -31,6 +31,7 @@ class SurahDLService : Service() {
         surahNumber = intent?.getIntExtra("number",1)
         val surahName = intent?.getStringExtra("surah")
         val fileName = "$surahNumber-$surahName.mp3"
+        path = this.getExternalFilesDir(null).toString() + "/surahs"
         if (lien != null){
             downloadMedia(lien,fileName)
         }
@@ -50,7 +51,7 @@ class SurahDLService : Service() {
 
         val notification = helper.getNotification()
         startForeground(NOTIFICATION_ID,notification)
-        val downloadParam = DownloadParam(url, nameFile, path)
+        val downloadParam = DownloadParam(url, nameFile, path!!)
         val downloadTask = GlobalScope.download(downloadParam)
         downloadTask.progress()
             .onEach { progress ->  helper.notificationBuilder.setProgress(100,progress.percent().toInt(),false)

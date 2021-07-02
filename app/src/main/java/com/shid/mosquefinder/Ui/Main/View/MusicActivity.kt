@@ -55,6 +55,7 @@ class MusicActivity : AppCompatActivity() {
                     val mediaController = MediaControllerCompat(this@MusicActivity, token)
                     MediaControllerCompat.setMediaController(this@MusicActivity, mediaController)
                 }
+                playSurah()
                 playPauseBuild()
                 Log.d("onConnected", "Controller Connected")
             }
@@ -96,11 +97,10 @@ class MusicActivity : AppCompatActivity() {
 
     }
 
-
-    fun playPauseBuild() {
+    fun playSurah() {
         mediaController = MediaControllerCompat.getMediaController(this@MusicActivity)
 
-        playPauseButton.setOnClickListener {
+
             val state = mediaController!!.playbackState.state
 
             // if it is not playing then what are you waiting for ? PLAY !
@@ -147,6 +147,17 @@ class MusicActivity : AppCompatActivity() {
                 song_player_progress_bar.visibility = View.VISIBLE
             }
 
+
+
+        mediaController!!.registerCallback(mControllerCallback)
+
+    }
+
+    fun playPauseBuild() {
+        mediaController = MediaControllerCompat.getMediaController(this@MusicActivity)
+
+        playPauseButton.setOnClickListener {
+           playSurah()
         }
 
         mediaController!!.registerCallback(mControllerCallback)
@@ -198,6 +209,10 @@ class MusicActivity : AppCompatActivity() {
                 b.putBoolean("repeat",isRepeat)
                 mediaController?.sendCommand("repeat",b,null)
             }
+        })
+
+        btn_back.setOnClickListener(View.OnClickListener {
+            onBackPressed()
         })
     }
 

@@ -8,10 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.firebase.firestore.auth.User
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.SurahViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.SurahViewModel
 import com.shid.mosquefinder.Ui.broadcast_receiver.DbReceiver
+import com.shid.mosquefinder.Utils.Common
+import com.shid.mosquefinder.Utils.GsonParser
+import com.shid.mosquefinder.Utils.SharePref
 import timber.log.Timber
 
 class LoadingActivity : AppCompatActivity() {
@@ -20,12 +25,12 @@ class LoadingActivity : AppCompatActivity() {
     }
 
     private lateinit var viewModel: SurahViewModel
+    private var sharedPref:SharePref ?= null
+    private var user:com.shid.mosquefinder.Data.Model.User ?= null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if(FILTER.equals(intent?.action)){
-                Timber.d("Test Receiver")
-            }
-
+            goToHomeActivity()
+            Timber.d("Test Receiver")
         }
 
     }
@@ -34,6 +39,10 @@ class LoadingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPref = SharePref(this)
+        user = GsonParser.gsonParser?.fromJson(sharedPref!!.loadUser(),com.shid.mosquefinder.Data.Model.User::class.java)
+        val filter = IntentFilter(FILTER)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,filter)
         setContentView(R.layout.activity_loading)
         setViewModel()
     }
@@ -53,17 +62,20 @@ class LoadingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        val filter = IntentFilter(FILTER)
-        registerReceiver(receiver, filter)
+
+        //registerReceiver(receiver, filter)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         unregisterReceiver(receiver)
     }
 
+
+
     fun goToHomeActivity() {
         val intent = Intent(this, HomeActivity::class.java)
+        intent.putExtra(Common.USER,user)
         startActivity(intent)
     }
 }

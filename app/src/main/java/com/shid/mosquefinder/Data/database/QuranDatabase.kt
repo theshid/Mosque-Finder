@@ -3,7 +3,9 @@ package com.shid.mosquefinder.Data.database
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
+import android.provider.Settings
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -65,8 +67,8 @@ abstract class QuranDatabase: RoomDatabase() {
                 }
             }
             Timber.d("inside DB")
-            val intent = Intent(LoadingActivity.FILTER)
-            context.sendBroadcast(intent)
+
+            //context.sendBroadcast(intent)
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
@@ -146,7 +148,7 @@ abstract class QuranDatabase: RoomDatabase() {
                         val category = categories.getJSONObject(i)
 
                         try {
-                            Timber.d("Db:insertion ayah")
+                            Timber.d("Db:insertion Categories")
                             surahDao.insertCategory(
                                 Category(0,
                                     category.getString("category_name")
@@ -210,9 +212,8 @@ abstract class QuranDatabase: RoomDatabase() {
                 }
             }
 
-
             GlobalScope.launch(Dispatchers.IO){
-                val ayahs = loadAyahsJsonArray()
+                val ayahs = loadJsonArray(resources,R.raw.quran,"ayahs")
 
                 try {
                     for (i in 0 until ayahs!!.length()) {
@@ -231,35 +232,15 @@ abstract class QuranDatabase: RoomDatabase() {
                         } catch (e: JSONException) {
                             e.printStackTrace()
                         }
-                    val intent = Intent(LoadingActivity.FILTER)
-                    context.sendBroadcast(intent)
+
                     }
+                    val intent = Intent(LoadingActivity.FILTER)
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
             }
 
-        }
-
-        private fun loadAyahsJsonArray(): JSONArray?{
-            val builder = StringBuilder()
-            val `in` =
-                resources.openRawResource(R.raw.quran)
-            val reader =
-                BufferedReader(InputStreamReader(`in`))
-            var line: String?
-            try {
-                while (reader.readLine().also { line = it } != null) {
-                    builder.append(line)
-                }
-                val json = JSONObject(builder.toString())
-                return json.getJSONArray("ayahs")
-            } catch (exception: IOException) {
-                exception.printStackTrace()
-            } catch (exception: JSONException) {
-                exception.printStackTrace()
-            }
-            return null
         }
 
         private fun loadSurahsJsonArray(): JSONArray? {

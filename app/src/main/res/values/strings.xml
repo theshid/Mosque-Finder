@@ -176,7 +176,7 @@
 
     <string name="channel_name" translatable="false">channel_name</string>
     <string name="channel_desc" translatable="false">channel_desc</string>
-    <string name="play_surah">Play Surah</string>
+    <string name="play_surah">Play entire Surah</string>
     <string name="download_surah">Download Surah</string>
     <string name="dl_available">This Surah is already available offline</string>
     <string name="dl_started">Download started, check notification</string>
@@ -223,6 +223,7 @@
     <string name="nature">Nature</string>
     <string name="sickeness_death"><![CDATA[Sickeness & Death]]></string>
     <string name="morning_evening">Morning-Evening</string>
+    <string name="surah_dl">Do you want to download this Surah?</string>
 
 
 </resources>

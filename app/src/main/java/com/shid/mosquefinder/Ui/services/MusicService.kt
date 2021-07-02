@@ -237,6 +237,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
     private fun initializePlayer() {
         mExoPlayer = SimpleExoPlayer.Builder(this).build()
         mExoPlayer!!.addListener(this)
+
         // mExoPlayer!!.setThrowsWhenUsingWrongThread(false)
     }
 

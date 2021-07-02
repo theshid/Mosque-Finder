@@ -26,7 +26,11 @@
         <receiver
             android:name=".Ui.broadcast_receiver.DbReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.shid.mosquefinder.DBLOAD"/>
+            </intent-filter>
+        </receiver>
 
         <activity android:name=".Ui.Main.View.LoadingActivity" />
         <activity

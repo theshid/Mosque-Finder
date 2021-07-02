@@ -46,10 +46,7 @@ class AuthActivity : AppCompatActivity() {
 
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 999
-        private const val TAG = "AuthActivity"
         var userPosition: LatLng? = null
-        var newUserPosition:LatLng?= null
-
     }
 
     private  var fusedLocationProviderClient: FusedLocationProviderClient ?= null
@@ -98,7 +95,7 @@ class AuthActivity : AppCompatActivity() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             maxWaitTime= 5000
         }
-        retrieveLocation()
+
     }
 
     private fun checkIfPermissionIsActive() {
@@ -106,7 +103,9 @@ class AuthActivity : AppCompatActivity() {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
+                        retrieveLocation()
                         setUpLocationListener()
+
 
                     }
                     else -> {
@@ -155,6 +154,8 @@ class AuthActivity : AppCompatActivity() {
         super.onResume()
         handleConnectivityChange()
         //setUpLocationListener()
+        setLocationUtils()
+        retrieveLocation()
         startLocationUpdates()
     }
 
@@ -232,6 +233,7 @@ class AuthActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
+                            setLocationUtils()
                             setUpLocationListener()
 
                             //getUserPosition()
@@ -395,7 +397,7 @@ class AuthActivity : AppCompatActivity() {
             finish()
         }else{
             val intent = Intent(this@AuthActivity, HomeActivity::class.java)
-            //intent.putExtra(USER, user)
+            intent.putExtra(USER, user)
             startActivity(intent)
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             finish()

@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_ayah.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 import java.util.*
 
@@ -222,8 +223,8 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private fun downloadDialog() {
         MaterialDialog(this).show {
             title(text = getString(R.string.title_dialog))
-            message(text = getString(R.string.dialog_rate_app))
-            positiveButton(text = getString(R.string.rate)) { dialog ->
+            message(text = getString(R.string.surah_dl))
+            positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 initializeService()
             }
@@ -317,7 +318,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     override fun onClickAyah(ayah: Ayah) {
 
         val verseNumber = baseNumber + ayah.verse_number
-        Log.d("Test", "ayaNum:$verseNumber")
+        Timber.d("ayaNum:$verseNumber")
         switch.visibility = View.VISIBLE
         switch.setDirection(StickySwitch.Direction.RIGHT)
 
