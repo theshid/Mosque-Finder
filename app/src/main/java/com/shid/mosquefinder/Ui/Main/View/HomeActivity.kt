@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.azan.Azan
 import com.azan.AzanTimes
 import com.azan.Method
@@ -22,6 +23,7 @@ import com.azan.astrologicalCalc.Location
 import com.azan.astrologicalCalc.SimpleDate
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.judemanutd.autostarter.AutoStartPermissionHelper
 import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
@@ -52,6 +54,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
     private lateinit var sharedPref: SharePref
+    private var isFirstTime: Boolean? = null
     private lateinit var workManager: WorkManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +62,14 @@ class HomeActivity : AppCompatActivity() {
         setViewModel()
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
+        isFirstTime = sharedPref.loadFirstTime()
         userPosition = sharedPref.loadSavedPosition()
+        if (isFirstTime == true &&  AutoStartPermissionHelper.getInstance().isAutoStartPermissionAvailable(this)){
+            dialogSettings()
+            sharedPref.setFirstTime(false)
+        } else{
+            sharedPref.setFirstTime(false)
+        }
         setWorkManagerNotification()
         setLocationUtils()
         checkIfPermissionIsActive()
@@ -73,7 +83,7 @@ class HomeActivity : AppCompatActivity() {
     private fun setWorkManagerNotification() {
         workManager = WorkManager.getInstance(this)
         val saveRequest: PeriodicWorkRequest =
-            PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
                 .addTag("notification")
                 .build()
         if (sharedPref.loadSwitchState()) {
@@ -154,6 +164,22 @@ class HomeActivity : AppCompatActivity() {
             maxWaitTime= 5000
         }
         retrieveLocation()
+    }
+
+    private fun dialogSettings(){
+        MaterialDialog(this).show {
+            title(text = getString(R.string.title_dialog))
+            message(text = getString(R.string.auto_start))
+            positiveButton(text = getString(R.string.yes)) { dialog ->
+                dialog.cancel()
+                AutoStartPermissionHelper.getInstance().getAutoStartPermission(this@HomeActivity)
+            }
+            negativeButton(text = getString(R.string.cancel)) { dialog ->
+                dialog.cancel()
+
+            }
+            icon(R.drawable.logo2)
+        }
     }
 
     private fun getTimeZone(): Double {

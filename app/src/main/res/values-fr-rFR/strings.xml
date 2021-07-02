@@ -214,4 +214,7 @@
     <string name="sickeness_death">Maladie et décès</string>
     <string name="morning_evening">Matin et soir</string>
     <string name="surah_dl">Voulez-vous télécharger cette sourate ?</string>
+    <string name="data_loading">Veuillez patienter \n Chargement des données.
+        \n Cette opération ne prendra place qu\'une seule fois.</string>
+    <string name="auto_start">Activer Auto-start pour recevoir les notifications. Autoriser?</string>
 </resources>

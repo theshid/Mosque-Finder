@@ -177,11 +177,11 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.orhanobut:logger:2.2.0'
 
-
-    debugImplementation 'com.facebook.flipper:flipper:0.94.1'
+    implementation 'com.github.judemanutd:autostarter:1.0.9'
+    /*debugImplementation 'com.facebook.flipper:flipper:0.94.1'
     debugImplementation 'com.facebook.soloader:soloader:0.10.1'
 
-    releaseImplementation 'com.facebook.flipper:flipper-noop:0.94.1'
+    releaseImplementation 'com.facebook.flipper:flipper-noop:0.94.1'*/
 
 
 

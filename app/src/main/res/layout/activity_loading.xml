@@ -22,7 +22,7 @@
         android:fontFamily="@font/quicksand_semibold"
         android:textAlignment="center"
         android:textSize="15sp"
-        android:text="The data is being loaded. \n Please wait"
+        android:text="@string/data_loading"
         android:textColor="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

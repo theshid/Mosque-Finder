@@ -55,7 +55,7 @@ class SharePref(context: Context) {
     }
 
     fun loadSwitchState():Boolean{
-        val state = mySharePref.getBoolean(mContext.getString(R.string.pref_notification_key),false)
+        val state = mySharePref.getBoolean(mContext.getString(R.string.pref_notification_key),true)
         return state
     }
 

@@ -169,9 +169,12 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         })
 
         viewModel.surah.observe(this, Observer {
-            surah_title.text = it.transliteration
-            surahName = it.transliteration
-            verse_number.text = it.totalVerses.toString() + " " + "Ayah"
+            if(it != null){
+                surah_title.text = it.transliteration
+                surahName = it.transliteration
+                verse_number.text = it.totalVerses.toString() + " " + "Ayah"
+            }
+
         })
 
 

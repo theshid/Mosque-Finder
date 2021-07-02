@@ -3,6 +3,7 @@ package com.shid.mosquefinder.Ui.Main.View
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.core.widget.doOnTextChanged
@@ -44,6 +45,14 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         setSearch()
         //setTransparentStatusBar()
         setNetworkMonitor()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
     }
 
     private fun setSearch() {

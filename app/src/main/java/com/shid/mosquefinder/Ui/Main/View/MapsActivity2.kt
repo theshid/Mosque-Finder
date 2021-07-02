@@ -1664,7 +1664,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 try {
                     val snippet =
                         distanceFromUser.toString() +
-                                getString(R.string.km) + "from your position "
+                                getString(R.string.km) + " " + getString(R.string.position)
 
                     /*val avatar: String = mosqueLocation
                         Log.d("Avatar", "avatar link $avatar")*/
