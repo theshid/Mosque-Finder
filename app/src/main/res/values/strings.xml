@@ -226,6 +226,11 @@
     <string name="surah_dl">Do you want to download this Surah?</string>
     <string name="data_loading">Please wait \n The data is being loaded. \n This is the only time this operation will take place</string>
     <string name="auto_start">Enabling auto-start will prevent your phone from disabling notifications. Allow?</string>
+    <string name="bubble_aya_title1">Listen to the entire Surah \n Press the desired Ayah below if
+    you only want to listen a particular Ayah.</string>
+    <string name="bubble_ayah_des1">Press here to play the whole Surah</string>
+    <string name="bubble_ayah_title3">Download Surah</string>
+    <string name="bubble_ayah_desc3">You can download the surah to listen to it offline</string>
 
 
 </resources>

@@ -20,7 +20,12 @@ import kotlinx.android.synthetic.main.onboarding_view.view.*
 import setParallaxTransformation
 
 class OnBoardingView @JvmOverloads
-constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) :
+constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) :
     FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
 
     private val numberOfPages by lazy { OnBoardingPage.values().size }
@@ -52,7 +57,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     private fun addSlideChangeListener() {
 
         slider.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
                 if (numberOfPages > 1) {
                     val newProgress = (position + positionOffset) / (numberOfPages - 1)
@@ -84,8 +93,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     }
 
     private fun navigateToHomeActivity(context: Context) {
-        val intent:Intent = Intent(context,HomeActivity::class.java)
-        intent.putExtra(Common.USER,OnBoardingActivity.user)
+        val intent: Intent = Intent(context, HomeActivity::class.java)
+        intent.putExtra(Common.USER, OnBoardingActivity.user)
         context.startActivity(intent)
 
     }

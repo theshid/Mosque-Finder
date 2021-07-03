@@ -13,6 +13,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
+import com.elconfidencial.bubbleshowcase.BubbleShowCase
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseListener
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -31,8 +35,11 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.AyahViewModel
 import com.shid.mosquefinder.Ui.services.SurahDLService
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
+import com.shid.mosquefinder.Utils.SharePref
 import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*
+import kotlinx.android.synthetic.main.activity_ayah.fab
+import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -52,6 +59,8 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var baseNumber = 0
     private var surahName: String? = null
     private var surahNumber: Int? = null
+    private lateinit var sharedPref:SharePref
+    private var isFirstTime:Boolean ?= null
     private lateinit var switch: StickySwitch
     private var verseList: List<Verse> ?= null
     companion object{
@@ -63,7 +72,8 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ayah)
-
+         sharedPref = SharePref(this)
+        isFirstTime = sharedPref.loadFirstTimeAyah()
         // Check whether we're recreating a previously destroyed instance
         if (savedInstanceState != null) {
             with(savedInstanceState) {
@@ -80,6 +90,10 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
 
         setViewModel()
         setUI(surahNumber!!)
+        if (isFirstTime == true){
+            activateShowcase()
+            sharedPref.setFirstTimeAyah(false)
+        }
 
 
         setNetworkMonitor()
@@ -106,6 +120,29 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         }
 
     }*/
+
+    private fun activateShowcase() {
+        BubbleShowCaseSequence()
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble_aya_title1)) //Any title for the bubble view
+                    .targetView(play_all) //View to point out
+                    .description(getString(R.string.bubble_ayah_des1))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            ) //First BubbleShowCase to show
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble_ayah_title3)) //Any title for the bubble view
+                    .targetView(fab) //View to point out
+                    .description(getString(R.string.bubble_ayah_desc3))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            )
+            .show() //Display the ShowCaseSequence
+    }
 
     private fun setViewModel() {
         val dao =

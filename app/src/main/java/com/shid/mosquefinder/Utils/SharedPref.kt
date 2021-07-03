@@ -36,6 +36,12 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
+    fun setFirstTimeAyah(firstTime:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean("first_time_ayah",firstTime)
+        editor.apply()
+    }
+
     fun setFirstTime(firstTime:Boolean){
         val editor = mySharePref.edit()
         editor.putBoolean("first_time_bis",firstTime)
@@ -77,6 +83,10 @@ class SharePref(context: Context) {
 
     fun loadFirstTime():Boolean{
         return mySharePref.getBoolean("first_time_bis", true)
+    }
+
+    fun loadFirstTimeAyah():Boolean{
+        return mySharePref.getBoolean("first_time_ayah", true)
     }
 
     fun loadUser():String{
