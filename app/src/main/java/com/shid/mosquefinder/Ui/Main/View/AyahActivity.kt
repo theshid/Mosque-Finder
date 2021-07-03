@@ -63,17 +63,13 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ayah)
-        savedInstanceState?.let {
-            previousSate = it.getBoolean("LOST_CONNECTION")
-        }
-
-
 
         // Check whether we're recreating a previously destroyed instance
         if (savedInstanceState != null) {
             with(savedInstanceState) {
                 // Restore value of members from saved state
                 surahNumber = getInt(STATE_SURAH)
+                previousSate = this.getBoolean("LOST_CONNECTION")
 
             }
         } else {
@@ -89,28 +85,27 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         setNetworkMonitor()
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+    override fun onSaveInstanceState(outState: Bundle) {
         outState.run {
             surahNumber?.let { putInt(STATE_SURAH, it) }
+            Timber.d("saved surah number to saveInstance")
 
         }
 
-        super.onSaveInstanceState(outState, outPersistentState)
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
+        super.onSaveInstanceState(outState)
 
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+
+   /* override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         // Restore state members from saved instance
-        savedInstanceState?.run {
+        savedInstanceState.run {
             surahNumber = getInt(STATE_SURAH)
 
         }
 
-    }
+    }*/
 
     private fun setViewModel() {
         val dao =

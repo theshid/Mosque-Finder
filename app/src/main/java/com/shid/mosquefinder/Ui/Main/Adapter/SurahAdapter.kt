@@ -72,18 +72,21 @@ class SurahAdapter() :
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
-                    if (list?.isNotEmpty()!!){
+                    if (list?.isNotEmpty() == true){
                         listData = list as ArrayList<Surah>
                     }
 
                 } else {
                     val resultList = ArrayList<Surah>()
-                    for (row in list!!) {
-                        if (row.transliteration!!.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(
-                                Locale.ROOT))) {
-                            resultList.add(row)
+                    if (list != null){
+                        for (row in list!!) {
+                            if (row.transliteration.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(
+                                    Locale.ROOT))) {
+                                resultList.add(row)
+                            }
                         }
                     }
+
                     listData = resultList
                 }
                 val filterResults = FilterResults()

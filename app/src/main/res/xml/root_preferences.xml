@@ -11,17 +11,10 @@
             android:defaultValue="false"
             app:iconSpaceReserved="false"/>
 
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/prayer_time">
+   <!-- <PreferenceCategory app:title="@string/prayer_time">
 
         <SwitchPreferenceCompat
             app:key="sync"
@@ -34,6 +27,6 @@
             app:summaryOn="@string/attachment_summary_on"
             app:title="@string/attachment_title" />
 
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
 </PreferenceScreen>
