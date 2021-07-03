@@ -36,7 +36,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
     private var channelId = "channelId"
     private var mExoPlayer: SimpleExoPlayer? = null
     private var oldUri: Uri? = null
-    private var surahName:String = "test"
+    private var surahName: String = "test"
 
 
     private val mMediaSessionCallback = object : MediaSessionCompat.Callback() {
@@ -68,7 +68,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
                 } else {
                     mExoPlayer?.repeatMode = Player.REPEAT_MODE_OFF
                 }
-            } else if (command == "surah"){
+            } else if (command == "surah") {
                 surahName = extras?.getString("surah")!!
             }
         }
@@ -162,7 +162,69 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
     }
 
     private fun initializeNotification(player: SimpleExoPlayer) {
-        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
+        playerNotificationManager = PlayerNotificationManager.Builder(
+            this,
+            notificationId,
+            channelId,
+            object : PlayerNotificationManager.MediaDescriptionAdapter {
+                override fun createCurrentContentIntent(player: Player): PendingIntent? {
+                    // return pending intent
+                    val intent = Intent(context, MusicActivity::class.java)
+                    intent.putExtra("state_player", state_player)
+                    return PendingIntent.getActivity(
+                        context, 0, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                }
+
+                //pass description here
+                override fun getCurrentContentText(player: Player): String? {
+                    return "Mishary bin Rashid Alafasy"
+                }
+
+                //pass title (mostly playing audio name)
+                override fun getCurrentContentTitle(player: Player): String {
+                    return surahName!!
+                }
+
+                // pass image as bitmap
+                override fun getCurrentLargeIcon(
+                    player: Player,
+                    callback: PlayerNotificationManager.BitmapCallback
+                ): Bitmap? {
+                    return BitmapFactory.decodeResource(resources, R.drawable.logo2)
+                }
+            }).setNotificationListener(object : PlayerNotificationManager.NotificationListener {
+
+            override fun onNotificationPosted(
+                notificationId: Int,
+                notification: Notification,
+                onGoing: Boolean
+            ) {
+                if (onGoing) {
+                    startForeground(notificationId, notification)
+                } else {
+                    stopForeground(false)
+                }
+
+
+            }
+
+            override fun onNotificationCancelled(
+                notificationId: Int,
+                dismissedByUser: Boolean
+            ) {
+                stopSelf()
+                stopForeground(true)
+            }
+
+        })
+            .setChannelDescriptionResourceId(R.string.channel_desc)
+            .setChannelNameResourceId(R.string.channel_name)
+            .build()
+
+
+        /*playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
             this,
             channelId,
             R.string.channel_name,
@@ -219,9 +281,10 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
                 }
 
             }
-        )
+        )*/
         //attach player to playerNotificationManager
         playerNotificationManager.setPlayer(player)
+
 
     }
 
@@ -269,7 +332,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
         state_player = isPlaying
         val b = Bundle()
         b.putBoolean("play_status", state_player!!)
-        mMediaSession?.sendSessionEvent("play_pause",b)
+        mMediaSession?.sendSessionEvent("play_pause", b)
         //   Log.d("Test", "value of state: override$isPlaying")
     }
 
@@ -287,6 +350,8 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
                 mExoPlayer?.seekToDefaultPosition()
                 pause()
                 mMediaSession?.sendSessionEvent("finish", null)
+                stopForeground(true)
+                playerNotificationManager.setPlayer(null)
 
             }
             Player.STATE_IDLE -> {
@@ -339,63 +404,9 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
             .build()
     }
 
-   /* private lateinit var mExtractorFactory: ExtractorMediaSource.Factory
-
-    private fun initializeExtractor() {
-        val userAgent = Util.getUserAgent(baseContext, "Application Name")
-        mExtractorFactory = ExtractorMediaSource.Factory(DefaultDataSourceFactory(this, userAgent))
-            .setExtractorsFactory(DefaultExtractorsFactory())
-    }*/
-
-    /* private fun extractMediaSourceFromUri(uri: Uri): MediaSource {
-
-         return mExtractorFactory.createMediaSource(uri)
-     }*/
 
     private fun buildMediaItem(uri: Uri): MediaItem {
         return MediaItem.fromUri(uri)
     }
 
-
-    /* companion object {
-         val intentFilter = IntentFilter().apply {
-             addAction(PlayerNotificationManager.ACTION_NEXT)
-             addAction(PlayerNotificationManager.ACTION_PREVIOUS)
-             addAction(PlayerNotificationManager.ACTION_PAUSE)
-             addAction(PlayerNotificationManager.ACTION_STOP)
-             addAction(PlayerNotificationManager.ACTION_PLAY)
-         }
-     }
-
-     inner class NotificationReceiver : BroadcastReceiver() {
-
-
-         override fun onReceive(context: Context?, intent: Intent?) {
-             when (intent?.action) {
-                 PlayerNotificationManager.ACTION_NEXT -> {
-                 }
-                 PlayerNotificationManager.ACTION_PREVIOUS -> {
-                 }
-                 PlayerNotificationManager.ACTION_PAUSE -> {
-                     Log.d(
-                         "Test", "value of state: checking receiver" + (mExoPlayer?.playbackState
-                                 == Player.STATE_READY && mExoPlayer!!.playWhenReady)
-                     )
-                     //updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
-                     mExoPlayer?.playWhenReady = false
-                     Log.d(
-                         "Test",
-                         "value of state: checking receiver after" + (mExoPlayer?.playbackState
-                                 == Player.STATE_READY && mExoPlayer!!.playWhenReady)
-                     )
-                 }
-                 PlayerNotificationManager.ACTION_PLAY -> {
-                     updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
-                 }
-                 PlayerNotificationManager.ACTION_STOP -> {
-                     //do what you want here!!!
-                 }
-             }
-         }
-     }*/
 }
