@@ -118,7 +118,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var locationCallback: LocationCallback? = null
-    private var locationRequest:LocationRequest ?= null
+    private var locationRequest: LocationRequest? = null
     var locationTracker: LocationTracker? = null
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
@@ -310,7 +310,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun checkPrefFirstTime(): Boolean {
         sharePref = SharePref(this)
-        isFirstTime = sharePref!!.loadHelpPref()
+        isFirstTime = sharePref!!.loadIsFirstTimePref()
         return isFirstTime!!
     }
 
@@ -386,7 +386,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun setFirstTimePref(value: Boolean) {
         sharePref = SharePref(this)
-        sharePref!!.setHelp(value)
+        sharePref!!.setIsFirstTime(value)
     }
 
     private fun checkPref() {
@@ -434,6 +434,23 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun setDrawerLayout() {
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
+
+                R.id.nav_home -> {
+                    goToHome()
+                }
+
+                R.id.nav_quran -> {
+                    goToQuran()
+                }
+
+                R.id.nav_names -> {
+                    goToNames()
+                }
+
+                R.id.nav_azkhar -> {
+                    goToCategories()
+                }
+
                 R.id.nav_quotes -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_GLOBAL_CASES)
                     goToQuotes()
@@ -442,6 +459,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 R.id.nav_mosques -> {
                     goToBeautifulMosques()
                 }
+
+                R.id.nav_settings -> {
+                    goToSettings()
+                }
+
                 R.id.nav_share -> {
                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_SHARE)
                     goToShareApp()
@@ -470,6 +492,27 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             drawerLayout.closeDrawer(navigationView)
             true
         }
+    }
+
+    private fun goToSettings() {
+        val intent = Intent(this,HomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToHome() {
+        val intent = Intent(this,HomeActivity::class.java)
+        intent.putExtra("user",user)
+        startActivity(intent)
+    }
+
+    private fun goToNames() {
+        val intent = Intent(this,NamesActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToCategories() {
+        val intent = Intent(this,CategoriesActivity::class.java)
+        startActivity(intent)
     }
 
     private fun activateShowcase() {
@@ -518,11 +561,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     .textColorResourceId(R.color.colorWhite)
                     .listener(object : BubbleShowCaseListener {
                         override fun onBackgroundDimClick(bubbleShowCase: BubbleShowCase) {
-                            TODO("Not yet implemented")
+
                         }
 
                         override fun onBubbleClick(bubbleShowCase: BubbleShowCase) {
-                            TODO("Not yet implemented")
+
                         }
 
                         override fun onCloseActionImageClick(bubbleShowCase: BubbleShowCase) {
@@ -541,12 +584,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         }
 
                         override fun onTargetClick(bubbleShowCase: BubbleShowCase) {
-                            TODO("Not yet implemented")
+
                         }
 
                     })
             )
             .show() //Display the ShowCaseSequence
+    }
+
+    private fun goToQuran() {
+        val intent = Intent(this, SurahActivity::class.java)
+        startActivity(intent)
     }
 
     private fun goToBeautifulMosques() {
@@ -625,6 +673,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun singOutFirebase() {
         firebaseAuth.signOut()
+        firebaseAuth.currentUser?.delete()
     }
 
     private fun signOutGoogle() {
@@ -809,20 +858,20 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
 
-   /* @SuppressLint("MissingPermission")
-    fun setUpLocationListener() {
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(application)
-        // for getting the current location update after every 2 seconds with high accuracy
-         locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+    /* @SuppressLint("MissingPermission")
+     fun setUpLocationListener() {
+         fusedLocationProviderClient =
+             LocationServices.getFusedLocationProviderClient(application)
+         // for getting the current location update after every 2 seconds with high accuracy
+          locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
+             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    *//* latTextView.text = location.latitude.toString()
+         locationCallback = object : LocationCallback() {
+             override fun onLocationResult(locationResult: LocationResult) {
+                 locationResult ?: return
+                 for (location in locationResult.locations) {
+                     *//* latTextView.text = location.latitude.toString()
                      lngTextView.text = location.longitude.toString()*//*
                     SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
                     Log.d("MapActivity", "position=" + location.latitude + "" + location.longitude)
@@ -1615,7 +1664,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 try {
                     val snippet =
                         distanceFromUser.toString() +
-                                getString(R.string.km) + "from your position "
+                                getString(R.string.km) + " " + getString(R.string.position)
 
                     /*val avatar: String = mosqueLocation
                         Log.d("Avatar", "avatar link $avatar")*/
@@ -1677,7 +1726,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         try {
                             val snippet =
                                 distanceFromUser.toString() +
-                                        getString(R.string.km) + "from your position "
+                                        getString(R.string.km) + " " +getString(R.string.position)
 
                             /*val avatar: String = mosqueLocation
                                 Log.d("Avatar", "avatar link $avatar")*/

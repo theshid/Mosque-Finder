@@ -1,0 +1,536 @@
+{
+  "chapters": [
+    {
+      "chapter_name": "Au réveil",
+      "category_id": 1
+    },
+    {
+      "chapter_name": "Quand on porte un vêtement",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Lorsque vous portez un nouveau vêtement",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "A une personne qui porte un nouveau vêtement",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Avant de se déshabiller",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Avant d'entrer dans les toilettes",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "En sortant des toilettes",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "En commençant les ablutions",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "En terminant les ablutions",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "En quittant la maison",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "En entrant dans le domicile",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "En allant à la mosquée",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "En pénétrant dans la mosquée",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "En sortant de la mosquée",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Après avoir entendu l'athan",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Supplication au début de la prière",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Pendant que vous êtes en Roukou",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "En se levant de son Roukou",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Pendant le soujoud",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Assis entre les deux soujoud",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Lorsqu'on est en soujoud à cause de la récitation du Coran.",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Le tashahhoud",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Prières sur le Prophète psl après le tashahhoud",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Après le tashahhoud final et avant le salam",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Rappel après le salam",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Pour chercher des conseils pour prendre une décision",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Rappel du matin",
+      "category_id": 1
+    },
+    {
+      "chapter_name": "Rappel du soir",
+      "category_id": 1
+    },
+    {
+      "chapter_name": "Avant de dormir",
+      "category_id": 1
+    },
+    {
+      "chapter_name": "En se retournant pendant la nuit",
+      "category_id": 1
+    },
+        {
+      "chapter_name": "En cas d'agitation, de peur, d'appréhension pendant le sommeil",
+      "category_id": 1
+    },
+    {
+      "chapter_name": "Lors d'un bon ou mauvais rêve",
+      "category_id": 1
+    },
+    {
+      "chapter_name": "Qunoot dans la prière de Witr",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Immédiatement après le salam de la prière du Witr.",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Contre l'anxiété et le chagrin",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Pour celui qui est en détresse",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "En cas de rencontre avec un ennemi ou avec les autorités",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Invocation contre l'oppression des gouvernants",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Contre les ennemis",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Quand on a peur d'un groupe de personnes",
+      "category_id": 4
+    },
+        {
+      "chapter_name": "Pour celui qui est affligé par le doute dans sa foi",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Règlement d'une dette",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Pour celui qui est affligé par des chuchotements dans la prière ou la récitation",
+      "category_id": 6
+    },
+    {
+      "chapter_name": "Pour celui dont les affaires sont devenues difficiles",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Après avoir commis un péché",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Pour repousser le diable et ses chuchotements",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Lorsqu'on est frappé par une mésaventure ou rattrapé par une affaire",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Félicitations à l'occasion d'une naissance",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Placer les enfants sous la protection d'Allah",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Lors des visites aux malades",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Le bienfait de la visite aux malades",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Quand les malades ont renoncé à tout espoir de vie",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Instruction pour celui qui approche de la mort",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Pour celui qui est affligé par une calamité",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "En fermant les yeux du défunt",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Pour le défunt lors de la prière funéraire",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Quand le défunt est un enfant, pendant la prière funéraire",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Condoléances",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Mise en terre du défunt",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Après avoir enterré le défunt",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Visite des tombes",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Pendant une tempête de vent",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "Quand on entend le tonnerre",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "Pour la pluie",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "En cas de pluie",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "Après la pluie",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "Demander un ciel dégagé",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "En voyant le croissant de lune",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "A la rupture du jeûne",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "Avant de manger",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "A la fin du repas",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "De l'hôte à l'invité",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "A celui qui offre un verre ou à celui qui a l'intention de le faire.",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "Lors de la rupture du jeûne dans la maison de quelqu'un",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "Par celui qui jeûne lorsqu'on lui présente de la nourriture et qu'il ne rompt pas son jeûne.",
+      "category_id": 3
+    },
+    {
+      "chapter_name": "Quand on est insulté pendant le jeûne",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "En voyant le fruit précoce ou prématuré",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "En cas d'éternuement",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Quand un mécréant loue Allah après avoir éternué",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Aux jeunes mariés",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "La nuit de noces ou lors de l'achat d'un animal",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Avant un rapport sexuel",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Quand on est en colère",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "En voyant quelqu'un dans l'épreuve ou la tribulation",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Lors d'une séance ou d'un rassemblement",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Pour l'expiation des péchés, dit à la fin d'une séance ou d'une assemblée.",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Retourner une supplique de pardon",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "A celui qui vous fait une faveur",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Protection contre le Dajjal",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "A celui qui prononce son amour pour vous, pour l'amour d'Allah",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "A celui qui vous a offert une partie de sa richesse",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Au débiteur lorsque sa dette est réglée",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Par peur du shirk",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Renvoyer une supplique après avoir accordé un cadeau ou une charité à quelqu'un.",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Interdiction d'attribuer des choses aux présages",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Lors du montage d'un animal ou de tout moyen de transport",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Pour les déplacements",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "En entrant dans une ville ou un village",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "En entrant sur le marché",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Lorsque l'animal monté (ou le moyen de transport) trébuche",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Supplication du voyageur pour le résident",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Supplication de l'habitant pour le voyageur",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Rappel lors de la montée ou de la descente",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Prière du voyageur à l'approche de l'aube",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "S'arrêter ou se loger quelque part",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Au retour d'un voyage",
+      "category_id": 5
+    },
+    {
+      "chapter_name": "Ce qu'il faut dire lorsqu'on reçoit des nouvelles agréables ou désagréables",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "L'excellence de l'envoi de prières sur le Prophète psl",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Excellence de la diffusion du salut islamique",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Retourner une salutation à un mécréant",
+      "category_id": 9
+    },
+        {
+      "chapter_name": "En entendant le chant d'un coq ou le braiment d'un âne...",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "En entendant l'aboiement des chiens la nuit",
+      "category_id": 10
+    },
+    {
+      "chapter_name": "Pour celui que vous avez insulté",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Le bienfait de l'éloge d'un camarade musulman",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "Pour celui qui a été loué",
+      "category_id": 9
+    },
+    {
+      "chapter_name": "La Talbiya pour celui qui fait le Haj ou la Oumra",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "Le Takbeer en passant devant la pierre noire",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "Entre le coin yéménite et la pierre noire",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "Lorsqu'on est au Mont Safa et au Mont Marwah",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "Le jour de 'Arafah",
+      "category_id": 8
+    },
+        {
+      "chapter_name": "Rappel à Muzdalifa",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "En jetant chaque caillou au Jamarat",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "Dans les moments d'étonnement et de plaisir",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "En recevant d'agréables nouvelles",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Lorsque vous ressentez une douleur dans le corps",
+      "category_id": 11
+    },
+    {
+      "chapter_name": "Quand on craint d'affliger quelque chose à quelqu'un .",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Quand on est surpris",
+      "category_id": 4
+    },
+    {
+      "chapter_name": "Lors de l'abattage ou de l'offrande d'un sacrifice",
+      "category_id": 8
+    },
+    {
+      "chapter_name": "Pour repousser la tromperie des démons obstinés",
+      "category_id": 2
+    },
+    {
+      "chapter_name": "Recherche du pardon et de la repentance",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Excellence du souvenir et de la glorification d'Allah",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Comment le Prophète faisait le Tasbeeh ?",
+      "category_id": 7
+    },
+    {
+      "chapter_name": "Règles générales et bienfaisantes",
+      "category_id": 2
+    }
+  ]
+}

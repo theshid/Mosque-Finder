@@ -5,15 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
+import coil.load
 import com.shid.mosquefinder.Data.Model.BeautifulMosques
-import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.View.DetailActivity
-import com.skydoves.transformationlayout.TransformationCompat.startActivity
-import kotlinx.android.synthetic.main.item_mosque.*
 import kotlinx.android.synthetic.main.item_mosque.view.*
-import kotlinx.android.synthetic.main.item_pager.view.*
+
 
 class MosqueAdapter(var list: MutableList<BeautifulMosques>, var context: Context) :
     RecyclerView.Adapter<MosqueAdapter.ViewHolder>() {

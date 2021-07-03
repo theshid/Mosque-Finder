@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class FeedbackViewModel (application: Application) :ViewModel(){
 
@@ -49,10 +50,8 @@ class FeedbackViewModel (application: Application) :ViewModel(){
                         .addOnFailureListener {
                             val errorMessage = getErrorMessage(context, it)
                             onSendFeedbackFailed(errorMessage)
-                            Log.e(
-                                javaClass.simpleName,
-                                "Error adding document",
-                                it
+                            Timber.e(
+                                "Error adding document $it"
                             )
                         }
                 } else {

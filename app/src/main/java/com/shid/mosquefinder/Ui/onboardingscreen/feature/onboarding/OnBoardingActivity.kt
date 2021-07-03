@@ -17,8 +17,8 @@ class OnBoardingActivity : AppCompatActivity() {
         setTransparentStatusBar()
         user = getUserFromIntent()
     }
-    private fun getUserFromIntent(): User? {
-        return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.Data.Model.User
+    private fun getUserFromIntent(): User {
+        return intent.getSerializableExtra(Common.USER) as User
     }
 
     companion object{

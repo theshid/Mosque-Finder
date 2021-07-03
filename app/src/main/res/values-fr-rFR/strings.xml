@@ -111,6 +111,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="determine_route">Determine route to </string>
     <string name="km">km </string>
+    <string name="position">de votre position</string>
     <string name="km_test">%1$s km</string>
     <string name="duree">Duration: </string>
     <string name="trip">Trip # </string>
@@ -172,5 +173,53 @@
     <string name="dialog_rate_app">Merci d\'utiliser Mosque Finder. Si vous appréciez, prenez quelques
         secondes pour donner une note sur Google Play Store.</string>
     <string name="rate">Notez</string>
-    <string name="quran">Quran</string>
+    <string name="quran">Coran</string>
+    <string name="internet_ayah">Une connexion Internet est nécéssaire pour jouer l\'audio</string>
+    <string name="azkar">Azkar</string>
+    <string name="_99_names_of_allah">Les 99 Noms d\'Allah</string>
+    <string name="mosques">Mosquées</string>
+    <string name="find_nearby_mosques_in_your_area">Trouvez les mosquées à proximité.</string>
+    <string name="get_to_know_the_99_names_of_allah">Apprenez à connaitre les 99 noms d\'Allah</string>
+    <string name="explore_and_learn_new_daily_azkhars">Explorez et apprenez de nouveaux azdkhar</string>
+    <string name="prayer_description">Vérifiez l\'heure de prière dans votre zone</string>
+    <string name="prayer_time">Heure de Prière</string>
+    <string name="quran_description">Écoutez et lisez le Saint Coran</string>
+    <string name="beauty_mosque_home">Trouvez et Explorez les plus belle mosquées du monde.</string>
+    <string name="quotes_from_great_personalities">Citation de grandes personnalités</string>
+
+    <string name="play_surah">Jouer la Sourate</string>
+    <string name="download_surah">Télécharger la Sourate</string>
+    <string name="dl_available">Cette Sourate est déjà disponible hors ligne</string>
+    <string name="dl_started">Téléchargement entamé, vérifiez la bar de notification</string>
+    <string name="find_nearby_mosque">Mosquées à proximité</string>
+    <string name="refresh">Actualisez</string>
+    <string name="next_prayer">Prochaine Prière</string>
+    <string name="translate_in_french">Traduire en Français</string>
+    <string name="internet_msg">Internet est nécessaire pour effectuer cette action</string>
+    <string name="chapter">Chapitre</string>
+    <string name="categories">Catégories</string>
+    <string name="home">Accueil</string>
+    <string name="notification_title">Ayah du Jour</string>
+    <string name="pref_notification_title">Notification</string>
+    <string name="pref_notification_summary">Un Ayah est publié quotidiennement</string>
+    <string name="nature">Nature</string>
+    <string name="home_family">Maison et famille</string>
+    <string name="food_drink">Alimentation et boissons</string>
+    <string name="joy_distress">Joie et Détresse></string>
+    <string name="travel">Voyage</string>
+    <string name="prayer">Prière</string>
+    <string name="praising_allah">Louer Allah</string>
+    <string name="hajj_umrah">Hajj et Oumrah</string>
+    <string name="good_etiquette">Les bonnes manières</string>
+    <string name="sickeness_death">Maladie et décès</string>
+    <string name="morning_evening">Matin et soir</string>
+    <string name="surah_dl">Voulez-vous télécharger cette sourate ?</string>
+    <string name="data_loading">Veuillez patienter \n Chargement des données.
+        \n Cette opération ne prendra place qu\'une seule fois.</string>
+    <string name="auto_start">Activer Auto-start pour recevoir les notifications. Autoriser?</string>
+    <string name="bubble_aya_title1">Écouter la Sourate entière</string>
+    <string name="bubble_ayah_des1">Appuyez ici pour écouter la sourate. \n Appuyez sur un verset
+    pour lancer l\'écoute du verset en question</string>
+    <string name="bubble_ayah_title3">Télécharger la Sourate</string>
+    <string name="bubble_ayah_desc3">Vous pouvez télécharger la Sourate pour une écoute hors ligne</string>
 </resources>

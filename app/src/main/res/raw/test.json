@@ -1,0 +1,41 @@
+{
+  "code": 200,
+  "status": "OK",
+  "data": {
+    "surahs": [
+      {
+        "number": 1,
+        "name": "سُورَةُ ٱلْفَاتِحَةِ",
+        "englishName": "Al-Faatiha",
+        "englishNameTranslation": "The Opening",
+        "revelationType": "Meccan",
+        "ayahs": [
+          {
+            "number": 1,
+            "audio": "https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3",
+            "audioSecondary": [
+              "https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3",
+              "https://cdn.islamic.network/quran/audio/64/ar.alafasy/1.mp3"
+            ],
+            "text": "﻿بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+            "numberInSurah": 1,
+            "juz": 1,
+            "manzil": 1,
+            "page": 1,
+            "ruku": 1,
+            "hizbQuarter": 1,
+            "sajda": false
+          }
+        ]
+      }
+    ],
+    "edition": {
+      "identifier": "ar.alafasy",
+      "language": "ar",
+      "name": "مشاري العفاسي",
+      "englishName": "Alafasy",
+      "format": "audio",
+      "type": "versebyverse"
+    }
+  }
+}

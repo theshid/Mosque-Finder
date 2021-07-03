@@ -1,7 +1,6 @@
 package com.shid.mosquefinder.Ui.Main.View
 
-import android.app.Activity
-import android.content.Intent
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -13,28 +12,18 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.BeautifulMosques
-import com.shid.mosquefinder.Data.Model.ClusterMarker
-import com.shid.mosquefinder.Data.Model.Mosque
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.BeautifulMosquesViewModelFactory
-import com.shid.mosquefinder.Ui.Base.SearchViewModelFactory
 import com.shid.mosquefinder.Ui.Main.Adapter.MosqueAdapter
-import com.shid.mosquefinder.Ui.Main.Adapter.SearchAdapter
 import com.shid.mosquefinder.Ui.Main.ViewModel.BeautifulMosquesViewModel
-import com.shid.mosquefinder.Ui.Main.ViewModel.SearchViewModel
-import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.Status
-import com.shid.mosquefinder.Utils.getCountryCode
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
-import com.skydoves.transformationlayout.TransformationCompat.startActivity
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar
-import kotlinx.android.synthetic.main.activity_feedback.*
-import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.item_mosque.*
+
 
 class BeautifulMosquesActivity : AppCompatActivity() {
     private lateinit var mosqueAdapter: MosqueAdapter
@@ -54,7 +43,7 @@ class BeautifulMosquesActivity : AppCompatActivity() {
         setViewModel()
 
         setOnClick()
-        setTransparentStatusBar()
+
         setNetworkMonitor()
         setObservers()
         Handler().postDelayed(kotlinx.coroutines.Runnable {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.shid.mosquefinder">
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -10,6 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".App"
@@ -18,11 +21,63 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Ui.Main.View.SurahActivity"></activity>
-        <activity android:name=".Ui.Main.View.TestActivity" />
-        <activity android:name=".Ui.Main.View.DetailActivity" />
-        <activity android:name=".Ui.Main.View.BeautifulMosquesActivity" />
+        android:theme="@style/AppTheme.NoActionBar"
+        android:usesCleartextTraffic="true">
+        <receiver
+            android:name=".Ui.broadcast_receiver.DbReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.shid.mosquefinder.DBLOAD"/>
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".Ui.Main.View.LoadingActivity" />
+        <activity
+            android:name=".Ui.Main.View.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".Ui.Main.View.ItemActivity" />
+        <activity android:name=".Ui.Main.View.ChapterActivity" />
+
+        <service
+            android:name=".Ui.services.SurahDLService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".Ui.services.MusicService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".Ui.Main.View.MusicActivity" />
+        <activity android:name=".Ui.Main.View.PrayerActivity" />
+        <activity
+            android:name=".Ui.Main.View.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.NamesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.CategoriesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.AyahActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.SurahActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.TestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.DetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Ui.Main.View.BeautifulMosquesActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Ui.Main.View.SearchActivity"
             android:screenOrientation="portrait" />
@@ -46,7 +101,9 @@
         </activity>
         <activity
             android:name=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
-            android:theme="@style/AppTheme.OnBoarding" />
+            android:theme="@style/AppTheme.OnBoarding" >
+
+        </activity>
         <activity
             android:name=".Ui.Main.View.AuthActivity"
             android:screenOrientation="portrait" />
@@ -65,7 +122,7 @@
         <activity
             android:name=".Ui.Main.View.MapsActivity2"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/HomeTheme" />
         <activity
             android:name=".Ui.Main.View.MapsActivity"

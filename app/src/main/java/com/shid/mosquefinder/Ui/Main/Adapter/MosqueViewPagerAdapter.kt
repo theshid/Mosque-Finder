@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
+import coil.load
 import com.shid.mosquefinder.Data.Model.Quotes
 import com.shid.mosquefinder.R
 import kotlinx.android.synthetic.main.item_pager.view.*

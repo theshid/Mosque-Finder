@@ -1,13 +1,11 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -173,14 +171,15 @@ class SplashActivity : AppCompatActivity() {
         splashViewModel.userLiveData!!.observe(
             this,
             Observer { user: User? ->
-                goToMapActivity(user)
+                goToHomeActivity(user)
+                Log.d("Splash","user:"+user?.email)
                 finish()
             }
         )
     }
 
-    private fun goToMapActivity(user: User?) {
-        val intent = Intent(this@SplashActivity, MapsActivity2::class.java)
+    private fun goToHomeActivity(user: User?) {
+        val intent = Intent(this@SplashActivity, HomeActivity::class.java)
         intent.putExtra(USER, user)
         startActivity(intent)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)

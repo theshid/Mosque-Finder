@@ -98,6 +98,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="determine_route">Determine route to </string>
     <string name="km">km </string>
+    <string name="position">from your position</string>
     <string name="km_test">%1$s km</string>
     <string name="duree">Duration: </string>
     <string name="trip">Trip # </string>
@@ -159,7 +160,77 @@
     <string name="marker_verified">(Verified)</string>
     <string name="marker_not_verified">(Not verified)</string>
     <string name="marker_false_position">(False position)</string>
+    <string name="internet_ayah">You need Internet connection to play the Ayah</string>
+    <string name="azkar">Azkar</string>
+    <string name="_99_names_of_allah">99 Names of Allah</string>
+    <string name="mosques">Mosques</string>
+    <string name="find_nearby_mosques_in_your_area">Find Nearby Mosques in your area.</string>
     <string name="quran">Quran</string>
+    <string name="get_to_know_the_99_names_of_allah">Get to know the 99 names of Allah</string>
+    <string name="explore_and_learn_new_daily_azkhars">Explore and learn new daily azkhars</string>
+    <string name="prayer_description">Check the time of Prayer in your area</string>
+    <string name="prayer_time">Prayer Time</string>
+    <string name="quran_description">Read and Listen to the Holy Quran</string>
+    <string name="beauty_mosque_home">Find and Explore the most beautiful mosque on the globe.</string>
+    <string name="quotes_from_great_personalities">Quotes from great personalities</string>
+
+    <string name="channel_name" translatable="false">channel_name</string>
+    <string name="channel_desc" translatable="false">channel_desc</string>
+    <string name="play_surah">Play entire Surah</string>
+    <string name="download_surah">Download Surah</string>
+    <string name="dl_available">This Surah is already available offline</string>
+    <string name="dl_started">Download started, check notification</string>
+    <string name="find_nearby_mosque">Find Nearby Mosque</string>
+    <string name="refresh">Refresh</string>
+    <string name="next_prayer">Next Prayer</string>
+    <string name="translate_in_french">Translate in French</string>
+    <string name="internet_msg">You need Internet to perform this action</string>
+    <string name="chapter">Chapter</string>
+    <string name="categories">Categories</string>
+    <string name="home">Home</string>
+    <string name="notification_title">Daily Ayah</string>
+
+    <string name="pref_notification_key" translatable="false">notification</string>
+    <string name="pref_notification_title">Notification</string>
+    <string name="pref_notification_summary">An Ayah is displayed daily.</string>
+
+    <string name="title_activity_settings">SettingsActivity</string>
+
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings">Settings</string>
+    <string name="home_family"><![CDATA[Home & Family]]></string>
+    <string name="food_drink"><![CDATA[Food & Drink]]></string>
+    <string name="joy_distress"><![CDATA[Joy & Distress]]></string>
+    <string name="travel">Travel</string>
+    <string name="prayer">Prayer</string>
+    <string name="praising_allah">Praising Allah</string>
+    <string name="hajj_umrah"><![CDATA[Hajj & Umrah]]></string>
+    <string name="good_etiquette">Good Etiquette</string>
+    <string name="nature">Nature</string>
+    <string name="sickeness_death"><![CDATA[Sickeness & Death]]></string>
+    <string name="morning_evening">Morning-Evening</string>
+    <string name="surah_dl">Do you want to download this Surah?</string>
+    <string name="data_loading">Please wait \n The data is being loaded. \n This is the only time this operation will take place</string>
+    <string name="auto_start">Enabling auto-start will prevent your phone from disabling notifications. Allow?</string>
+    <string name="bubble_aya_title1">Listen to the entire Surah \n Press the desired Ayah below if
+    you only want to listen a particular Ayah.</string>
+    <string name="bubble_ayah_des1">Press here to play the whole Surah</string>
+    <string name="bubble_ayah_title3">Download Surah</string>
+    <string name="bubble_ayah_desc3">You can download the surah to listen to it offline</string>
 
 
 </resources>

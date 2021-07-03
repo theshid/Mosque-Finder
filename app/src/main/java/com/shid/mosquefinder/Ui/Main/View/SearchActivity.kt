@@ -64,7 +64,7 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         setRecycler()
 
         setObservers()
-        setTransparentStatusBar()
+
         setNetworkMonitor()
         setOnClick()
         Handler().postDelayed(kotlinx.coroutines.Runnable {

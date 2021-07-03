@@ -6,8 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.view.ViewGroup
 import android.widget.ImageView
 import coil.ImageLoader
-import coil.api.load
-import coil.request.LoadRequest
+import coil.request.ImageRequest
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
@@ -127,14 +126,14 @@ class MyClusterManagerRenderer constructor(
             try {
 
                 val loader = ImageLoader(context)
-                val req = LoadRequest.Builder(context)
+                val req = ImageRequest.Builder(context)
                     .data(url) // demo link
                     .target { result ->
                        icon = (result as BitmapDrawable).bitmap
                     }
                     .build()
 
-                val disposable = loader.execute(req)
+                //val disposable = loader.execute(req)
 
 
 

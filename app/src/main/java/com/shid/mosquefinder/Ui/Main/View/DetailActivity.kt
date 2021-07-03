@@ -5,23 +5,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
-import coil.api.load
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.BeautifulMosques
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.Adapter.MosqueViewPagerAdapter
-import com.shid.mosquefinder.Ui.Main.Adapter.ViewPagerAdapter
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.onTransformationEndContainerApplyParams
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_detail.toolbar
 import kotlinx.android.synthetic.main.activity_detail.viewPager2
-import kotlinx.android.synthetic.main.activity_quotes.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -34,7 +30,7 @@ class DetailActivity : AppCompatActivity() {
         onTransformationEndContainerApplyParams()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        setTransparentStatusBar()
+
         setNetworkMonitor()
         setOnClick()
         val mosqueItem: BeautifulMosques = requireNotNull(intent.getParcelableExtra(EXTRA_MOSQUE))

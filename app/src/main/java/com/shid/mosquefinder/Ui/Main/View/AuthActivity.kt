@@ -1,13 +1,14 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,29 +28,25 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
 import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingActivity
-import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
+import com.shid.mosquefinder.Utils.GsonParser
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
 import com.shid.mosquefinder.Utils.PermissionUtils
+import com.shid.mosquefinder.Utils.SharePref
 import com.shid.mosquefinder.Utils.Status
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
-import fr.quentinklein.slt.LocationTracker
-import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_auth.*
+import timber.log.Timber
 
 
 class AuthActivity : AppCompatActivity() {
 
 
     companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 999
-        private const val TAG = "AuthActivity"
+        const val LOCATION_PERMISSION_REQUEST_CODE = 999
         var userPosition: LatLng? = null
-        var newUserPosition:LatLng?= null
-
     }
 
     private  var fusedLocationProviderClient: FusedLocationProviderClient ?= null
@@ -62,6 +59,9 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private var previousSate = true
 
+    private var sharePref: SharePref? = null
+    private var isFirstTime: Boolean? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -70,13 +70,16 @@ class AuthActivity : AppCompatActivity() {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
 
+        sharePref = SharePref(this)
+        isFirstTime = sharePref!!.loadFirstTime()
+        setLocationUtils()
 
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
         initAuthViewModel()
-        setTransparentStatusBar()
+
         checkIfPermissionIsActive()
         initSignInButton()
         setObservers()
@@ -84,12 +87,25 @@ class AuthActivity : AppCompatActivity() {
         initGoogleSignInClient()
     }
 
+    private fun setLocationUtils() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest = LocationRequest.create().apply {
+            interval = 5000
+            fastestInterval = 50
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            maxWaitTime= 5000
+        }
+
+    }
+
     private fun checkIfPermissionIsActive() {
         when {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
+                        retrieveLocation()
                         setUpLocationListener()
+
 
                     }
                     else -> {
@@ -106,10 +122,41 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+    private fun retrieveLocation() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations) {
+                    userPosition = LatLng(location.latitude, location.longitude)
+
+                    sharePref!!.saveUserPosition(userPosition!!)
+                    // Update UI with location data
+                    // ...
+                }
+            }
+
+
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        fusedLocationProviderClient!!.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+
+
+    }
+
     override fun onResume() {
         super.onResume()
         handleConnectivityChange()
-        setUpLocationListener()
+        //setUpLocationListener()
+        setLocationUtils()
+        retrieveLocation()
+        startLocationUpdates()
     }
 
     override fun onPause() {
@@ -156,30 +203,21 @@ class AuthActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun setUpLocationListener() {
-         fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(application)
-        // for getting the current location update after every 2 seconds with high accuracy
-         locationRequest = LocationRequest().setInterval(10000).setFastestInterval(2000)
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-
-        locationCallback =  object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                for (location in locationResult.locations) {
-                    /* latTextView.text = location.latitude.toString()
-                     lngTextView.text = location.longitude.toString()*/
-                    SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
-                    Log.d("AuthActivity", "position=" + location.latitude + "" + location.longitude)
-                    Log.d("AuthActivity","accuracy:"+location.accuracy)
+        fusedLocationProviderClient!!.lastLocation
+            .addOnSuccessListener { location: android.location.Location? ->
+                userPosition =
+                    location?.longitude?.let {
+                        LatLng(
+                            location.latitude,
+                            it
+                        )
+                    } // Got last known location. In some rare situations this can be null.
+                userPosition?.let {
+                    Timber.d("value of position:$userPosition")
+                    sharePref!!.saveUserPosition(LatLng(it.latitude, it.longitude))
                 }
-                // Few more things we can do here:
-                // For example: Update the location of user on server
             }
-        }
 
-        fusedLocationProviderClient!!.requestLocationUpdates(
-            locationRequest,locationCallback,
-            Looper.myLooper())
     }
 
 
@@ -195,6 +233,7 @@ class AuthActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
+                            setLocationUtils()
                             setUpLocationListener()
 
                             //getUserPosition()
@@ -244,7 +283,8 @@ class AuthActivity : AppCompatActivity() {
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        resultLauncher.launch(signInIntent)
+        //startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     private fun initAuthViewModel() {
@@ -266,7 +306,7 @@ class AuthActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task =
@@ -278,6 +318,23 @@ class AuthActivity : AppCompatActivity() {
             } catch (e: ApiException) {
                 logErrorMessage(e.message)
             }
+        }
+    }*/
+
+    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            val data: Intent? = result.data
+            val task =
+                GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val googleSignInAccount =
+                    task.getResult(ApiException::class.java)
+                googleSignInAccount?.let { getGoogleAuthCredential(it) }
+            } catch (e: ApiException) {
+                logErrorMessage(e.message)
+            }
+
         }
     }
 
@@ -294,7 +351,7 @@ class AuthActivity : AppCompatActivity() {
             if (it.isNew!!) {
                 createNewUser(it)
             } else {
-                goToMapActivity(it)
+                goToHomeActivity(it)
             }
         })
 
@@ -328,11 +385,23 @@ class AuthActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun goToMapActivity(user: User) {
-        val intent = Intent(this@AuthActivity, MapsActivity2::class.java)
-        intent.putExtra(USER, user)
-        startActivity(intent)
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-        finish()
+    private fun goToHomeActivity(user: User) {
+        val convertUserJson = GsonParser.gsonParser?.toJson(user)
+        if (convertUserJson != null) {
+            sharePref?.saveUser(convertUserJson)
+        }
+        if (isFirstTime == true){
+            val intent = Intent(this,LoadingActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+            finish()
+        }else{
+            val intent = Intent(this@AuthActivity, HomeActivity::class.java)
+            intent.putExtra(USER, user)
+            startActivity(intent)
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+            finish()
+        }
+
     }
 }

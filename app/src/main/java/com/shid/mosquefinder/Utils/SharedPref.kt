@@ -3,9 +3,13 @@ package com.shid.mosquefinder.Utils
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.android.gms.maps.model.LatLng
+import com.shid.mosquefinder.R
 
+const val defaultLat = 33.97159194946289F
+const val defaultLng = -6.849812984466553F
 class SharePref(context: Context) {
     private val mySharePref: SharedPreferences
+    val mContext = context
 
     fun saveUserPosition(savedPosition: LatLng) {
         val editor = mySharePref.edit()
@@ -26,10 +30,39 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
-    fun setHelp(firstTime:Boolean){
+    fun setIsFirstTime(firstTime:Boolean){
         val editor = mySharePref.edit()
         editor.putBoolean("first_time",firstTime)
         editor.apply()
+    }
+
+    fun setFirstTimeAyah(firstTime:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean("first_time_ayah",firstTime)
+        editor.apply()
+    }
+
+    fun setFirstTime(firstTime:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean("first_time_bis",firstTime)
+        editor.apply()
+    }
+
+    fun saveSwitchState(state:Boolean){
+        val editor = mySharePref.edit()
+        editor.putBoolean(mContext.getString(R.string.pref_notification_key),state)
+        editor.apply()
+    }
+
+    fun saveUser(user:String){
+        val editor = mySharePref.edit()
+        editor.putString("user",user)
+        editor.apply()
+    }
+
+    fun loadSwitchState():Boolean{
+        val state = mySharePref.getBoolean(mContext.getString(R.string.pref_notification_key),true)
+        return state
     }
 
     fun loadUseCount():Int{
@@ -39,13 +72,25 @@ class SharePref(context: Context) {
         return mySharePref.getBoolean("rate",false)
     }
     fun loadSavedPosition(): LatLng {
-    val position:LatLng = LatLng(mySharePref.getFloat("position_lat",15F).toDouble(),
-    mySharePref.getFloat("position_lon",15F).toDouble())
+    val position:LatLng = LatLng(mySharePref.getFloat("position_lat", defaultLat).toDouble(),
+    mySharePref.getFloat("position_lon", defaultLng).toDouble())
         return position
     }
 
-    fun loadHelpPref(): Boolean {
+    fun loadIsFirstTimePref(): Boolean {
         return mySharePref.getBoolean("first_time", true)
+    }
+
+    fun loadFirstTime():Boolean{
+        return mySharePref.getBoolean("first_time_bis", true)
+    }
+
+    fun loadFirstTimeAyah():Boolean{
+        return mySharePref.getBoolean("first_time_ayah", true)
+    }
+
+    fun loadUser():String{
+        return mySharePref.getString("user","")!!
     }
 
     init {

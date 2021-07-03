@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Ui.Main.View.AyahActivity">
+
+
+
+    <LinearLayout
+        android:id="@+id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@+id/ayahRecycler"
+        app:layout_constraintStart_toStartOf="@+id/ayahRecycler"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back"
+                android:id="@+id/btn_back"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                app:tint="@color/colorWhite" />
+            <TextView
+                android:id="@+id/surah_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_centerInParent="true"
+                style="@style/TextAppearance.AppCompat.Item.White"
+                android:fontFamily="@font/quicksand_semibold"
+                android:gravity="center"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:textSize="20sp"
+                tools:text="Al-Fatiha" />
+        </RelativeLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/verse_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/quicksand_regular"
+            android:gravity="center"
+            android:textColor="@color/colorWhite"
+            tools:text="7 Ayah" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_play"
+            android:layout_marginTop="10dp"
+            android:id="@+id/play_all"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_play_all"
+            android:text="@string/play_surah"
+            android:textColor="@color/colorWhite"
+            android:fontFamily="@font/quicksand_regular"/>
+
+        <io.ghyeok.stickyswitch.widget.StickySwitch
+            android:id="@+id/switch_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:ss_animationDuration="600"
+            app:ss_iconPadding="18dp"
+            app:ss_iconSize="22dp"
+            app:ss_leftIcon="@drawable/ic_play"
+            app:ss_leftText="Play"
+            app:ss_rightIcon="@drawable/ic_pause"
+            app:ss_rightText="Pause"
+            app:ss_selectedTextSize="14sp"
+            app:ss_sliderBackgroundColor="@color/colorPrimary"
+            app:ss_switchColor="@color/blue_default"
+            app:ss_textColor="@color/colorWhite"
+            app:ss_textSize="12sp"
+            app:ss_animationType="line"/>
+
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ayahRecycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_title"
+        tools:itemCount="20"
+        tools:listitem="@layout/item_quran_ayah" />
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/exoplayerView"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ayahRecycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+
+    </com.google.android.exoplayer2.ui.PlayerView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_dl"
+        android:backgroundTint="@color/colorPrimary"
+        app:tint="@color/white"
+        android:background="@color/colorPrimary"
+        android:foregroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/exoplayerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="@string/download_surah" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="Notification">
+
+        <SwitchPreference
+            android:id="@+id/notification"
+            android:key="@string/pref_notification_key"
+            android:title="@string/pref_notification_title"
+            android:summary="@string/pref_notification_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+
+    </PreferenceCategory>
+
+   <!-- <PreferenceCategory app:title="@string/prayer_time">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />
+
+    </PreferenceCategory>-->
+
+</PreferenceScreen>

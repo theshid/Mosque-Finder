@@ -1,0 +1,400 @@
+{
+  "noms": [
+    {
+      "name_transliteration": "Allah",
+      "name": "Allah"
+    },
+    {
+      "name_transliteration": "AR-RAHMAAN",
+      "name": "Le Très-Miséricordieux"
+    },
+    {
+      "name_transliteration": "AR-RAHEEM",
+      "name": "Le TOUT Miséricordieux"
+    },
+    {
+      "name_transliteration": "AL-MALIK",
+      "name": "Le Souverain, Le Roi, celui qui controle et dirige"
+    },
+    {
+      "name_transliteration": "AL-QUDDUS",
+      "name": "L'Infiniment Saint"
+    },
+    {
+      "name_transliteration": "AS-SALAM",
+      "name": "La paix, la Sécurité, le Salut"
+    },
+    {
+      "name_transliteration": "AL-MU’MIN",
+      "name": "Le Fidèle, le Sécurisant, le confiant"
+    },
+    {
+      "name_transliteration": "AL-MUHAYMIN",
+      "name": " Le Surveillant, le Témoin, le Préservateur, le Dominateur"
+    },
+    {
+      "name_transliteration": "AL-AZEEZ",
+      "name": "Le Tout Puissant, le glorieux,AL Aziz veut dire dans un sens celui qui est cher et précieux"
+    },
+    {
+      "name_transliteration": "AL-JABBAR",
+      "name": "Le grandiose, le puissant, le Contraignant"
+    },
+    {
+      "name_transliteration": "AL-MUTAKABBIR",
+      "name": "Celui qui est superieur à ses créatures"
+    },
+    {
+      "name_transliteration": "AL-KHAALIQ",
+      "name": "Le Créateur, Le CREATEUR dans le sens général, Celui Qui fait exister les choses."
+    },
+    {
+      "name_transliteration": "AL-BAARI",
+      "name": "Le Créateur, le Producteur, Le CREATEUR dans le sens de la création de ce qui est vivant."
+    },
+    {
+      "name_transliteration": "AL-MUSAWWIR",
+      "name": "Celui qui donne l'aspect diversifié à chaque création et à chaque créature."
+    },
+    {
+      "name_transliteration": "AL-GHAFFAR",
+      "name": "Le Tout-Pardonnant, Il pardonne les péchés de Ses serviteurs encore et encore"
+    },
+    {
+      "name_transliteration": "AL-QAHHAR",
+      "name": "Le Tout PUISSANT et Très Contraignant, le Dominateur Suprême "
+    },
+    {
+      "name_transliteration": "AL-WAHHAAB",
+      "name": "Le Donateur gracieux, Celui Qui donne immensément sans rien recevoir en retour"
+    },
+    {
+      "name_transliteration": "AR-RAZZAAQ",
+      "name": "Celui qui accorde toujours la subsistance, celui qui nourit toutes choses"
+    },
+    {
+      "name_transliteration": "AL-FATTAAH",
+      "name": "Le Conquérant, Celui qui Facilite les actions dignes et vertueuses"
+    },
+    {
+      "name_transliteration": "AL-‘ALEEM",
+      "name": "Le Très-Savant, celui qui voit tout que cela soit caché ou non, l'Omniscient"
+    },
+    {
+      "name_transliteration": "AL-QAABID",
+      "name": "Celui qui retient et qui rétracte"
+    },
+    {
+      "name_transliteration": "AL-BAASIT",
+      "name": "Celui qui étend sa générosité et sa miséricorde"
+    },
+    {
+      "name_transliteration": "AL-KHAAFIDH",
+      "name": "Celui Qui destine les oppresseurs et les orgueilleux au rabaissement et au châtiment"
+    },
+    {
+      "name_transliteration": "AR-RAAFI",
+      "name": "Celui qui éleve l'honneur et le statut d'un croyant dans ce bas monde et dans l'au dela"
+    },
+    {
+      "name_transliteration": "AL-MU’IZZ",
+      "name": "Celui qui donne les honneurs, la puissance et la considération"
+    },
+    {
+      "name_transliteration": "AL-MUZIL",
+      "name": "Celui qui avilit"
+    },
+    {
+      "name_transliteration": "AS-SAMEE",
+      "name": "Celui qui entend absolument toute choses"
+    },
+    {
+      "name_transliteration": "AL-BASEER",
+      "name": "Le Voyant, Celui qui voit  tout"
+    },
+    {
+      "name_transliteration": "AL-HAKAM",
+      "name": "Le Juge, Celui dont le Jugement dans l’au-delà sera parfaitement juste et approprié"
+    },
+    {
+      "name_transliteration": "AL-‘ADL",
+      "name": "Le Juste, l'Equitable, Celui qui rétablit l'Equilibre"
+    },
+    {
+      "name_transliteration": "AL-LATEEF",
+      "name": "Le Subtil-Bienveillant, le Bon"
+    },
+    {
+      "name_transliteration": "AL-KHABEER",
+      "name": "Le Très-Instruit, le Bien-Informé"
+    },
+    {
+      "name_transliteration": "AL-HALEEM",
+      "name": "Le Longanime, le Très Clément"
+    },
+    {
+      "name_transliteration": "AL-‘ATHEEM",
+      "name": "L'Immense, le Magnifique, l'Eminent, le Considérable"
+    },
+    {
+      "name_transliteration": "AL-GHAFOOR",
+      "name": "Le Tout-Pardonnant"
+    },
+    {
+      "name_transliteration": "ASH-SHAKOOR",
+      "name": "Le Très-Reconnaissant, le Très-Remerciant, Celui qui accroît infiniment"
+    },
+    {
+      "name_transliteration": "AL-‘ALEE",
+      "name": "Le Sublime, l'Elevé, le Très-Haut"
+    },
+    {
+      "name_transliteration": "AL-KABEER",
+      "name": "L'Infiniment Grand, plus élevé en Qualités que Ses créatures"
+    },
+    {
+      "name_transliteration": "AL-HAFEEDH",
+      "name": "Le Préservateur, le Conservateur, Celui qui garde"
+    },
+    {
+      "name_transliteration": "AL-MUQEET",
+      "name": "Le Gardien, le Puissant, le Témoin, Celui qui produit la subsistance"
+    },
+    {
+      "name_transliteration": "AL-HASEEB",
+      "name": "Celui qui tient compte de tout, Celui qui suffit à ses créatures"
+    },
+    {
+      "name_transliteration": "AL-JALEEL",
+      "name": "Le Majestueux, qui s'attribue la grandeur du Pouvoir et la Gloire de Sa dignité"
+    },
+    {
+      "name_transliteration": "AL-KAREEM",
+      "name": "Le Tout-Généreux, le Noble-Généreux, pur de toute abjection"
+    },
+    {
+      "name_transliteration": "AR-RAQEEB",
+      "name": "Le Vigilant, Celui qui observe"
+    },
+    {
+      "name_transliteration": "AL-MUJEEB",
+      "name": "Celui qui exauce, Celui qui répond au nécessiteux et au désireux qui Le prie"
+    },
+    {
+      "name_transliteration": "AL-WAASI",
+      "name": "L'Ample, le Vaste, l'Immense"
+    },
+    {
+      "name_transliteration": "AL-HAKEEM",
+      "name": "L'Infiniment Sage"
+    },
+    {
+      "name_transliteration": "AL-WADOOD",
+      "name": "Le Bien-Aimant, le Bien-Aimé"
+    },
+    {
+      "name_transliteration": "AL-MAJEED",
+      "name": "Le Très Glorieux, doté d'un Pouvoir parfait, de Haute Dignité, de Compassion, de Générosité et de Douceur"
+    },
+    {
+      "name_transliteration": "AL-BA’ITH",
+      "name": "Celui qui ressuscite Ses serviteurs après la mort, Celui qui incite"
+    },
+    {
+      "name_transliteration": "ASH-SHAHEED",
+      "name": "Le Témoin, qui n'ignore rien de ce qui arrive"
+    },
+    {
+      "name_transliteration": "AL-HAQQ",
+      "name": " Le Vrai, dont l'Existence est la seule véritable"
+    },
+    {
+      "name_transliteration": "AL-WAKEEL",
+      "name": "Le Gérant, l'Intendant, Celui à qui on se confie et dont le soutien ne fléchit jamais"
+    },
+    {
+      "name_transliteration": "AL-QAWIYY",
+      "name": "Le Très-Fort, le Très-Puissant, Celui qui possède le Pouvoir complet"
+    },
+    {
+      "name_transliteration": "AL-MATEEN",
+      "name": "Le Très-Ferme, l'Inébranlable qui jamais ne fléchit ou ne fatigue"
+    },
+    {
+      "name_transliteration": "AL-WALIYY",
+      "name": "Le Très-Proche, l'Ami, le Maître, le Tuteur"
+    },
+    {
+      "name_transliteration": "AL-HAMEED",
+      "name": "Le Très-Louange, Celui qui est digne de louanges"
+    },
+    {
+      "name_transliteration": "AL-MUHSEE",
+      "name": "Celui dont le savoir cerne toute chose, Celui qui garde en compte"
+    },
+    {
+      "name_transliteration": "AL-MUBDI",
+      "name": "Celui qui produit sans modèle, Celui qui donne l'Origine"
+    },
+    {
+      "name_transliteration": "AL-MU’ID",
+      "name": "Celui qui redonne existence après la mort, Celui qui réintègre, qui répète"
+    },
+    {
+      "name_transliteration": "AL-MUHYEE",
+      "name": "Celui qui fait vivre, qui donne la vie"
+    },
+    {
+      "name_transliteration": "AL-MUMEET",
+      "name": "Celui qui fait mourir le vivant"
+    },
+    {
+      "name_transliteration": "AL-HAYY",
+      "name": "Le Vivant, dont la vie est différente de notre vie"
+    },
+    {
+      "name_transliteration": "AL-QAYYOOM",
+      "name": "L'Immuable, le Subsistant par Soi"
+    },
+    {
+      "name_transliteration": "AL-WAAJID",
+      "name": "L'Opulent,Celui qui trouve tout ce qu'Il veut"
+    },
+    {
+      "name_transliteration": "AL-MAAJID",
+      "name": "Le Noble, le Majestueux, Celui qui a plein de Gloire"
+    },
+    {
+      "name_transliteration": "AL-WAAHID",
+      "name": "L'Unique, sans associé, le Seul, l'Un"
+    },
+    {
+      "name_transliteration": "AS-SAMAD",
+      "name": "Le Maître absolu, le Soutien universel, Celui en qui on place sa confiance"
+    },
+    {
+      "name_transliteration": "AL-QADIR",
+      "name": "Le Puissant, le Déterminant, le Détenteur du pouvoir"
+    },
+    {
+      "name_transliteration": "AL-MUQTADIR",
+      "name": "Celui qui a pouvoir sur tout, le Détenteur Absolu du pouvoir"
+    },
+    {
+      "name_transliteration": "AL-MUQADDIM",
+      "name": "Celui qui met en avant, Celui qui précède ou devance"
+    },
+    {
+      "name_transliteration": "AL-MU’AKHKHIR",
+      "name": "Celui qui met en arrière, Celui qui vient en dernier ou qui retarde"
+    },
+    {
+      "name_transliteration": "AL-AWWAL",
+      "name": "Le Premier, dont l'existence n'a pas de commencement"
+    },
+    {
+      "name_transliteration": "AL-AAKHIR",
+      "name": "Le Dernier, dont l'existence n'a pas de fin"
+    },
+    {
+      "name_transliteration": "AZ-DHAAHIR",
+      "name": "L'Extérieur, l'Apparent"
+    },
+    {
+      "name_transliteration": "AL-BAATIN",
+      "name": "L'Intérieur, le Caché"
+    },
+    {
+      "name_transliteration": "AL-WAALI",
+      "name": "Le Maître très proche, Celui qui dirige"
+    },
+    {
+      "name_transliteration": "AL-MUTA’ALI",
+      "name": "Le Sublime, l'Exalté, l'Elevé, pur de tout attribut de la création"
+    },
+    {
+      "name_transliteration": "AL-BARR",
+      "name": "Le Bon, le Bienveillant, le Bienfaisant, envers ses créatures"
+    },
+    {
+      "name_transliteration": "AT-TAWWAB",
+      "name": "Celui qui ne cesse de revenir, d'accueillir le repentir sincère de ses adorateurs et qui leur accorde Son Pardon"
+    },
+    {
+      "name_transliteration": "AL-MUNTAQIM",
+      "name": "Le Vengeur, qui a le dessus sur Ses ennemis et les punit pour leurs péchés"
+    },
+    {
+      "name_transliteration": "AL-‘AFUWW",
+      "name": "Celui qui efface, l'Indulgent dont le pardon est large"
+    },
+    {
+      "name_transliteration": "AR-RA’OOF",
+      "name": "Le Très-Doux, le Très-Bienveillant"
+    },
+    {
+      "name_transliteration": "MAALIK-UL-MULK",
+      "name": "Le Possesseur du Royaume, qui contrôle son règne et donne un règne à qui Il veu"
+    },
+    {
+      "name_transliteration": "DHUL-JALAALI WAL-IKRAAM",
+      "name": "Celui qui detient la Majesté et la Générosité, Celui qui comble de bienfaits ceux qui auront compris que Allah est  est meilleur que tout autre"
+    },
+    {
+      "name_transliteration": "AL-MUQSIT",
+      "name": "L'Equitable, Celui  qui juge conformément à la plus grande justice"
+    },
+    {
+      "name_transliteration": "AL-JAAMI",
+      "name": "Celui qui réunit, Celui qui rassemble ses créatures le jour du jugement"
+    },
+    {
+      "name_transliteration": "AL-GHANIYY",
+      "name": "Le Suffisant par soi, Celui qui n'a besoin de personne"
+    },
+    {
+      "name_transliteration": "AL-MUGHNI",
+      "name": "Celui qui donne  la subsistance satisfaisant ainsi les besoins de ses créatures"
+    },
+    {
+      "name_transliteration": "AL-MANI",
+      "name": "Le Défenseur, Celui qui preserve et protège ses fidèles croyants"
+    },
+    {
+      "name_transliteration": "AD-DHARR",
+      "name": "Celui qui contrarie, Celui qui est tout puissant à faire parvenir immanquablement la nuisance a celui qui l'offense"
+    },
+    {
+      "name_transliteration": "AN-NAFI",
+      "name": "Celui qui est tout puissant à faire parvenir immanquablement le profit et qui facilite la vie de qui Il veut"
+    },
+    {
+      "name_transliteration": "AN-NUR",
+      "name": "La Lumière, celui qui guide le croyant vers la lumiere de la foi"
+    },
+    {
+      "name_transliteration": "AL-HAADI",
+      "name": "Le Guide"
+    },
+    {
+      "name_transliteration": "AL-BADEE",
+      "name": "Le Novateur, Celui qui a créé toute chose et les a formées selon sa volonté  sans exemple précédent"
+    },
+    {
+      "name_transliteration": "AL-BAAQI",
+      "name": "Le Permanent, celui dont l'existence est eternel"
+    },
+    {
+      "name_transliteration": "AL-WAARITH",
+      "name": "L'Héritier, Celui Qui existe et ne change jamais"
+    },
+    {
+      "name_transliteration": "AR-RASHEED",
+      "name": "Celui qui agit avec droiture, Celui qui dirige avec sagesse"
+    },
+    {
+      "name_transliteration": "AS-SABOOR",
+      "name": "Le patient, le trés constant, qui recule la punition des pecheurs"
+    }
+  ]
+}
