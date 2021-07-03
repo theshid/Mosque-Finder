@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.content.ComponentName
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -83,6 +84,8 @@ class MusicActivity : AppCompatActivity() {
             } else if (event == "finish") {
 
                 playPauseButton.setImageResource(R.drawable.ic_play_vector)
+                val intent = Intent(this@MusicActivity,MusicService::class.java)
+                stopService(intent)
 
             } else if (event == "play_pause"){
                 val status = extras.getBoolean("play_status")
