@@ -3,19 +3,15 @@ package com.shid.mosquefinder.Ui.Main.View
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
-import com.elconfidencial.bubbleshowcase.BubbleShowCase
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
-import com.elconfidencial.bubbleshowcase.BubbleShowCaseListener
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
@@ -389,8 +385,8 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
 
     private fun initializePlayer(ayaNum: Int) {
 
-        val link = "https://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayaNum.mp3"
-        val linkSurah = ""
+        val link = "http://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayaNum.mp3"
+
 
         preparePlayer(link, "default")
         exoplayerView.player = simpleExoplayer
@@ -408,8 +404,9 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         return MediaItem.fromUri(uri)
     }
 
-    private fun preparePlayer(videoUrl: String, type: String) {
-        val uri = Uri.parse(videoUrl)
+    private fun preparePlayer(ayahUrl: String, type: String) {
+        val uri = Uri.parse(ayahUrl)
+        Timber.d("link:$ayahUrl")
         /* val evictor = LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong())
          val databaseProvider: DatabaseProvider = ExoDatabaseProvider(this)
 

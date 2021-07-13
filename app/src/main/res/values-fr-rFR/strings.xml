@@ -9,7 +9,7 @@
     //Splash Activity
     <string name="splash_title">Mosque Finder</string>
     <string name="splash_message">Trouvez une Mosquée en tout temps</string>
-    <string name="brought_you_by_shidtech">UniSoft</string>
+    <string name="brought_you_by_shidtech">ShidApps</string>
 
     //Toast
     <string name="location_permission_not_granted">Permission de localisation non accordé</string>
