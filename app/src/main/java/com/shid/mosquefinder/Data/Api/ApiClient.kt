@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.Data.Model.Api
+package com.shid.mosquefinder.Data.Api
 
 
 
@@ -14,7 +14,7 @@ object ApiClient {
     private var okHttpClient: OkHttpClient? = null
 
     fun provideOkHttpClient():OkHttpClient {
-        if (okHttpClient==null){
+        if (okHttpClient ==null){
            okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .connectTimeout(120, TimeUnit.SECONDS)

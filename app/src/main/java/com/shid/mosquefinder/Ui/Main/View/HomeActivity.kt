@@ -183,9 +183,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun getTimeZone(): Double {
-        val cal: Calendar = Calendar.getInstance(Locale.getDefault())
-        val offset = -(cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET)) / (60 * 1000)
-        return offset.toDouble()
+        val tz = TimeZone.getDefault()
+        val now = Date()
+        val offsetFromUtc = tz.getOffset(now.time) / 3600000.0
+        return offsetFromUtc
     }
 
     private fun retrieveLocation() {

@@ -25,6 +25,7 @@ import com.shid.mosquefinder.Utils.SharePref
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.android.synthetic.main.activity_prayer.toolbar
+import timber.log.Timber
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,7 +57,9 @@ class PrayerActivity : AppCompatActivity() {
        // user = getUserFromIntent()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
+        Timber.d("userPosition:$userPosition")
         timeZone = getTimeZone()
+        Timber.d("timeZone:${timeZone.toString()}")
         calculatePrayerTime(userPosition!!)
         findCity(userPosition!!.latitude,userPosition!!.longitude)
         setDate()
@@ -154,9 +157,15 @@ class PrayerActivity : AppCompatActivity() {
     }
 
     private fun getTimeZone(): Double {
-        val cal: Calendar = Calendar.getInstance(Locale.getDefault())
-        val offset = -(cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET)) / (60 * 1000)
-        return offset.toDouble()
+       /* val cal: Calendar = Calendar.getInstance(Locale.getDefault())
+        val offset = -(cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET)) / (60 * 1000)*/
+
+        val tz = TimeZone.getDefault()
+        val now = Date()
+        val offsetFromUtc = tz.getOffset(now.time) / 3600000.0
+        val m2tTimeZoneIs: String = offsetFromUtc.toString()
+        Timber.d("new timezone test:$m2tTimeZoneIs")
+        return offsetFromUtc
     }
 
     private fun setDate() {
@@ -214,12 +223,14 @@ class PrayerActivity : AppCompatActivity() {
 
         private fun calculatePrayerTime(position: LatLng) {
             date = SimpleDate(GregorianCalendar())
+            Timber.d("date:${date.toString()}")
             val location = com.azan.astrologicalCalc.Location(
                 position.latitude,
                 position.longitude,
                 timeZone!!,
                 0
             )
+            Timber.d("Location Library:${location.gmtDiff}")
             val azan = Azan(location, Method.EGYPT_SURVEY)
             val prayerTimes = azan.getPrayerTimes(date)
             tv_pray_time_fajr.text = prayerTimes.fajr().toString().dropLast(3)

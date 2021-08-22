@@ -1,7 +1,7 @@
 package com.shid.mosquefinder.Utils
 
 import android.util.Log
-import com.shid.mosquefinder.Data.Model.Api.ApiClient
+import com.shid.mosquefinder.Data.Api.ApiClient
 import com.shid.mosquefinder.Data.Model.Api.ApiInterface
 
 object Common {
