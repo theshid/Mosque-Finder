@@ -30,6 +30,11 @@
         android:title="@string/beautiful_mosque" />
 
     <item
+        android:id="@+id/nav_qibla"
+        android:icon="@drawable/qibla_compass"
+        android:title="@string/qibla" />
+
+    <item
         android:id="@+id/nav_settings"
         android:icon="@drawable/ic_settings_basic"
         android:title="@string/settings"/>

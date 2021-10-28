@@ -24,6 +24,7 @@ import com.shid.mosquefinder.Ui.services.MusicService
 import com.shid.mosquefinder.Utils.formatTimeInMillisToString
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import kotlinx.android.synthetic.main.activity_music.*
+import timber.log.Timber
 import java.io.File
 
 class MusicActivity : AppCompatActivity() {
@@ -58,12 +59,12 @@ class MusicActivity : AppCompatActivity() {
                 }
                 playSurah()
                 playPauseBuild()
-                Log.d("onConnected", "Controller Connected")
+                Timber.d( "Controller Connected")
             }
 
             override fun onConnectionFailed() {
                 super.onConnectionFailed()
-                Log.d("onConnectionFailed", "Connection Failed")
+                Timber.d("Connection Failed")
 
             }
 
@@ -177,7 +178,7 @@ class MusicActivity : AppCompatActivity() {
         setMediaBrowser()
 
         statePlayer = intent.getBooleanExtra("state_player",false)
-        Log.d("Test", "value of state:$statePlayer")
+        Timber.d( "value of state:$statePlayer")
         setPlayPauseBtnFromIntent(statePlayer)
         setClickListeners()
         trackTimeObserver()

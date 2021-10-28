@@ -460,6 +460,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     goToBeautifulMosques()
                 }
 
+                R.id.nav_qibla -> {
+                    goToQibla()
+                }
+
                 R.id.nav_settings -> {
                     goToSettings()
                 }
@@ -496,6 +500,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun goToSettings() {
         val intent = Intent(this,HomeActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun goToQibla() {
+        val intent = Intent(this,CompassActivity::class.java)
         startActivity(intent)
     }
 
