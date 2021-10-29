@@ -230,6 +230,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"
             app:cardElevation="3dp"
+            android:id="@+id/cardIsha"
             app:cardUseCompatPadding="true">
 
             <RelativeLayout
@@ -283,4 +284,17 @@
         android:textColor="@color/md_yellow_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textDate" />
+
+
+    <Button
+        android:id="@+id/btn_qibla"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/view_qibla_position"
+        android:textColor="@color/md_yellow_100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

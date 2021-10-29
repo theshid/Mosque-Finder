@@ -80,6 +80,15 @@ class PrayerActivity : AppCompatActivity() {
         menu_settings.setOnClickListener(View.OnClickListener {
             goToSettings()
         })
+
+        btn_qibla.setOnClickListener(View.OnClickListener {
+            goToQibla()
+        })
+    }
+
+    private fun goToQibla() {
+        val intent = Intent(this,CompassActivity::class.java)
+        startActivity(intent)
     }
 
 

@@ -232,5 +232,19 @@
     <string name="bubble_ayah_title3">Download Surah</string>
     <string name="bubble_ayah_desc3">You can download the surah to listen to it offline</string>
 
+    <string name="sotw_north" translatable="false">N</string>
+    <string name="sotw_east" translatable="false">E</string>
+    <string name="sotw_south" translatable="false">S</string>
+    <string name="sotw_west" translatable="false">W</string>
+    <string name="sotw_northeast" translatable="false">NE</string>
+    <string name="sotw_northwest" translatable="false">NW</string>
+    <string name="sotw_southeast" translatable="false">SE</string>
+    <string name="sotw_southwest" translatable="false">SW</string>
+
+    <string name="compass_dial" translatable="false">Compass Dial</string>
+    <string name="compass_hands" translatable="false">Compass Hands</string>
+    <string name="view_qibla_position">View Qibla Position</string>
+    <string name="qibla">Qibla</string>
+
 
 </resources>
