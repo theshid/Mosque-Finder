@@ -64,6 +64,7 @@ import fr.quentinklein.slt.LocationTracker
 import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
+import timber.log.Timber
 import uk.co.markormesher.android_fab.FloatingActionButton
 import uk.co.markormesher.android_fab.SpeedDialMenuAdapter
 import uk.co.markormesher.android_fab.SpeedDialMenuItem
@@ -1590,6 +1591,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun intentToGoogleMap(marker: Marker) {
+        Timber.d("check OnClick")
         val latitude: String = marker.position.latitude.toString()
         val longitude: String = marker.position.longitude.toString()
         val gmmIntentUri = Uri.parse("google.navigation:q=$latitude,$longitude")
@@ -1598,9 +1600,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         try {
             if (mapIntent.resolveActivity(applicationContext.packageManager) != null) {
                 startActivity(mapIntent)
+                Timber.d("check OnClick start activity")
             }
         } catch (e: java.lang.NullPointerException) {
-            Log.e(TAG, "onClick: NullPointerException: Couldn't open map." + e.message)
+            Timber.d("onClick: NullPointerException: Couldn't open map.%s", e.message)
             Toast.makeText(
                 applicationContext,
                 getString(R.string.map_error),
@@ -1756,7 +1759,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
                             mClusterMarkers.add(newClusterMarker)
                             for (i in mClusterMarkers) {
-                                Log.d(TAG, i.title.toString())
+                                Timber.d(i.title.toString())
                             }
 
 

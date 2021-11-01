@@ -245,6 +245,7 @@
     <string name="compass_hands" translatable="false">Compass Hands</string>
     <string name="view_qibla_position">View Qibla Position</string>
     <string name="qibla">Qibla</string>
+    <string name="qibla_position">Qibla Position</string>
 
 
 </resources>

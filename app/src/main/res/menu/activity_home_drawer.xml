@@ -31,7 +31,7 @@
 
     <item
         android:id="@+id/nav_qibla"
-        android:icon="@drawable/qibla_compass"
+        android:icon="@drawable/ic_qibla_compass"
         android:title="@string/qibla" />
 
     <item

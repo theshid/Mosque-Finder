@@ -25,7 +25,7 @@ import timber.log.Timber
 class CompassActivity : AppCompatActivity() {
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 999
-        var userPosition: LatLng? = null
+        var userPosition: LatLng = LatLng(0.0,0.0)
         var userLocation: Location?= null
     }
 
@@ -49,9 +49,10 @@ class CompassActivity : AppCompatActivity() {
         dialView = findViewById(R.id.main_image_dial)
         sotwLabel = findViewById(R.id.sotw_label)
 
-       btn_back.setOnClickListener(View.OnClickListener {
-           onBackPressed()
-       })
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
+
 
         checkIfPermissionIsActive()
 

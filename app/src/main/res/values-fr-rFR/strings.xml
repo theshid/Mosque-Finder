@@ -224,4 +224,5 @@
     <string name="bubble_ayah_desc3">Vous pouvez télécharger la Sourate pour une écoute hors ligne</string>
     <string name="view_qibla_position">Voir Qibla</string>
     <string name="qibla">Qibla</string>
+    <string name="qibla_position">Position Qibla </string>
 </resources>

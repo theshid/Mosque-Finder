@@ -13,6 +13,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.Ui.Main.View.SplashActivity
 import timber.log.Timber
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @SuppressLint("MissingPermission")
@@ -34,7 +37,7 @@ class Compass(context: Context) : SensorEventListener {
     private val R = FloatArray(9)
     private val I = FloatArray(9)
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var userPosition:LatLng?=null
+    private var userPosition:LatLng = LatLng(0.0,0.0)
 
 
     private var azimuth = 0f
@@ -54,7 +57,10 @@ class Compass(context: Context) : SensorEventListener {
                     userPosition = LatLng(location.latitude, location.longitude)
                 }// Got last known location. In some rare situations this can be null.
             }
-        userPosition = sharePref?.loadSavedPosition()
+        if (sharePref?.loadSavedPosition() != null){
+            userPosition = sharePref!!.loadSavedPosition()
+        }
+        //userPosition = sharePref?.loadSavedPosition()
 
     }
 
@@ -115,16 +121,19 @@ class Compass(context: Context) : SensorEventListener {
                 // Log.d(TAG, "azimuth (rad): " + azimuth);
                 azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat() // orientation
                 azimuth = (azimuth + azimuthFix + 360) % 360
-                if (userPosition!= null){
-                    Timber.d("user location:%s %s", userPosition!!.latitude.toString() ,userPosition!!.longitude.toString())
+                azimuth -= if (userPosition!= LatLng(0.0,0.0)){
+                    Timber.d("user location:%s %s", userPosition.latitude.toString() ,
+                        userPosition.longitude.toString())
 
-                    azimuth -= bearing(userPosition!!.latitude,
-                        userPosition!!.longitude,kaabaLocation.latitude,kaabaLocation.longitude)
+                    bearing(userPosition.latitude,
+                        userPosition.longitude,kaabaLocation.latitude,kaabaLocation.longitude)
                         .toFloat()
                 } else{
-                    Timber.d("user location:%s %s", SplashActivity.userPosition!!.latitude.toString() ,SplashActivity.userPosition!!.longitude.toString())
+                    Timber.d("user location:%s %s",
+                        SplashActivity.userPosition!!.latitude.toString() ,
+                        SplashActivity.userPosition!!.longitude.toString())
 
-                    azimuth -= bearing(SplashActivity.userPosition!!.latitude,
+                    bearing(SplashActivity.userPosition!!.latitude,
                         SplashActivity.userPosition!!.longitude,kaabaLocation.latitude,kaabaLocation.longitude)
                         .toFloat()
                 }
@@ -146,12 +155,12 @@ class Compass(context: Context) : SensorEventListener {
         val latitude1 = Math.toRadians(startLat)
         val latitude2 = Math.toRadians(endLat)
         val longDiff = Math.toRadians(endLng - startLng)
-        val y = Math.sin(longDiff) * Math.cos(latitude2)
+        val y = sin(longDiff) * cos(latitude2)
         val x =
-            Math.cos(latitude1) * Math.sin(latitude2) - Math.sin(latitude1) * Math.cos(latitude2) * Math.cos(
+            cos(latitude1) * sin(latitude2) - sin(latitude1) * cos(latitude2) * cos(
                 longDiff
             )
-        return (Math.toDegrees(Math.atan2(y, x)) + 360) % 360
+        return (Math.toDegrees(atan2(y, x)) + 360) % 360
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
