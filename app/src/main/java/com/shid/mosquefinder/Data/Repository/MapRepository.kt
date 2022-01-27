@@ -225,7 +225,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
         googlePlaceUrl.append("?location=$latitude,$longitude")
         googlePlaceUrl.append("&radius=3000")
         googlePlaceUrl.append("&type=$place")
-        googlePlaceUrl.append("&key=" + mApp.getString(R.string.google_maps_key))
+        googlePlaceUrl.append("&key=" + mApp.getString(R.string.browser_key))
         googlePlaceUrl.append("&pagetoken=$token")
         Log.d("Url_debug", googlePlaceUrl.toString())
         return googlePlaceUrl.toString()

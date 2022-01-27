@@ -74,7 +74,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
             val contentText = ayah.translation
             val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             var builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText)
                 .setStyle(NotificationCompat.BigTextStyle()
