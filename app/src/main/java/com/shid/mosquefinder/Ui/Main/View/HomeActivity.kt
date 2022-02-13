@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -87,7 +88,7 @@ class HomeActivity : AppCompatActivity() {
                 .addTag("notification")
                 .build()
         if (sharedPref.loadSwitchState()) {
-            workManager.enqueue(saveRequest)
+            workManager.enqueueUniquePeriodicWork("Daily Ayah",ExistingPeriodicWorkPolicy.KEEP,saveRequest)
         } else {
             workManager.cancelAllWorkByTag(SettingsActivity.SettingsFragment.WORKER_TAG)
         }

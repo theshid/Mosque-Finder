@@ -15,8 +15,8 @@ android {
         applicationId "com.shid.mosquefinder"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 22
-        versionName "3.06"
+        versionCode 23
+        versionName "3.07"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

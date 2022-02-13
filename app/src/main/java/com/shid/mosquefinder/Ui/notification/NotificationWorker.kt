@@ -3,11 +3,15 @@ package com.shid.mosquefinder.Ui.notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.shid.mosquefinder.Data.Repository.AyahRepository
@@ -52,13 +56,16 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
                 contentText = ayah.frenchTranslation
             }
             val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logo2)
             var builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.drawable.logo2)
+                .setLargeIcon(largeIcon)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText)
                 .setStyle(NotificationCompat.BigTextStyle()
                     .bigText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setColor(context.resources.getColor(R.color.whiteTransparent))
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setSound(alarmSound)
                 .setAutoCancel(true)
@@ -73,14 +80,17 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
         } else {
             val contentText = ayah.translation
             val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logo2)
             var builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.logo2)
+                .setLargeIcon(largeIcon)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText)
                 .setStyle(NotificationCompat.BigTextStyle()
                     .bigText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setColor(context.resources.getColor(R.color.whiteTransparent))
                 .setSound(alarmSound)
                 .setAutoCancel(true)
             Timber.d("value of surah:"+ayah.surah_number)
