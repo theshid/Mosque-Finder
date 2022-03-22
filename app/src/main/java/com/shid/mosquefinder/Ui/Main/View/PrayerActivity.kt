@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -33,12 +31,9 @@ class PrayerActivity : AppCompatActivity() {
     private var userPosition: LatLng? = null
     private lateinit var date: SimpleDate
     private var timeZone: Double? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
     private lateinit var sharedPref: SharePref
+    @OptIn(ExperimentalCoroutinesApi::class)
     private lateinit var fusedLocationWrapper: FusedLocationWrapper
-    // private var user: User? = null
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -47,16 +42,16 @@ class PrayerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_prayer)
         fusedLocationWrapper = fusedLocationWrapper()
         permissionCheck(fusedLocationWrapper)
-        //setLocationUtils()
         setUI()
         clickListeners()
     }
 
 
     private fun setUI() {
-        // user = getUserFromIntent()
         sharedPref = SharePref(this)
-        userPosition = sharedPref.loadSavedPosition()
+        if (userPosition == null){
+            userPosition = sharedPref.loadSavedPosition()
+        }
         Timber.d("userPosition:$userPosition")
         timeZone = getTimeZone()
         Timber.d("timeZone:${timeZone.toString()}")
@@ -89,51 +84,7 @@ class PrayerActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        if (PermissionUtils.isAccessFineLocationGranted(this)) {
-
-            //startLocationUpdates()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        //stopLocationUpdates()
-    }
-
-    private fun setLocationUtils() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest()
-        retrieveLocation()
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
-
-    @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    }
-
-
-    private fun setCity() {
-        val calendar: Calendar = Calendar.getInstance(TimeZone.getDefault())
-        val zone: TimeZone = calendar.timeZone
-        val zoneId = zone.id
-        txt_city.text = zoneId
-    }
-
     private fun findCity(MyLat: Double, MyLong: Double) {
-        //double MyLat = 33.97159194946289;
-        //double MyLong = -6.849812984466553;
         val geocoder = Geocoder(this, Locale.getDefault())
         var addresses: List<Address>? = null
         try {
@@ -143,15 +94,8 @@ class PrayerActivity : AppCompatActivity() {
         }
         val cityName = addresses!![0].locality
         val country = addresses[0].countryName
-
-        val cityy = cityName.replace(' ', '-')
-        txt_city.text = "$cityy,$country"
-        /*val preff = getSharedPreferences("lastprayertimes", MODE_PRIVATE)
-        val editor = preff.edit()
-        editor.putString("country", country)
-        editor.putString("city", cityy)
-        editor.apply()*/
-
+        val city = cityName.replace(' ', '-')
+        txt_city.text = "$city,$country"
     }
 
     private fun getTimeZone(): Double {
@@ -193,45 +137,8 @@ class PrayerActivity : AppCompatActivity() {
         if (PermissionUtils.isAccessFineLocationGranted(this)) {
             getUserLocation(fusedLocationWrapper)
 
-            /*fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    userPosition =
-                        location?.longitude?.let {
-                            LatLng(
-                                location.latitude,
-                                it
-                            )
-                        } // Got last known location. In some rare situations this can be null.
-                    userPosition?.let {
-                        calculatePrayerTime(it)
-                        findCity(it.latitude, it.longitude)
-                        sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
-                    }
-                }*/
-
-            /*if (userPosition == null) {
-                retrieveLocation()
-            }*/
         } else {
             Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun retrieveLocation() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    userPosition = LatLng(location.latitude, location.longitude)
-                    calculatePrayerTime(userPosition!!)
-                    findCity(userPosition!!.latitude, userPosition!!.longitude)
-                    sharedPref.saveUserPosition(userPosition!!)
-                    // Update UI with location data
-                    // ...
-                }
-            }
-
-
         }
     }
 

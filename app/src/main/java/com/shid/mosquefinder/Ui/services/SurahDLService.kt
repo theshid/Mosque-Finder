@@ -3,8 +3,10 @@ package com.shid.mosquefinder.Ui.services
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.shid.mosquefinder.Ui.services.downloadUtil.NotificationHelper
 import com.shid.mosquefinder.Ui.services.downloadUtil.NotificationHelper.Companion.NOTIFICATION_ID
 import kotlinx.coroutines.GlobalScope
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.onEach
 import zlc.season.downloadx.core.DownloadParam
 import zlc.season.downloadx.download
 
+@RequiresApi(Build.VERSION_CODES.M)
 class SurahDLService : Service() {
     private val helper by lazy { NotificationHelper(this) }
     // Binder given to clients

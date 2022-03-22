@@ -12,6 +12,7 @@ import android.os.*
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.annotation.RequiresApi
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -43,14 +44,9 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
         override fun onPlayFromUri(uri: Uri?, extras: Bundle?) {
             super.onPlayFromUri(uri, extras)
             uri?.let {
-                // val mediaSource = extractMediaSourceFromUri(uri)
                 val mediaItem = buildMediaItem(uri)
                 if (uri != oldUri) {
                     play(mediaItem)
-                    /*val b = Bundle()
-                    b.putLong("yo", mExoPlayer!!.contentDuration)
-                    mMediaSession?.sendSessionEvent("lol", b)*/
-
                 } else play() // this song was paused so we don't need to reload it
                 oldUri = uri
             }
@@ -88,16 +84,10 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
         super.onCreate()
         context = this
         initializePlayer()
-        //initializeExtractor()
         initializeAttributes()
 
 
         mMediaSession = MediaSessionCompat(baseContext, "tag for debugging").apply {
-            // Enable callbacks from MediaButtons and TransportControls
-            /*setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-            )*/
             // Set initial PlaybackState with ACTION_PLAY, so media buttons can start the player
             mStateBuilder = PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
@@ -120,7 +110,6 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
         override fun run() {
             val information = sendPositionAndDuration()
             mMediaSession?.sendSessionEvent("player_information", information)
-            //Log.d("Test","Service"+mExoPlayer?.currentPosition)
             h?.postDelayed(this, 1000)
         }
 
@@ -146,9 +135,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
     private fun play(mediaItem: MediaItem) {
         if (mExoPlayer == null) initializePlayer()
         mExoPlayer?.apply {
-            // AudioAttributes here from exoplayer package !!!
             mAttrs?.let { initializeAttributes() }
-            // In 2.9.X you don't need to manually handle audio focus :D
             setAudioAttributes(mAttrs!!, true)
             setMediaItem(mediaItem)
             prepare()
@@ -167,13 +154,14 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
             notificationId,
             channelId,
             object : PlayerNotificationManager.MediaDescriptionAdapter {
+                @RequiresApi(Build.VERSION_CODES.M)
                 override fun createCurrentContentIntent(player: Player): PendingIntent? {
                     // return pending intent
                     val intent = Intent(context, MusicActivity::class.java)
                     intent.putExtra("state_player", state_player)
                     return PendingIntent.getActivity(
                         context, 0, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        PendingIntent.FLAG_IMMUTABLE
                     )
                 }
 
@@ -223,68 +211,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
             .setChannelNameResourceId(R.string.channel_name)
             .build()
 
-
-        /*playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-            this,
-            channelId,
-            R.string.channel_name,
-            R.string.channel_desc,
-            notificationId,
-            object : PlayerNotificationManager.MediaDescriptionAdapter {
-
-
-                override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                    // return pending intent
-                    val intent = Intent(context, MusicActivity::class.java)
-                    intent.putExtra("state_player", state_player)
-                    return PendingIntent.getActivity(
-                        context, 0, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                }
-
-                //pass description here
-                override fun getCurrentContentText(player: Player): String? {
-                    return "Mishary bin Rashid Alafasy"
-                }
-
-                //pass title (mostly playing audio name)
-                override fun getCurrentContentTitle(player: Player): String {
-                    return surahName!!
-                }
-
-                // pass image as bitmap
-                override fun getCurrentLargeIcon(
-                    player: Player,
-                    callback: PlayerNotificationManager.BitmapCallback
-                ): Bitmap? {
-                    return BitmapFactory.decodeResource(resources,R.drawable.logo2)
-                }
-            },
-            object : PlayerNotificationManager.NotificationListener {
-
-                override fun onNotificationPosted(
-                    notificationId: Int,
-                    notification: Notification,
-                    onGoing: Boolean
-                ) {
-
-                    startForeground(notificationId, notification)
-
-                }
-
-                override fun onNotificationCancelled(
-                    notificationId: Int,
-                    dismissedByUser: Boolean
-                ) {
-                    stopSelf()
-                }
-
-            }
-        )*/
-        //attach player to playerNotificationManager
         playerNotificationManager.setPlayer(player)
-
 
     }
 
@@ -301,7 +228,6 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
         mExoPlayer = SimpleExoPlayer.Builder(this).build()
         mExoPlayer!!.addListener(this)
 
-        // mExoPlayer!!.setThrowsWhenUsingWrongThread(false)
     }
 
     private fun pause() {
@@ -309,14 +235,11 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
             playWhenReady = false
             if (playbackState == PlaybackStateCompat.STATE_PLAYING) {
                 updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
-                //Log.d("Test", "value of state: pause" + mExoPlayer!!.playbackState)
             }
-
         }
     }
 
     private fun stop() {
-        // release the resources when the service is destroyed
         playerNotificationManager.setPlayer(null)
         mExoPlayer?.playWhenReady = false
         mExoPlayer?.release()
@@ -333,7 +256,6 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
         val b = Bundle()
         b.putBoolean("play_status", state_player!!)
         mMediaSession?.sendSessionEvent("play_pause", b)
-        //   Log.d("Test", "value of state: override$isPlaying")
     }
 
     override fun onPlaybackStateChanged(state: Int) {
@@ -387,13 +309,12 @@ class MusicService : MediaBrowserServiceCompat(), Player.EventListener {
     }
 
     private fun updatePlaybackState(state: Int) {
-        // You need to change the state because the action taken in the controller depends on the state !!!
         mMediaSession?.setPlaybackState(
             PlaybackStateCompat.Builder().setState(
-                state // this state is handled in the media controller
+                state
                 ,
                 mExoPlayer?.currentPosition ?: PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN,
-                1.0f // Speed playing
+                1.0f
             ).build()
         )
     }

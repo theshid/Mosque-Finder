@@ -12,31 +12,38 @@ import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.Utils.Compass
-import com.shid.mosquefinder.Utils.PermissionUtils
-import com.shid.mosquefinder.Utils.SOTWFormatter
+import com.shid.mosquefinder.Utils.*
 import kotlinx.android.synthetic.main.activity_compass.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CompassActivity : AppCompatActivity() {
     companion object {
+
         const val LOCATION_PERMISSION_REQUEST_CODE = 999
         var userPosition: LatLng = LatLng(0.0, 0.0)
         var userLocation: Location? = null
+
     }
 
     private var compass: Compass? = null
     private var arrowView: ImageView? = null
     private var dialView: ImageView? = null
+    private lateinit var sharedPref: SharePref
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private lateinit var fusedLocationWrapper: FusedLocationWrapper
 
     private var sotwLabel: TextView? = null // SOTW is for "side of the world"
     private var currentAzimuth = 0f
     private var sotwFormatter: SOTWFormatter? = null
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compass)
@@ -47,6 +54,9 @@ class CompassActivity : AppCompatActivity() {
         dialView = findViewById(R.id.main_image_dial)
         sotwLabel = findViewById(R.id.sotw_label)
 
+        fusedLocationWrapper = fusedLocationWrapper()
+        sharedPref = SharePref(this)
+
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -56,12 +66,13 @@ class CompassActivity : AppCompatActivity() {
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun checkIfPermissionIsActive() {
         when {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
-                        setUpLocationListener()
+                        getUserLocation(fusedLocationWrapper)
                     }
                     else -> {
                         PermissionUtils.showGPSNotEnabledDialog(this)
@@ -77,6 +88,19 @@ class CompassActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
+        this.lifecycleScope.launch {
+            val location = fusedLocationWrapper.awaitLastLocation()
+            userPosition = LatLng(location.latitude, location.longitude)
+            userPosition.let {
+                sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -88,7 +112,7 @@ class CompassActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
-                            setUpLocationListener()
+                            getUserLocation(fusedLocationWrapper)
                         }
                         else -> {
                             PermissionUtils.showGPSNotEnabledDialog(this)
@@ -97,7 +121,7 @@ class CompassActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                         this,
-                        "permisssion not granted",
+                        getString(R.string.permisson_not_granted),
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -105,21 +129,6 @@ class CompassActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun setUpLocationListener() {
-
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
-        fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    userPosition = LatLng(location.latitude, location.longitude)
-                    Timber.d("user location :" + location.latitude.toString() + " " + location.longitude)
-                    userLocation = location
-                }
-
-            }
-    }
 
     override fun onStart() {
         super.onStart()

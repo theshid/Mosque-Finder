@@ -1,17 +1,14 @@
 package com.shid.mosquefinder.Ui.Main.View
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
@@ -20,43 +17,35 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.azan.Azan
 import com.azan.AzanTimes
 import com.azan.Method
-import com.azan.astrologicalCalc.Location
 import com.azan.astrologicalCalc.SimpleDate
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.judemanutd.autostarter.AutoStartPermissionHelper
 import com.shid.mosquefinder.Data.Model.User
-import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.SurahViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.SurahViewModel
 import com.shid.mosquefinder.Ui.notification.NotificationWorker
-import com.shid.mosquefinder.Utils.Common
-import com.shid.mosquefinder.Utils.PermissionUtils
-import com.shid.mosquefinder.Utils.SharePref
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
-import fr.quentinklein.slt.LocationTracker
-import fr.quentinklein.slt.ProviderError
+import com.shid.mosquefinder.Utils.*
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_surah.*
-import okhttp3.internal.notify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class HomeActivity : AppCompatActivity() {
     private var user: User? = null
     var userPosition: LatLng? = null
     private var timeZone: Double? = null
     private lateinit var viewModel: SurahViewModel
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
     private lateinit var sharedPref: SharePref
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private lateinit var fusedLocationWrapper: FusedLocationWrapper
     private var isFirstTime: Boolean? = null
     private lateinit var workManager: WorkManager
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -64,7 +53,7 @@ class HomeActivity : AppCompatActivity() {
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
         isFirstTime = sharedPref.loadFirstTime()
-        userPosition = sharedPref.loadSavedPosition()
+        fusedLocationWrapper = fusedLocationWrapper()
         if (isFirstTime == true &&  AutoStartPermissionHelper.getInstance().isAutoStartPermissionAvailable(this)){
             dialogSettings()
             sharedPref.setFirstTime(false)
@@ -72,13 +61,9 @@ class HomeActivity : AppCompatActivity() {
             sharedPref.setFirstTime(false)
         }
         setWorkManagerNotification()
-        setLocationUtils()
         checkIfPermissionIsActive()
         user = getUserFromIntent()
         setClickListeners()
-
-        //setTransparentStatusBar()
-
     }
 
     private fun setWorkManagerNotification() {
@@ -107,13 +92,13 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun checkIfPermissionIsActive() {
         when {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
-                        permissionCheck()
-
+                        permissionCheck(fusedLocationWrapper)
                     }
                     else -> {
                         PermissionUtils.showGPSNotEnabledDialog(this)
@@ -129,42 +114,30 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
-    private fun permissionCheck() {
+    private fun permissionCheck(fusedLocationWrapper: FusedLocationWrapper) {
         if (PermissionUtils.isAccessFineLocationGranted(this)) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: android.location.Location? ->
-                    userPosition =
-                        location?.longitude?.let {
-                            LatLng(
-                                location.latitude,
-                                it
-                            )
-                        } // Got last known location. In some rare situations this can be null.
-                    userPosition?.let {
-                        calculatePrayerTime(it)
-
-                        sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
-                    }
-                }
-
+            getUserLocation(fusedLocationWrapper)
             if (userPosition == null) {
-                retrieveLocation()
+                userPosition = sharedPref.loadSavedPosition()
             }
         } else {
             Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun setLocationUtils() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest.create().apply {
-            interval = 5000
-            fastestInterval = 50
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            maxWaitTime= 5000
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
+        this.lifecycleScope.launch {
+            val location = fusedLocationWrapper.awaitLastLocation()
+            userPosition = LatLng(location.latitude, location.longitude)
+            userPosition?.let {
+                calculatePrayerTime(it)
+                sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
+            }
         }
-        retrieveLocation()
     }
 
     private fun dialogSettings(){
@@ -186,26 +159,7 @@ class HomeActivity : AppCompatActivity() {
     private fun getTimeZone(): Double {
         val tz = TimeZone.getDefault()
         val now = Date()
-        val offsetFromUtc = tz.getOffset(now.time) / 3600000.0
-        return offsetFromUtc
-    }
-
-    private fun retrieveLocation() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    userPosition = LatLng(location.latitude, location.longitude)
-                    calculatePrayerTime(userPosition!!)
-
-                    sharedPref.saveUserPosition(userPosition!!)
-                    // Update UI with location data
-                    // ...
-                }
-            }
-
-
-        }
+        return tz.getOffset(now.time) / 3600000.0
     }
 
     private fun calculatePrayerTime(position: LatLng) {
@@ -223,24 +177,9 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-    }
-
-    private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
-
-    private fun initializePrayerDate(time:String):Date{
+    private fun initializePrayerDate(time: String): Date {
         val simpleDateFormat = SimpleDateFormat("HH:mm")
-        val futureTime: Date = simpleDateFormat.parse(time)
-        return futureTime
+        return simpleDateFormat.parse(time)
     }
 
     private fun setNextPrayer(prayerTimes:AzanTimes){
@@ -271,55 +210,38 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-
-    override fun onPause() {
-        super.onPause()
-        stopLocationUpdates()
-
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (PermissionUtils.isAccessFineLocationGranted(this)) {
-
-            startLocationUpdates()
-        }
-    }
-
-
     private fun setClickListeners() {
-        cardMap.setOnClickListener(View.OnClickListener {
+        cardMap.setOnClickListener{
             goToMapActivity()
-        })
+        }
 
-        cardQuran.setOnClickListener(View.OnClickListener {
+        cardQuran.setOnClickListener {
             goToQuranActivity()
-        })
+        }
 
-        cardNames.setOnClickListener(View.OnClickListener {
+        cardNames.setOnClickListener {
             goToNamesActivity()
-        })
+        }
 
-        cardAzkhar.setOnClickListener(View.OnClickListener {
+        cardAzkhar.setOnClickListener {
             goToAzkharActivity()
-        })
+        }
 
-        cardMosques.setOnClickListener(View.OnClickListener {
+        cardMosques.setOnClickListener{
             goToMosquesActivity()
-        })
+        }
 
-        cardQuotes.setOnClickListener(View.OnClickListener {
+        cardQuotes.setOnClickListener {
             goToQuotesActivity()
-        })
+        }
 
-        cardPrayerTime.setOnClickListener(View.OnClickListener {
+        cardPrayerTime.setOnClickListener {
             goToPrayerActivity()
-        })
+        }
 
-        btn_settings.setOnClickListener(View.OnClickListener {
+        btn_settings.setOnClickListener {
             goToSettings()
-        })
+        }
     }
 
     private fun goToSettings() {
