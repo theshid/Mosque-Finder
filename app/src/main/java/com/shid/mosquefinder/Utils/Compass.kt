@@ -11,6 +11,7 @@ import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.shid.mosquefinder.Ui.Main.View.CompassActivity
 import com.shid.mosquefinder.Ui.Main.View.SplashActivity
 import timber.log.Timber
 import kotlin.math.atan2
@@ -20,7 +21,6 @@ import kotlin.math.sin
 
 @SuppressLint("MissingPermission")
 class Compass(context: Context) : SensorEventListener {
-    private val TAG = "Compass"
 
     interface CompassListener {
         fun onNewAzimuth(azimuth: Float)
@@ -39,28 +39,31 @@ class Compass(context: Context) : SensorEventListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var userPosition:LatLng = LatLng(0.0,0.0)
 
-
     private var azimuth = 0f
     private var azimuthFix = 0f
     private val kaabaLocation = LatLng(21.422487, 39.826206)
     private var sharePref: SharePref? = null
 
     init {
+        Timber.d("inside init")
         sensorManager = context
             .getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gsensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         msensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        /*fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 if (location != null) {
                     userPosition = LatLng(location.latitude, location.longitude)
                 }// Got last known location. In some rare situations this can be null.
+            }*/
+        userPosition = CompassActivity.userPosition
+        if (userPosition == LatLng(0.0,0.0)){
+            if (sharePref?.loadSavedPosition() != null){
+                userPosition = sharePref!!.loadSavedPosition()
             }
-        if (sharePref?.loadSavedPosition() != null){
-            userPosition = sharePref!!.loadSavedPosition()
         }
-        //userPosition = sharePref?.loadSavedPosition()
+
 
     }
 
@@ -130,15 +133,14 @@ class Compass(context: Context) : SensorEventListener {
                         .toFloat()
                 } else{
                     Timber.d("user location:%s %s",
-                        SplashActivity.userPosition!!.latitude.toString() ,
-                        SplashActivity.userPosition!!.longitude.toString())
+                        CompassActivity.userPosition.latitude.toString() ,
+                        CompassActivity.userPosition.longitude.toString())
 
-                    bearing(SplashActivity.userPosition!!.latitude,
-                        SplashActivity.userPosition!!.longitude,kaabaLocation.latitude,kaabaLocation.longitude)
+                    bearing(CompassActivity.userPosition.latitude,
+                        CompassActivity.userPosition.longitude,kaabaLocation.latitude,kaabaLocation.longitude)
                         .toFloat()
                 }
 
-                // Log.d(TAG, "azimuth (deg): " + azimuth);
                 if (listener != null) {
                     listener!!.onNewAzimuth(azimuth)
                 }

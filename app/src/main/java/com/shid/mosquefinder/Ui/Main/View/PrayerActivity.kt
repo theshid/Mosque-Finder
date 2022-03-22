@@ -9,22 +9,20 @@ import android.os.Bundle
 import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.azan.Azan
 import com.azan.Method
 import com.azan.astrologicalCalc.SimpleDate
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.Utils.Common
-import com.shid.mosquefinder.Utils.PermissionUtils
-import com.shid.mosquefinder.Utils.SharePref
-import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
+import com.shid.mosquefinder.Utils.*
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.android.synthetic.main.activity_prayer.toolbar
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -37,77 +35,75 @@ class PrayerActivity : AppCompatActivity() {
     private var timeZone: Double? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest:LocationRequest
-    private lateinit var sharedPref:SharePref
-   // private var user: User? = null
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var sharedPref: SharePref
+    private lateinit var fusedLocationWrapper: FusedLocationWrapper
+    // private var user: User? = null
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
-
-        setLocationUtils()
+        fusedLocationWrapper = fusedLocationWrapper()
+        permissionCheck(fusedLocationWrapper)
+        //setLocationUtils()
         setUI()
         clickListeners()
     }
 
 
-
     private fun setUI() {
-       // user = getUserFromIntent()
+        // user = getUserFromIntent()
         sharedPref = SharePref(this)
         userPosition = sharedPref.loadSavedPosition()
         Timber.d("userPosition:$userPosition")
         timeZone = getTimeZone()
         Timber.d("timeZone:${timeZone.toString()}")
         calculatePrayerTime(userPosition!!)
-        findCity(userPosition!!.latitude,userPosition!!.longitude)
+        findCity(userPosition!!.latitude, userPosition!!.longitude)
         setDate()
     }
-    private fun clickListeners() {
-        /*button.setOnClickListener(View.OnClickListener {
-            goToMapActivity()
-        })*/
 
-        btn_location.setOnClickListener(View.OnClickListener {
-            permissionCheck()
-        })
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun clickListeners() {
+        btn_location.setOnClickListener {
+            permissionCheck(fusedLocationWrapper)
+        }
 
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
 
-        menu_settings.setOnClickListener(View.OnClickListener {
+        menu_settings.setOnClickListener {
             goToSettings()
-        })
+        }
 
-        btn_qibla.setOnClickListener(View.OnClickListener {
+        btn_qibla.setOnClickListener {
             goToQibla()
-        })
+        }
     }
 
     private fun goToQibla() {
-        val intent = Intent(this,CompassActivity::class.java)
+        val intent = Intent(this, CompassActivity::class.java)
         startActivity(intent)
     }
 
 
     override fun onResume() {
         super.onResume()
-        if (PermissionUtils.isAccessFineLocationGranted(this)){
+        if (PermissionUtils.isAccessFineLocationGranted(this)) {
 
-            startLocationUpdates()
+            //startLocationUpdates()
         }
-
-
     }
 
     override fun onPause() {
         super.onPause()
-        stopLocationUpdates()
+        //stopLocationUpdates()
     }
 
-    private fun setLocationUtils(){
+    private fun setLocationUtils() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest()
         retrieveLocation()
@@ -158,17 +154,7 @@ class PrayerActivity : AppCompatActivity() {
 
     }
 
-    private fun goToMapActivity(){
-        val intent = Intent(this,MapsActivity2::class.java)
-       // intent.putExtra(Common.USER, user)
-        startActivity(intent)
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-    }
-
     private fun getTimeZone(): Double {
-       /* val cal: Calendar = Calendar.getInstance(Locale.getDefault())
-        val offset = -(cal.get(Calendar.ZONE_OFFSET) + cal.get(Calendar.DST_OFFSET)) / (60 * 1000)*/
-
         val tz = TimeZone.getDefault()
         val now = Date()
         val offsetFromUtc = tz.getOffset(now.time) / 3600000.0
@@ -187,10 +173,27 @@ class PrayerActivity : AppCompatActivity() {
         textDate.text = date
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
-    private fun permissionCheck() {
+    private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
+        this.lifecycleScope.launch {
+            val location = fusedLocationWrapper.awaitLastLocation()
+            userPosition = LatLng(location.latitude, location.longitude)
+            userPosition?.let {
+                calculatePrayerTime(it)
+                findCity(it.latitude, it.longitude)
+                sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun permissionCheck(fusedLocationWrapper: FusedLocationWrapper) {
         if (PermissionUtils.isAccessFineLocationGranted(this)) {
-            fusedLocationClient.lastLocation
+            getUserLocation(fusedLocationWrapper)
+
+            /*fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     userPosition =
                         location?.longitude?.let {
@@ -199,27 +202,29 @@ class PrayerActivity : AppCompatActivity() {
                                 it
                             )
                         } // Got last known location. In some rare situations this can be null.
-                    userPosition?.let { calculatePrayerTime(it)
-                    findCity(it.latitude,it.longitude)
-                    sharedPref.saveUserPosition(LatLng(it.latitude,it.longitude))}
-                }
+                    userPosition?.let {
+                        calculatePrayerTime(it)
+                        findCity(it.latitude, it.longitude)
+                        sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
+                    }
+                }*/
 
-           if (userPosition == null){
-               retrieveLocation()
-           }
-        }else {
+            /*if (userPosition == null) {
+                retrieveLocation()
+            }*/
+        } else {
             Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun retrieveLocation(){
+    private fun retrieveLocation() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
-                    userPosition = LatLng(location.latitude,location.longitude)
+                    userPosition = LatLng(location.latitude, location.longitude)
                     calculatePrayerTime(userPosition!!)
-                    findCity(userPosition!!.latitude,userPosition!!.longitude)
+                    findCity(userPosition!!.latitude, userPosition!!.longitude)
                     sharedPref.saveUserPosition(userPosition!!)
                     // Update UI with location data
                     // ...
@@ -230,33 +235,33 @@ class PrayerActivity : AppCompatActivity() {
         }
     }
 
-        private fun calculatePrayerTime(position: LatLng) {
-            date = SimpleDate(GregorianCalendar())
-            Timber.d("date:${date.toString()}")
-            val location = com.azan.astrologicalCalc.Location(
-                position.latitude,
-                position.longitude,
-                timeZone!!,
-                0
-            )
-            Timber.d("Location Library:${location.gmtDiff}")
-            val azan = Azan(location, Method.EGYPT_SURVEY)
-            val prayerTimes = azan.getPrayerTimes(date)
-            tv_pray_time_fajr.text = prayerTimes.fajr().toString().dropLast(3)
-            tv_pray_time_dhuhr.text = prayerTimes.thuhr().toString().dropLast(3)
-            tv_pray_time_asr.text = prayerTimes.assr().toString().dropLast(3)
-            tv_pray_time_maghrib.text = prayerTimes.maghrib().toString().dropLast(3)
-            tv_pray_time_isha.text = prayerTimes.ishaa().toString().dropLast(3)
+    private fun calculatePrayerTime(position: LatLng) {
+        date = SimpleDate(GregorianCalendar())
+        Timber.d("date:${date.toString()}")
+        val location = com.azan.astrologicalCalc.Location(
+            position.latitude,
+            position.longitude,
+            timeZone!!,
+            0
+        )
+        Timber.d("Location Library:${location.gmtDiff}")
+        val azan = Azan(location, Method.EGYPT_SURVEY)
+        val prayerTimes = azan.getPrayerTimes(date)
+        tv_pray_time_fajr.text = prayerTimes.fajr().toString().dropLast(3)
+        tv_pray_time_dhuhr.text = prayerTimes.thuhr().toString().dropLast(3)
+        tv_pray_time_asr.text = prayerTimes.assr().toString().dropLast(3)
+        tv_pray_time_maghrib.text = prayerTimes.maghrib().toString().dropLast(3)
+        tv_pray_time_isha.text = prayerTimes.ishaa().toString().dropLast(3)
 
-        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_prayer,menu)
+        menuInflater.inflate(R.menu.menu_prayer, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_settings -> {
                 goToSettings()
                 return true
@@ -266,14 +271,9 @@ class PrayerActivity : AppCompatActivity() {
     }
 
     private fun goToSettings() {
-        val intent = Intent(this,SettingsActivity::class.java)
+        val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
 
-    private fun getUserFromIntent(): User? {
-        return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.Data.Model.User
-    }
 
-
-
-    }
+}
