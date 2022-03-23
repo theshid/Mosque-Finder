@@ -50,20 +50,24 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         setViewModel()
+        user = getUserFromIntent()
         timeZone = getTimeZone()
         sharedPref = SharePref(this)
         isFirstTime = sharedPref.loadFirstTime()
         fusedLocationWrapper = fusedLocationWrapper()
+        displayAutoStartDialog()
+        setWorkManagerNotification()
+        checkIfPermissionIsActive()
+        setClickListeners()
+    }
+
+    private fun displayAutoStartDialog(){
         if (isFirstTime == true &&  AutoStartPermissionHelper.getInstance().isAutoStartPermissionAvailable(this)){
             dialogSettings()
             sharedPref.setFirstTime(false)
         } else{
             sharedPref.setFirstTime(false)
         }
-        setWorkManagerNotification()
-        checkIfPermissionIsActive()
-        user = getUserFromIntent()
-        setClickListeners()
     }
 
     private fun setWorkManagerNotification() {

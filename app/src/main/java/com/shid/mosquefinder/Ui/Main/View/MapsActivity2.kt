@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
@@ -61,6 +62,8 @@ import fr.quentinklein.slt.LocationTracker
 import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.co.markormesher.android_fab.FloatingActionButton
 import uk.co.markormesher.android_fab.SpeedDialMenuAdapter
@@ -80,7 +83,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
-        private const val TAG = "MapsActivity"
         var userPosition: LatLng? = null
         var newUserPosition: LatLng? = null
         private const val RQ_SEARCH = 101
@@ -114,11 +116,13 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private lateinit var fusedLocationWrapper: FusedLocationWrapper
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private var locationCallback: LocationCallback? = null
     private var locationRequest: LocationRequest? = null
     var locationTracker: LocationTracker? = null
-    lateinit var locationListener:LocationTracker.Listener
+    lateinit var locationListener: LocationTracker.Listener
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
     private var useCount: Int = 0
@@ -156,7 +160,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
 
         override fun getBackgroundColour(position: Int): Int {
-
             return Color.argb(255, 255, 255, 255)
         }
 
@@ -177,7 +180,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
 
             } else if (position == 1) {
-
                 setCameraView()
                 Handler().postDelayed(kotlinx.coroutines.Runnable {
                     //anything you want to start after 3
@@ -220,26 +222,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkIfPermissionIsActive()
+
         MapsInitializer.initialize(applicationContext, MapsInitializer.Renderer.LATEST, this);
         setContentView(R.layout.activity_maps2)
 
-        locationTracker = LocationTracker()
-        locationListener = object: LocationTracker.Listener{
-            override fun onLocationFound(location: Location) {
-                newUserPosition = LatLng(location.latitude, location.longitude)
-                Timber.d( "new position:%s", newUserPosition)
-                Timber.d( "accuracy:%s", location.accuracy)
-            }
-
-            override fun onProviderError(providerError: ProviderError) {
-
-            }
-
-        }
+        fusedLocationWrapper = fusedLocationWrapper()
+        sharePref = SharePref(this)
+        permissionCheck(fusedLocationWrapper)
         //initReviews()
         searchText.isClickable = false
         searchText.isEnabled = false
@@ -259,7 +252,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             setFirstTimePref(isFirstTime!!)
         }
 
-        getUserPositionFromOtherActivities()
         setDrawerLayout()
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -278,16 +270,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             userPosition != null -> {
                 mosqueeDePlace(userPosition!!)
             }
-            SplashActivity.userPosition != null -> {
-                mosqueeDePlace(SplashActivity.userPosition!!)
-            }
             else -> {
                 checkPref()
                 if (userPosition != null) {
                     mosqueeDePlace(userPosition!!)
                 }
-
-
             }
         }
         initGoogleSignInClient()
@@ -296,7 +283,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setObserver()
     }
 
-    private fun checkIfPermissionIsActive() {
+    /*private fun checkIfPermissionIsActive() {
         when {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
 
@@ -306,20 +293,42 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 startActivity(intent)
             }
         }
+    }*/
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
+        this.lifecycleScope.launch {
+            val location = fusedLocationWrapper.awaitLastLocation()
+            userPosition = LatLng(location.latitude, location.longitude)
+            userPosition?.let {
+                sharePref?.saveUserPosition(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun permissionCheck(fusedLocationWrapper: FusedLocationWrapper) {
+        if (PermissionUtils.isAccessFineLocationGranted(this)) {
+            getUserLocation(fusedLocationWrapper)
+
+        } else {
+            Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
+            val intent= Intent(this, AuthActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun loadUseCount(): Int {
-        sharePref = SharePref(this)
         return sharePref!!.loadUseCount()
     }
 
     private fun loadIfUserRated(): Boolean {
-        sharePref = SharePref(this)
         return sharePref!!.loadIfUserRated()
     }
 
     private fun checkPrefFirstTime(): Boolean {
-        sharePref = SharePref(this)
         isFirstTime = sharePref!!.loadIsFirstTimePref()
         return isFirstTime!!
     }
@@ -385,22 +394,18 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun setIfUserRated(didUserRate: Boolean) {
-        sharePref = SharePref(this)
         sharePref!!.saveIfUserRated(didUserRate)
     }
 
     private fun setUserCount(use_count: Int) {
-        sharePref = SharePref(this)
         sharePref!!.saveUseCount(use_count)
     }
 
     private fun setFirstTimePref(value: Boolean) {
-        sharePref = SharePref(this)
         sharePref!!.setIsFirstTime(value)
     }
 
     private fun checkPref() {
-        sharePref = SharePref(this)
         userPosition = sharePref!!.loadSavedPosition()
     }
 
@@ -414,11 +419,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-
     }
 
     override fun onBackPressed() {
@@ -451,7 +451,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
 
                 R.id.nav_quotes -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_GLOBAL_CASES)
                     goToQuotes()
                 }
 
@@ -468,11 +467,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
 
                 R.id.nav_share -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_SHARE)
                     goToShareApp()
                 }
                 R.id.nav_feedback -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_FEEDBACK)
                     goToFeedback()
                 }
                 /* R.id.nav_credits -> {
@@ -480,15 +477,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                      goToCredits()
                  }*/
                 R.id.nav_contact -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     sendEmail()
                 }
                 R.id.nav_help -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     activateShowcase()
                 }
                 R.id.nav_exit -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     logOutDialog()
                 }
             }
@@ -577,16 +571,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         }
 
                         override fun onCloseActionImageClick(bubbleShowCase: BubbleShowCase) {
-                            if (userPosition != null) {
-                                addMapMarkers(userPosition!!)
-                            } else if (newUserPosition != null) {
-                                addMapMarkers(newUserPosition!!)
-                            } else {
-                                Toast.makeText(
-                                    this@MapsActivity2,
-                                    getString(R.string.offline),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                            when {
+                                userPosition != null -> {
+                                    addMapMarkers(userPosition!!)
+                                }
+                                else -> {
+                                    Toast.makeText(
+                                        this@MapsActivity2,
+                                        getString(R.string.offline),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
 
                         }
@@ -658,9 +653,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
                 Status.ERROR -> {
                     //Handle Error
-
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Timber.d( it.message.toString())
+                    Timber.d(it.message.toString())
                 }
             }
         })
@@ -702,7 +696,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
 
     private fun setMessageForToast(user: User) {
-
         Toast.makeText(
             this,
             String.format(resources.getString(R.string.toast_log_in_msg, user.name)),
@@ -729,7 +722,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
-
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_connected))
                 .setMessage(getString(R.string.sneaker_msg_network))
@@ -737,7 +729,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_disconnected))
                 .setMessage(getString(R.string.sneaker_msg_network_lost))
@@ -752,11 +743,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         super.onResume()
 
         handleConnectivityChange()
-
-        if (locationTracker == null) {
+        /*if (locationTracker == null) {
             locationTracker = LocationTracker()
             setUpNewLocationListener()
-        }
+        }*/
 
     }
 
@@ -775,25 +765,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     )
                 )
                 if (!success) {
-                    Timber.e( "Style parsing failed.")
+                    Timber.e("Style parsing failed.")
                 }
             } catch (e: Resources.NotFoundException) {
-                Timber.e( "Can't find style. Error: $e")
+                Timber.e("Can't find style. Error: $e")
             }
         }
 
         when {
-            newUserPosition != null -> {
-                Handler().postDelayed(kotlinx.coroutines.Runnable {
-                    //anything you want to start after 3s
-                    addMapMarkers(newUserPosition!!)
-                    searchText.isClickable = true
-                    searchText.isEnabled = true
-
-
-                }, 3000)
-
-            }
             userPosition != null -> {
                 Handler().postDelayed(kotlinx.coroutines.Runnable {
 
@@ -805,7 +784,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }, 3000)
             }
             else -> {
-                val rootView = findViewById<View>(android.R.id.content)
+                //val rootView = findViewById<View>(android.R.id.content)
                 Handler().postDelayed(kotlinx.coroutines.Runnable {
                     checkPref()
                     userPosition?.let {
@@ -814,9 +793,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         searchText.isEnabled = true
                     }
 
-
                 }, 3000)
-
 
             }
         }
@@ -824,19 +801,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     }
 
-
-    private fun getUserPositionFromOtherActivities() {
-        if (AuthActivity.userPosition != null) {
-            userPosition = AuthActivity.userPosition!!
-            savePositionToSharePref(userPosition!!)
-        } else if (SplashActivity.userPosition != null) {
-            userPosition = SplashActivity.userPosition!!
-            savePositionToSharePref(userPosition!!)
-        }
-    }
-
     private fun savePositionToSharePref(position: LatLng) {
-        sharePref = SharePref(this)
         sharePref!!.saveUserPosition(position)
     }
 
@@ -844,7 +809,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     override fun onPause() {
         super.onPause()
 
-        if (fusedLocationProviderClient != null) {
+       /* if (fusedLocationProviderClient != null) {
             fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
 
         }
@@ -852,7 +817,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         locationCallback = null
         locationTracker?.stopListening()
         locationTracker = null
-        locationRequest = null
+        locationRequest = null*/
 
     }
 
@@ -886,12 +851,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         menuButton.setOnClickListener {
-            //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_OPEN)
             drawerLayout.openDrawer(navigationView)
         }
 
         searchText.setOnClickListener {
-            //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.HOME_OPEN_SEARCH)
             goToSearch()
         }
 
@@ -926,10 +889,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             message(text = getString(R.string.dialog_prompt_location))
             positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
-                //userPosition?.let { mosqueInputDialog(it) }
-
                 prepareMapForInput()
-
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
@@ -942,7 +902,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         resetMap()
         Toast.makeText(this, getString(R.string.toast_marker), Toast.LENGTH_LONG).show()
         addSingleMarker()
-
     }
 
     private fun addSingleMarker() {
@@ -955,7 +914,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 .zIndex(1.0f)
         )
 
-        var listener: GoogleMap.OnMarkerDragListener = object : GoogleMap.OnMarkerDragListener {
+        val listener: GoogleMap.OnMarkerDragListener = object : GoogleMap.OnMarkerDragListener {
             override fun onMarkerDragEnd(marker: Marker) {
                 Timber.d("onMarkerDragEnd:%s", marker.position)
             }
@@ -1011,7 +970,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun saveMosqueInputInDatabase(userPosition: LatLng, inputField: String) {
-        val mosqueLocation: GeoPoint = GeoPoint(userPosition.latitude, userPosition.longitude)
+        val mosqueLocation = GeoPoint(userPosition.latitude, userPosition.longitude)
         val userMosqueInput: HashMap<String, Comparable<*>> = hashMapOf(
             "name" to inputField,
             "position" to mosqueLocation,
@@ -1092,7 +1051,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         setTextViews()
         markersClickListeners()
         for (i in mClusterMarkers) {
-            Timber.d( i.title.toString())
+            Timber.d(i.title.toString())
         }
         mClusterManager!!.cluster()
         setCameraView()
@@ -1100,7 +1059,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun setTextViews() {
         if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
-            Timber.d( sortedMosqueList[2].title.toString())
+            Timber.d(sortedMosqueList[2].title.toString())
             mosque_first_distance.text =
                 String.format(getString(R.string.km_test), sortedMosqueList[1].distanceFromUser)
             mosque_second_distance.text =
@@ -1141,8 +1100,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 )
             })
         }
-
-
     }
 
     private fun setCameraView() {
@@ -1283,9 +1240,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun addUserMarker(position: LatLng) {
-        //userPosition = mapViewModel.getUserPosition()!!
         try {
-
             val snippet2 = getString(R.string.you)
             val newClusterMarker2 =
                 ClusterMarker(
@@ -1308,10 +1263,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun markersClickListeners() {
         markerCollectionForClusters = mClusterManager!!.markerCollection
-
         markerCollectionForClusters?.setOnMarkerClickListener { marker ->
             Timber.d("you clicked")
-            //openDialog(marker!!)
             marker.showInfoWindow()
             true
         }
@@ -1342,10 +1295,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 showDirectionInGoogleMapDialog(marker)
             }
             else -> {
-
                 showOptionsForUserInputMosquesDialog(marker)
-                //dialogOpenGoogleMap(marker)
-                //dialogForRoute(marker)
             }
         }
     }
@@ -1363,10 +1313,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
             btn_report.setOnClickListener {
                 this.cancel()
-
                 showReportDialog(marker)
-
-
             }
         }
     }
@@ -1376,8 +1323,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_confirm))
             icon(R.drawable.logo2)
-
-
             positiveButton(text = getString(R.string.confirm_mosque)) { dialog ->
                 dialog.cancel()
                 user?.let { confirmMosquePosition(marker, it) }
@@ -1402,15 +1347,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_msg_google_map))
             icon(R.drawable.logo2)
-
-
             positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 intentToGoogleMap(marker)
             }
             negativeButton(text = getString(R.string.no)) { dialog ->
                 dialog.cancel()
-                //Toast.makeText(applicationContext, "Window closed", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -1420,15 +1362,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_log_out))
             icon(R.drawable.logo2)
-
-
             positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 signOut()
             }
             negativeButton(text = getString(R.string.no)) { dialog ->
                 dialog.cancel()
-
             }
         }
     }
@@ -1507,12 +1446,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         distanceFromUser.toString() +
                                 getString(R.string.km) + " " + getString(R.string.position)
 
-                    /*val avatar: String = mosqueLocation
-                        Log.d("Avatar", "avatar link $avatar")*/
-                    // int avatar = R.mipmap.icon; // set the default avatar
                     val newClusterMarker =
                         ClusterMarker(
-
                             lat,
                             lng,
                             placeName,
@@ -1523,12 +1458,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         )
                     mClusterManager!!.addItem(newClusterMarker)
                     markerCollectionForClusters = mClusterManager!!.markerCollection
-
                     mClusterMarkers.add(newClusterMarker)
                     for (i in mClusterMarkers) {
-                        Timber.d( i.title.toString())
+                        Timber.d(i.title.toString())
                     }
-
 
                 } catch (e: NullPointerException) {
                     Timber.e("addMapMarkers: NullPointerException: %s", e.message)
@@ -1538,63 +1471,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
     }
 
-    private fun getMosquesFromGoogleMap(userLocation: LatLng) {
-
-        mapViewModel.getGoogleMapMosqueFromRepository(LatLng(14.707626, -17.450015))
-            ?.observe(this, Observer {
-                val places: List<PlacesSearchResult>? = it?.results
-                if (places != null) {
-                    for (i in places.indices) {
-                        val googlePlace = it.results[i]
-                        val lat = googlePlace.geometry!!.location!!.lat
-                        val lng = googlePlace.geometry!!.location!!.lng
-                        val placeName = googlePlace.name
-                        val distanceFromUser = calculateDistanceBetweenUserAndMosque(
-                            LatLng(lat, lng), userLocation
-                        )
-
-                        Timber.d("addMapMarkers: location: %s", googlePlace.geometry.location.toString())
-                        Timber.d("addMapMarkers: name: %s", googlePlace.name)
-                        try {
-                            val snippet =
-                                distanceFromUser.toString() +
-                                        getString(R.string.km) + " " + getString(R.string.position)
-
-                            /*val avatar: String = mosqueLocation
-                                Log.d("Avatar", "avatar link $avatar")*/
-                            // int avatar = R.mipmap.icon; // set the default avatar
-                            val newClusterMarker =
-                                ClusterMarker(
-
-                                    lat,
-                                    lng,
-                                    placeName,
-                                    snippet,
-                                    "default",
-                                    true,
-                                    distanceFromUser
-                                )
-                            mClusterManager!!.addItem(newClusterMarker)
-                            markerCollectionForClusters = mClusterManager!!.markerCollection
-
-                            mClusterMarkers.add(newClusterMarker)
-                            for (i in mClusterMarkers) {
-                                Timber.d(i.title.toString())
-                            }
-
-
-                        } catch (e: NullPointerException) {
-                            Timber.e("addMapMarkers: NullPointerException:$e.message")
-                        }
-
-                    }
-                }
-
-            })
-
-        // mClusterManager?.cluster()
-    }
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -1606,9 +1483,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
-                            //setUpLocationListener()
-                            setUpNewLocationListener()
-                            //getUserPosition()
+                            permissionCheck(fusedLocationWrapper)
                         }
                         else -> {
                             PermissionUtils.showGPSNotEnabledDialog(this)
@@ -1627,8 +1502,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     override fun onMapsSdkInitialized(renderer: MapsInitializer.Renderer) {
         when (renderer) {
-            MapsInitializer.Renderer.LATEST -> Timber.d( "The latest version of the renderer is used.")
-            MapsInitializer.Renderer.LEGACY -> Timber.d( "The legacy version of the renderer is used.")
+            MapsInitializer.Renderer.LATEST -> Timber.d("The latest version of the renderer is used.")
+            MapsInitializer.Renderer.LEGACY -> Timber.d("The legacy version of the renderer is used.")
         }
 
     }
