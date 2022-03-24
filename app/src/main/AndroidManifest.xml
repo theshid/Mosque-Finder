@@ -100,7 +100,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Ui.Main.View.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -109,7 +110,7 @@
         </activity>
         <activity
             android:name=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
-            android:theme="@style/AppTheme.OnBoarding"></activity>
+            android:theme="@style/AppTheme.OnBoarding" />
         <activity
             android:name=".Ui.Main.View.AuthActivity"
             android:screenOrientation="portrait" />

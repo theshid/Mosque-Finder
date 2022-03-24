@@ -29,32 +29,13 @@ class MapViewModel(mapRepository: MapRepository, var application: Application) :
     private val mRepository = mapRepository
     val position: LatLng = LatLng(5.6363262, -0.2349102)
     private var getPlace: MutableLiveData<Place>? = null
-    val locationTracker = LocationTracker()
-    val newUserPosition: LatLng? = null
-    val testPlace: MutableLiveData<Place>? = null
-
 
     init {
-        //setUpNewLocationListener()
         mMosqueList = mRepository.getTotalMosquesFromFirebase()
         Log.d("MapModel", mMosqueList.size.toString())
         mGoogleMosqueList = mRepository.getGoogleMosqueFromFirebase()
         mNigerGoogleMosqueList = mRepository.getNigerGoogleMosqueFromFirebase()
         retrieveStatusMsg()
-
-
-        /*when {
-            SplashActivity.userPosition != null -> {
-                getPlace = mRepository.googlePlaceNearbyMosques("mosque", SplashActivity.userPosition!!)
-            }
-            MapsActivity2.userPosition != null -> {
-                getPlace = mRepository.googlePlaceNearbyMosques("mosque", MapsActivity2.userPosition!!)
-            }
-            MapsActivity2.newUserPosition != null -> {
-                getPlace = mRepository.googlePlaceNearbyMosques("mosque", MapsActivity2.newUserPosition!!)
-            }
-        }*/
-
     }
 
     fun retrieveStatusMsg(): LiveData<Resource<String>> {
@@ -63,14 +44,6 @@ class MapViewModel(mapRepository: MapRepository, var application: Application) :
 
     fun inputMosqueInDatabase(userInput: HashMap<String, Comparable<*>>) {
         mRepository.inputMosqueInDatabase(userInput)
-    }
-
-    fun getGoogleMosqueFromRepository(): MutableList<GoogleMosque> {
-        return mGoogleMosqueList
-    }
-
-    fun getNigerGoogleMosqueFromRepository(): MutableList<GoogleMosque> {
-        return mNigerGoogleMosqueList
     }
 
     fun getUsersMosqueFromRepository(): MutableList<Mosque> {
@@ -91,23 +64,6 @@ class MapViewModel(mapRepository: MapRepository, var application: Application) :
 
     fun reportFalseMosqueLocation(marker: Marker, user: User) {
         mRepository.reportFalseLocation(marker, user)
-    }
-
-    fun setUpNewLocationListener(): MutableLiveData<LatLng>? {
-        var position: MutableLiveData<LatLng> = MutableLiveData()
-        locationTracker.addListener(object : LocationTracker.Listener {
-
-            override fun onLocationFound(location: Location) {
-                position = MutableLiveData(LatLng(location.latitude, location.latitude))
-                Log.d("MapsActivity2.TAG", "new position:" + MapsActivity2.newUserPosition)
-                Log.d("MapsActivity2.TAG", "accuracy" + location.accuracy)
-            }
-
-            override fun onProviderError(providerError: ProviderError) {
-            }
-
-        });
-        return position
     }
 
 }

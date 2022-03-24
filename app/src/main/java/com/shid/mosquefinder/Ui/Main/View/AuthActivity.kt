@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -28,16 +29,15 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.ViewModel.AuthViewModel
 import com.shid.mosquefinder.Ui.Base.AuthViewModelFactory
 import com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.OnBoardingActivity
+import com.shid.mosquefinder.Utils.*
 import com.shid.mosquefinder.Utils.Common.RC_SIGN_IN
 import com.shid.mosquefinder.Utils.Common.USER
 import com.shid.mosquefinder.Utils.Common.logErrorMessage
-import com.shid.mosquefinder.Utils.GsonParser
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
-import com.shid.mosquefinder.Utils.PermissionUtils
-import com.shid.mosquefinder.Utils.SharePref
-import com.shid.mosquefinder.Utils.Status
 import kotlinx.android.synthetic.main.activity_auth.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -61,7 +61,10 @@ class AuthActivity : AppCompatActivity() {
 
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private lateinit var fusedLocationWrapper: FusedLocationWrapper
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -69,7 +72,7 @@ class AuthActivity : AppCompatActivity() {
         savedInstanceState?.let {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
-
+        fusedLocationWrapper = fusedLocationWrapper()
         sharePref = SharePref(this)
         isFirstTime = sharePref!!.loadFirstTime()
         setLocationUtils()
@@ -98,15 +101,36 @@ class AuthActivity : AppCompatActivity() {
 
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun permissionCheck(fusedLocationWrapper: FusedLocationWrapper) {
+        if (PermissionUtils.isAccessFineLocationGranted(this)) {
+            getUserLocation(fusedLocationWrapper)
+
+        } else {
+            Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
+        this.lifecycleScope.launch {
+            val location = fusedLocationWrapper.awaitLastLocation()
+            userPosition = LatLng(location.latitude, location.longitude)
+            userPosition?.let {
+                sharePref?.saveUserPosition(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun checkIfPermissionIsActive() {
         when {
             PermissionUtils.isAccessFineLocationGranted(this) -> {
                 when {
                     PermissionUtils.isLocationEnabled(this) -> {
-                        retrieveLocation()
-                        setUpLocationListener()
-
-
+                        permissionCheck(fusedLocationWrapper)
                     }
                     else -> {
                         PermissionUtils.showGPSNotEnabledDialog(this)
@@ -154,29 +178,24 @@ class AuthActivity : AppCompatActivity() {
         super.onResume()
         handleConnectivityChange()
         //setUpLocationListener()
-        setLocationUtils()
+        /*setLocationUtils()
         retrieveLocation()
-        startLocationUpdates()
+        startLocationUpdates()*/
     }
 
     override fun onPause() {
         super.onPause()
-        if (fusedLocationProviderClient != null){
+     /*   if (fusedLocationProviderClient != null){
             fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
         }
         fusedLocationProviderClient = null
         locationCallback = null
-        locationRequest = null
+        locationRequest = null*/
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean("LOST_CONNECTION", previousSate)
         super.onSaveInstanceState(outState)
-    }
-
-    override fun onStop() {
-        super.onStop()
-
     }
 
     private fun setObservers() {
@@ -191,7 +210,6 @@ class AuthActivity : AppCompatActivity() {
                 }
                 Status.ERROR -> {
                     //Handle Error
-
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
                     Timber.d(it.message.toString())
                 }
@@ -222,6 +240,7 @@ class AuthActivity : AppCompatActivity() {
 
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -233,10 +252,7 @@ class AuthActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
-                            setLocationUtils()
-                            setUpLocationListener()
-
-                            //getUserPosition()
+                            permissionCheck(fusedLocationWrapper)
                         }
                         else -> {
                             PermissionUtils.showGPSNotEnabledDialog(this)
@@ -255,7 +271,6 @@ class AuthActivity : AppCompatActivity() {
 
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
-            //showSnackBar(textView, "The network is back !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_connected))
                 .setMessage(getString(R.string.sneaker_msg_network))
@@ -264,7 +279,6 @@ class AuthActivity : AppCompatActivity() {
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-            //showSnackBar(textView, "No Network !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_disconnected))
                 .setMessage(getString(R.string.sneaker_msg_network_lost))
@@ -284,7 +298,6 @@ class AuthActivity : AppCompatActivity() {
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
         resultLauncher.launch(signInIntent)
-        //startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     private fun initAuthViewModel() {
@@ -306,20 +319,6 @@ class AuthActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
     }
 
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val googleSignInAccount =
-                    task.getResult(ApiException::class.java)
-                googleSignInAccount?.let { getGoogleAuthCredential(it) }
-            } catch (e: ApiException) {
-                logErrorMessage(e.message)
-            }
-        }
-    }*/
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {

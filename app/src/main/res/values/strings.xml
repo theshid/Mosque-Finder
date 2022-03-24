@@ -246,6 +246,7 @@
     <string name="view_qibla_position">View Qibla Position</string>
     <string name="qibla">Qibla</string>
     <string name="qibla_position">Qibla Position</string>
+    <string name="permisson_not_granted">permisssion not granted</string>
 
 
 </resources>

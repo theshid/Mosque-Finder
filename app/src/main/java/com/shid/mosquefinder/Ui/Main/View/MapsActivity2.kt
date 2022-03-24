@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.input.getInputField
@@ -34,10 +35,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
@@ -64,6 +62,8 @@ import fr.quentinklein.slt.LocationTracker
 import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import uk.co.markormesher.android_fab.FloatingActionButton
 import uk.co.markormesher.android_fab.SpeedDialMenuAdapter
@@ -72,26 +72,21 @@ import uk.co.markormesher.android_fab.SpeedDialMenuOpenListener
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener {
-
-    private lateinit var mMap: GoogleMap
-
-    private var testPlaces: List<PlacesSearchResult>? = null
-
-    private lateinit var mapViewModel: MapViewModel
-
+class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener,
+    OnMapsSdkInitializedCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
-        private const val TAG = "MapsActivity"
-        var userPosition: LatLng? = null
-        var newUserPosition: LatLng? = null
         private const val RQ_SEARCH = 101
-
 
         init {
             AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         }
     }
+
+    private lateinit var mMap: GoogleMap
+    private var userPosition: LatLng? = null
+    private var testPlaces: List<PlacesSearchResult>? = null
+    private lateinit var mapViewModel: MapViewModel
 
     //Markers
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
@@ -105,9 +100,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var sortedMosqueList: List<ClusterMarker> = ArrayList()
-    private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
-    private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
-
 
     private lateinit var mMapBoundary: LatLngBounds
 
@@ -117,10 +109,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
 
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
-    private var locationCallback: LocationCallback? = null
-    private var locationRequest: LocationRequest? = null
-    var locationTracker: LocationTracker? = null
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private lateinit var fusedLocationWrapper: FusedLocationWrapper
     private var sharePref: SharePref? = null
     private var isFirstTime: Boolean? = null
     private var useCount: Int = 0
@@ -138,98 +128,50 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         Pair("3 items", 3)
 
     )
-    private val speedDialMenuAdapter = object : SpeedDialMenuAdapter() {
-        override fun getCount(): Int = speedDialSizeOptions[speedDialSize].second
-
-        override fun getMenuItem(context: Context, position: Int): SpeedDialMenuItem =
-            when (position) {
-                0 -> SpeedDialMenuItem(
-                    context,
-                    R.drawable.ic_refresh,
-                    getString(R.string.options_1)
-                )
-                1 -> SpeedDialMenuItem(context, R.drawable.ic_add, getString(R.string.options_2))
-                2 -> SpeedDialMenuItem(
-                    context,
-                    R.drawable.ic_my_location,
-                    getString(R.string.options_3)
-                )
-                else -> throw IllegalArgumentException("No menu item: $position")
-            }
-
-        override fun getBackgroundColour(position: Int): Int {
-
-            return Color.argb(255, 255, 255, 255)
-        }
-
-        override fun onMenuItemClick(position: Int): Boolean {
-            if (position == 0) {
-                if (newUserPosition != null) {
-                    mosqueeDePlace(newUserPosition!!)
-                    Handler().postDelayed(Runnable {
-                        addMapMarkers(newUserPosition!!)
-                    }, 2000)
-
-                } else {
-                    mosqueeDePlace(userPosition!!)
-                    Handler().postDelayed(Runnable {
-                        addMapMarkers(userPosition!!)
-                    }, 2000)
-
-                }
-
-            } else if (position == 1) {
-
-                setCameraView()
-                Handler().postDelayed(kotlinx.coroutines.Runnable {
-                    //anything you want to start after 3s
-
-                    mosquePromptDialog()
 
 
-                    // addUserMarker()
-
-                }, 2000)
-            } else {
-                if (userPosition != null) {
-                    setCameraView(userPosition!!)
-                } else if (newUserPosition != null) {
-                    setCameraView(newUserPosition!!)
-                } else {
-                    setCameraView()
-                }
-
-
-            }
-            return true
-        }
-
-        override fun onPrepareItemLabel(context: Context, position: Int, label: TextView) {
-            // make the first item bold if there are multiple items
-            // (this isn't a design pattern, it's just to demo the functionality)
-            if (speedDialSize > 0) {
-                label.setTypeface(label.typeface, Typeface.BOLD)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    label.setTextColor(resources.getColor(R.color.colorWhite, context.theme))
-                } else {
-                    label.setTextColor(resources.getColor(R.color.colorWhite))
-                }
-            }
-        }
-
-        // rotate the "+" icon only
-        override fun fabRotationDegrees(): Float = if (buttonIcon == 0) 135F else 0F
-    }
-
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        checkIfPermissionIsActive()
-        setContentView(R.layout.activity_maps2)
 
-        locationTracker = LocationTracker()
-        //initReviews()
+        MapsInitializer.initialize(applicationContext, MapsInitializer.Renderer.LATEST, this);
+        setContentView(R.layout.activity_maps2)
+        savedInstanceState?.let {
+            previousSate = it.getBoolean("LOST_CONNECTION")
+        }
+        initialSetUp()
+        permissionCheck(fusedLocationWrapper)
+        setDrawerLayout()
+        setTransparentStatusBar()
+        setNetworkMonitor()
+        setupViewModel()
+        fetchGoogleMapMosques()
+        initGoogleSignInClient()
+        setMessageForToast(user!!)
+        btnClickListeners()
+        setObserver()
+    }
+
+    private fun fetchGoogleMapMosques() {
+        when {
+            userPosition != null -> {
+                mosqueeDePlace(userPosition!!)
+            }
+            else -> {
+                checkPref()
+                if (userPosition != null) {
+                    mosqueeDePlace(userPosition!!)
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun initialSetUp() {
+        fusedLocationWrapper = fusedLocationWrapper()
+        sharePref = SharePref(this)
+
         searchText.isClickable = false
         searchText.isEnabled = false
         useCount = loadUseCount()
@@ -248,69 +190,47 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             setFirstTimePref(isFirstTime!!)
         }
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        getUserPositionFromOtherActivities()
-        setDrawerLayout()
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         user = getUserFromIntent()
-
-        savedInstanceState?.let {
-            previousSate = it.getBoolean("LOST_CONNECTION")
-        }
-        setTransparentStatusBar()
-        setNetworkMonitor()
-        //setUpLocationListener()
-        setUpNewLocationListener()
-        setupViewModel()
-        when {
-            userPosition != null -> {
-                mosqueeDePlace(userPosition!!)
-            }
-            SplashActivity.userPosition != null -> {
-                mosqueeDePlace(SplashActivity.userPosition!!)
-            }
-            else -> {
-                checkPref()
-                if (userPosition != null) {
-                    mosqueeDePlace(userPosition!!)
-                }
-
-
-            }
-        }
-        initGoogleSignInClient()
-        setMessageForToast(user!!)
-        btnClickListeners()
-        setObserver()
     }
 
-    private fun checkIfPermissionIsActive() {
-        when {
-            PermissionUtils.isAccessFineLocationGranted(this) -> {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
+        this.lifecycleScope.launch {
+            val location = fusedLocationWrapper.awaitLastLocation()
+            userPosition = LatLng(location.latitude, location.longitude)
+            userPosition?.let {
+                savePositionToSharePref(LatLng(it.latitude, it.longitude))
+            }
+        }
+    }
 
-            }
-            else -> {
-                val intent: Intent = Intent(this, AuthActivity::class.java)
-                startActivity(intent)
-            }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @SuppressLint("MissingPermission")
+    private fun permissionCheck(fusedLocationWrapper: FusedLocationWrapper) {
+        if (PermissionUtils.isAccessFineLocationGranted(this)) {
+            getUserLocation(fusedLocationWrapper)
+
+        } else {
+            Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
+            val intent = Intent(this, AuthActivity::class.java)
+            startActivity(intent)
         }
     }
 
     private fun loadUseCount(): Int {
-        sharePref = SharePref(this)
         return sharePref!!.loadUseCount()
     }
 
     private fun loadIfUserRated(): Boolean {
-        sharePref = SharePref(this)
         return sharePref!!.loadIfUserRated()
     }
 
     private fun checkPrefFirstTime(): Boolean {
-        sharePref = SharePref(this)
         isFirstTime = sharePref!!.loadIsFirstTimePref()
         return isFirstTime!!
     }
@@ -318,9 +238,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private fun askForReview(valueRate: Boolean) {
         if (reviewInfo != null) {
             manager.launchReviewFlow(this, reviewInfo!!).addOnFailureListener {
-                // Log error and continue with the flow
             }.addOnCompleteListener { _ ->
-                // Log success and continue with the flow
                 didUserRate = true
                 setIfUserRated(true)
 
@@ -346,12 +264,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             message(text = getString(R.string.dialog_rate_app))
             positiveButton(text = getString(R.string.rate)) { dialog ->
                 dialog.cancel()
-                //userPosition?.let { mosqueInputDialog(it) }
-                //askForReview(valueRate)
                 goToStore()
                 setIfUserRated(true)
-
-
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
@@ -376,51 +290,26 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun setIfUserRated(didUserRate: Boolean) {
-        sharePref = SharePref(this)
         sharePref!!.saveIfUserRated(didUserRate)
     }
 
     private fun setUserCount(use_count: Int) {
-        sharePref = SharePref(this)
         sharePref!!.saveUseCount(use_count)
     }
 
     private fun setFirstTimePref(value: Boolean) {
-        sharePref = SharePref(this)
         sharePref!!.setIsFirstTime(value)
     }
 
     private fun checkPref() {
-        sharePref = SharePref(this)
         userPosition = sharePref!!.loadSavedPosition()
     }
-
-    private fun setUpNewLocationListener() {
-        locationTracker?.addListener(object : LocationTracker.Listener {
-
-            override fun onLocationFound(location: Location) {
-                newUserPosition = LatLng(location.latitude, location.longitude)
-                Log.d(TAG, "new position:" + newUserPosition)
-                Log.d(TAG, "accuracy" + location.accuracy)
-            }
-
-            override fun onProviderError(providerError: ProviderError) {
-            }
-
-        });
-    }
-
 
     private fun setNetworkMonitor() {
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-
     }
 
     override fun onBackPressed() {
@@ -453,7 +342,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
 
                 R.id.nav_quotes -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_GLOBAL_CASES)
                     goToQuotes()
                 }
 
@@ -470,27 +358,22 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
 
                 R.id.nav_share -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_SHARE)
                     goToShareApp()
                 }
                 R.id.nav_feedback -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_FEEDBACK)
                     goToFeedback()
                 }
                 /* R.id.nav_credits -> {
-                     //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CREDITS)
-                     goToCredits()
-                 }*/
+                 //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CREDITS)
+                 goToCredits()
+             }*/
                 R.id.nav_contact -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     sendEmail()
                 }
                 R.id.nav_help -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     activateShowcase()
                 }
                 R.id.nav_exit -> {
-                    //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_CONTACT)
                     logOutDialog()
                 }
             }
@@ -500,28 +383,28 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun goToSettings() {
-        val intent = Intent(this,HomeActivity::class.java)
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
 
     private fun goToQibla() {
-        val intent = Intent(this,CompassActivity::class.java)
+        val intent = Intent(this, CompassActivity::class.java)
         startActivity(intent)
     }
 
     private fun goToHome() {
-        val intent = Intent(this,HomeActivity::class.java)
-        intent.putExtra("user",user)
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.putExtra("user", user)
         startActivity(intent)
     }
 
     private fun goToNames() {
-        val intent = Intent(this,NamesActivity::class.java)
+        val intent = Intent(this, NamesActivity::class.java)
         startActivity(intent)
     }
 
     private fun goToCategories() {
-        val intent = Intent(this,CategoriesActivity::class.java)
+        val intent = Intent(this, CategoriesActivity::class.java)
         startActivity(intent)
     }
 
@@ -579,16 +462,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         }
 
                         override fun onCloseActionImageClick(bubbleShowCase: BubbleShowCase) {
-                            if (userPosition != null) {
-                                addMapMarkers(userPosition!!)
-                            } else if (newUserPosition != null) {
-                                addMapMarkers(newUserPosition!!)
-                            } else {
-                                Toast.makeText(
-                                    this@MapsActivity2,
-                                    getString(R.string.offline),
-                                    Toast.LENGTH_LONG
-                                ).show()
+                            when {
+                                userPosition != null -> {
+                                    addMapMarkers(userPosition!!)
+                                }
+                                else -> {
+                                    Toast.makeText(
+                                        this@MapsActivity2,
+                                        getString(R.string.offline),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
 
                         }
@@ -660,9 +544,8 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
                 Status.ERROR -> {
                     //Handle Error
-
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Log.d(TAG, it.message.toString())
+                    Timber.d(it.message.toString())
                 }
             }
         })
@@ -698,13 +581,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     override fun onStop() {
         super.onStop()
         firebaseAuth.removeAuthStateListener(this)
-
     }
 
 
     private fun setMessageForToast(user: User) {
-        //val message = "You are logged in as: " + user.name
-        // messageTextView!!.text = message
         Toast.makeText(
             this,
             String.format(resources.getString(R.string.toast_log_in_msg, user.name)),
@@ -731,7 +611,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
-            // showSnackBar(textView, "The network is back !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_connected))
                 .setMessage(getString(R.string.sneaker_msg_network))
@@ -739,7 +618,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-            // showSnackBar(textView, "No Network !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_disconnected))
                 .setMessage(getString(R.string.sneaker_msg_network_lost))
@@ -752,16 +630,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
-        //mMap.isMyLocationEnabled = true
         handleConnectivityChange()
-
-        //setUpLocationListener()
-
-        if (locationTracker == null) {
-            locationTracker = LocationTracker()
-            setUpNewLocationListener()
-        }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -771,9 +640,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-
-        mMap?.apply {
+        mMap.apply {
             try {
                 val success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
@@ -781,124 +648,41 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     )
                 )
                 if (!success) {
-                    Log.e(this.javaClass.simpleName, "Style parsing failed.")
+                    Timber.e("Style parsing failed.")
                 }
             } catch (e: Resources.NotFoundException) {
-                Log.e(this.javaClass.simpleName, "Can't find style. Error: ", e)
+                Timber.e("Can't find style. Error: $e")
             }
         }
 
+        when {
+            userPosition != null -> {
+                Handler().postDelayed(kotlinx.coroutines.Runnable {
 
-
-
-        if (newUserPosition != null) {
-            Handler().postDelayed(kotlinx.coroutines.Runnable {
-                //anything you want to start after 3s
-                addMapMarkers(newUserPosition!!)
-                searchText.isClickable = true
-                searchText.isEnabled = true
-                //getMosquesFromGoogleMap(newUserPosition!!)
-                // addUserMarker()
-
-            }, 3000)
-
-        } else if (userPosition != null) {
-            Handler().postDelayed(kotlinx.coroutines.Runnable {
-                //anything you want to start after 3s
-
-                addMapMarkers(userPosition!!)
-                searchText.isClickable = true
-                searchText.isEnabled = true
-                //getMosquesFromGoogleMap(userPosition!!)
-
-
-            }, 3000)
-        } else {
-            val rootView = findViewById<View>(android.R.id.content)
-            //Snackbar.make(rootView, getString(R.string.offline), Snackbar.LENGTH_LONG).show()
-            Handler().postDelayed(kotlinx.coroutines.Runnable {
-                //anything you want to start after 3s
-                checkPref()
-                userPosition?.let {
-                    addMapMarkers(it)
+                    addMapMarkers(userPosition!!)
                     searchText.isClickable = true
                     searchText.isEnabled = true
-                }
+                }, 3000)
+            }
+            else -> {
+                Handler().postDelayed(kotlinx.coroutines.Runnable {
+                    checkPref()
+                    userPosition?.let {
+                        addMapMarkers(it)
+                        searchText.isClickable = true
+                        searchText.isEnabled = true
+                    }
 
+                }, 3000)
 
-            }, 3000)
-            //Toast.makeText(this,"Please activate Internet",Toast.LENGTH_LONG).show()
-
-
+            }
         }
 
-
-    }
-
-
-    private fun getUserPositionFromOtherActivities() {
-        if (AuthActivity.userPosition != null) {
-            userPosition = AuthActivity.userPosition!!
-            savePositionToSharePref(userPosition!!)
-        } else if (SplashActivity.userPosition != null) {
-            userPosition = SplashActivity.userPosition!!
-            savePositionToSharePref(userPosition!!)
-        }
     }
 
     private fun savePositionToSharePref(position: LatLng) {
-        sharePref = SharePref(this)
         sharePref!!.saveUserPosition(position)
     }
-
-    @SuppressLint("MissingPermission")
-    override fun onPause() {
-        super.onPause()
-
-        if (fusedLocationProviderClient != null) {
-            fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
-
-        }
-        fusedLocationProviderClient = null
-        locationCallback = null
-        locationTracker?.stopListening()
-        locationTracker = null
-        locationRequest = null
-
-    }
-
-
-    /* @SuppressLint("MissingPermission")
-     fun setUpLocationListener() {
-         fusedLocationProviderClient =
-             LocationServices.getFusedLocationProviderClient(application)
-         // for getting the current location update after every 2 seconds with high accuracy
-          locationRequest = LocationRequest().setInterval(10000).setFastestInterval(4000)
-             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-
-
-         locationCallback = object : LocationCallback() {
-             override fun onLocationResult(locationResult: LocationResult) {
-                 locationResult ?: return
-                 for (location in locationResult.locations) {
-                     *//* latTextView.text = location.latitude.toString()
-                     lngTextView.text = location.longitude.toString()*//*
-                    SplashActivity.userPosition = LatLng(location.latitude, location.longitude)
-                    Log.d("MapActivity", "position=" + location.latitude + "" + location.longitude)
-                    Log.d("MapActivity", "accuracy:" + location.accuracy)
-                }
-
-
-                // Few more things we can do here:
-                // For example: Update the location of user on server
-            }
-        }
-
-        fusedLocationProviderClient?.requestLocationUpdates(
-            locationRequest, locationCallback,
-            Looper.myLooper()
-        )
-    }*/
 
     private fun btnClickListeners() {
         card_first.setOnClickListener {
@@ -928,44 +712,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
         }
 
-
-        /* with(lava_fab) {
-             //setLavaBackgroundResColor(R.color.fab_color)
-             setParentOnClickListener { lava_fab.trigger() }
-             setChildOnClickListener(Child.TOP) {
-                 setCameraView()
-                 Handler().postDelayed(kotlinx.coroutines.Runnable {
-                     //anything you want to start after 3s
-
-                     mosquePromptDialog()
-
-
-                     // addUserMarker()
-
-                 }, 2000)
-
-
-             }
-             setChildOnClickListener(Child.LEFT) { // some action }
-                 addMapMarkers()
-                 *//* enableShadow()
-                 setParentIcon(R.drawable.ic_parent)
-                 setChildIcon(Child.TOP, R.drawable.ic_child_top)
-                 setChildIcon(Child.LEFT, R.drawable.ic_child_left)*//*
-            }
-        }*/
-
         menuButton.setOnClickListener {
-            //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.MENU_OPEN)
             drawerLayout.openDrawer(navigationView)
         }
 
         searchText.setOnClickListener {
-            //AnalyticsUtil.logEvent(this, AnalyticsUtil.Value.HOME_OPEN_SEARCH)
             goToSearch()
         }
 
-        fab.speedDialMenuAdapter = speedDialMenuAdapter
+        fab.speedDialMenuAdapter = setUpSpeedMenuAdapter()
         fab.contentCoverEnabled = true
         fab.setContentCoverColour(0xcc000000.toInt())
 
@@ -977,6 +732,82 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         })
 
 
+    }
+
+    private fun setUpSpeedMenuAdapter(): SpeedDialMenuAdapter {
+        val speedDialMenuAdapter = object : SpeedDialMenuAdapter() {
+            override fun getCount(): Int = speedDialSizeOptions[speedDialSize].second
+
+            override fun getMenuItem(context: Context, position: Int): SpeedDialMenuItem =
+                when (position) {
+                    0 -> SpeedDialMenuItem(
+                        context,
+                        R.drawable.ic_refresh,
+                        getString(R.string.options_1)
+                    )
+                    1 -> SpeedDialMenuItem(
+                        context,
+                        R.drawable.ic_add,
+                        getString(R.string.options_2)
+                    )
+                    2 -> SpeedDialMenuItem(
+                        context,
+                        R.drawable.ic_my_location,
+                        getString(R.string.options_3)
+                    )
+                    else -> throw IllegalArgumentException("No menu item: $position")
+                }
+
+            override fun getBackgroundColour(position: Int): Int {
+                return Color.argb(255, 255, 255, 255)
+            }
+
+            override fun onMenuItemClick(position: Int): Boolean {
+                if (position == 0) {
+                    mosqueeDePlace(userPosition!!)
+                    Handler().postDelayed(Runnable {
+                        addMapMarkers(userPosition!!)
+                    }, 2000)
+                } else if (position == 1) {
+                    setCameraView()
+                    Handler().postDelayed(kotlinx.coroutines.Runnable {
+                        mosquePromptDialog()
+                    }, 2000)
+                } else {
+                    when {
+                        userPosition != null -> {
+                            setCameraView(userPosition!!)
+                        }
+                        else -> {
+                            setCameraView()
+                        }
+                    }
+                }
+                return true
+            }
+
+            override fun onPrepareItemLabel(context: Context, position: Int, label: TextView) {
+                // make the first item bold if there are multiple items
+                // (this isn't a design pattern, it's just to demo the functionality)
+                if (speedDialSize > 0) {
+                    label.setTypeface(label.typeface, Typeface.BOLD)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        label.setTextColor(
+                            resources.getColor(
+                                R.color.colorWhite,
+                                context.theme
+                            )
+                        )
+                    } else {
+                        label.setTextColor(resources.getColor(R.color.colorWhite))
+                    }
+                }
+            }
+
+            // rotate the "+" icon only
+            override fun fabRotationDegrees(): Float = if (buttonIcon == 0) 135F else 0F
+        }
+        return speedDialMenuAdapter
     }
 
     private fun goToSearch() {
@@ -996,10 +827,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             message(text = getString(R.string.dialog_prompt_location))
             positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
-                //userPosition?.let { mosqueInputDialog(it) }
-
                 prepareMapForInput()
-
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
@@ -1012,7 +840,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         resetMap()
         Toast.makeText(this, getString(R.string.toast_marker), Toast.LENGTH_LONG).show()
         addSingleMarker()
-
     }
 
     private fun addSingleMarker() {
@@ -1024,42 +851,36 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 .draggable(true)
                 .zIndex(1.0f)
         )
-        var listener: GoogleMap.OnMarkerDragListener = object : GoogleMap.OnMarkerDragListener {
-            override fun onMarkerDragEnd(marker: Marker?) {
-                if (marker != null) {
-                    Log.d(TAG, "onMarkerDragEnd" + marker.position)
-                }
 
+        val listener: GoogleMap.OnMarkerDragListener = object : GoogleMap.OnMarkerDragListener {
+            override fun onMarkerDragEnd(marker: Marker) {
+                Timber.d("onMarkerDragEnd:%s", marker.position)
             }
 
-            override fun onMarkerDragStart(p0: Marker?) {
-                Log.d(TAG, "onMarkerDragStart")
+            override fun onMarkerDragStart(p0: Marker) {
+                Timber.d("onMarkerDragStart")
             }
 
-            override fun onMarkerDrag(p0: Marker?) {
-                Log.d(TAG, "onMarkerDragStart")
+            override fun onMarkerDrag(p0: Marker) {
+
+                Timber.d("onMarkerDrag")
             }
         }
 
         markerCollection!!.setOnMarkerDragListener(listener)
-        markerCollection!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
-            override fun onMarkerClick(marker: Marker?): Boolean {
-                //userPosition?.let { mosqueInputDialog(it) }
-                if (marker != null) {
-                    Log.d(TAG, "onMarkerClickListener" + marker.position)
-                }
-                marker?.let {
-                    mosqueInputDialog(
-                        LatLng(
-                            it.position.latitude,
-                            it.position.longitude
-                        )
-                    )
-                }
-                return true
-            }
+        markerCollection!!.setOnMarkerClickListener { marker -> //userPosition?.let { mosqueInputDialog(it) }
+            Timber.d("onMarkerClickListener:%s", marker.position)
 
-        })
+            marker.let {
+                mosqueInputDialog(
+                    LatLng(
+                        it.position.latitude,
+                        it.position.longitude
+                    )
+                )
+            }
+            true
+        }
     }
 
     private fun mosqueInputDialog(userPositionToAdd: LatLng) {
@@ -1087,7 +908,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun saveMosqueInputInDatabase(userPosition: LatLng, inputField: String) {
-        val mosqueLocation: GeoPoint = GeoPoint(userPosition.latitude, userPosition.longitude)
+        val mosqueLocation = GeoPoint(userPosition.latitude, userPosition.longitude)
         val userMosqueInput: HashMap<String, Comparable<*>> = hashMapOf(
             "name" to inputField,
             "position" to mosqueLocation,
@@ -1106,13 +927,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             MapViewModelFactory(Common.googleApiService, application)
         ).get(MapViewModel::class.java)
 
-        /*mapViewModel.setUpNewLocationListener()?.observe(this, Observer {
-            if (it != null) {
-                newUserPosition = it
-
-            }
-
-        })*/
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1122,9 +936,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 clusterMarkerFromIntent = data.getParcelableExtra("search_result")!!
 
                 val latLngNow = clusterMarkerFromIntent?.position
-
-                // Set a boundary to start
-
                 val bottomBoundary: Double = latLngNow!!.latitude - .009
                 val leftBoundary: Double = latLngNow.longitude - .009
                 val topBoundary: Double = latLngNow.latitude + .009
@@ -1137,19 +948,13 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 try {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
                 } catch (ise: IllegalStateException) {
-                    mMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
+                    mMap.setOnMapLoadedCallback {
                         mMap.moveCamera(
                             CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0)
                         )
-                    })
+                    }
                 }
 
-
-                /*val location = CameraUpdateFactory.newLatLngZoom(
-                    latLngNow, ZOOM_MAP
-                )
-
-                mMap?.animateCamera(location)*/
             }
         }
 
@@ -1159,7 +964,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun addMapMarkers(userLocation: LatLng) {
         resetMap()
-
 
         if (mClusterManager == null) {
             mClusterManager = ClusterManager(this, mMap)
@@ -1172,33 +976,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             )
             mClusterManager!!.renderer = mClusterManagerRenderer
         }
-        //getMosquesFromGoogleMap(userLocation)
-        //getMosquesFromGoogleMap()
-        /*if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
-            putPlacesInCluster(userLocation)
-        }*/
+
         putPlacesInCluster(userLocation)
-
         getMosqueFromFirebase()
-        //getGoogleMosqueFromFirebase()
-        //addGoogleFirebaseMarkersToClusterManager(userLocation)
-        // getNigerGoogleMosqueFromFirebase()
-
-        // addNigerGoogleFirebaseMarkersToClusterManager(userLocation)
-
-
         addFirebaseMarkersToClusterManager(userLocation)
-
-
-
         addUserMarker(userLocation)
-
 
         sortClusterMarkerList()
         setTextViews()
         markersClickListeners()
         for (i in mClusterMarkers) {
-            Log.d("Map", i.title.toString())
+            Timber.d(i.title.toString())
         }
         mClusterManager!!.cluster()
         setCameraView()
@@ -1206,7 +994,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun setTextViews() {
         if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
-            Log.d(TAG, sortedMosqueList[2].title.toString())
+            Timber.d(sortedMosqueList[2].title.toString())
             mosque_first_distance.text =
                 String.format(getString(R.string.km_test), sortedMosqueList[1].distanceFromUser)
             mosque_second_distance.text =
@@ -1226,12 +1014,10 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun setCameraView(position: LatLng) {
-        // Set a boundary to start
-
-        val bottomBoundary: Double = position!!.latitude - .009
-        val leftBoundary: Double = position!!.longitude - .009
-        val topBoundary: Double = position!!.latitude + .009
-        val rightBoundary: Double = position!!.longitude + .009
+        val bottomBoundary: Double = position.latitude - .009
+        val leftBoundary: Double = position.longitude - .009
+        val topBoundary: Double = position.latitude + .009
+        val rightBoundary: Double = position.longitude + .009
 
         mMapBoundary = LatLngBounds(
             LatLng(bottomBoundary, leftBoundary),
@@ -1239,7 +1025,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         )
         try {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
-            // mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
         } catch (ise: IllegalStateException) {
             mMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
                 mMap.moveCamera(
@@ -1247,12 +1032,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 )
             })
         }
-
-
     }
 
     private fun setCameraView() {
-        // Set a boundary to start
         if (userPosition != null) {
             val bottomBoundary: Double = userPosition!!.latitude - .009
             val leftBoundary: Double = userPosition!!.longitude - .009
@@ -1285,83 +1067,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         return BigDecimal(distanceInKm).setScale(2, RoundingMode.HALF_EVEN).toDouble()
     }
 
-    private fun addNigerGoogleFirebaseMarkersToClusterManager(userLocation: LatLng) {
-        if (mNigerGoogleMosqueList != null) {
-            for (mosqueLocation in mNigerGoogleMosqueList) {
-                val mosqueLat: Double = mosqueLocation.latitude.toDouble()
-                val mosqueLg: Double = mosqueLocation.longitude.toDouble()
-                val distanceFromUser =
-                    calculateDistanceBetweenUserAndMosque(LatLng(mosqueLat, mosqueLg), userLocation)
-                try {
-                    val snippet =
-                        distanceFromUser.toString() + " " +
-                                getString(R.string.km) + " " + getString(R.string.from_position)
-                    val title = mosqueLocation.placeName
-
-                    val newClusterMarker =
-                        ClusterMarker(
-
-                            mosqueLat,
-                            mosqueLg,
-                            title,
-                            snippet,
-                            "default",
-                            true,
-                            distanceFromUser
-                        )
-                    mClusterMarkers.add(newClusterMarker)
-                    mClusterManager!!.addItem(newClusterMarker)
-                    markerCollectionForClusters2 = mClusterManager!!.markerCollection
-
-
-                } catch (e: NullPointerException) {
-                    Log.e(
-                        "Map",
-                        "addMapMarkers: NullPointerException: " + e.message
-                    )
-                }
-            }
-        }
-    }
-
-    private fun addGoogleFirebaseMarkersToClusterManager(userLocation: LatLng) {
-        if (mGoogleMosqueList != null) {
-            for (mosqueLocation in mGoogleMosqueList) {
-                val mosqueLat: Double = mosqueLocation.latitude.toDouble()
-                val mosqueLg: Double = mosqueLocation.longitude.toDouble()
-                val distanceFromUser =
-                    calculateDistanceBetweenUserAndMosque(LatLng(mosqueLat, mosqueLg), userLocation)
-                try {
-                    val snippet =
-                        distanceFromUser.toString() + " " +
-                                getString(R.string.km) + " " + getString(R.string.from_position)
-                    val title = mosqueLocation.placeName
-
-                    val newClusterMarker =
-                        ClusterMarker(
-
-                            mosqueLat,
-                            mosqueLg,
-                            title,
-                            snippet,
-                            "default",
-                            true,
-                            distanceFromUser
-                        )
-                    mClusterMarkers.add(newClusterMarker)
-                    mClusterManager!!.addItem(newClusterMarker)
-                    markerCollectionForClusters2 = mClusterManager!!.markerCollection
-
-
-                } catch (e: NullPointerException) {
-                    Log.e(
-                        "Map",
-                        "addMapMarkers: NullPointerException: " + e.message
-                    )
-                }
-            }
-        }
-    }
 
     private fun addFirebaseMarkersToClusterManager(userLocation: LatLng) {
         var newClusterMarker: ClusterMarker? = null
@@ -1372,16 +1077,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         mosqueLocation.position.latitude, mosqueLocation.position.longitude
                     ), userLocation
                 )
-                Log.d(
-                    "Map",
-                    "addMapMarkers: location: " + mosqueLocation.position.toString()
-                )
+                Timber.d("addMapMarkers: location: $mosqueLocation.position.toString()")
                 try {
                     val snippet =
                         distanceFromUser.toString() + " " +
                                 getString(R.string.km) + " " + getString(R.string.from_position)
                     val title = mosqueLocation.name
-
 
                     if (mosqueLocation.report >= 2) {
                         newClusterMarker =
@@ -1427,19 +1128,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
 
                 } catch (e: NullPointerException) {
-                    Log.e(
-                        "Map",
-                        "addMapMarkers: NullPointerException: " + e.message
-                    )
+                    Timber.e("addMapMarkers: NullPointerException: %s", e.message)
                 }
             }
         }
     }
 
     private fun addUserMarker(position: LatLng) {
-        //userPosition = mapViewModel.getUserPosition()!!
         try {
-
             val snippet2 = getString(R.string.you)
             val newClusterMarker2 =
                 ClusterMarker(
@@ -1456,34 +1152,29 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
 
         } catch (e: NullPointerException) {
-            Log.e(
-                "Map",
-                "addMapMarkers: NullPointerException: " + e.message
-            )
+            Timber.e("addMapMarkers: NullPointerException: " + e.message)
         }
     }
 
     private fun markersClickListeners() {
         markerCollectionForClusters = mClusterManager!!.markerCollection
-
         markerCollectionForClusters?.setOnMarkerClickListener { marker ->
-            Log.d(TAG, "you clicked")
-            //openDialog(marker!!)
+            Timber.d("you clicked")
             marker.showInfoWindow()
             true
         }
 
         markerCollectionForClusters?.setOnInfoWindowClickListener { marker ->
-            Log.d(TAG, "you clicked info window")
+            Timber.d("you clicked info window")
             for (i in mClusterMarkers) {
-                Log.d(TAG, marker.title)
-                Log.d(TAG, i.title!!)
+                Timber.d(marker.title)
+                Timber.d(i.title!!)
                 //We check if the marker comes from Google Place or FireStore
                 if (i.isMarkerFromGooglePlace && i.title == marker.title) {
                     showDirectionInGoogleMapDialog(marker)
 
                 } else if (i.title == marker.title && !i.isMarkerFromGooglePlace) {
-                    Log.d(TAG, "you clicked info window ,access granted")
+                    Timber.d("you clicked info window ,access granted")
                     showOptionsDialog(marker)
                 }
             }
@@ -1492,17 +1183,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun showOptionsDialog(marker: Marker) {
         when {
-            marker.title.contains("You") -> {
+            marker.title!!.contains("You") -> {
                 marker.showInfoWindow()
             }
-            marker.title.contains("Trip") -> {
+            marker.title!!.contains("Trip") -> {
                 showDirectionInGoogleMapDialog(marker)
             }
             else -> {
-
                 showOptionsForUserInputMosquesDialog(marker)
-                //dialogOpenGoogleMap(marker)
-                //dialogForRoute(marker)
             }
         }
     }
@@ -1520,10 +1208,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
             btn_report.setOnClickListener {
                 this.cancel()
-
                 showReportDialog(marker)
-
-
             }
         }
     }
@@ -1533,8 +1218,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_confirm))
             icon(R.drawable.logo2)
-
-
             positiveButton(text = getString(R.string.confirm_mosque)) { dialog ->
                 dialog.cancel()
                 user?.let { confirmMosquePosition(marker, it) }
@@ -1559,15 +1242,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_msg_google_map))
             icon(R.drawable.logo2)
-
-
             positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 intentToGoogleMap(marker)
             }
             negativeButton(text = getString(R.string.no)) { dialog ->
                 dialog.cancel()
-                //Toast.makeText(applicationContext, "Window closed", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -1577,15 +1257,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.dialog_log_out))
             icon(R.drawable.logo2)
-
-
             positiveButton(text = getString(R.string.yes)) { dialog ->
                 dialog.cancel()
                 signOut()
             }
             negativeButton(text = getString(R.string.no)) { dialog ->
                 dialog.cancel()
-
             }
         }
     }
@@ -1627,23 +1304,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         mMosqueList = mapViewModel.getUsersMosqueFromRepository()
     }
 
-    private fun getGoogleMosqueFromFirebase() {
-        mGoogleMosqueList = mapViewModel.getGoogleMosqueFromRepository()
-    }
-
-    private fun getNigerGoogleMosqueFromFirebase() {
-        mNigerGoogleMosqueList = mapViewModel.getNigerGoogleMosqueFromRepository()
-        Log.d(TAG, mNigerGoogleMosqueList.size.toString())
-    }
 
     private fun mosqueeDePlace(userLocation: LatLng) {
         /* if (getCountryCode(applicationContext) != "gh" && getCountryCode(applicationContext) != "tg" && getCountryCode(applicationContext) != "ne" ) {
-             mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
-                 ?.observe(this, Observer {
-                     val places: List<PlacesSearchResult>? = it?.results
-                     testPlaces = places
-                 })
-         }*/
+         mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
+             ?.observe(this, Observer {
+                 val places: List<PlacesSearchResult>? = it?.results
+                 testPlaces = places
+             })
+     }*/
 
         mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
             ?.observe(this, Observer {
@@ -1654,7 +1323,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun putPlacesInCluster(userLocation: LatLng) {
-        Log.d("Map", "value of places $testPlaces")
+        Timber.d("value of places $testPlaces")
         if (testPlaces != null) {
             for (i in testPlaces!!.indices) {
                 val googlePlace = testPlaces!![i]
@@ -1665,25 +1334,18 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                     LatLng(lat, lng), userLocation
                 )
 
-                Log.d(
-                    "Map",
-                    "addMapMarkers: location: " + googlePlace.geometry.location.toString()
+                Timber.d(
+                    "addMapMarkers: location: %s",
+                    googlePlace.geometry.location.toString()
                 )
-                Log.d(
-                    "Map",
-                    "addMapMarkers: name: " + googlePlace.name
-                )
+                Timber.d("addMapMarkers: name: %s", googlePlace.name)
                 try {
                     val snippet =
                         distanceFromUser.toString() +
                                 getString(R.string.km) + " " + getString(R.string.position)
 
-                    /*val avatar: String = mosqueLocation
-                        Log.d("Avatar", "avatar link $avatar")*/
-                    // int avatar = R.mipmap.icon; // set the default avatar
                     val newClusterMarker =
                         ClusterMarker(
-
                             lat,
                             lng,
                             placeName,
@@ -1694,90 +1356,20 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         )
                     mClusterManager!!.addItem(newClusterMarker)
                     markerCollectionForClusters = mClusterManager!!.markerCollection
-
                     mClusterMarkers.add(newClusterMarker)
                     for (i in mClusterMarkers) {
-                        Log.d(TAG, i.title.toString())
+                        Timber.d(i.title.toString())
                     }
 
-
                 } catch (e: NullPointerException) {
-                    Log.e(
-                        "Map",
-                        "addMapMarkers: NullPointerException: " + e.message
-                    )
+                    Timber.e("addMapMarkers: NullPointerException: %s", e.message)
                 }
 
             }
         }
     }
 
-    private fun getMosquesFromGoogleMap(userLocation: LatLng) {
-
-        mapViewModel.getGoogleMapMosqueFromRepository(LatLng(14.707626, -17.450015))
-            ?.observe(this, Observer {
-                val places: List<PlacesSearchResult>? = it?.results
-                if (places != null) {
-                    for (i in places.indices) {
-                        val googlePlace = it!!.results!![i]
-                        val lat = googlePlace.geometry!!.location!!.lat
-                        val lng = googlePlace.geometry!!.location!!.lng
-                        val placeName = googlePlace.name
-                        val distanceFromUser = calculateDistanceBetweenUserAndMosque(
-                            LatLng(lat, lng), userLocation
-                        )
-
-                        Log.d(
-                            "Map",
-                            "addMapMarkers: location: " + googlePlace.geometry.location.toString()
-                        )
-                        Log.d(
-                            "Map",
-                            "addMapMarkers: name: " + googlePlace.name
-                        )
-                        try {
-                            val snippet =
-                                distanceFromUser.toString() +
-                                        getString(R.string.km) + " " +getString(R.string.position)
-
-                            /*val avatar: String = mosqueLocation
-                                Log.d("Avatar", "avatar link $avatar")*/
-                            // int avatar = R.mipmap.icon; // set the default avatar
-                            val newClusterMarker =
-                                ClusterMarker(
-
-                                    lat,
-                                    lng,
-                                    placeName,
-                                    snippet,
-                                    "default",
-                                    true,
-                                    distanceFromUser
-                                )
-                            mClusterManager!!.addItem(newClusterMarker)
-                            markerCollectionForClusters = mClusterManager!!.markerCollection
-
-                            mClusterMarkers.add(newClusterMarker)
-                            for (i in mClusterMarkers) {
-                                Timber.d(i.title.toString())
-                            }
-
-
-                        } catch (e: NullPointerException) {
-                            Log.e(
-                                "Map",
-                                "addMapMarkers: NullPointerException: " + e.message
-                            )
-                        }
-
-                    }
-                }
-
-            })
-
-        // mClusterManager?.cluster()
-    }
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -1789,9 +1381,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when {
                         PermissionUtils.isLocationEnabled(this) -> {
-                            //setUpLocationListener()
-                            setUpNewLocationListener()
-                            //getUserPosition()
+                            permissionCheck(fusedLocationWrapper)
                         }
                         else -> {
                             PermissionUtils.showGPSNotEnabledDialog(this)
@@ -1806,6 +1396,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 }
             }
         }
+    }
+
+    override fun onMapsSdkInitialized(renderer: MapsInitializer.Renderer) {
+        when (renderer) {
+            MapsInitializer.Renderer.LATEST -> Timber.d("The latest version of the renderer is used.")
+            MapsInitializer.Renderer.LEGACY -> Timber.d("The legacy version of the renderer is used.")
+        }
+
     }
 
 

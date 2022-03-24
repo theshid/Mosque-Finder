@@ -31,23 +31,16 @@ import kotlinx.android.synthetic.main.activity_search.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
+class SearchActivity : AppCompatActivity(), SearchAdapter.OnClickSearch {
 
     companion object {
         const val SEARCH_RESULT = "search_result"
-        private const val TAG = "SearchActivity"
     }
-
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var searchViewModel: SearchViewModel
     private var previousSate = true
-    private var mMosqueList: MutableList<Mosque> = ArrayList()
-    private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
-    private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
-    private var mClusterMarkerList: MutableList<ClusterMarker> = ArrayList()
-    private var userPosition = SplashActivity.userPosition
-    private var sortedMosqueList :List<ClusterMarker> = ArrayList()
-    private var listFromApi =  arrayListOf<ClusterMarker>()
+    private var sortedMosqueList: List<ClusterMarker> = ArrayList()
+    private var listFromApi = arrayListOf<ClusterMarker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +51,8 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         }
         val bundle = intent.extras
         if (bundle != null) {
-            listFromApi = bundle.getParcelableArrayList<ClusterMarker>("test") as ArrayList<ClusterMarker>
+            listFromApi =
+                bundle.getParcelableArrayList<ClusterMarker>("test") as ArrayList<ClusterMarker>
         }
         setViewModel()
         setRecycler()
@@ -68,27 +62,14 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         setNetworkMonitor()
         setOnClick()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
-            //anything you want to start after 3s
+
             progressBar.visibility = View.GONE
-            //mMosqueList = searchViewModel.getUsersMosqueFromRepository()
-            /*if (getCountryCode(applicationContext) == "gh"){
-                mGoogleMosqueList = searchViewModel.getGoogleMosqueFromRepository()
-                getClusterMarkers(mGoogleMosqueList)
-                sortClusterMarkerList()
-            } else if (getCountryCode(applicationContext) == "ne"){
-                mNigerGoogleMosqueList = searchViewModel.getNigerGoogleMosqueFromRepository()
-                getClusterMarkers(mNigerGoogleMosqueList)
-                sortClusterMarkerList()
-            }*/
             sortClusterMarkerList()
 
             searchAdapter.list = sortedMosqueList as MutableList<ClusterMarker>
             searchAdapter.mosqueList = sortedMosqueList as MutableList<ClusterMarker>
             searchAdapter.notifyDataSetChanged()
             setSearch()
-            Log.d(TAG,mMosqueList.size.toString())
-
-            // addUserMarker()
 
         }, 2000)
     }
@@ -102,18 +83,12 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         searchEdit.doOnTextChanged { text, _, _, _ ->
             val search = text.toString()
             searchAdapter.filter.filter(search)
-           /* if (search.isBlank()) {
-                //viewModel.getContries()
-            } else {
-               // viewModel.search(search)
-
-            }*/
         }
     }
 
     private fun setObservers() {
 
-        searchViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+        searchViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
@@ -134,7 +109,6 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
     }
 
     private fun sortClusterMarkerList() {
-       // sortedMosqueList = mClusterMarkerList.sortedWith(compareBy { it.distanceFromUser })
         sortedMosqueList = listFromApi.sortedWith(compareBy { it.distanceFromUser })
     }
 
@@ -170,23 +144,17 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
             this,
             SearchViewModelFactory(Common.googleApiService, application)
         ).get(SearchViewModel::class.java)
-
-
     }
 
     private fun setNetworkMonitor() {
         NetworkEvents.observe(this, androidx.lifecycle.Observer {
-
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
-
-
         })
     }
 
     private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
-            // showSnackBar(textView, "The network is back !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_connected))
                 .setMessage(getString(R.string.sneaker_msg_network))
@@ -194,7 +162,6 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
         }
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-            // showSnackBar(textView, "No Network !")
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_disconnected))
                 .setMessage(getString(R.string.sneaker_msg_network_lost))
@@ -208,77 +175,5 @@ class SearchActivity : AppCompatActivity(),SearchAdapter.OnClickSearch {
 
     }
 
-    private fun getClusterMarkers(googleList:MutableList<GoogleMosque>):MutableList<ClusterMarker>{
-        var newClusterMarker: ClusterMarker? = null
-        var newClusterMarker2: ClusterMarker? = null
-        for (mosqueLocation in mMosqueList) {
 
-            val title = mosqueLocation.name
-            val snippet = ""
-            var distanceFromUser = 0.0
-            if (userPosition!=null) {
-                distanceFromUser = calculateDistanceBetweenUserAndMosque(
-                    LatLng(mosqueLocation.position.latitude,mosqueLocation.position.longitude), userPosition!!
-                )
-            }
-            newClusterMarker =
-                ClusterMarker(
-
-                    mosqueLocation.position.latitude,
-                    mosqueLocation.position.longitude
-                    ,
-                    title,
-                    snippet,
-                    "verified",
-                    false,
-                    distanceFromUser
-                )
-
-            mClusterMarkerList.add(newClusterMarker)
-        }
-
-
-        for (mosqueLocation in googleList) {
-            val mosqueLat: Double = mosqueLocation.latitude.toDouble()
-            val mosqueLg: Double = mosqueLocation.longitude.toDouble()
-
-            try {
-                val snippet =""
-                val title = mosqueLocation.placeName
-                var distanceFromUser = 0.0
-                if (userPosition !=null) {
-                    distanceFromUser = calculateDistanceBetweenUserAndMosque(
-                        LatLng(mosqueLat, mosqueLg),
-                        userPosition!!
-                    )
-                }
-
-
-
-                newClusterMarker2 =
-                    ClusterMarker(
-
-                        mosqueLat,
-                        mosqueLg,
-                        title,
-                        snippet,
-                        "default",
-                        true,
-                        distanceFromUser
-                    )
-                mClusterMarkerList.add(newClusterMarker2)
-
-            } catch (e: NullPointerException) {
-                Log.e(
-                    "Map",
-                    "addMapMarkers: NullPointerException: " + e.message
-                )
-            }
-        }
-        Log.d("model",mClusterMarkerList.size.toString())
-        Log.d("model",mMosqueList.size.toString())
-        Log.d("model",mGoogleMosqueList.size.toString())
-
-        return mClusterMarkerList
-    }
 }

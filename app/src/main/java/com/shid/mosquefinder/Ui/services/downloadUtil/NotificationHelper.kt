@@ -14,6 +14,7 @@ import com.shid.mosquefinder.Ui.Main.View.AyahActivity
 import com.shid.mosquefinder.Ui.Main.View.SurahActivity
 
 
+@RequiresApi(Build.VERSION_CODES.M)
 class NotificationHelper(val context: Context) {
 
 
@@ -34,7 +35,6 @@ class NotificationHelper(val context: Context) {
 
      val notificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(context, CHANNEL_ID)
-            // 2
             .setContentTitle(context.getString(R.string.app_name))
             .setContentText("Download in progress")
             .setProgress(progressMax,0,false)
@@ -43,7 +43,6 @@ class NotificationHelper(val context: Context) {
             .setContentIntent(contentIntent)
             .setSmallIcon(R.drawable.logo2)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            // 3
             .setAutoCancel(true)
     }
 
@@ -54,39 +53,31 @@ class NotificationHelper(val context: Context) {
             context,
             0,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannel() =
-        // 1
         NotificationChannel(
             CHANNEL_ID,
             CHANNEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         ).apply {
-
-            // 2
             description = CHANNEL_DESCRIPTION
             setSound(null, null)
         }
 
     fun getNotification(): Notification {
-        // 1
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(createChannel())
         }
-
-        // 2
         return notificationBuilder.build()
     }
 
     fun updateNotification(notificationText: String? = null) {
-        // 1
         notificationText?.let { notificationBuilder.setContentText(it) }
-        // 2
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
     }
 }

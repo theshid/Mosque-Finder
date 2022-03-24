@@ -72,9 +72,10 @@ class SharePref(context: Context) {
         return mySharePref.getBoolean("rate",false)
     }
     fun loadSavedPosition(): LatLng {
-    val position:LatLng = LatLng(mySharePref.getFloat("position_lat", defaultLat).toDouble(),
-    mySharePref.getFloat("position_lon", defaultLng).toDouble())
-        return position
+        return LatLng(
+            mySharePref.getFloat("position_lat", defaultLat).toDouble(),
+            mySharePref.getFloat("position_lon", defaultLng).toDouble()
+        )
     }
 
     fun loadIsFirstTimePref(): Boolean {
