@@ -225,4 +225,8 @@
     <string name="view_qibla_position">Voir Qibla</string>
     <string name="qibla">Qibla</string>
     <string name="qibla_position">Position Qibla </string>
+
+    <string name="blog">Blog</string>
+    <string name="blog_description">Apprenez à mieux connaitre votre religion</string>
+
 </resources>

@@ -3,10 +3,24 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/drawable-mdpi/ic_person.xml" value="0.1" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/drawable/ic_dua.xml" value="0.1" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/drawable/ic_family.xml" value="0.1" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_article_detail.xml" value="0.3796875" />
         <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_beautiful_mosques.xml" value="0.10677083333333333" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_blog.xml" value="0.3796875" />
         <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_compass.xml" value="0.10677083333333333" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_detail.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_home.xml" value="0.3796875" />
         <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_maps2.xml" value="0.146875" />
         <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_prayer.xml" value="0.2171875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/activity_surah.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/content_post_details.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/item_chapter.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/item_mosque.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/item_post.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/item_quran_ayah.xml" value="0.3796875" />
+        <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/layout/item_quran_surah.xml" value="0.3796875" />
         <entry key="..\:/Users/Shid/Desktop/Xiaomi/MosqueFinder/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.17222222222222222" />
       </map>
     </option>

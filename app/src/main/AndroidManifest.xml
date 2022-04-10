@@ -8,7 +8,6 @@
     -->
     <queries>
         <package android:name="com.google.android.apps.maps" />
-
     </queries>
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -27,6 +26,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".Ui.Main.View.ArticleDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Ui.Main.View.BlogActivity"
+            android:exported="false" />
         <activity
             android:name=".Ui.Main.View.CompassActivity"
             android:exported="false" />
@@ -100,8 +105,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Ui.Main.View.SplashActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
