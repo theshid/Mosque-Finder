@@ -10,7 +10,8 @@ data class Article(
     var author: String = "",
     var body: String = "",
     var pic: String = "",
-    var body_fr: String = ""
+    var body_fr: String = "",
+    var tag: String = ""
 ) :
     Parcelable {
 }

@@ -169,7 +169,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:id="@+id/cardBook"
+                android:id="@+id/cardBlog"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"

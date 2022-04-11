@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.shid.mosquefinder.Data.Model.Article
-import com.shid.mosquefinder.Data.Model.BeautifulMosques
 import com.shid.mosquefinder.Utils.Resource
 import timber.log.Timber
 
@@ -41,7 +40,7 @@ class BlogRepository {
                 }
 
                 if (querySnapshot != null) {
-
+                    Timber.d("querySnapshot not null")
                     mBlogList.clear()
                     for (doc in querySnapshot) {
 
@@ -50,23 +49,26 @@ class BlogRepository {
                         val author: String = doc.get("author") as String
                         val body: String = doc.get("body") as String
                         val pic: String = doc.get("image_link") as String
-                        val bodyFr: String = doc.get("bodey_fr") as String
+                        val bodyFr: String = doc.get("body_fr") as String
+                        val tag: String = doc.get("tag") as String
 
 
-                        val beautyElem =
+                        val article =
                             Article(
                                 title,
                                 titleFr,
                                 author,
                                 body,
                                 pic,
-                                bodyFr
+                                bodyFr,
+                                tag
                             )
-                        mBlogList.add(beautyElem)
+                        mBlogList.add(article)
+                        Timber.d("Is blog list empty:" + mBlogList.isEmpty())
                     }
                 }
             })
-        Timber.d("Mosque firebase%s", mBlogList.isEmpty().toString())
+        Timber.d("Is blog list empty:" + mBlogList.isEmpty())
         return mBlogList
     }
 }

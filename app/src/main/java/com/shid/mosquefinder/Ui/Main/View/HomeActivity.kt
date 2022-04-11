@@ -219,6 +219,10 @@ class HomeActivity : AppCompatActivity() {
             goToMapActivity()
         }
 
+        cardBlog.setOnClickListener{
+            goToBlogActivity()
+        }
+
         cardQuran.setOnClickListener {
             goToQuranActivity()
         }
@@ -246,6 +250,10 @@ class HomeActivity : AppCompatActivity() {
         btn_settings.setOnClickListener {
             goToSettings()
         }
+    }
+
+    private fun goToBlogActivity() {
+        startActivity<BlogActivity>()
     }
 
     private fun goToSettings() {

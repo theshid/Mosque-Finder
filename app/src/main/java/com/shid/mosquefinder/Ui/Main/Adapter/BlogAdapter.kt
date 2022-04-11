@@ -1,6 +1,5 @@
 package com.shid.mosquefinder.Ui.Main.Adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.shid.mosquefinder.Data.Model.Article
-import com.shid.mosquefinder.Data.Model.BeautifulMosques
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Main.View.ArticleDetailActivity
-import kotlinx.android.synthetic.main.item_mosque.view.*
 import kotlinx.android.synthetic.main.item_post.view.*
 
-class BlogAdapter(val list: MutableList<BeautifulMosques>, val context: Context) :
+class BlogAdapter :
     ListAdapter<Article, BlogAdapter.ViewHolder>(DIFF_CALLBACK) {
     private var onClickedTime = System.currentTimeMillis()
 
@@ -31,7 +28,7 @@ class BlogAdapter(val list: MutableList<BeautifulMosques>, val context: Context)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutInflater = LayoutInflater.from(context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         val view: View = layoutInflater.inflate(R.layout.item_post, parent, false)
 
         return ViewHolder(view)
@@ -44,15 +41,15 @@ class BlogAdapter(val list: MutableList<BeautifulMosques>, val context: Context)
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(article: Article) {
             itemView.apply {
-                post_title.text = article.title
-                post_author.text = article.author
+                post_title.text = "Title:"+article.title
+                post_author.text = "Author:"+article.author
                 imageView.load(article.pic)
 
                 rootView.setOnClickListener {
                     val currentTime = System.currentTimeMillis()
-                    if (currentTime - onClickedTime > transformationLayout.duration) {
+                    if (currentTime - onClickedTime > transformationLayout_blog.duration) {
                         onClickedTime = currentTime
-                        ArticleDetailActivity.startActivity(transformationLayout, article)
+                        ArticleDetailActivity.startActivity(transformationLayout_blog, article)
                     }
                 }
 
