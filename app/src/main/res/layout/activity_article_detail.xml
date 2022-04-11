@@ -28,7 +28,7 @@
             app:expandedTitleTextAppearance="@style/ToolbarTitleTextAppearance"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:statusBarScrim="@color/colorPrimary"
-            app:title="@string/menu_detail"
+            app:title="Blog Section"
             app:titleTextAppearance="@style/ToolbarTextAppearance"
             app:titleTextColor="@android:color/white" >
 

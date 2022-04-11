@@ -12,15 +12,7 @@ import kotlinx.android.synthetic.main.item_quran_ayah.view.*
 
 class NameAdapter():RecyclerView.Adapter<NameAdapter.NameViewHolder>() {
     private var listData = ArrayList<NameOfAllah>()
-    lateinit var onClickName: OnClickName
 
-    interface OnClickName {
-        fun onClickName(name: NameOfAllah)
-    }
-
-    fun setOnItemClick(mOnClickName: OnClickName) {
-        onClickName = mOnClickName
-    }
 
     fun setData(newListData: List<NameOfAllah>) {
         listData.clear()
@@ -36,9 +28,9 @@ class NameAdapter():RecyclerView.Adapter<NameAdapter.NameViewHolder>() {
 
     override fun onBindViewHolder(holder: NameAdapter.NameViewHolder, position: Int) {
         listData[position].run { holder.bind(this) }
-        holder.itemView.setOnClickListener(View.OnClickListener {
+      /*  holder.itemView.setOnClickListener(View.OnClickListener {
             listData[position].let { it -> onClickName.onClickName(it) }
-        })
+        })*/
     }
 
     override fun getItemCount(): Int {

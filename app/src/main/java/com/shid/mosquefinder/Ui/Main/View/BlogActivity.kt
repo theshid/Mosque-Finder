@@ -2,6 +2,7 @@ package com.shid.mosquefinder.Ui.Main.View
 
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -36,10 +37,10 @@ class BlogActivity : AppCompatActivity() {
         setObservers()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             mBlogList = mViewModel.getArticlesFromRepository()
-            //progressBar2.visibility = View.GONE
+            progressBar_blog.visibility = View.GONE
             setRecycler()
             blogAdapter.notifyDataSetChanged()
-        }, 2000)
+        }, 1000)
     }
 
     private fun setOnClick() {

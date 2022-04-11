@@ -28,28 +28,26 @@ class ArticleDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_article_detail)
 
         setNetworkMonitor()
-        setOnClick()
         val articleItem: Article = requireNotNull(intent.getParcelableExtra(EXTRA_ARTICLE))
         setUi(articleItem)
     }
 
     private fun setUi(article: Article) {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
+
+        val formatText = article.body.replace("\\n","\n")
         post_author.text = article.author
         imageView.load(article.pic)
         if (Locale.getDefault().language == "fr"){
-            post_body.text = article.body_fr
+            post_body.text = article.body_fr.replace("\\n","\n")
             post_title.text = article.title_fr
         }else{
-            post_body.text = article.body
+            post_body.text = formatText
             post_title.text = article.title
         }
 
-    }
-
-    private fun setOnClick() {
-        toolbar.setNavigationOnClickListener {
-            onBackPressed()
-        }
     }
 
     private fun setNetworkMonitor() {
