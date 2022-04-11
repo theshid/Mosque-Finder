@@ -251,6 +251,7 @@
     <string name="blog_description">Get to know you religion better</string>
     <string name="text_post_header">Post Header</string>
     <string name="blog_section">Blog Section</string>
+    <string name="handle_notification_now">Test</string>
 
 
 </resources>

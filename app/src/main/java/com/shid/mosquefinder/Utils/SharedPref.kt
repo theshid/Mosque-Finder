@@ -2,6 +2,7 @@ package com.shid.mosquefinder.Utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.text.TextUtils
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 
@@ -60,6 +61,19 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
+    fun saveFirebaseToken(token:String){
+        if (TextUtils.isEmpty(token)){
+            return
+        }
+        val editor = mySharePref.edit()
+        editor.putString("token",token)
+        editor.apply()
+    }
+
+    fun loadFirebaseToken():String{
+        return mySharePref.getString("token","").toString()
+    }
+
     fun loadSwitchState():Boolean{
         val state = mySharePref.getBoolean(mContext.getString(R.string.pref_notification_key),true)
         return state
@@ -93,6 +107,8 @@ class SharePref(context: Context) {
     fun loadUser():String{
         return mySharePref.getString("user","")!!
     }
+
+
 
     init {
         mySharePref = context.getSharedPreferences("filename", Context.MODE_PRIVATE)
