@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -50,11 +52,16 @@ class HomeActivity : AppCompatActivity() {
     private var isFirstTime: Boolean? = null
     private lateinit var workManager: WorkManager
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent) {
+            /*val pendingIntent = context?.let { NotificationHelper.getPendingIntent(it) }
+            intent.extras?.getString("message")
+                ?.let { NotificationHelper.showNotification(context!!,pendingIntent!!, it) }*/
             intent.extras?.getString("message")?.let { showToast(it) }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +74,14 @@ class HomeActivity : AppCompatActivity() {
         fusedLocationWrapper = fusedLocationWrapper()
         val bundle = intent.extras
         if (bundle != null) {
-            bundle.getString("text")?.let { showToast(it) }
+            Timber.d("bundle coming in:"+bundle.keySet())
+            if (bundle.getString("text")!= null){
+                startActivity<BlogActivity>()
+            }
+
+            /*val pendingIntent = NotificationHelper.getPendingIntent(this)
+            bundle.getString("text")
+                ?.let { NotificationHelper.showNotification(this,pendingIntent, it) }*/
         }
 
         displayAutoStartDialog()
@@ -298,51 +312,45 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun goToSettings() {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+        startActivity<SettingsActivity>()
     }
 
     private fun goToMapActivity() {
-        val intent = Intent(this, MapsActivity2::class.java)
-        intent.putExtra(Common.USER, user)
-        startActivity(intent)
+        startActivity<MapsActivity2>{
+            putExtra(Common.USER, user)
+        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToQuranActivity() {
-        val intent = Intent(this, SurahActivity::class.java)
-        startActivity(intent)
+        startActivity<SurahActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToNamesActivity() {
-        val intent = Intent(this, NamesActivity::class.java)
-        startActivity(intent)
+        startActivity<NamesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToAzkharActivity() {
-        val intent = Intent(this, CategoriesActivity::class.java)
-        startActivity(intent)
+        startActivity<CategoriesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToMosquesActivity() {
-        val intent = Intent(this, BeautifulMosquesActivity::class.java)
-        startActivity(intent)
+        startActivity<BeautifulMosquesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToQuotesActivity() {
-        val intent = Intent(this, QuotesActivity::class.java)
-        startActivity(intent)
+        startActivity<QuotesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToPrayerActivity() {
-        val intent = Intent(this, PrayerActivity::class.java)
-        intent.putExtra("user", user)
-        startActivity(intent)
+        startActivity<PrayerActivity> {
+            putExtra("user", user)
+        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 

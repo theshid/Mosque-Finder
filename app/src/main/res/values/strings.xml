@@ -189,6 +189,7 @@
     <string name="categories">Categories</string>
     <string name="home">Home</string>
     <string name="notification_title">Daily Ayah</string>
+    <string name="notification_helper_title">New Content</string>
 
     <string name="pref_notification_key" translatable="false">notification</string>
     <string name="pref_notification_title">Notification</string>

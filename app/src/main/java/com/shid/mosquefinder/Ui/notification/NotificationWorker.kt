@@ -32,7 +32,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
     private val randomSurahNumber = (1..114).random()
 
     companion object {
-        private var notificationId = 90
+         var notificationId = 90
     }
 
     init {
@@ -57,7 +57,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
             }
             val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logo2)
-            var builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo2)
                 .setLargeIcon(largeIcon)
                 .setContentTitle(context.getString(R.string.notification_title))

@@ -157,11 +157,13 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         when {
             userPosition != null -> {
                 mosqueeDePlace(userPosition!!)
+                Timber.d("using User Position")
             }
             else -> {
                 checkPref()
                 if (userPosition != null) {
                     mosqueeDePlace(userPosition!!)
+                    Timber.d("using User Position share Pref")
                 }
             }
         }
@@ -1317,6 +1319,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         mapViewModel.getGoogleMapMosqueFromRepository(userLocation)
             ?.observe(this, Observer {
                 val places: List<PlacesSearchResult>? = it?.results
+                Timber.d("Is googleMap mosque list empty:${places?.isEmpty()}")
                 testPlaces = places
             })
 
