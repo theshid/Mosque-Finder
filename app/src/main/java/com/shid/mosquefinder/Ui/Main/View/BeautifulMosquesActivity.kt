@@ -22,14 +22,15 @@ import com.shid.mosquefinder.Utils.Status
 import com.shid.mosquefinder.Utils.setTransparentStatusBar
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
+import kotlinx.android.synthetic.main.activity_beautiful_mosques.progressBar2
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar
+import kotlinx.android.synthetic.main.activity_blog.*
 
 
 class BeautifulMosquesActivity : AppCompatActivity() {
     private lateinit var mosqueAdapter: MosqueAdapter
     private lateinit var mosqueViewModel: BeautifulMosquesViewModel
     private var previousSate = true
-    private var onClickedTime = System.currentTimeMillis()
     private lateinit var layoutManager: GridLayoutManager
     private var mMosqueList: MutableList<BeautifulMosques> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,15 +70,6 @@ class BeautifulMosquesActivity : AppCompatActivity() {
         mMosqueList.shuffle()
         mosqueAdapter = MosqueAdapter(mMosqueList, this)
         mosque_recycler.adapter = mosqueAdapter
-        /*mosqueAdapter.setOnClickMosque {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - onClickedTime > transformationLayout.duration) {
-                onClickedTime = currentTime
-                DetailActivity.startActivity(transformationLayout, it)
-            }
-
-        }*/
-
     }
 
     private fun setViewModel() {

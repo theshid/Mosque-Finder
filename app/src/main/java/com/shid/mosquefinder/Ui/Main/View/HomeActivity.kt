@@ -1,14 +1,18 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
-import android.os.Looper
-import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
@@ -18,7 +22,8 @@ import com.azan.Azan
 import com.azan.AzanTimes
 import com.azan.Method
 import com.azan.astrologicalCalc.SimpleDate
-import com.google.android.gms.location.*
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.model.LatLng
 import com.judemanutd.autostarter.AutoStartPermissionHelper
 import com.shid.mosquefinder.Data.Model.User
@@ -41,10 +46,22 @@ class HomeActivity : AppCompatActivity() {
     private var timeZone: Double? = null
     private lateinit var viewModel: SurahViewModel
     private lateinit var sharedPref: SharePref
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private lateinit var fusedLocationWrapper: FusedLocationWrapper
     private var isFirstTime: Boolean? = null
     private lateinit var workManager: WorkManager
+    private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.M)
+        override fun onReceive(context: Context?, intent: Intent) {
+            /*val pendingIntent = context?.let { NotificationHelper.getPendingIntent(it) }
+            intent.extras?.getString("message")
+                ?.let { NotificationHelper.showNotification(context!!,pendingIntent!!, it) }*/
+            intent.extras?.getString("message")?.let { showToast(it) }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,17 +72,43 @@ class HomeActivity : AppCompatActivity() {
         sharedPref = SharePref(this)
         isFirstTime = sharedPref.loadFirstTime()
         fusedLocationWrapper = fusedLocationWrapper()
+        val bundle = intent.extras
+        if (bundle != null) {
+            Timber.d("bundle coming in:"+bundle.keySet())
+            if (bundle.getString("text")!= null){
+                startActivity<BlogActivity>()
+            }
+
+            /*val pendingIntent = NotificationHelper.getPendingIntent(this)
+            bundle.getString("text")
+                ?.let { NotificationHelper.showNotification(this,pendingIntent, it) }*/
+        }
+
         displayAutoStartDialog()
         setWorkManagerNotification()
         checkIfPermissionIsActive()
         setClickListeners()
     }
 
-    private fun displayAutoStartDialog(){
-        if (isFirstTime == true &&  AutoStartPermissionHelper.getInstance().isAutoStartPermissionAvailable(this)){
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(messageReceiver, IntentFilter("MyData"))
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    }
+
+    private fun displayAutoStartDialog() {
+        if (isFirstTime == true && AutoStartPermissionHelper.getInstance()
+                .isAutoStartPermissionAvailable(this)
+        ) {
             dialogSettings()
             sharedPref.setFirstTime(false)
-        } else{
+        } else {
             sharedPref.setFirstTime(false)
         }
     }
@@ -77,7 +120,11 @@ class HomeActivity : AppCompatActivity() {
                 .addTag("notification")
                 .build()
         if (sharedPref.loadSwitchState()) {
-            workManager.enqueueUniquePeriodicWork("Daily Ayah",ExistingPeriodicWorkPolicy.KEEP,saveRequest)
+            workManager.enqueueUniquePeriodicWork(
+                "Daily Ayah",
+                ExistingPeriodicWorkPolicy.KEEP,
+                saveRequest
+            )
         } else {
             workManager.cancelAllWorkByTag(SettingsActivity.SettingsFragment.WORKER_TAG)
         }
@@ -93,6 +140,14 @@ class HomeActivity : AppCompatActivity() {
         viewModel.surahList.observe(this, androidx.lifecycle.Observer {
             Timber.d("value of :$it")
         })
+
+        if (checkGooglePlayServices()) {
+            viewModel.update()
+        } else {
+            //You won't be able to send notifications to this device
+            Timber.w("Device doesn't have google play services")
+        }
+
 
     }
 
@@ -144,7 +199,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun dialogSettings(){
+    private fun dialogSettings() {
         MaterialDialog(this).show {
             title(text = getString(R.string.title_dialog))
             message(text = getString(R.string.auto_start))
@@ -186,7 +241,7 @@ class HomeActivity : AppCompatActivity() {
         return simpleDateFormat.parse(time)
     }
 
-    private fun setNextPrayer(prayerTimes:AzanTimes){
+    private fun setNextPrayer(prayerTimes: AzanTimes) {
         val fajr = initializePrayerDate(prayerTimes.fajr().toString().dropLast(3))
         val dhur = initializePrayerDate(prayerTimes.thuhr().toString().dropLast(3))
         val asr = initializePrayerDate(prayerTimes.assr().toString().dropLast(3))
@@ -196,16 +251,16 @@ class HomeActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         val simpleDateFormat = SimpleDateFormat("HH:mm")
         val nowTime = simpleDateFormat.parse(simpleDateFormat.format(calendar.time))
-        if (nowTime.after(fajr) && nowTime.before(dhur)){
+        if (nowTime.after(fajr) && nowTime.before(dhur)) {
             tv_prayer_time.text = "Dhur"
             tv_home_salat_time.text = prayerTimes.thuhr().toString().dropLast(3)
-        } else if (nowTime.after(dhur) && nowTime.before(asr)){
+        } else if (nowTime.after(dhur) && nowTime.before(asr)) {
             tv_prayer_time.text = "Asr"
             tv_home_salat_time.text = prayerTimes.assr().toString().dropLast(3)
-        } else if (nowTime.after(asr) && nowTime.before(maghrib)){
+        } else if (nowTime.after(asr) && nowTime.before(maghrib)) {
             tv_prayer_time.text = "Maghrib"
             tv_home_salat_time.text = prayerTimes.maghrib().toString().dropLast(3)
-        } else if (nowTime.after(maghrib) && nowTime.before(isha)){
+        } else if (nowTime.after(maghrib) && nowTime.before(isha)) {
             tv_prayer_time.text = "Isha"
             tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
         } else {
@@ -215,8 +270,12 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setClickListeners() {
-        cardMap.setOnClickListener{
+        cardMap.setOnClickListener {
             goToMapActivity()
+        }
+
+        cardBlog.setOnClickListener {
+            goToBlogActivity()
         }
 
         cardQuran.setOnClickListener {
@@ -231,7 +290,7 @@ class HomeActivity : AppCompatActivity() {
             goToAzkharActivity()
         }
 
-        cardMosques.setOnClickListener{
+        cardMosques.setOnClickListener {
             goToMosquesActivity()
         }
 
@@ -248,56 +307,70 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun goToBlogActivity() {
+        startActivity<BlogActivity>()
+    }
+
     private fun goToSettings() {
-        val intent = Intent(this,SettingsActivity::class.java)
-        startActivity(intent)
+        startActivity<SettingsActivity>()
     }
 
     private fun goToMapActivity() {
-        val intent = Intent(this, MapsActivity2::class.java)
-        intent.putExtra(Common.USER, user)
-        startActivity(intent)
+        startActivity<MapsActivity2>{
+            putExtra(Common.USER, user)
+        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToQuranActivity() {
-        val intent = Intent(this, SurahActivity::class.java)
-        startActivity(intent)
+        startActivity<SurahActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToNamesActivity() {
-        val intent = Intent(this, NamesActivity::class.java)
-        startActivity(intent)
+        startActivity<NamesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToAzkharActivity() {
-        val intent = Intent(this, CategoriesActivity::class.java)
-        startActivity(intent)
+        startActivity<CategoriesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToMosquesActivity() {
-        val intent = Intent(this, BeautifulMosquesActivity::class.java)
-        startActivity(intent)
+        startActivity<BeautifulMosquesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToQuotesActivity() {
-        val intent = Intent(this, QuotesActivity::class.java)
-        startActivity(intent)
+        startActivity<QuotesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToPrayerActivity() {
-        val intent = Intent(this, PrayerActivity::class.java)
-        intent.putExtra("user",user)
-        startActivity(intent)
+        startActivity<PrayerActivity> {
+            putExtra("user", user)
+        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun getUserFromIntent(): User? {
         return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.Data.Model.User
     }
+
+    private fun checkGooglePlayServices(): Boolean {
+        // 1
+        val status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
+        // 2
+        return if (status != ConnectionResult.SUCCESS) {
+            Timber.e("Error")
+            // ask user to update google play services and manage the error.
+            false
+        } else {
+            // 3
+            Timber.i("Google play services updated")
+            true
+        }
+    }
+
 }

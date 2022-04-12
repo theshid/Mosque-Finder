@@ -119,11 +119,12 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:id="@+id/cardMap"
-                android:layout_width="160dp"
-                android:layout_height="190dp"
+                android:layout_width="340dp"
+                android:layout_height="150dp"
                 android:layout_margin="10dp"
                 android:focusable="true">
                 <LinearLayout
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -139,7 +140,6 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:layout_marginTop="10dp"
-                        android:fontFamily="@font/quicksand_semibold"
                         android:textColor="@color/colorPrimary"
                         android:text="@string/mosques"/>
                     <View
@@ -152,6 +152,57 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="@string/find_nearby_mosques_in_your_area"
+                        android:padding="5dp"
+                        android:textColor="@android:color/black"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.card.MaterialCardView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:id="@+id/cardBlog"
+                android:layout_width="160dp"
+                android:layout_height="190dp"
+                android:layout_margin="10dp"
+                android:focusable="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/circle_shape"
+                        android:src="@drawable/book"
+                        android:padding="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/quicksand_semibold"
+                        android:textColor="@color/colorPrimary"
+                        android:text="@string/blog"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_margin="10dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/blog_description"
                         android:padding="5dp"
                         android:textColor="@android:color/black"/>
 

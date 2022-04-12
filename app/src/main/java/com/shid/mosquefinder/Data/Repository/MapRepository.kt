@@ -28,6 +28,7 @@ import com.shid.mosquefinder.Utils.Resource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 import java.lang.StringBuilder
 import java.util.HashMap
 
@@ -236,7 +237,7 @@ class MapRepository constructor(mService: ApiInterface, application: Application
         userPosition: LatLng,
         nextToken: String = ""
     )
-            : MutableLiveData<Place>? {
+            : MutableLiveData<Place> {
 
         //mMap.clear()
 
@@ -249,15 +250,15 @@ class MapRepository constructor(mService: ApiInterface, application: Application
                 override fun onFailure(call: Call<Place>, t: Throwable) {
                     /*Toast.makeText(mApp.applicationContext, "" + t.message, Toast.LENGTH_LONG)
                         .show()*/
-                    Log.d(TAG, "failed")
-                    placeData?.value = null
+                    Timber.d("failed")
+                    placeData.value = null
                 }
 
                 override fun onResponse(call: Call<Place>, response: Response<Place>) {
-                    Log.d(TAG, "Api Mosque" + response.isSuccessful)
+                    Timber.d("Api Mosque" + response.isSuccessful)
 
                     if (response.isSuccessful) { //for(i in 0 until response.body()!!.results!!.size)
-                        placeData?.value = response.body()
+                        placeData.value = response.body()
                         placeData.postValue(response.body())
 
 

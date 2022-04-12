@@ -189,6 +189,7 @@
     <string name="categories">Categories</string>
     <string name="home">Home</string>
     <string name="notification_title">Daily Ayah</string>
+    <string name="notification_helper_title">New Content</string>
 
     <string name="pref_notification_key" translatable="false">notification</string>
     <string name="pref_notification_title">Notification</string>
@@ -247,6 +248,11 @@
     <string name="qibla">Qibla</string>
     <string name="qibla_position">Qibla Position</string>
     <string name="permisson_not_granted">permisssion not granted</string>
+    <string name="blog">Blog</string>
+    <string name="blog_description">Get to know you religion better</string>
+    <string name="text_post_header">Post Header</string>
+    <string name="blog_section">Blog Section</string>
+    <string name="handle_notification_now">Test</string>
 
 
 </resources>

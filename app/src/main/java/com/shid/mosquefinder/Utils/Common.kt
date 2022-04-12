@@ -1,8 +1,13 @@
 package com.shid.mosquefinder.Utils
 
+import android.content.Context
 import android.util.Log
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.shid.mosquefinder.Data.Api.ApiClient
 import com.shid.mosquefinder.Data.Model.Api.ApiInterface
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 object Common {
     private const val GOOGLE_API_URL = "https://maps.googleapis.com/"
@@ -29,4 +34,20 @@ object Common {
 
     val frenchQuranApiService: ApiInterface
         get() = ApiClient.getClient(QURAN_API_URL).create(ApiInterface::class.java)
+
+    suspend fun retrievePushId(context: Context):String?{
+        return suspendCoroutine { cont ->
+            FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                if (!it.isSuccessful){
+                    cont.resume(null)
+                }
+                val newPushId = it.result
+                if (!newPushId.isNullOrBlank()){
+                    val sharePref = SharePref(context)
+                    sharePref.saveFirebaseToken(newPushId)
+                }
+                cont.resume(newPushId)
+            }
+        }
+    }
 }
