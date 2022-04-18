@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:id="@+id/ll"
-        >
+        android:orientation="vertical"
+        android:padding="10dp">
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -62,250 +63,294 @@
                             android:layout_height="wrap_content">
 
                             <ImageView
+                                android:id="@+id/btn_settings"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
+                                android:layout_alignParentEnd="true"
                                 android:layout_marginEnd="30dp"
                                 android:padding="5dp"
-                                android:layout_alignParentEnd="true"
-                                android:src="@drawable/ic_settings_1"
-                                android:id="@+id/btn_settings"/>
+                                android:src="@drawable/ic_settings_1" />
 
                             <TextView
+                                android:id="@+id/tv_settings"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_below="@+id/btn_settings"
                                 android:layout_alignParentEnd="true"
                                 android:layout_marginEnd="20dp"
                                 android:text="@string/settings"
+                                android:textColor="@color/colorWhite" />
+
+
+                            <TextView
+                                android:id="@+id/tv_countdown_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_next_prayer"
                                 android:textColor="@color/colorWhite"
-                                android:layout_below="@+id/btn_settings"
-                                />
+                                tools:text="Remaining time" />
+
+                            <TextView
+                                android:id="@+id/tv_next_prayer_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/tv_next_prayer"
+                                android:layout_toEndOf="@+id/tv_countdown_time"
+                                android:textColor="@color/colorWhite"
+                                tools:text="Asr" />
 
                             <TextView
                                 android:id="@+id/tv_next_prayer"
                                 style="@style/TextAppearance.AppCompat.Header2"
                                 android:layout_width="wrap_content"
+                                android:textStyle="bold"
                                 android:layout_height="wrap_content"
-                                android:text="@string/next_prayer"
-                                />
+                                android:text="@string/next_prayer" />
                         </RelativeLayout>
-
 
 
                         <TextView
                             android:id="@+id/tv_home_salat_time"
                             style="@style/TextAppearance.AppCompat.Header1"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                             />
+                            android:layout_height="wrap_content" />
 
                         <TextView
                             android:id="@+id/tv_prayer_time"
                             style="@style/TextAppearance.AppCompat.Header2"
+                            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Asr"
-                             />
+                            android:text="Asr" />
                     </LinearLayout>
                 </FrameLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:id="@+id/cardMap"
                 android:layout_width="340dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
                 <LinearLayout
 
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/circle_shape"
-                        android:src="@drawable/ic_map"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/ic_map" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         android:layout_marginTop="10dp"
+                        android:text="@string/mosques"
                         android:textColor="@color/colorPrimary"
-                        android:text="@string/mosques"/>
+                        android:textStyle="bold" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/colorPrimary"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/find_nearby_mosques_in_your_area"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"/>
+                        android:text="@string/find_nearby_mosques_in_your_area"
+                        android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
 
         </LinearLayout>
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:id="@+id/cardBlog"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/circle_shape"
-                        android:src="@drawable/book"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/book" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/quicksand_semibold"
+                        android:text="@string/blog"
                         android:textColor="@color/colorPrimary"
-                        android:text="@string/blog"/>
+                        android:textStyle="bold" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/colorPrimary"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/blog_description"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"/>
+                        android:text="@string/blog_description"
+                        android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:id="@+id/cardQuran"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/circle_shape"
-                        android:src="@drawable/ic_quran_home"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/ic_quran_home" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         android:layout_marginTop="10dp"
+                        android:text="@string/quran"
                         android:textColor="@color/colorPrimary"
-                        android:text="@string/quran"/>
+                        android:textStyle="bold" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/colorPrimary"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/quran_description"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"/>
+                        android:text="@string/quran_description"
+                        android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:layout_width="160dp"
                 android:id="@+id/cardNames"
+                android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/circle_shape"
-                        android:src="@drawable/ic_name_home"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/ic_name_home" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         android:layout_marginTop="10dp"
+                        android:text="@string/_99_names_of_allah"
                         android:textColor="@color/colorPrimary"
-                        android:text="@string/_99_names_of_allah"/>
+                        android:textStyle="bold" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/colorPrimary"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/get_to_know_the_99_names_of_allah"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"/>
+                        android:text="@string/get_to_know_the_99_names_of_allah"
+                        android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:layout_width="160dp"
                 android:id="@+id/cardAzkhar"
+                android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -325,8 +370,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="Azkhar"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"/>
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -346,64 +391,71 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-
         </LinearLayout>
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:id="@+id/cardMosques"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/circle_shape"
-                        android:src="@drawable/ic_beautiful_mosque"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/ic_beautiful_mosque" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:gravity="center"
                         android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="@string/beautiful_mosque"
                         android:textColor="@color/colorPrimary"
-                        android:text="@string/beautiful_mosque"/>
+                        android:textStyle="bold" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/colorPrimary"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/beauty_mosque_home"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"/>
+                        android:text="@string/beauty_mosque_home"
+                        android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:id="@+id/cardQuotes"
                 android:layout_width="160dp"
                 android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -423,8 +475,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="@string/quote_islam"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"/>
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold" />
 
                     <View
                         android:layout_width="match_parent"
@@ -444,53 +496,59 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-
         </LinearLayout>
+
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
+
             <com.google.android.material.card.MaterialCardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:id="@+id/cardPrayerTime"
                 android:layout_width="340dp"
                 android:layout_height="150dp"
                 android:layout_margin="10dp"
-                android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground">
+
                 <LinearLayout
 
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <ImageView
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/circle_shape"
-                        android:src="@drawable/ic_clock"
-                        android:padding="10dp"/>
+                        android:padding="10dp"
+                        android:src="@drawable/ic_clock" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         android:layout_marginTop="10dp"
+                        android:text="@string/prayer_time"
                         android:textColor="@color/colorPrimary"
-                        android:text="@string/prayer_time"/>
+                        android:textStyle="bold" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/colorPrimary"
-                        android:layout_margin="10dp"/>
+                        android:layout_margin="10dp"
+                        android:background="@color/colorPrimary" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/prayer_description"
                         android:padding="5dp"
-                        android:textColor="@android:color/black"/>
+                        android:text="@string/prayer_description"
+                        android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

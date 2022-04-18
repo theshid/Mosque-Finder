@@ -32,6 +32,7 @@ import com.shid.mosquefinder.Ui.Base.SurahViewModelFactory
 import com.shid.mosquefinder.Ui.Main.ViewModel.SurahViewModel
 import com.shid.mosquefinder.Ui.notification.NotificationWorker
 import com.shid.mosquefinder.Utils.*
+import com.shid.mosquefinder.Utils.enums.Prayers
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var fusedLocationWrapper: FusedLocationWrapper
     private var isFirstTime: Boolean? = null
     private lateinit var workManager: WorkManager
+    private val scope = lifecycleScope
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent) {
@@ -74,8 +76,8 @@ class HomeActivity : AppCompatActivity() {
         fusedLocationWrapper = fusedLocationWrapper()
         val bundle = intent.extras
         if (bundle != null) {
-            Timber.d("bundle coming in:"+bundle.keySet())
-            if (bundle.getString("text")!= null){
+            Timber.d("bundle coming in:" + bundle.keySet())
+            if (bundle.getString("text") != null) {
                 startActivity<BlogActivity>()
             }
 
@@ -87,6 +89,8 @@ class HomeActivity : AppCompatActivity() {
         displayAutoStartDialog()
         setWorkManagerNotification()
         checkIfPermissionIsActive()
+        scope.launch { viewModel.nextPray.collect { tv_countdown_time.text = it } }
+        scope.launch { viewModel.descNextPray.collect { tv_next_prayer_name.text = it } }
         setClickListeners()
     }
 
@@ -189,7 +193,7 @@ class HomeActivity : AppCompatActivity() {
     @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     private fun getUserLocation(fusedLocationWrapper: FusedLocationWrapper) {
-        this.lifecycleScope.launch {
+        scope.launch {
             val location = fusedLocationWrapper.awaitLastLocation()
             userPosition = LatLng(location.latitude, location.longitude)
             userPosition?.let {
@@ -252,20 +256,30 @@ class HomeActivity : AppCompatActivity() {
         val simpleDateFormat = SimpleDateFormat("HH:mm")
         val nowTime = simpleDateFormat.parse(simpleDateFormat.format(calendar.time))
         if (nowTime.after(fajr) && nowTime.before(dhur)) {
-            tv_prayer_time.text = "Dhur"
-            tv_home_salat_time.text = prayerTimes.thuhr().toString().dropLast(3)
+            val salatTime = prayerTimes.thuhr().toString().dropLast(3)
+            tv_prayer_time.text = Prayers.DHUR.prayer
+            tv_home_salat_time.text = salatTime
+            viewModel.getIntervalText(Prayers.DHUR, salatTime)
         } else if (nowTime.after(dhur) && nowTime.before(asr)) {
-            tv_prayer_time.text = "Asr"
+            val salatTime = prayerTimes.assr().toString().dropLast(3)
+            tv_prayer_time.text = Prayers.ASR.prayer
             tv_home_salat_time.text = prayerTimes.assr().toString().dropLast(3)
+            viewModel.getIntervalText(Prayers.ASR, salatTime)
         } else if (nowTime.after(asr) && nowTime.before(maghrib)) {
-            tv_prayer_time.text = "Maghrib"
+            val salatTime = prayerTimes.maghrib().toString().dropLast(3)
+            tv_prayer_time.text = Prayers.MAGHRIB.prayer
             tv_home_salat_time.text = prayerTimes.maghrib().toString().dropLast(3)
+            viewModel.getIntervalText(Prayers.MAGHRIB, salatTime)
         } else if (nowTime.after(maghrib) && nowTime.before(isha)) {
-            tv_prayer_time.text = "Isha"
+            val salatTime = prayerTimes.ishaa().toString().dropLast(3)
+            tv_prayer_time.text = Prayers.ISHA.prayer
             tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
+            viewModel.getIntervalText(Prayers.ISHA, salatTime)
         } else {
-            tv_prayer_time.text = "Fajr"
+            val salatTime = prayerTimes.fajr().toString().dropLast(3)
+            tv_prayer_time.text = Prayers.FAJR.prayer
             tv_home_salat_time.text = prayerTimes.fajr().toString().dropLast(3)
+            viewModel.getIntervalText(Prayers.FAJR, salatTime)
         }
     }
 
@@ -316,7 +330,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun goToMapActivity() {
-        startActivity<MapsActivity2>{
+        startActivity<MapsActivity2> {
             putExtra(Common.USER, user)
         }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
