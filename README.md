@@ -2,20 +2,27 @@
 <img src="images/logo.png" width="150" height="150">                                       <img src="images/store.jpg" width="300" height="150">
 # Mosque-Finder
 
-MosqueFinder is an Android application 📱 that display nearby mosques.
+MosqueFinder is an Android application 📱 that display nearby mosques and so much more!
 Download the app [here](https://play.google.com/store/apps/details?id=com.shid.mosquefinder)
 
-| Main Screen     |  Map Screen |  Quote Screen | Most beautiful Mosques  |Detail Screen  |
+| Home Screen     |  Map Screen |  Quote Screen | Most beautiful Mosques  |Blog Screen  |
 | ----------- | ----------- |----------- |----------- |----------- |
-|<img src="images/2.jpeg" width="150" height="250">|<img src="images/3.jpeg" width="150" height="250">|<img src="images/6.jpeg" width="150" height="250">|<img src="images/7.jpeg" width="150" height="250">|<img src="images/5.jpeg" width="150" height="250">|
+|<img src="images/home.jpg" width="150" height="250">|<img src="images/3.jpeg" width="150" height="250">|<img src="images/6.jpeg" width="150" height="250">|<img src="images/7.jpeg" width="150" height="250">|<img src="images/blog.jpg" width="150" height="250">|
 
 ## About
 
 - Shows nearby Mosques
-- User add a mosque that is not in the database
+- User add a mosque that is not in the Google map database
+- User can verify if the position of a mosque is legit or not
 - Motivational quotes
 - User can send live feedback
+- User can read and listen to the Holy Quran
+- Download for offline listening
+- Azkhar to memorize
+- Prayers time
 - User can see the most beautiful mosque
+- Blog section
+- Qibla Direction
 
 ## Architecture Pattern : MVVM 🛠
 
@@ -29,6 +36,8 @@ Download the app [here](https://play.google.com/store/apps/details?id=com.shid.m
     - ViewModel - Stores UI-related data that isn't destroyed on UI changes.
 - MotionLayout - Layout type that helps you manage motion and widget animation in your app.
 - Firebase - Platform developed by Google for creating mobile and web applications.
+- Kotlin Flow
+- Coroutines
 
 ## Credits
 
