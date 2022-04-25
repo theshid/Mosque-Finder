@@ -12,10 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import com.azan.Azan
 import com.azan.Method
 import com.azan.astrologicalCalc.SimpleDate
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.Utils.*
+import kotlinx.android.synthetic.main.activity_ayah.*
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -23,13 +26,13 @@ import timber.log.Timber
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.properties.Delegates
 
 class PrayerActivity : AppCompatActivity() {
 
     private var userPosition: LatLng? = null
     private lateinit var date: SimpleDate
     private var timeZone: Double? = null
+    private var isFirstTime: Boolean? = null
     private lateinit var sharedPref: SharePref
 
     val prayerAlarm = PrayerAlarmBroadcastReceiver()
@@ -42,15 +45,20 @@ class PrayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
+        sharedPref = SharePref(this)
+        isFirstTime = sharedPref.loadFirstTimePrayerNotification()
         fusedLocationWrapper = fusedLocationWrapper()
         permissionCheck(fusedLocationWrapper)
         setUI()
         clickListeners()
+        if (isFirstTime == true) {
+            activateShowcase()
+            sharedPref.setFirstTimePrayerNotification(false)
+        }
     }
 
 
     private fun setUI() {
-        sharedPref = SharePref(this)
         if (userPosition == null) {
             userPosition = sharedPref.loadSavedPosition()
         }
@@ -66,6 +74,7 @@ class PrayerActivity : AppCompatActivity() {
         ivSoundAsr.setImageResource(if (asrIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
         ivSoundMaghrib.setImageResource(if (maghribIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
         ivSoundIsha.setImageResource(if (ishaIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+
         Timber.d("userPosition:$userPosition")
         timeZone = getTimeZone()
         Timber.d("timeZone:${timeZone.toString()}")
@@ -76,9 +85,6 @@ class PrayerActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun clickListeners() {
-        btn_location.setOnClickListener {
-            permissionCheck(fusedLocationWrapper)
-        }
 
         toolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -92,6 +98,41 @@ class PrayerActivity : AppCompatActivity() {
             goToQibla()
         }
 
+        btn_activate_notification.setOnClickListener {
+            if (sharedPref.loadIsAllPrayersNotificationActivated()) {
+                sharedPref.saveFajrState(false)
+                sharedPref.saveDhurState(false)
+                sharedPref.saveAsrState(false)
+                sharedPref.saveMaghribState(false)
+                sharedPref.saveIshaState(false)
+                sharedPref.setAllPrayerNotifications(false)
+
+                ivSoundFajr.setImageResource(R.drawable.ic_sound_off)
+                ivSoundDhur.setImageResource(R.drawable.ic_sound_off)
+                ivSoundAsr.setImageResource(R.drawable.ic_sound_off)
+                ivSoundMaghrib.setImageResource(R.drawable.ic_sound_off)
+                ivSoundIsha.setImageResource(R.drawable.ic_sound_off)
+
+                btn_activate_notification.text = getString(R.string.activate_all_notification)
+            } else {
+                sharedPref.saveFajrState(true)
+                sharedPref.saveDhurState(true)
+                sharedPref.saveAsrState(true)
+                sharedPref.saveMaghribState(true)
+                sharedPref.saveIshaState(true)
+                sharedPref.setAllPrayerNotifications(true)
+
+                ivSoundFajr.setImageResource(R.drawable.ic_sound_on)
+                ivSoundDhur.setImageResource(R.drawable.ic_sound_on)
+                ivSoundAsr.setImageResource(R.drawable.ic_sound_on)
+                ivSoundMaghrib.setImageResource(R.drawable.ic_sound_on)
+                ivSoundIsha.setImageResource(R.drawable.ic_sound_on)
+
+                btn_activate_notification.text = getString(R.string.disactivate_all_notification)
+            }
+
+        }
+
         btnSoundFajr.setOnClickListener {
             val fajr: String?
             fajr = sharedPref.loadFajr()
@@ -99,11 +140,19 @@ class PrayerActivity : AppCompatActivity() {
 
             ivSoundFajr.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
 
-            if (isReminderSet){
+            if (isReminderSet) {
                 sharedPref.saveFajrState(isReminderSet)
-                fajr.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.FAJR,isReminderSet,Common.FAJR_INDEX) }
-            }else{
-                prayerAlarm.cancelAlarm(this,Common.FAJR_INDEX)
+                fajr.let { it1 ->
+                    prayerAlarm.setPrayerAlarm(
+                        this,
+                        it1,
+                        Common.FAJR,
+                        isReminderSet,
+                        Common.FAJR_INDEX
+                    )
+                }
+            } else {
+                prayerAlarm.cancelAlarm(this, Common.FAJR_INDEX)
                 sharedPref.saveFajrState(isReminderSet)
 
             }
@@ -117,12 +166,20 @@ class PrayerActivity : AppCompatActivity() {
 
             ivSoundDhur.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
 
-            if (isReminderSet){
+            if (isReminderSet) {
                 Timber.d("value of Dhur:$dhur")
                 sharedPref.saveDhurState(isReminderSet)
-                dhur.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.DHUR,isReminderSet,Common.DHUR_INDEX) }
-            }else{
-                prayerAlarm.cancelAlarm(this,Common.DHUR_INDEX)
+                dhur.let { it1 ->
+                    prayerAlarm.setPrayerAlarm(
+                        this,
+                        it1,
+                        Common.DHUR,
+                        isReminderSet,
+                        Common.DHUR_INDEX
+                    )
+                }
+            } else {
+                prayerAlarm.cancelAlarm(this, Common.DHUR_INDEX)
                 sharedPref.saveDhurState(isReminderSet)
 
             }
@@ -136,11 +193,19 @@ class PrayerActivity : AppCompatActivity() {
 
             ivSoundAsr.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
 
-            if (isReminderSet){
+            if (isReminderSet) {
                 sharedPref.saveAsrState(isReminderSet)
-                asr.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.ASR,isReminderSet,Common.ASR_INDEX) }
-            }else{
-                prayerAlarm.cancelAlarm(this,Common.ASR_INDEX)
+                asr.let { it1 ->
+                    prayerAlarm.setPrayerAlarm(
+                        this,
+                        it1,
+                        Common.ASR,
+                        isReminderSet,
+                        Common.ASR_INDEX
+                    )
+                }
+            } else {
+                prayerAlarm.cancelAlarm(this, Common.ASR_INDEX)
                 sharedPref.saveAsrState(isReminderSet)
 
             }
@@ -154,11 +219,19 @@ class PrayerActivity : AppCompatActivity() {
 
             ivSoundMaghrib.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
 
-            if (isReminderSet){
+            if (isReminderSet) {
                 sharedPref.saveMaghribState(isReminderSet)
-                maghrib.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.MAGHRIB,isReminderSet,Common.MAGHRIB_INDEX) }
-            }else{
-                prayerAlarm.cancelAlarm(this,Common.MAGHRIB_INDEX)
+                maghrib.let { it1 ->
+                    prayerAlarm.setPrayerAlarm(
+                        this,
+                        it1,
+                        Common.MAGHRIB,
+                        isReminderSet,
+                        Common.MAGHRIB_INDEX
+                    )
+                }
+            } else {
+                prayerAlarm.cancelAlarm(this, Common.MAGHRIB_INDEX)
                 sharedPref.saveMaghribState(isReminderSet)
 
             }
@@ -172,11 +245,19 @@ class PrayerActivity : AppCompatActivity() {
 
             ivSoundIsha.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
 
-            if (isReminderSet){
+            if (isReminderSet) {
                 sharedPref.saveIshaState(isReminderSet)
-                isha.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.ISHA,isReminderSet,Common.ISHA_INDEX) }
-            }else{
-                prayerAlarm.cancelAlarm(this,Common.ISHA_INDEX)
+                isha.let { it1 ->
+                    prayerAlarm.setPrayerAlarm(
+                        this,
+                        it1,
+                        Common.ISHA,
+                        isReminderSet,
+                        Common.ISHA_INDEX
+                    )
+                }
+            } else {
+                prayerAlarm.cancelAlarm(this, Common.ISHA_INDEX)
                 sharedPref.saveIshaState(isReminderSet)
 
             }
@@ -285,6 +366,29 @@ class PrayerActivity : AppCompatActivity() {
 
     private fun goToSettings() {
         startActivity<SettingsActivity>()
+    }
+
+    private fun activateShowcase() {
+        BubbleShowCaseSequence()
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble_prayer_notification_title)) //Any title for the bubble view
+                    .targetView(btn_activate_notification) //View to point out
+                    .description(getString(R.string.bubble_prayer_notification_all_description))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            ) //First BubbleShowCase to show
+            .addShowCase(
+                BubbleShowCaseBuilder(this) //Activity instance
+                    .title(getString(R.string.bubble_prayer_notification_title)) //Any title for the bubble view
+                    .targetView(btnSoundFajr) //View to point out
+                    .description(getString(R.string.bubble_prayer_notification_description))
+                    .backgroundColorResourceId(R.color.colorPrimary)
+                    .imageResourceId(R.drawable.logo2)
+                    .textColorResourceId(R.color.colorWhite)
+            )
+            .show() //Display the ShowCaseSequence
     }
 
 

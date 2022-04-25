@@ -173,6 +173,7 @@
     <string name="quran_description">Read and Listen to the Holy Quran</string>
     <string name="beauty_mosque_home">Find and Explore the most beautiful mosque on the globe.</string>
     <string name="quotes_from_great_personalities">Quotes from great personalities</string>
+    <string name="feedback_description">Give your feedback to improve Mosque Finder</string>
 
     <string name="channel_name" translatable="false">channel_name</string>
     <string name="channel_desc" translatable="false">channel_desc</string>
@@ -182,6 +183,8 @@
     <string name="dl_started">Download started, check notification</string>
     <string name="find_nearby_mosque">Find Nearby Mosque</string>
     <string name="refresh">Refresh</string>
+    <string name="activate_all_notification">Enable All</string>
+    <string name="disactivate_all_notification">Disable All</string>
     <string name="next_prayer">Next Prayer:</string>
     <string name="translate_in_french">Translate in French</string>
     <string name="internet_msg">You need Internet to perform this action</string>
@@ -232,6 +235,9 @@
     <string name="bubble_ayah_des1">Press here to play the whole Surah</string>
     <string name="bubble_ayah_title3">Download Surah</string>
     <string name="bubble_ayah_desc3">You can download the surah to listen to it offline</string>
+    <string name="bubble_prayer_notification_title">Enable Prayer Notification</string>
+    <string name="bubble_prayer_notification_description">You can activate notification for prayers by pressing the icon</string>
+    <string name="bubble_prayer_notification_all_description">Click to enable or disable all prayers notifications</string>
 
     <string name="sotw_north" translatable="false">N</string>
     <string name="sotw_east" translatable="false">E</string>

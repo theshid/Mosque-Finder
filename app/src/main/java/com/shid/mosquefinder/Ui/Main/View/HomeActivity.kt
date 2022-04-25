@@ -325,6 +325,14 @@ class HomeActivity : AppCompatActivity() {
             goToQuotesActivity()
         }
 
+        cardQibla.setOnClickListener {
+            goToQiblaActivity()
+        }
+
+        cardFeedback.setOnClickListener {
+            goToFeedbackActivity()
+        }
+
         cardPrayerTime.setOnClickListener {
             goToPrayerActivity()
         }
@@ -336,6 +344,14 @@ class HomeActivity : AppCompatActivity() {
 
     private fun goToBlogActivity() {
         startActivity<BlogActivity>()
+    }
+
+    private fun goToQiblaActivity(){
+        startActivity<CompassActivity>()
+    }
+
+    private fun goToFeedbackActivity(){
+        startActivity<FeedbackActivity>()
     }
 
     private fun goToSettings() {

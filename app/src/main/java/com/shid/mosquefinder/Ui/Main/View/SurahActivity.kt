@@ -123,6 +123,6 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         startActivity<AyahActivity> {
             putExtra("surah_number", surah.id)
         }
-        
+
     }
 }

@@ -186,6 +186,7 @@
     <string name="quran_description">Écoutez et lisez le Saint Coran</string>
     <string name="beauty_mosque_home">Trouvez et Explorez les plus belle mosquées du monde.</string>
     <string name="quotes_from_great_personalities">Citation de grandes personnalités</string>
+    <string name="feedback_description">Donnez vos suggestions pour améliorer Mosque Finder</string>
 
     <string name="play_surah">Jouer la Sourate</string>
     <string name="download_surah">Télécharger la Sourate</string>
@@ -193,6 +194,8 @@
     <string name="dl_started">Téléchargement entamé, vérifiez la bar de notification</string>
     <string name="find_nearby_mosque">Mosquées à proximité</string>
     <string name="refresh">Actualisez</string>
+    <string name="activate_all_notification">Activer Rappels</string>
+    <string name="disactivate_all_notification">Déactiver Rappels</string>
     <string name="next_prayer">Prochaine Prière</string>
     <string name="translate_in_french">Traduire en Français</string>
     <string name="internet_msg">Internet est nécessaire pour effectuer cette action</string>
@@ -222,6 +225,9 @@
     pour lancer l\'écoute du verset en question</string>
     <string name="bubble_ayah_title3">Télécharger la Sourate</string>
     <string name="bubble_ayah_desc3">Vous pouvez télécharger la Sourate pour une écoute hors ligne</string>
+    <string name="bubble_prayer_notification_title">Activer Notifications pour les prières</string>
+    <string name="bubble_prayer_notification_description">Appuyez sur les icons pour activer la notification</string>
+    <string name="bubble_prayer_notification_all_description">Appuyez pour activer ou déactiver toutes les notifications pour les prières</string>
     <string name="view_qibla_position">Voir Qibla</string>
     <string name="qibla">Qibla</string>
     <string name="qibla_position">Position Qibla </string>

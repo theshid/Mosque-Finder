@@ -107,15 +107,6 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     }
 
 
-   /* override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        // Restore state members from saved instance
-        savedInstanceState.run {
-            surahNumber = getInt(STATE_SURAH)
-
-        }
-
-    }*/
 
     private fun activateShowcase() {
         BubbleShowCaseSequence()
