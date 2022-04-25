@@ -1,6 +1,10 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -18,7 +22,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.Utils.*
-import kotlinx.android.synthetic.main.activity_ayah.*
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -34,6 +37,9 @@ class PrayerActivity : AppCompatActivity() {
     private var timeZone: Double? = null
     private var isFirstTime: Boolean? = null
     private lateinit var sharedPref: SharePref
+    private var _broadcastReceiver: BroadcastReceiver? = null
+    private val _sdfWatchTime = SimpleDateFormat("HH:mm")
+
 
     val prayerAlarm = PrayerAlarmBroadcastReceiver()
 
@@ -57,6 +63,25 @@ class PrayerActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        _broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action?.compareTo(Intent.ACTION_TIME_TICK) == 0) {
+                    textTime.text = _sdfWatchTime.format(Date())
+                }
+            }
+        }
+
+registerReceiver(_broadcastReceiver, IntentFilter(Intent.ACTION_TIME_TICK))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (_broadcastReceiver!= null){
+            unregisterReceiver(_broadcastReceiver)
+        }
+    }
 
     private fun setUI() {
         if (userPosition == null) {

@@ -56,9 +56,6 @@ class HomeActivity : AppCompatActivity() {
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent) {
-            /*val pendingIntent = context?.let { NotificationHelper.getPendingIntent(it) }
-            intent.extras?.getString("message")
-                ?.let { NotificationHelper.showNotification(context!!,pendingIntent!!, it) }*/
             intent.extras?.getString("message")?.let { showToast(it) }
         }
     }
@@ -282,7 +279,6 @@ class HomeActivity : AppCompatActivity() {
             viewModel.getIntervalText(Prayers.MAGHRIB, salatTime)
         } else if (nowTime.after(maghribDate) && nowTime.before(ishaDate)) {
             val salatTime = prayerTimes.ishaa().toString().dropLast(3)
-
             tv_prayer_time.text = Prayers.ISHA.prayer
             tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
             viewModel.getIntervalText(Prayers.ISHA, salatTime)
