@@ -22,15 +22,15 @@
             app:navigationIcon="@drawable/ic_back"
             app:title="@string/prayer_time"
             app:titleTextAppearance="@style/ToolbarTextAppearance"
-            app:titleTextColor="@android:color/white" >
+            app:titleTextColor="@android:color/white">
 
             <ImageView
+                android:id="@+id/menu_settings"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_settings_basic"
-                android:id="@+id/menu_settings"
-                android:layout_marginEnd="10dp"
                 android:layout_gravity="end"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_settings_basic"
                 app:tint="@color/colorWhite" />
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -42,10 +42,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:textSize="30sp"
-        android:textColor="@color/colorWhite"
         android:fontFamily="@font/quicksand_semibold"
         android:text="Accra, Ghana"
+        android:textColor="@color/colorWhite"
+        android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appBar" />
 
@@ -53,25 +53,25 @@
         android:id="@+id/textDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="@color/colorWhite"
-        android:fontFamily="@font/quicksand_semibold"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/quicksand_semibold"
         android:text="January 4, 2021"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_city" />
 
     <TextView
         android:id="@+id/textTime"
-        android:textSize="25sp"
-        android:fontFamily="@font/quicksand_semibold"
-        android:textColor="@color/colorWhite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/quicksand_semibold"
         android:text="18:00"
+        android:textColor="@color/colorWhite"
+        android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textDate" />
 
@@ -116,6 +116,27 @@
                     android:layout_marginEnd="40dp"
                     android:fontFamily="@font/quicksand_semibold"
                     android:text="05:30 AM" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnSoundFajr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivSoundFajr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_sound_off"
+                        app:tint="@color/colorPrimary" />
+                </com.google.android.material.card.MaterialCardView>
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -151,6 +172,27 @@
                     android:layout_marginEnd="40dp"
                     android:fontFamily="@font/quicksand_semibold"
                     android:text="05:30 AM" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnSoundDhur"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivSoundDhur"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_sound_off"
+                        app:tint="@color/colorPrimary" />
+                </com.google.android.material.card.MaterialCardView>
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -186,6 +228,27 @@
                     android:layout_marginEnd="40dp"
                     android:fontFamily="@font/quicksand_semibold"
                     android:text="05:30 AM" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnSoundAsr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivSoundAsr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_sound_off"
+                        app:tint="@color/colorPrimary" />
+                </com.google.android.material.card.MaterialCardView>
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -221,16 +284,37 @@
                     android:layout_marginEnd="40dp"
                     android:fontFamily="@font/quicksand_semibold"
                     android:text="05:30 AM" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnSoundMaghrib"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivSoundMaghrib"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_sound_off"
+                        app:tint="@color/colorPrimary" />
+                </com.google.android.material.card.MaterialCardView>
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardIsha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"
             app:cardElevation="3dp"
-            android:id="@+id/cardIsha"
             app:cardUseCompatPadding="true">
 
             <RelativeLayout
@@ -257,6 +341,27 @@
                     android:layout_marginEnd="40dp"
                     android:fontFamily="@font/quicksand_semibold"
                     android:text="05:30 AM" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnSoundIsha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/ivSoundIsha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_sound_off"
+                        app:tint="@color/colorPrimary" />
+                </com.google.android.material.card.MaterialCardView>
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -274,7 +379,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />-->
 
-    <Button
+    <!--<Button
         android:id="@+id/btn_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -283,7 +388,7 @@
         android:text="@string/refresh"
         android:textColor="@color/md_yellow_100"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDate" />
+        app:layout_constraintTop_toBottomOf="@+id/textDate" />-->
 
 
     <Button

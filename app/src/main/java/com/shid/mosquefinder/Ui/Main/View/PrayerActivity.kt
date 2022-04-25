@@ -1,7 +1,6 @@
 package com.shid.mosquefinder.Ui.Main.View
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -13,18 +12,18 @@ import androidx.lifecycle.lifecycleScope
 import com.azan.Azan
 import com.azan.Method
 import com.azan.astrologicalCalc.SimpleDate
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.Ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.Utils.*
 import kotlinx.android.synthetic.main.activity_prayer.*
-import kotlinx.android.synthetic.main.activity_prayer.toolbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.properties.Delegates
 
 class PrayerActivity : AppCompatActivity() {
 
@@ -32,6 +31,9 @@ class PrayerActivity : AppCompatActivity() {
     private lateinit var date: SimpleDate
     private var timeZone: Double? = null
     private lateinit var sharedPref: SharePref
+
+    val prayerAlarm = PrayerAlarmBroadcastReceiver()
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private lateinit var fusedLocationWrapper: FusedLocationWrapper
 
@@ -49,9 +51,21 @@ class PrayerActivity : AppCompatActivity() {
 
     private fun setUI() {
         sharedPref = SharePref(this)
-        if (userPosition == null){
+        if (userPosition == null) {
             userPosition = sharedPref.loadSavedPosition()
         }
+
+        val fajrIsReminderSet = sharedPref.loadFajrState()
+        val dhurIsReminderSet = sharedPref.loadDhurState()
+        val asrIsReminderSet = sharedPref.loadAsrState()
+        val maghribIsReminderSet = sharedPref.loadMaghribState()
+        val ishaIsReminderSet = sharedPref.loadIshaState()
+
+        ivSoundFajr.setImageResource(if (fajrIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+        ivSoundDhur.setImageResource(if (dhurIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+        ivSoundAsr.setImageResource(if (asrIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+        ivSoundMaghrib.setImageResource(if (maghribIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+        ivSoundIsha.setImageResource(if (ishaIsReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
         Timber.d("userPosition:$userPosition")
         timeZone = getTimeZone()
         Timber.d("timeZone:${timeZone.toString()}")
@@ -77,11 +91,103 @@ class PrayerActivity : AppCompatActivity() {
         btn_qibla.setOnClickListener {
             goToQibla()
         }
+
+        btnSoundFajr.setOnClickListener {
+            val fajr: String?
+            fajr = sharedPref.loadFajr()
+            val isReminderSet = !sharedPref.loadFajrState()
+
+            ivSoundFajr.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+
+            if (isReminderSet){
+                sharedPref.saveFajrState(isReminderSet)
+                fajr.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.FAJR,isReminderSet,Common.FAJR_INDEX) }
+            }else{
+                prayerAlarm.cancelAlarm(this,Common.FAJR_INDEX)
+                sharedPref.saveFajrState(isReminderSet)
+
+            }
+
+        }
+
+        btnSoundDhur.setOnClickListener {
+            val dhur: String?
+            dhur = sharedPref.loadDhur()
+            val isReminderSet = !sharedPref.loadDhurState()
+
+            ivSoundDhur.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+
+            if (isReminderSet){
+                Timber.d("value of Dhur:$dhur")
+                sharedPref.saveDhurState(isReminderSet)
+                dhur.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.DHUR,isReminderSet,Common.DHUR_INDEX) }
+            }else{
+                prayerAlarm.cancelAlarm(this,Common.DHUR_INDEX)
+                sharedPref.saveDhurState(isReminderSet)
+
+            }
+
+        }
+
+        btnSoundAsr.setOnClickListener {
+            val asr: String?
+            asr = sharedPref.loadAsr()
+            val isReminderSet = !sharedPref.loadAsrState()
+
+            ivSoundAsr.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+
+            if (isReminderSet){
+                sharedPref.saveAsrState(isReminderSet)
+                asr.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.ASR,isReminderSet,Common.ASR_INDEX) }
+            }else{
+                prayerAlarm.cancelAlarm(this,Common.ASR_INDEX)
+                sharedPref.saveAsrState(isReminderSet)
+
+            }
+
+        }
+
+        btnSoundMaghrib.setOnClickListener {
+            val maghrib: String?
+            maghrib = sharedPref.loadMaghrib()
+            val isReminderSet = !sharedPref.loadMaghribState()
+
+            ivSoundMaghrib.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+
+            if (isReminderSet){
+                sharedPref.saveMaghribState(isReminderSet)
+                maghrib.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.MAGHRIB,isReminderSet,Common.MAGHRIB_INDEX) }
+            }else{
+                prayerAlarm.cancelAlarm(this,Common.MAGHRIB_INDEX)
+                sharedPref.saveMaghribState(isReminderSet)
+
+            }
+
+        }
+
+        btnSoundIsha.setOnClickListener {
+            val isha: String?
+            isha = sharedPref.loadIsha()
+            val isReminderSet = !sharedPref.loadIshaState()
+
+            ivSoundIsha.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+
+            if (isReminderSet){
+                sharedPref.saveIshaState(isReminderSet)
+                isha.let { it1 -> prayerAlarm.setPrayerAlarm(this, it1,Common.ISHA,isReminderSet,Common.ISHA_INDEX) }
+            }else{
+                prayerAlarm.cancelAlarm(this,Common.ISHA_INDEX)
+                sharedPref.saveIshaState(isReminderSet)
+
+            }
+
+        }
+
+
     }
 
     private fun goToQibla() {
-        val intent = Intent(this, CompassActivity::class.java)
-        startActivity(intent)
+        startActivity<CompassActivity>()
     }
 
     private fun findCity(MyLat: Double, MyLong: Double) {
@@ -178,8 +284,7 @@ class PrayerActivity : AppCompatActivity() {
     }
 
     private fun goToSettings() {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
+        startActivity<SettingsActivity>()
     }
 
 

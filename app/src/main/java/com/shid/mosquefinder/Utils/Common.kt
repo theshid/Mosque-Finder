@@ -13,6 +13,24 @@ object Common {
     private const val GOOGLE_API_URL = "https://maps.googleapis.com/"
     private const val DEEPL_API_URL = " https://api-free.deepl.com/"
     private const val QURAN_API_URL = "http://api.alquran.cloud/"
+    const val FAJR = "Fajr"
+    const val DHUR = "Dhur"
+    const val ASR = "Asr"
+    const val MAGHRIB = "Maghrib"
+    const val ISHA = "Isha"
+
+    const val FAJR_STATE = "Fajr_STATE"
+    const val DHUR_STATE = "Dhur_STATE"
+    const val ASR_STATE = "Asr_STATE"
+    const val MAGHRIB_STATE = "Maghrib_STATE"
+    const val ISHA_STATE = "Isha_STATE"
+
+    const val FAJR_INDEX = 0
+    const val DHUR_INDEX = 1
+    const val ASR_INDEX = 2
+    const val MAGHRIB_INDEX = 3
+    const val ISHA_INDEX = 4
+
     var RC_SIGN_IN = 123
     var USER = "user"
     var USERS = "users"

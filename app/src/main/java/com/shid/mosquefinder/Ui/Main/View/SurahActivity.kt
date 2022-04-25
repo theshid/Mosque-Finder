@@ -1,34 +1,22 @@
 package com.shid.mosquefinder.Ui.Main.View
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.WindowManager
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.database.entities.Surah
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.Ui.Base.SearchViewModelFactory
 import com.shid.mosquefinder.Ui.Base.SurahViewModelFactory
 import com.shid.mosquefinder.Ui.Main.Adapter.SurahAdapter
-import com.shid.mosquefinder.Ui.Main.ViewModel.SearchViewModel
 import com.shid.mosquefinder.Ui.Main.ViewModel.SurahViewModel
-import com.shid.mosquefinder.Utils.Common
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
-import com.shid.mosquefinder.Utils.setTransparentStatusBar
-import kotlinx.android.synthetic.main.activity_search.*
+import com.shid.mosquefinder.Utils.startActivity
 import kotlinx.android.synthetic.main.activity_surah.*
-import kotlinx.android.synthetic.main.activity_surah.backButton
-import kotlinx.android.synthetic.main.activity_surah.searchEdit
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
 
@@ -132,8 +120,9 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
     }
 
     override fun onClickSurah(surah: Surah) {
-        var intent = Intent(this, AyahActivity::class.java)
-        intent.putExtra("surah_number", surah.id)
-        startActivity(intent)
+        startActivity<AyahActivity> {
+            putExtra("surah_number", surah.id)
+        }
+        
     }
 }

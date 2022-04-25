@@ -76,14 +76,11 @@ class HomeActivity : AppCompatActivity() {
         fusedLocationWrapper = fusedLocationWrapper()
         val bundle = intent.extras
         if (bundle != null) {
-            Timber.d("bundle coming in:" + bundle.keySet())
+            Timber.d("bundle coming in:%s", bundle.keySet())
             if (bundle.getString("text") != null) {
                 startActivity<BlogActivity>()
             }
 
-            /*val pendingIntent = NotificationHelper.getPendingIntent(this)
-            bundle.getString("text")
-                ?.let { NotificationHelper.showNotification(this,pendingIntent, it) }*/
         }
 
         displayAutoStartDialog()
@@ -245,42 +242,58 @@ class HomeActivity : AppCompatActivity() {
         return simpleDateFormat.parse(time)
     }
 
+
     private fun setNextPrayer(prayerTimes: AzanTimes) {
-        val fajr = initializePrayerDate(prayerTimes.fajr().toString().dropLast(3))
-        val dhur = initializePrayerDate(prayerTimes.thuhr().toString().dropLast(3))
-        val asr = initializePrayerDate(prayerTimes.assr().toString().dropLast(3))
-        val maghrib = initializePrayerDate(prayerTimes.maghrib().toString().dropLast(3))
-        val isha = initializePrayerDate(prayerTimes.ishaa().toString().dropLast(3))
+        val fajr = prayerTimes.fajr().toString().dropLast(3)
+        val dhur = prayerTimes.thuhr().toString().dropLast(3)
+        val asr = prayerTimes.assr().toString().dropLast(3)
+        val maghrib = prayerTimes.maghrib().toString().dropLast(3)
+        val isha = prayerTimes.ishaa().toString().dropLast(3)
+
+        val fajrDate = initializePrayerDate(fajr)
+        val dhurDate = initializePrayerDate(dhur)
+        val asrDate = initializePrayerDate(asr)
+        val maghribDate = initializePrayerDate(maghrib)
+        val ishaDate = initializePrayerDate(isha)
+
+        sharedPref.saveFajr(fajr)
+        sharedPref.saveDhur(dhur)
+        sharedPref.saveAsr(asr)
+        sharedPref.saveMaghrib(maghrib)
+        sharedPref.saveIsha(isha)
 
         val calendar = Calendar.getInstance()
         val simpleDateFormat = SimpleDateFormat("HH:mm")
         val nowTime = simpleDateFormat.parse(simpleDateFormat.format(calendar.time))
-        if (nowTime.after(fajr) && nowTime.before(dhur)) {
+        if (nowTime.after(fajrDate) && nowTime.before(dhurDate)) {
             val salatTime = prayerTimes.thuhr().toString().dropLast(3)
             tv_prayer_time.text = Prayers.DHUR.prayer
             tv_home_salat_time.text = salatTime
             viewModel.getIntervalText(Prayers.DHUR, salatTime)
-        } else if (nowTime.after(dhur) && nowTime.before(asr)) {
+        } else if (nowTime.after(dhurDate) && nowTime.before(asrDate)) {
             val salatTime = prayerTimes.assr().toString().dropLast(3)
             tv_prayer_time.text = Prayers.ASR.prayer
             tv_home_salat_time.text = prayerTimes.assr().toString().dropLast(3)
             viewModel.getIntervalText(Prayers.ASR, salatTime)
-        } else if (nowTime.after(asr) && nowTime.before(maghrib)) {
+        } else if (nowTime.after(asrDate) && nowTime.before(maghribDate)) {
             val salatTime = prayerTimes.maghrib().toString().dropLast(3)
             tv_prayer_time.text = Prayers.MAGHRIB.prayer
             tv_home_salat_time.text = prayerTimes.maghrib().toString().dropLast(3)
             viewModel.getIntervalText(Prayers.MAGHRIB, salatTime)
-        } else if (nowTime.after(maghrib) && nowTime.before(isha)) {
+        } else if (nowTime.after(maghribDate) && nowTime.before(ishaDate)) {
             val salatTime = prayerTimes.ishaa().toString().dropLast(3)
+
             tv_prayer_time.text = Prayers.ISHA.prayer
             tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
             viewModel.getIntervalText(Prayers.ISHA, salatTime)
         } else {
             val salatTime = prayerTimes.fajr().toString().dropLast(3)
+
             tv_prayer_time.text = Prayers.FAJR.prayer
             tv_home_salat_time.text = prayerTimes.fajr().toString().dropLast(3)
             viewModel.getIntervalText(Prayers.FAJR, salatTime)
         }
+
     }
 
     private fun setClickListeners() {

@@ -9,54 +9,48 @@ import com.shid.mosquefinder.R
 const val defaultLat = 33.97159194946289F
 const val defaultLng = -6.849812984466553F
 class SharePref(context: Context) {
-    private val mySharePref: SharedPreferences
+    private val mySharePref: SharedPreferences = context.getSharedPreferences("filename", Context.MODE_PRIVATE)
     val mContext = context
+    var editor:SharedPreferences.Editor = mySharePref.edit()
+
 
     fun saveUserPosition(savedPosition: LatLng) {
-        val editor = mySharePref.edit()
         editor.putFloat("position_lat", savedPosition.latitude.toFloat())
         editor.putFloat("position_lon", savedPosition.longitude.toFloat())
         editor.apply()
     }
 
     fun saveUseCount(count:Int){
-        val editor:SharedPreferences.Editor = mySharePref.edit()
         editor.putInt("use_count",count)
         editor.apply()
     }
 
     fun saveIfUserRated(rated: Boolean){
-        val editor:SharedPreferences.Editor = mySharePref.edit()
         editor.putBoolean("rate",rated)
         editor.apply()
     }
 
     fun setIsFirstTime(firstTime:Boolean){
-        val editor = mySharePref.edit()
         editor.putBoolean("first_time",firstTime)
         editor.apply()
     }
 
     fun setFirstTimeAyah(firstTime:Boolean){
-        val editor = mySharePref.edit()
         editor.putBoolean("first_time_ayah",firstTime)
         editor.apply()
     }
 
     fun setFirstTime(firstTime:Boolean){
-        val editor = mySharePref.edit()
         editor.putBoolean("first_time_bis",firstTime)
         editor.apply()
     }
 
     fun saveSwitchState(state:Boolean){
-        val editor = mySharePref.edit()
         editor.putBoolean(mContext.getString(R.string.pref_notification_key),state)
         editor.apply()
     }
 
     fun saveUser(user:String){
-        val editor = mySharePref.edit()
         editor.putString("user",user)
         editor.apply()
     }
@@ -65,9 +59,118 @@ class SharePref(context: Context) {
         if (TextUtils.isEmpty(token)){
             return
         }
-        val editor = mySharePref.edit()
         editor.putString("token",token)
         editor.apply()
+    }
+
+    fun saveFajr(prayer:String){
+        editor.putString(Common.FAJR,prayer)
+        editor.apply()
+    }
+
+    fun saveDhur(prayer:String){
+        editor.putString(Common.DHUR,prayer)
+        editor.apply()
+    }
+
+    fun saveAsr(prayer:String){
+        editor.putString(Common.ASR,prayer)
+        editor.apply()
+    }
+
+    fun saveMaghrib(prayer:String){
+        editor.putString(Common.MAGHRIB,prayer)
+        editor.apply()
+    }
+
+    fun saveIsha(prayer:String){
+        editor.putString(Common.ISHA,prayer)
+        editor.apply()
+    }
+
+    fun saveFajrState(state:Boolean){
+        editor.putBoolean(Common.FAJR_STATE,state)
+        editor.apply()
+    }
+
+    fun saveDhurState(state:Boolean){
+        editor.putBoolean(Common.DHUR_STATE,state)
+        editor.apply()
+    }
+
+    fun saveAsrState(state:Boolean){
+        editor.putBoolean(Common.ASR_STATE,state)
+        editor.apply()
+    }
+
+    fun saveMaghribState(state:Boolean){
+        editor.putBoolean(Common.MAGHRIB_STATE,state)
+        editor.apply()
+    }
+
+    fun saveIshaState(state:Boolean){
+        editor.putBoolean(Common.ISHA_STATE,state)
+        editor.apply()
+    }
+
+    fun loadFajrState():Boolean{
+        return mySharePref.getBoolean(Common.FAJR_STATE,false)
+    }
+
+    fun loadDhurState():Boolean{
+        return mySharePref.getBoolean(Common.DHUR_STATE,false)
+    }
+
+    fun loadAsrState():Boolean{
+        return mySharePref.getBoolean(Common.ASR_STATE,false)
+    }
+
+    fun loadMaghribState():Boolean{
+        return mySharePref.getBoolean(Common.MAGHRIB_STATE,false)
+    }
+
+    fun loadIshaState():Boolean{
+        return mySharePref.getBoolean(Common.ISHA_STATE,false)
+    }
+
+    fun loadFajr():String{
+        return mySharePref.getString(Common.FAJR,"").toString()
+    }
+
+    fun loadDhur():String{
+        return mySharePref.getString(Common.DHUR,"").toString()
+    }
+
+    fun loadAsr():String{
+        return mySharePref.getString(Common.ASR,"").toString()
+    }
+
+    fun loadMaghrib():String{
+        return mySharePref.getString(Common.MAGHRIB,"").toString()
+    }
+
+    fun loadIsha():String{
+        return mySharePref.getString(Common.ISHA,"").toString()
+    }
+
+    fun savePrayersTime(prayers:HashMap<String,String>){
+        val prayerTime = GsonParser.gsonParser?.toJson(prayers)
+        editor.putString("prayers",prayerTime)
+        editor.apply()
+    }
+
+    fun loadPrayersTime():String{
+        return mySharePref.getString("prayers","").toString()
+    }
+
+    fun saveReminderTime(reminder:HashMap<String,Boolean>){
+        val prayerTime = GsonParser.gsonParser?.toJson(reminder)
+        editor.putString("reminder",prayerTime)
+        editor.apply()
+    }
+
+    fun isReminderSet():String{
+        return mySharePref.getString("reminder","").toString()
     }
 
     fun loadFirebaseToken():String{
@@ -109,8 +212,4 @@ class SharePref(context: Context) {
     }
 
 
-
-    init {
-        mySharePref = context.getSharedPreferences("filename", Context.MODE_PRIVATE)
-    }
 }
