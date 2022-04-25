@@ -9,12 +9,10 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
-import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -34,7 +32,6 @@ import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.android.play.core.review.ReviewInfo
@@ -50,7 +47,6 @@ import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.Data.Model.ClusterMarker
 import com.shid.mosquefinder.Data.Model.Mosque
-import com.shid.mosquefinder.Data.Model.Pojo.GoogleMosque
 import com.shid.mosquefinder.Data.Model.User
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.Ui.Base.MapViewModelFactory
@@ -58,8 +54,6 @@ import com.shid.mosquefinder.Ui.Main.ViewModel.MapViewModel
 import com.shid.mosquefinder.Utils.*
 import com.shid.mosquefinder.Utils.Network.Event
 import com.shid.mosquefinder.Utils.Network.NetworkEvents
-import fr.quentinklein.slt.LocationTracker
-import fr.quentinklein.slt.ProviderError
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -539,7 +533,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         mapViewModel.retrieveStatusMsg().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+                    val rootView = findViewById<View>(android.R.id.content)
+                    it.data?.let { it1 -> showSnackbar(rootView, it1) }
+                    //Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
                 }
                 Status.LOADING -> {
 
@@ -840,11 +836,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private fun prepareMapForInput() {
         resetMap()
-        Toast.makeText(this, getString(R.string.toast_marker), Toast.LENGTH_LONG).show()
+        val rootView = findViewById<View>(android.R.id.content)
+        showSnackbar(rootView, getString(R.string.toast_marker), duration = -2)
+        //Toast.makeText(this, getString(R.string.toast_marker), Toast.LENGTH_LONG).show()
         addSingleMarker()
     }
 
     private fun addSingleMarker() {
+        button.show()
         markerManager = MarkerManager(mMap)
         markerCollection = markerManager!!.newCollection()
         markerCollection!!.addMarker(
@@ -883,6 +882,11 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
             true
         }
+        button.setOnClickListener {
+            mosqueeDePlace(userPosition!!)
+            userPosition?.let { addMapMarkers(it) }
+            button.remove()
+        }
     }
 
     private fun mosqueInputDialog(userPositionToAdd: LatLng) {
@@ -896,17 +900,21 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 val inputField = dialog.getInputField().text.toString()
 
                 dialog.cancel()
+                this@MapsActivity2.button.remove()
                 saveMosqueInputInDatabase(userPositionToAdd, inputField)
                 mosqueeDePlace(userPositionToAdd)
                 userPosition?.let { addMapMarkers(it) }
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
+                this@MapsActivity2.button.remove()
                 mosqueeDePlace(userPositionToAdd)
                 userPosition?.let { addMapMarkers(it) }
             }
+
             icon(R.drawable.logo2)
         }
+
     }
 
     private fun saveMosqueInputInDatabase(userPosition: LatLng, inputField: String) {
@@ -1003,7 +1011,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                 String.format(getString(R.string.km_test), sortedMosqueList[2].distanceFromUser)
             mosque_third_distance.text =
                 String.format(getString(R.string.km_test), sortedMosqueList[3].distanceFromUser)
-
+            Timber.d(sortedMosqueList[1].title.toString())
             mosque_un.text = sortedMosqueList[1].title
             mosque_deux.text = sortedMosqueList[2].title
             mosque_trois.text = sortedMosqueList[3].title

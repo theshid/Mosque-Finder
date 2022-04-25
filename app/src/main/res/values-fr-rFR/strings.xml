@@ -17,8 +17,8 @@
     <string name="toast_permission">Veuillez accepter les autorisations</string>
     <string name="email_message">Envoyer un email à mosquefinder@gmail.com</string>
     <string name="toast_log_in_msg">Vous êtes connecté en tant que: %1$s</string>
-    <string name="toast_marker">Déplacez le marqueur a l\'endroit ou se trouve la mosquée,
-    si vous vous trouvez sur place appuyez sur le marqueur rouge</string>
+    <string name="toast_marker">Maintenez et Déplacez le marqueur rouge a l\'endroit ou se trouve la mosquée,
+    une fois trouvé, appuyez sur le marqueur rouge pour confirmer la position</string>
 
     //Snackbar
     <string name="sneaker_connected">Connecté!!</string>

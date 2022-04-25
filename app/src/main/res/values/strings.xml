@@ -16,7 +16,7 @@
     <string name="toast_permission">Please accept Permissions</string>
     <string name="email_message">Send email to mosquefinder@gmail.com</string>
     <string name="toast_log_in_msg">You are logged in as: %1$s</string>
-    <string name="toast_marker">Hold and drag the marker to where the mosque is, then press on the marker</string>
+    <string name="toast_marker">Hold and drag the red marker to desired position. Tap marker to add mosque information</string>
 
     //Snackbar
     <string name="sneaker_connected">Connected!!</string>

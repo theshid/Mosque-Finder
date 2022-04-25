@@ -3,7 +3,7 @@ package com.shid.mosquefinder.Utils
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 
-fun showSnackBar(view: View, text: String) {
+fun showSnackBarTest(view: View, text: String) {
     val snackbar = Snackbar.make(
         view,
         text,
