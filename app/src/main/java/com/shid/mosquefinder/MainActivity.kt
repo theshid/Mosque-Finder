@@ -10,9 +10,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.shid.mosquefinder.Data.Model.User
-import com.shid.mosquefinder.Ui.Main.View.AuthActivity
-import com.shid.mosquefinder.Utils.Common.USER
+import com.shid.mosquefinder.data.model.User
+import com.shid.mosquefinder.ui.Main.View.AuthActivity
+import com.shid.mosquefinder.utils.Common.USER
 import kotlinx.android.synthetic.main.activity_main.*
 
 

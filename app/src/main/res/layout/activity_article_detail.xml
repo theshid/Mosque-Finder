@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Ui.Main.View.ArticleDetailActivity"
+    tools:context=".ui.Main.View.ArticleDetailActivity"
     android:fitsSystemWindows="true"
     android:background="@color/colorPrimary">
 

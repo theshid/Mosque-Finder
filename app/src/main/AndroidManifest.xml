@@ -27,17 +27,17 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".Ui.Main.View.ArticleDetailActivity"
+            android:name=".ui.Main.View.ArticleDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".Ui.Main.View.BlogActivity"
+            android:name=".ui.Main.View.BlogActivity"
             android:exported="false" />
         <activity
-            android:name=".Ui.Main.View.CompassActivity"
+            android:name=".ui.Main.View.CompassActivity"
             android:exported="false" />
 
         <receiver
-            android:name=".Ui.broadcast_receiver.DbReceiver"
+            android:name=".ui.broadcast_receiver.DbReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -45,19 +45,19 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".Ui.Main.View.LoadingActivity" />
+        <activity android:name=".ui.Main.View.LoadingActivity" />
         <activity
-            android:name=".Ui.Main.View.SettingsActivity"
+            android:name=".ui.Main.View.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".Ui.Main.View.ItemActivity" />
-        <activity android:name=".Ui.Main.View.ChapterActivity" />
+        <activity android:name=".ui.Main.View.ItemActivity" />
+        <activity android:name=".ui.Main.View.ChapterActivity" />
 
         <service
-            android:name=".Ui.services.SurahDLService"
+            android:name=".ui.services.SurahDLService"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".Ui.services.MusicService"
+            android:name=".ui.services.MusicService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -65,46 +65,46 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Ui.Main.View.MusicActivity" />
-        <activity android:name=".Ui.Main.View.PrayerActivity" />
+        <activity android:name=".ui.Main.View.MusicActivity" />
+        <activity android:name=".ui.Main.View.PrayerActivity" />
         <activity
-            android:name=".Ui.Main.View.HomeActivity"
+            android:name=".ui.Main.View.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.NamesActivity"
+            android:name=".ui.Main.View.NamesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.CategoriesActivity"
+            android:name=".ui.Main.View.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.AyahActivity"
+            android:name=".ui.Main.View.AyahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.SurahActivity"
+            android:name=".ui.Main.View.SurahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.TestActivity"
+            android:name=".ui.Main.View.TestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.DetailActivity"
+            android:name=".ui.Main.View.DetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.BeautifulMosquesActivity"
+            android:name=".ui.Main.View.BeautifulMosquesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.SearchActivity"
+            android:name=".ui.Main.View.SearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.QuotesActivity"
+            android:name=".ui.Main.View.QuotesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.CreditsActivity"
+            android:name=".ui.Main.View.CreditsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.FeedbackActivity"
+            android:name=".ui.Main.View.FeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.SplashActivity"
+            android:name=".ui.Main.View.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -114,10 +114,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
+            android:name=".ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
             android:theme="@style/AppTheme.OnBoarding" />
         <activity
-            android:name=".Ui.Main.View.AuthActivity"
+            android:name=".ui.Main.View.AuthActivity"
             android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -132,7 +132,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Ui.Main.View.MapsActivity2"
+            android:name=".ui.Main.View.MapsActivity2"
             android:label="@string/title_activity_maps"
             android:screenOrientation="fullSensor"
             android:theme="@style/HomeTheme" />
@@ -140,7 +140,7 @@
             android:name=".MainActivity"
             android:theme="@style/AppTheme" />
         <service
-            android:name=".Ui.services.MyFirebaseMessagingService"
+            android:name=".ui.services.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

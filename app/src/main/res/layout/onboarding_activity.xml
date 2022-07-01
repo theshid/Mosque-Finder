@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.customView.OnBoardingView
+<com.shid.mosquefinder.ui.onboardingscreen.feature.onboarding.customView.OnBoardingView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
@@ -7,6 +7,6 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/colorWhite"
-    tools:context=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity">
+    tools:context=".ui.onboardingscreen.feature.onboarding.OnBoardingActivity">
 
-</com.shid.mosquefinder.Ui.onboardingscreen.feature.onboarding.customView.OnBoardingView>
+</com.shid.mosquefinder.ui.onboardingscreen.feature.onboarding.customView.OnBoardingView>
