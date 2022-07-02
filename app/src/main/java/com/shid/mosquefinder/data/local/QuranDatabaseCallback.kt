@@ -9,9 +9,8 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.data.database.QuranDao
-import com.shid.mosquefinder.data.database.QuranDatabase
 import com.shid.mosquefinder.data.database.entities.*
-import com.shid.mosquefinder.ui.Main.View.LoadingActivity
+import com.shid.mosquefinder.ui.main.views.LoadingActivity
 import com.shid.mosquefinder.utils.loadJsonArray
 import kotlinx.coroutines.*
 import org.json.JSONArray
@@ -23,33 +22,35 @@ import java.io.IOException
 import java.io.InputStreamReader
 import javax.inject.Inject
 
-class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScope,
-                                                private val resources: Resources,
-                                                private val mContext: Context,
-                                                private val database: QuranDatabase,
-                                                private val dao:QuranDao
-) : RoomDatabase.Callback(){
+class QuranDatabaseCallback @Inject constructor(
+    private val scope: CoroutineScope,
+    private val resources: Resources,
+    private val mContext: Context,
+    private val dao: QuranDao
+) : RoomDatabase.Callback() {
+
+
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
 
-            scope.launch {
-                async { loadAyah(dao,mContext) }.await()
-                async { loadNames(dao) }.await()
-                async { loadSurahs(dao) }.await()
+        scope.launch {
+            async { loadAyah(dao, mContext) }.await()
+            async { loadNames(dao) }.await()
+            async { loadSurahs(dao) }.await()
 
-            }
+        }
 
     }
 
-    private suspend fun loadSurahs(surahDao: QuranDao){
-        GlobalScope.launch(Dispatchers.IO){
+    private suspend fun loadSurahs(surahDao: QuranDao) {
+        GlobalScope.launch(Dispatchers.IO) {
             val surahs = loadSurahsJsonArray()
             try {
                 for (i in 0 until surahs!!.length()) {
                     val surah = surahs.getJSONObject(i)
 
                     try {
-                        Log.d("Db","insertion surah")
+                        Log.d("Db", "insertion surah")
                         surahDao.insertSurah(
                             Surah(
                                 surah.getInt("number"), surah.getString("name"),
@@ -71,9 +72,9 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
         }
     }
 
-    private suspend fun loadNames(surahDao: QuranDao){
-        GlobalScope.launch(Dispatchers.IO){
-            val categories = loadJsonArray(resources, R.raw.category,"categories")
+    private suspend fun loadNames(surahDao: QuranDao) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val categories = loadJsonArray(resources, R.raw.category, "categories")
 
             try {
                 for (i in 0 until categories!!.length()) {
@@ -82,7 +83,8 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
                     try {
                         Timber.d("Db:insertion Categories")
                         surahDao.insertCategory(
-                            Category(0,
+                            Category(
+                                0,
                                 category.getString("category_name")
 
                             )
@@ -97,7 +99,7 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
                 e.printStackTrace()
             }
 
-            val chapters = loadJsonArray(resources, R.raw.chapter,"chapters")
+            val chapters = loadJsonArray(resources, R.raw.chapter, "chapters")
 
             try {
                 for (i in 0 until chapters!!.length()) {
@@ -106,7 +108,8 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
                     try {
                         Timber.d("Db: insertion chapters")
                         surahDao.insertChapter(
-                            Chapter(0,
+                            Chapter(
+                                0,
                                 chapter.getString("chapter_name"),
                                 chapter.getInt("category_id")
                             )
@@ -121,7 +124,7 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
                 e.printStackTrace()
             }
 
-            val divineNames = loadJsonArray(resources, R.raw.noms,"noms")
+            val divineNames = loadJsonArray(resources, R.raw.noms, "noms")
             try {
                 for (i in 0 until divineNames!!.length()) {
                     val divineName = divineNames.getJSONObject(i)
@@ -129,7 +132,8 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
                     try {
                         Timber.d("Db: insertion divine names")
                         surahDao.insertDivineName(
-                            DivineName(0,
+                            DivineName(
+                                0,
                                 divineName.getString("name")
                             )
                         )
@@ -146,8 +150,8 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
     }
 
     private suspend fun loadAyah(surahDao: QuranDao, context: Context) {
-        GlobalScope.launch(Dispatchers.IO){
-            val ayahs = loadJsonArray(resources, R.raw.quran,"ayahs")
+        GlobalScope.launch(Dispatchers.IO) {
+            val ayahs = loadJsonArray(resources, R.raw.quran, "ayahs")
 
             try {
                 for (i in 0 until ayahs!!.length()) {
@@ -156,7 +160,8 @@ class QuranDatabaseCallback @Inject constructor(private val scope: CoroutineScop
                     try {
                         Timber.d("Db: insertion ayah")
                         surahDao.insertAyah(
-                            Ayah(0,
+                            Ayah(
+                                0,
                                 ayah.getInt("surah_number"), ayah.getInt("verse_number"),
                                 ayah.getString("text"),
                                 ayah.getString("translation")

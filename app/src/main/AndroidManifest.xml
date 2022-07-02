@@ -27,13 +27,13 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.Main.View.ArticleDetailActivity"
+            android:name=".ui.main.views.ArticleDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.Main.View.BlogActivity"
+            android:name=".ui.main.views.BlogActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.Main.View.CompassActivity"
+            android:name=".ui.main.views.CompassActivity"
             android:exported="false" />
 
         <receiver
@@ -45,12 +45,12 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.Main.View.LoadingActivity" />
+        <activity android:name=".ui.main.views.LoadingActivity" />
         <activity
-            android:name=".ui.Main.View.SettingsActivity"
+            android:name=".ui.main.views.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".ui.Main.View.ItemActivity" />
-        <activity android:name=".ui.Main.View.ChapterActivity" />
+        <activity android:name=".ui.main.views.AzkharActivity" />
+        <activity android:name=".ui.main.views.ChapterActivity" />
 
         <service
             android:name=".ui.services.SurahDLService"
@@ -65,46 +65,46 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".ui.Main.View.MusicActivity" />
-        <activity android:name=".ui.Main.View.PrayerActivity" />
+        <activity android:name=".ui.main.views.MusicActivity" />
+        <activity android:name=".ui.main.views.PrayerActivity" />
         <activity
-            android:name=".ui.Main.View.HomeActivity"
+            android:name=".ui.main.views.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.NamesActivity"
+            android:name=".ui.main.views.NamesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.CategoriesActivity"
+            android:name=".ui.main.views.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.AyahActivity"
+            android:name=".ui.main.views.AyahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.SurahActivity"
+            android:name=".ui.main.views.SurahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.TestActivity"
+            android:name=".ui.main.views.TestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.DetailActivity"
+            android:name=".ui.main.views.DetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.BeautifulMosquesActivity"
+            android:name=".ui.main.views.BeautifulMosquesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.SearchActivity"
+            android:name=".ui.main.views.SearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.QuotesActivity"
+            android:name=".ui.main.views.QuotesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.CreditsActivity"
+            android:name=".ui.main.views.CreditsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.FeedbackActivity"
+            android:name=".ui.main.views.FeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.Main.View.SplashActivity"
+            android:name=".ui.main.views.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -117,7 +117,7 @@
             android:name=".ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
             android:theme="@style/AppTheme.OnBoarding" />
         <activity
-            android:name=".ui.Main.View.AuthActivity"
+            android:name=".ui.main.views.AuthActivity"
             android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -132,7 +132,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".ui.Main.View.MapsActivity2"
+            android:name=".ui.main.views.MapsActivity2"
             android:label="@string/title_activity_maps"
             android:screenOrientation="fullSensor"
             android:theme="@style/HomeTheme" />

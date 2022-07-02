@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shid.mosquefinder.data.repository.ChapterRepository
-import com.shid.mosquefinder.ui.Main.ViewModel.ChapterViewModel
+import com.shid.mosquefinder.ui.main.view_models.ChapterViewModel
 
 class ChapterViewModelFactory(application: Application,chapterRepository: ChapterRepository)
     :ViewModelProvider.Factory {

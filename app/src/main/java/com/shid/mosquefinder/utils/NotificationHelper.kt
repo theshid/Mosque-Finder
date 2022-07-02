@@ -11,7 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.ui.Main.View.BlogActivity
+import com.shid.mosquefinder.ui.main.views.BlogActivity
 import com.shid.mosquefinder.ui.services.downloadUtil.NotificationHelper.Companion.CHANNEL_ID
 
 object NotificationHelper {

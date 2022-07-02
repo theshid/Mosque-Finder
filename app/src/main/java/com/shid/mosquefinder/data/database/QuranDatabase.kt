@@ -1,30 +1,8 @@
 package com.shid.mosquefinder.data.database
 
-import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
-import android.util.Log
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.data.database.entities.*
-import com.shid.mosquefinder.R
-import com.shid.mosquefinder.ui.Main.View.LoadingActivity
-import com.shid.mosquefinder.utils.loadJsonArray
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
-import timber.log.Timber
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 
 @Database(entities = [Surah::class, Ayah::class, Category::class, Chapter::class, DivineName::class,
                      Item::class], version = 3,exportSchema = true)

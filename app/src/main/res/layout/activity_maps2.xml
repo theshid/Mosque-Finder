@@ -8,7 +8,7 @@
     android:fitsSystemWindows="false"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".ui.Main.View.MapsActivity2">
+    tools:context=".ui.main.views.MapsActivity2">
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

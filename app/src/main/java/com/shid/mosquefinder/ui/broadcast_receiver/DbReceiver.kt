@@ -3,7 +3,7 @@ package com.shid.mosquefinder.ui.broadcast_receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.shid.mosquefinder.ui.Main.View.LoadingActivity
+import com.shid.mosquefinder.ui.main.views.LoadingActivity
 import timber.log.Timber
 
 class DbReceiver : BroadcastReceiver() {

@@ -3,7 +3,7 @@ package com.shid.mosquefinder.ui.Base
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.shid.mosquefinder.ui.Main.ViewModel.AuthViewModel
+import com.shid.mosquefinder.ui.main.view_models.AuthViewModel
 
 class AuthViewModelFactory constructor(application: Application) : ViewModelProvider.Factory {
 

@@ -3,7 +3,7 @@ package com.shid.mosquefinder.ui.Base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shid.mosquefinder.data.repository.BeautifulMosquesRepository
-import com.shid.mosquefinder.ui.Main.ViewModel.BeautifulMosquesViewModel
+import com.shid.mosquefinder.ui.main.view_models.BeautifulMosquesViewModel
 
 class BeautifulMosquesViewModelFactory():ViewModelProvider.Factory {
 

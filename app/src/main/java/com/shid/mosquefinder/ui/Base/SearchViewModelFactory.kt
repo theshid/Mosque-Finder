@@ -3,14 +3,14 @@ package com.shid.mosquefinder.ui.Base
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.shid.mosquefinder.data.model.Api.ApiInterface
+import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
 import com.shid.mosquefinder.data.repository.MapRepository
-import com.shid.mosquefinder.ui.Main.ViewModel.SearchViewModel
+import com.shid.mosquefinder.ui.main.view_models.SearchViewModel
 
-class SearchViewModelFactory constructor(apiInterface: ApiInterface, application: Application) : ViewModelProvider.Factory  {
+class SearchViewModelFactory constructor(googleApiInterface: GoogleApiInterface, application: Application) : ViewModelProvider.Factory  {
 
     val mApplication = application
-    val mApiInterface = apiInterface
+    val mApiInterface = googleApiInterface
 
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

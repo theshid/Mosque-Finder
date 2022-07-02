@@ -14,7 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.ui.Main.View.HomeActivity
+import com.shid.mosquefinder.ui.main.views.HomeActivity
 import com.shid.mosquefinder.utils.Common
 import com.shid.mosquefinder.utils.SharePref
 import com.shid.mosquefinder.utils.TimeUtil.hour

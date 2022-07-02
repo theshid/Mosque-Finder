@@ -1,6 +1,7 @@
 package com.shid.mosquefinder.app
 
 import android.content.Context
+import android.content.res.Resources
 import androidx.work.WorkManager
 import com.shid.mosquefinder.utils.SharePref
 import dagger.Module
@@ -24,7 +25,7 @@ object CoreModule {
 
     @Provides
     @Singleton
-    fun providesResources(@ApplicationContext context: Context) = context.resources
+    fun providesResources(@ApplicationContext context: Context):Resources = context.resources
 
     @Provides
     @Singleton

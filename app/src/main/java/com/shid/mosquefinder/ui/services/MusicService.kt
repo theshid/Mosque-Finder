@@ -16,7 +16,7 @@ import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.shid.mosquefinder.ui.Main.View.MusicActivity
+import com.shid.mosquefinder.ui.main.views.MusicActivity
 import com.shid.mosquefinder.R
 
 private const val MY_EMPTY_MEDIA_ROOT_ID = "empty_root_id"

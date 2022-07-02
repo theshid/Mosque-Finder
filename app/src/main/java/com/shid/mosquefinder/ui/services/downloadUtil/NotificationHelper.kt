@@ -10,7 +10,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.ui.Main.View.AyahActivity
+import com.shid.mosquefinder.ui.main.views.AyahActivity
 
 
 @RequiresApi(Build.VERSION_CODES.M)

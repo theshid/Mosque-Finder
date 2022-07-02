@@ -3,7 +3,7 @@ package com.shid.mosquefinder.ui.Base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shid.mosquefinder.data.repository.QuoteRepository
-import com.shid.mosquefinder.ui.Main.ViewModel.QuotesViewModel
+import com.shid.mosquefinder.ui.main.view_models.QuotesViewModel
 
 class QuotesViewModelFactory ():ViewModelProvider.Factory {
 

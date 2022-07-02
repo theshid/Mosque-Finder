@@ -1,37 +1,20 @@
 package com.shid.mosquefinder.app
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Resources
-import android.util.Log
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.shid.mosquefinder.R
 import com.shid.mosquefinder.data.database.QuranDao
 import com.shid.mosquefinder.data.database.QuranDatabase
-import com.shid.mosquefinder.data.database.entities.*
 import com.shid.mosquefinder.data.local.QuranDatabaseCallback
-import com.shid.mosquefinder.ui.Main.View.LoadingActivity
-import com.shid.mosquefinder.utils.loadJsonArray
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
-import timber.log.Timber
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 import javax.inject.Singleton
 
 @Module

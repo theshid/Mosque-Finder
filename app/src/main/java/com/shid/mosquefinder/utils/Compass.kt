@@ -8,7 +8,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
-import com.shid.mosquefinder.ui.Main.View.CompassActivity
+import com.shid.mosquefinder.ui.main.views.CompassActivity
 import timber.log.Timber
 import kotlin.math.atan2
 import kotlin.math.cos

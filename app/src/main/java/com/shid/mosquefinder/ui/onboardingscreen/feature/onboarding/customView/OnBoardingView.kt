@@ -10,7 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.omni.onboardingscreen.feature.onboarding.OnBoardingPagerAdapter
 import com.omni.onboardingscreen.feature.onboarding.entity.OnBoardingPage
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.ui.Main.View.HomeActivity
+import com.shid.mosquefinder.ui.main.views.HomeActivity
 import com.shid.mosquefinder.ui.onboardingscreen.domain.OnBoardingPrefManager
 import com.shid.mosquefinder.ui.onboardingscreen.feature.onboarding.OnBoardingActivity
 import com.shid.mosquefinder.utils.Common

@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shid.mosquefinder.data.repository.AyahRepository
-import com.shid.mosquefinder.ui.Main.ViewModel.AyahViewModel
+import com.shid.mosquefinder.ui.main.view_models.AyahViewModel
 
 
 class AyahViewModelFactory constructor( application: Application,ayahRepository: AyahRepository) : ViewModelProvider.Factory  {

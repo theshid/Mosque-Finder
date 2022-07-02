@@ -4,14 +4,19 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.shid.mosquefinder.data.api.ApiClient
-import com.shid.mosquefinder.data.model.Api.ApiInterface
+import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object Common {
-    private const val GOOGLE_API_URL = "https://maps.googleapis.com/"
-    private const val DEEPL_API_URL = " https://api-free.deepl.com/"
-    private const val QURAN_API_URL = "http://api.alquran.cloud/"
+     const val GOOGLE_API_URL = "https://maps.googleapis.com/"
+    const val DEEPL_API_URL = " https://api-free.deepl.com/"
+     const val QURAN_API_URL = "http://api.alquran.cloud/"
+
+    const val GOOGLE = "Google"
+    const val DEEPL = "DeepL"
+    const val QURAN = "Quran"
+
     const val FAJR = "Fajr"
     const val DHUR = "Dhur"
     const val ASR = "Asr"
@@ -43,14 +48,14 @@ object Common {
     }
 
 
-    val googleApiService: ApiInterface
-        get() = ApiClient.getClient(GOOGLE_API_URL).create(ApiInterface::class.java)
+    val googleApiService: GoogleApiInterface
+        get() = ApiClient.getClient(GOOGLE_API_URL).create(GoogleApiInterface::class.java)
 
-    val deeplApiService: ApiInterface
-        get() = ApiClient.getClient(DEEPL_API_URL).create(ApiInterface::class.java)
+    val deeplApiService: GoogleApiInterface
+        get() = ApiClient.getClient(DEEPL_API_URL).create(GoogleApiInterface::class.java)
 
-    val frenchQuranApiService: ApiInterface
-        get() = ApiClient.getClient(QURAN_API_URL).create(ApiInterface::class.java)
+    val frenchQuranApiService: GoogleApiInterface
+        get() = ApiClient.getClient(QURAN_API_URL).create(GoogleApiInterface::class.java)
 
     suspend fun retrievePushId(context: Context):String?{
         return suspendCoroutine { cont ->

@@ -12,10 +12,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.*
 import com.google.firebase.ktx.Firebase
-import com.shid.mosquefinder.data.model.Api.ApiInterface
+import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.Mosque
-import com.shid.mosquefinder.data.model.Pojo.GoogleMosque
-import com.shid.mosquefinder.data.model.Pojo.Place
+import com.shid.mosquefinder.data.model.pojo.GoogleMosque
+import com.shid.mosquefinder.data.model.pojo.Place
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.utils.Common
@@ -27,7 +27,7 @@ import timber.log.Timber
 import java.lang.StringBuilder
 import java.util.HashMap
 
-class MapRepository constructor(mService: ApiInterface, application: Application) {
+class MapRepository constructor(mService: GoogleApiInterface, application: Application) {
     private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
     private lateinit var mMosqueListEventListener: ListenerRegistration
