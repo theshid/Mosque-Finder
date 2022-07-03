@@ -8,9 +8,10 @@ import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 
 import com.shid.mosquefinder.ConnectivityStateHolder.registerConnectivityBroadcaster
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
-
+@HiltAndroidApp
 class App : Application() {
 
     companion object {

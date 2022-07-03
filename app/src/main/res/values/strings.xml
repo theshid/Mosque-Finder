@@ -259,6 +259,8 @@
     <string name="text_post_header">Post Header</string>
     <string name="blog_section">Blog Section</string>
     <string name="handle_notification_now">Test</string>
+    <string name="error_check_internet_connection">Check Internet Connection</string>
+    <string name="error_oops_error_occured">Oops!! An Error occurred</string>
 
 
 </resources>
