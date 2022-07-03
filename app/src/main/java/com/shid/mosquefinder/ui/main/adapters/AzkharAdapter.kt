@@ -13,7 +13,7 @@ import dev.kosrat.muslimdata.models.AzkarItem
 import kotlinx.android.synthetic.main.item_azkhar.view.*
 import java.util.*
 
-internal class AzkharAdapter(val viewModel: AzkharViewModel, val listener: (AzkarItem) -> Unit) :
+internal class AzkharAdapter(val listener: (AzkarItem) -> Unit) :
     ListAdapter<AzkarItem, AzkharAdapter.ItemViewHolder>(DIFF_CALLBACK) {
 
 

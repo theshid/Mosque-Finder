@@ -1,21 +1,15 @@
 package com.shid.mosquefinder.ui.main.view_models
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.shid.mosquefinder.data.remote.usecases.GetTranslationUseCase
 import com.shid.mosquefinder.ui.main.mappers.toPresentation
 import com.shid.mosquefinder.ui.main.states.AzkharViewState
 import com.shid.mosquefinder.ui.main.states.Error
-import com.shid.mosquefinder.ui.models.DeeplPresentation
 import com.shid.mosquefinder.utils.ExceptionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.kosrat.muslimdata.models.Language
-import dev.kosrat.muslimdata.repository.MuslimRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
