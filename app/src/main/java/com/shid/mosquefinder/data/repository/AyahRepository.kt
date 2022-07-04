@@ -1,7 +1,7 @@
 package com.shid.mosquefinder.data.repository
 
-import com.shid.mosquefinder.data.database.QuranDao
-import com.shid.mosquefinder.data.database.entities.Ayah
+import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.entities.Ayah
 
 class AyahRepository(private val quranDao: QuranDao) {
 

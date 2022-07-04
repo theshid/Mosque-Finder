@@ -18,8 +18,8 @@ import com.shid.mosquefinder.data.model.pojo.GoogleMosque
 import com.shid.mosquefinder.data.model.pojo.Place
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.utils.Common
-import com.shid.mosquefinder.utils.Resource
+import com.shid.mosquefinder.app.utils.Common
+import com.shid.mosquefinder.app.utils.Resource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

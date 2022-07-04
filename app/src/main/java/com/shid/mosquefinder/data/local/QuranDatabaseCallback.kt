@@ -8,10 +8,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.data.database.QuranDao
-import com.shid.mosquefinder.data.database.entities.*
-import com.shid.mosquefinder.ui.main.views.LoadingActivity
-import com.shid.mosquefinder.utils.loadJsonArray
+import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.entities.*
+import com.shid.mosquefinder.app.ui.main.views.LoadingActivity
+import com.shid.mosquefinder.app.utils.loadJsonArray
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -52,7 +52,7 @@ class QuranDatabaseCallback @Inject constructor(
                     try {
                         Log.d("Db", "insertion surah")
                         surahDao.insertSurah(
-                            Surah(
+                            SurahDb(
                                 surah.getInt("number"), surah.getString("name"),
                                 surah.getString("transliteration_en"),
                                 surah.getString("translation_en"),

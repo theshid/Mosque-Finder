@@ -25,7 +25,7 @@ class App : Application() {
         context = this;
         application = this
         registerConnectivityBroadcaster()
-        val formatStrategy:FormatStrategy = PrettyFormatStrategy.newBuilder()
+       /* val formatStrategy:FormatStrategy = PrettyFormatStrategy.newBuilder()
             .showThreadInfo(true)
             .methodCount(1)
             .methodOffset(5)
@@ -38,7 +38,7 @@ class App : Application() {
                 Logger.log(priority,"-$tag",message,t)
             }
         })
-
+*/
         /*SoLoader.init(this, false)
 
         if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {

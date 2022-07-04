@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.views.CreditsActivity">
+    tools:context=".app.ui.main.views.CreditsActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

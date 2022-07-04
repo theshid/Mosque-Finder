@@ -10,14 +10,14 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.data.model.User
-import com.shid.mosquefinder.domain.AuthRepository
-import com.shid.mosquefinder.utils.Common.USERS
-import com.shid.mosquefinder.utils.Common.logErrorMessage
-import com.shid.mosquefinder.utils.Resource
+import com.shid.mosquefinder.domain.repository.AuthRepository
+import com.shid.mosquefinder.app.utils.Common.USERS
+import com.shid.mosquefinder.app.utils.Common.logErrorMessage
+import com.shid.mosquefinder.app.utils.Resource
 import javax.inject.Inject
 
 
-class AuthRepositoryImpl:AuthRepository {
+class AuthRepositoryImpl: AuthRepository {
 
     @Inject
     private lateinit var firebaseAuth :FirebaseAuth
