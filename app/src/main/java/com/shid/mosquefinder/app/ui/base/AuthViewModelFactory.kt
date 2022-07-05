@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.app.ui.Base
+package com.shid.mosquefinder.app.ui.base
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

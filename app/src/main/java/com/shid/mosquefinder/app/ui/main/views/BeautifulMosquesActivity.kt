@@ -13,7 +13,7 @@ import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.BeautifulMosquesViewModelFactory
+import com.shid.mosquefinder.app.ui.base.BeautifulMosquesViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.BeautifulMosquesViewModel
 import com.shid.mosquefinder.app.utils.Network.Event

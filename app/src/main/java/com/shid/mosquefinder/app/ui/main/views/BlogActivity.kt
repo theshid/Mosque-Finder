@@ -10,7 +10,7 @@ import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.BlogViewModelFactory
+import com.shid.mosquefinder.app.ui.base.BlogViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.BlogAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.BlogViewModel
 import com.shid.mosquefinder.app.utils.Network.Event

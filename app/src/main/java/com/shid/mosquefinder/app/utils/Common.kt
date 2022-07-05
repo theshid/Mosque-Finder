@@ -9,9 +9,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object Common {
-     const val GOOGLE_API_URL = "https://maps.googleapis.com/"
+    const val GOOGLE_API_URL = "https://maps.googleapis.com/"
     const val DEEPL_API_URL = " https://api-free.deepl.com/"
-     const val QURAN_API_URL = "http://api.alquran.cloud/"
+    const val QURAN_API_URL = "http://api.alquran.cloud/"
 
     const val GOOGLE = "Google"
     const val DEEPL = "DeepL"
@@ -42,6 +42,8 @@ object Common {
     var USER_LG = "user_lg"
     var TAG = "FirebaseAuthAppTag"
 
+    const val LOCATION_PERMISSION_REQUEST_CODE = 999
+
 
     fun logErrorMessage(errorMessage: String?) {
         Log.d(TAG, errorMessage.toString())
@@ -57,14 +59,14 @@ object Common {
     val frenchQuranApiService: GoogleApiInterface
         get() = ApiClient.getClient(QURAN_API_URL).create(GoogleApiInterface::class.java)
 
-    suspend fun retrievePushId(context: Context):String?{
+    suspend fun retrievePushId(context: Context): String? {
         return suspendCoroutine { cont ->
             FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                if (!it.isSuccessful){
+                if (!it.isSuccessful) {
                     cont.resume(null)
                 }
                 val newPushId = it.result
-                if (!newPushId.isNullOrBlank()){
+                if (!newPushId.isNullOrBlank()) {
                     val sharePref = SharePref(context)
                     sharePref.saveFirebaseToken(newPushId)
                 }

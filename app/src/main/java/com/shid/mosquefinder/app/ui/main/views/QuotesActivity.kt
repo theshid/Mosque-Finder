@@ -13,7 +13,7 @@ import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.Quotes
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.QuotesViewModelFactory
+import com.shid.mosquefinder.app.ui.base.QuotesViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.ViewPagerAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.QuotesViewModel
 import com.shid.mosquefinder.app.utils.Network.Event

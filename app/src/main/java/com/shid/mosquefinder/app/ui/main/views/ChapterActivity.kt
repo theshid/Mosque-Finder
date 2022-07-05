@@ -9,7 +9,7 @@ import com.shid.mosquefinder.data.repository.ChapterRepository
 import com.shid.mosquefinder.data.local.database.QuranDatabase
 import com.shid.mosquefinder.data.local.database.entities.Chapter
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.ChapterViewModelFactory
+import com.shid.mosquefinder.app.ui.base.ChapterViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.ChapterAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.ChapterViewModel
 import dev.kosrat.muslimdata.models.Language

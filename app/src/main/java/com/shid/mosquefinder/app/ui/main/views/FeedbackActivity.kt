@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.FeedbackViewModelFactory
+import com.shid.mosquefinder.app.ui.base.FeedbackViewModelFactory
 import com.shid.mosquefinder.app.ui.main.view_models.FeedbackViewModel
 import com.shid.mosquefinder.app.utils.Network.Event
 import com.shid.mosquefinder.app.utils.Network.NetworkEvents

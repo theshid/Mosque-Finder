@@ -37,7 +37,8 @@ class QuranDatabaseCallback @Inject constructor(
             async { loadAyah(dao, mContext) }.await()
             async { loadNames(dao) }.await()
             async { loadSurahs(dao) }.await()
-
+            val intent = Intent(LoadingActivity.FILTER)
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
         }
 
     }
@@ -173,8 +174,8 @@ class QuranDatabaseCallback @Inject constructor(
                     }
 
                 }
-                val intent = Intent(LoadingActivity.FILTER)
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                /*val intent = Intent(LoadingActivity.FILTER)
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)*/
             } catch (e: JSONException) {
                 e.printStackTrace()
             }

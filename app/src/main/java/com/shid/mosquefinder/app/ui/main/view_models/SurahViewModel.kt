@@ -24,11 +24,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SurahViewModel @Inject constructor(private val quranDao: QuranDao, val getAllSurahsUseCase: GetAllSurahsUseCase) : BaseViewModel() {
+internal class SurahViewModel @Inject constructor( val getAllSurahsUseCase: GetAllSurahsUseCase) : BaseViewModel() {
 
     private var getAllSurahsJob: Job?=null
 
@@ -76,6 +77,7 @@ internal class SurahViewModel @Inject constructor(private val quranDao: QuranDao
     private suspend fun loadSurahs() {
         getAllSurahsUseCase(Unit).collect{surahs ->
             val surahsList = surahs.map { it.toPresentation() }
+            Timber.d("surahs: $surahsList ")
             onSurahsLoadingComplete(surahsList)
         }
     }

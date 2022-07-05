@@ -49,7 +49,7 @@ import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.MapViewModelFactory
+import com.shid.mosquefinder.app.ui.base.MapViewModelFactory
 import com.shid.mosquefinder.app.ui.main.view_models.MapViewModel
 import com.shid.mosquefinder.app.utils.*
 import com.shid.mosquefinder.app.utils.Network.Event

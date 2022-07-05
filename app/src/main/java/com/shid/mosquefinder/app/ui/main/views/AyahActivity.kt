@@ -25,7 +25,7 @@ import com.shid.mosquefinder.data.local.database.QuranDatabase
 import com.shid.mosquefinder.data.local.database.entities.Ayah
 import com.shid.mosquefinder.data.local.database.entities.SurahDb
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.AyahViewModelFactory
+import com.shid.mosquefinder.app.ui.base.AyahViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.AyahAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
 import com.shid.mosquefinder.app.ui.services.SurahDLService

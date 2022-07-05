@@ -8,9 +8,9 @@ import android.os.Bundle
 import android.os.Looper
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,43 +23,49 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
-import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.AuthViewModel
-import com.shid.mosquefinder.app.ui.Base.AuthViewModelFactory
 import com.shid.mosquefinder.app.ui.onboardingscreen.feature.onboarding.OnBoardingActivity
 import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.utils.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.Common.USER
 import com.shid.mosquefinder.app.utils.Common.logErrorMessage
 import com.shid.mosquefinder.app.utils.Network.Event
 import com.shid.mosquefinder.app.utils.Network.NetworkEvents
+import com.shid.mosquefinder.data.model.User
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class AuthActivity : BaseActivity() {
+
+    var userPosition: LatLng? = null
+   /* @Inject
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient*/
+    /*private var locationCallback: LocationCallback ?= null
+    private var locationRequest:LocationRequest ?= null*/
 
 
-class AuthActivity : AppCompatActivity() {
+    private val authViewModel: AuthViewModel by viewModels()
 
-
-    companion object {
-        const val LOCATION_PERMISSION_REQUEST_CODE = 999
-        var userPosition: LatLng? = null
-    }
-
-    private  var fusedLocationProviderClient: FusedLocationProviderClient ?= null
-    private var locationCallback: LocationCallback ?= null
-    private var locationRequest:LocationRequest ?= null
-
-
-    private lateinit var authViewModel: AuthViewModel
-    private lateinit var authViewModelFactory: AuthViewModelFactory
+    /*private lateinit var authViewModelFactory: AuthViewModelFactory*/
     private lateinit var googleSignInClient: GoogleSignInClient
     private var previousSate = true
 
-    private var sharePref: SharePref? = null
+    @Inject
+    private lateinit var googleSignInOptions: GoogleSignInOptions
+
+    @Inject
+    private lateinit var sharePref: SharePref
     private var isFirstTime: Boolean? = null
+
     @OptIn(ExperimentalCoroutinesApi::class)
+    @Inject
     private lateinit var fusedLocationWrapper: FusedLocationWrapper
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -70,16 +76,16 @@ class AuthActivity : AppCompatActivity() {
         savedInstanceState?.let {
             previousSate = it.getBoolean("LOST_CONNECTION")
         }
-        fusedLocationWrapper = fusedLocationWrapper()
-        sharePref = SharePref(this)
-        isFirstTime = sharePref!!.loadFirstTime()
-        setLocationUtils()
+        //fusedLocationWrapper = fusedLocationWrapper()
+        //sharePref = SharePref(this)
+        isFirstTime = sharePref.loadFirstTime()
+        //setLocationUtils()
 
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
-        initAuthViewModel()
+        //initAuthViewModel()
 
         checkIfPermissionIsActive()
         initSignInButton()
@@ -88,16 +94,16 @@ class AuthActivity : AppCompatActivity() {
         initGoogleSignInClient()
     }
 
-    private fun setLocationUtils() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+   /* private fun setLocationUtils() {
+        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest.create().apply {
             interval = 5000
             fastestInterval = 50
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            maxWaitTime= 5000
+            maxWaitTime = 5000
         }
 
-    }
+    }*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
@@ -117,7 +123,7 @@ class AuthActivity : AppCompatActivity() {
             val location = fusedLocationWrapper.awaitLastLocation()
             userPosition = LatLng(location.latitude, location.longitude)
             userPosition?.let {
-                sharePref?.saveUserPosition(LatLng(it.latitude, it.longitude))
+                sharePref.saveUserPosition(LatLng(it.latitude, it.longitude))
             }
         }
     }
@@ -144,9 +150,9 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    private fun retrieveLocation() {
+    /*private fun retrieveLocation() {
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
+            override fun onLocationResult(locationResult: LocationResult) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
                     userPosition = LatLng(location.latitude, location.longitude)
@@ -159,9 +165,9 @@ class AuthActivity : AppCompatActivity() {
 
 
         }
-    }
+    }*/
 
-    @SuppressLint("MissingPermission")
+   /* @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
         fusedLocationProviderClient!!.requestLocationUpdates(
             locationRequest,
@@ -170,7 +176,7 @@ class AuthActivity : AppCompatActivity() {
         )
 
 
-    }
+    }*/
 
     override fun onResume() {
         super.onResume()
@@ -183,12 +189,12 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-     /*   if (fusedLocationProviderClient != null){
-            fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
-        }
-        fusedLocationProviderClient = null
-        locationCallback = null
-        locationRequest = null*/
+        /*   if (fusedLocationProviderClient != null){
+               fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
+           }
+           fusedLocationProviderClient = null
+           locationCallback = null
+           locationRequest = null*/
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -198,7 +204,7 @@ class AuthActivity : AppCompatActivity() {
 
     private fun setObservers() {
 
-        authViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer{
+        authViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
@@ -217,7 +223,7 @@ class AuthActivity : AppCompatActivity() {
 
     }
 
-    @SuppressLint("MissingPermission")
+  /*  @SuppressLint("MissingPermission")
     fun setUpLocationListener() {
         fusedLocationProviderClient!!.lastLocation
             .addOnSuccessListener { location: android.location.Location? ->
@@ -234,8 +240,7 @@ class AuthActivity : AppCompatActivity() {
                 }
             }
 
-    }
-
+    }*/
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -298,42 +303,37 @@ class AuthActivity : AppCompatActivity() {
         resultLauncher.launch(signInIntent)
     }
 
-    private fun initAuthViewModel() {
+    /*private fun initAuthViewModel() {
         authViewModelFactory =
             AuthViewModelFactory(application)
         authViewModel = ViewModelProvider(
             this,
             authViewModelFactory
         ).get(AuthViewModel(application)::class.java)
-    }
+    }*/
 
     private fun initGoogleSignInClient() {
-        val googleSignInOptions =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
     }
 
 
-    private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            // There are no request codes
-            val data: Intent? = result.data
-            val task =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val googleSignInAccount =
-                    task.getResult(ApiException::class.java)
-                googleSignInAccount?.let { getGoogleAuthCredential(it) }
-            } catch (e: ApiException) {
-                logErrorMessage(e.message)
-            }
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // There are no request codes
+                val data: Intent? = result.data
+                val task =
+                    GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    val googleSignInAccount =
+                        task.getResult(ApiException::class.java)
+                    googleSignInAccount?.let { getGoogleAuthCredential(it) }
+                } catch (e: ApiException) {
+                    logErrorMessage(e.message)
+                }
 
+            }
         }
-    }
 
     private fun getGoogleAuthCredential(googleSignInAccount: GoogleSignInAccount) {
         val googleTokenId = googleSignInAccount.idToken
@@ -369,33 +369,34 @@ class AuthActivity : AppCompatActivity() {
     private fun toastMessage(name: String) {
         Toast.makeText(
             this,
-            String.format(resources.getString(R.string.toast_auth_salutation,name)),
+            String.format(resources.getString(R.string.toast_auth_salutation, name)),
             Toast.LENGTH_LONG
         ).show()
+
     }
 
-    private fun goToOnBoardingActivity(user: User){
-        val intent = Intent(this@AuthActivity, OnBoardingActivity::class.java)
-        intent.putExtra(USER, user)
-        startActivity(intent)
+    private fun goToOnBoardingActivity(user: User) {
+        startActivity<OnBoardingActivity>{
+            putExtra(USER, user)
+        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         finish()
     }
 
     private fun goToHomeActivity(user: User) {
         val convertUserJson = GsonParser.gsonParser?.toJson(user)
-        if (convertUserJson != null) {
-            sharePref?.saveUser(convertUserJson)
-        }
-        if (isFirstTime == true){
-            val intent = Intent(this,LoadingActivity::class.java)
-            startActivity(intent)
+        convertUserJson?.let {  sharePref.saveUser(convertUserJson) }
+       /* if (convertUserJson != null) {
+            sharePref.saveUser(convertUserJson)
+        }*/
+        if (isFirstTime == true) {
+            startActivity<LoadingActivity>()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             finish()
-        }else{
-            val intent = Intent(this@AuthActivity, HomeActivity::class.java)
-            intent.putExtra(USER, user)
-            startActivity(intent)
+        } else {
+            startActivity<HomeActivity>{
+                putExtra(USER, user)
+            }
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             finish()
         }

@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.NameViewModelFactory
+import com.shid.mosquefinder.app.ui.base.NameViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.NameAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.NameViewModel
 import dev.kosrat.muslimdata.models.Language

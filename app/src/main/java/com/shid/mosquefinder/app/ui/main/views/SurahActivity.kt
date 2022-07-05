@@ -2,45 +2,70 @@ package com.shid.mosquefinder.app.ui.main.views
 
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
-import com.shid.mosquefinder.data.local.database.entities.SurahDb
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.SurahViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.SurahAdapter
+import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
+import com.shid.mosquefinder.app.ui.models.SurahPresentation
 import com.shid.mosquefinder.app.utils.Network.Event
 import com.shid.mosquefinder.app.utils.Network.NetworkEvents
+import com.shid.mosquefinder.app.utils.hide
+import com.shid.mosquefinder.app.utils.show
+import com.shid.mosquefinder.app.utils.showSnackbar
 import com.shid.mosquefinder.app.utils.startActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_surah.*
 
+@AndroidEntryPoint
 class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
 
-    private lateinit var viewModel: SurahViewModel
+    private val viewModel: SurahViewModel by viewModels()
     private var previousSate = true
     private lateinit var surahAdapter: SurahAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_surah)
-        setViewModel()
+        //setViewModel()
         hideSoftKeyboard()
         setUI()
         setOnClick()
         setSearch()
+        observeSurahViewState()
         //setTransparentStatusBar()
         setNetworkMonitor()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    private fun observeSurahViewState() {
+        viewModel.surahViewState.observe(this) { state ->
+            handleSurahLoading(state)
+            state.surahs?.let { list ->
+                if (list.isNotEmpty()) {
+                    surahAdapter.submitList(list)
+                }
+            }
+            handleSurahError(state)
+        }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
+    private fun handleSurahError(state: SurahViewState) {
+        state.error?.run {
+            showSnackbar(
+                surahRecycler, getString(this.message), isError = true
+            )
+        }
+    }
+
+    private fun handleSurahLoading(surahViewState: SurahViewState) {
+        if (surahViewState.isLoading) {
+            progressBar3.show()
+        } else {
+            progressBar3.hide()
+        }
     }
 
     private fun setSearch() {
@@ -50,12 +75,12 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         }
     }
 
-    private fun setViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            SurahViewModelFactory(application)
-        ).get(SurahViewModel::class.java)
-    }
+    /* private fun setViewModel() {
+         viewModel = ViewModelProvider(
+             this,
+             SurahViewModelFactory(application)
+         ).get(SurahViewModel::class.java)
+     }*/
 
     private fun hideSoftKeyboard() {
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
@@ -63,10 +88,11 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
 
     private fun setUI() {
         surahAdapter = SurahAdapter()
-        setRecycler()
+        surahAdapter.setItemClick(this@SurahActivity)
+        //setRecycler()
     }
 
-    private fun setRecycler() {
+    /*private fun setRecycler() {
         viewModel.getSurahs()
         viewModel.surahDbList.observe(this, Observer {
             if (it.isNotEmpty()) {
@@ -81,7 +107,7 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         })
 
 
-    }
+    }*/
 
     private fun setOnClick() {
         backButton.setOnClickListener {
@@ -94,8 +120,6 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
 
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
-
-
         })
     }
 
@@ -119,9 +143,9 @@ class SurahActivity : AppCompatActivity(), SurahAdapter.OnClickSurah {
         previousSate = ConnectivityStateHolder.isConnected
     }
 
-    override fun onClickSurah(surahDb: SurahDb) {
+    override fun onClickSurah(surahPresentation: SurahPresentation) {
         startActivity<AyahActivity> {
-            putExtra("surah_number", surahDb.id)
+            putExtra("surah_number", surahPresentation.number)
         }
 
     }

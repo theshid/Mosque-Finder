@@ -5,44 +5,63 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.shid.mosquefinder.data.local.database.entities.SurahDb
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.models.SurahPresentation
+import dev.kosrat.muslimdata.models.AzkarItem
 import kotlinx.android.synthetic.main.item_quran_surah.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 class SurahAdapter() :
-    RecyclerView.Adapter<SurahAdapter.SurahViewHolder>(),Filterable {
-    lateinit var onClickSurah: OnClickSurah
-     var list:MutableList<SurahDb>?=null
-    private var listData  = ArrayList<SurahDb>()
+    ListAdapter<SurahPresentation,SurahAdapter.SurahViewHolder>(DIFF_CALLBACK),Filterable {
 
-    fun setData(newListData: List<SurahDb>) {
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SurahPresentation>() {
+            override fun areItemsTheSame(oldItem: SurahPresentation, newItem: SurahPresentation): Boolean =
+                oldItem.number == newItem.number
+
+            override fun areContentsTheSame(oldItem: SurahPresentation, newItem: SurahPresentation): Boolean =
+                oldItem == newItem
+        }
+    }
+    lateinit var onClickSurah: OnClickSurah
+     var list:MutableList<SurahPresentation>?=null
+    private var listData  = ArrayList<SurahPresentation>()
+
+    /*fun setData(newListData: List<SurahDb>) {
         listData.clear()
         listData.addAll(newListData)
         notifyDataSetChanged()
-    }
+    }*/
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurahViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_quran_surah, parent, false)
+        listData.clear()
+        listData.addAll(currentList)
         return SurahViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: SurahViewHolder, position: Int) {
-        listData[position].run { holder.bind(this) }
+        //listData[position].run { holder.bind(this) }
+        val item = getItem(position)
+        holder.bind(item)
         holder.itemView.setOnClickListener(View.OnClickListener {
             listData[position].let { it -> onClickSurah.onClickSurah(it) }
         })
+
     }
 
-    override fun getItemCount(): Int {
+    /*override fun getItemCount(): Int {
         return listData.size
-    }
+    }*/
 
     interface OnClickSurah {
-        fun onClickSurah(surahDb: SurahDb)
+        fun onClickSurah(surahPresentation: SurahPresentation)
     }
 
     fun setItemClick(mOnClickSurah: OnClickSurah){
@@ -50,12 +69,11 @@ class SurahAdapter() :
     }
 
 
-
     inner class SurahViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        fun bind(surahDb: SurahDb) {
+        fun bind(surahDb: SurahPresentation) {
             itemView.apply {
-                tv_item_surah_number.text = surahDb.id.toString()
+                tv_item_surah_number.text = surahDb.number.toString()
                 tv_item_surah_surah.text = surahDb.transliteration
                 tv_item_surah_arab.text = surahDb.name
                 tv_item_surah_revelation_type.text = surahDb.revelationType
@@ -72,11 +90,11 @@ class SurahAdapter() :
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
                     if (list?.isNotEmpty() == true){
-                        listData = list as ArrayList<SurahDb>
+                        listData = list as ArrayList<SurahPresentation>
                     }
 
                 } else {
-                    val resultList = ArrayList<SurahDb>()
+                    val resultList = ArrayList<SurahPresentation>()
                     if (list != null){
                         for (row in list!!) {
                             if (row.transliteration.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(
@@ -94,8 +112,9 @@ class SurahAdapter() :
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                listData = results?.values as ArrayList<SurahDb>
-                notifyDataSetChanged()
+                listData = results?.values as ArrayList<SurahPresentation>
+                submitList(listData)
+                //notify
             }
 
         }

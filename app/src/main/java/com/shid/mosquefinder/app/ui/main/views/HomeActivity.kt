@@ -31,6 +31,7 @@ import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.ui.notification.NotificationWorker
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.utils.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.enums.Prayers
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -139,10 +140,10 @@ class HomeActivity : AppCompatActivity() {
             SurahViewModelFactory(application)
         ).get(SurahViewModel::class.java)*/
 
-        viewModel.getSurahs()
+       /* viewModel.getSurahs()
         viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
             Timber.d("value of :$it")
-        })
+        })*/
 
         if (checkGooglePlayServices()) {
             viewModel.update()
@@ -170,7 +171,7 @@ class HomeActivity : AppCompatActivity() {
             else -> {
                 PermissionUtils.requestAccessFineLocationPermission(
                     this,
-                    AuthActivity.LOCATION_PERMISSION_REQUEST_CODE
+                    LOCATION_PERMISSION_REQUEST_CODE
                 )
             }
         }

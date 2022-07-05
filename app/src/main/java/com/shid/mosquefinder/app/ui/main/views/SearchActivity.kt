@@ -16,7 +16,7 @@ import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.Base.SearchViewModelFactory
+import com.shid.mosquefinder.app.ui.base.SearchViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.SearchAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.SearchViewModel
 import com.shid.mosquefinder.app.utils.Common
