@@ -6,11 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import coil.load
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.ConnectivityStateHolder
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.utils.Network.Event
-import com.shid.mosquefinder.app.utils.Network.NetworkEvents
+import com.shid.mosquefinder.app.utils.network.Event
+import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import com.shid.mosquefinder.app.utils.onTransformationEndContainerApplyParams
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout

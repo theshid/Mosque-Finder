@@ -8,7 +8,7 @@ import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.pojo.GoogleMosque
 import com.shid.mosquefinder.data.repository.MapRepository
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 
 class SearchViewModel(mapRepository: MapRepository, application: Application) : ViewModel() {
 

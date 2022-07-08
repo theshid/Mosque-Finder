@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.shid.mosquefinder.data.model.Quotes
 import com.shid.mosquefinder.data.repository.QuoteRepository
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 
 class QuotesViewModel(var quoteRepository: QuoteRepository) : ViewModel() {
 

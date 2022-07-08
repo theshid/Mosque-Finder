@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewpager2.widget.ViewPager2
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.ConnectivityStateHolder
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueViewPagerAdapter
-import com.shid.mosquefinder.app.utils.Network.Event
-import com.shid.mosquefinder.app.utils.Network.NetworkEvents
+import com.shid.mosquefinder.app.utils.network.Event
+import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import com.shid.mosquefinder.app.utils.onTransformationEndContainerApplyParams
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout

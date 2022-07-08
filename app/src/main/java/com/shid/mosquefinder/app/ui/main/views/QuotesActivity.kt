@@ -10,15 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.ConnectivityStateHolder
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.Quotes
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.QuotesViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.ViewPagerAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.QuotesViewModel
-import com.shid.mosquefinder.app.utils.Network.Event
-import com.shid.mosquefinder.app.utils.Network.NetworkEvents
-import com.shid.mosquefinder.app.utils.Status
+import com.shid.mosquefinder.app.utils.network.Event
+import com.shid.mosquefinder.app.utils.network.NetworkEvents
+import com.shid.mosquefinder.app.utils.enums.Status
 import kotlinx.android.synthetic.main.activity_quotes.*
 import kotlinx.android.synthetic.main.activity_quotes.toolbar
 

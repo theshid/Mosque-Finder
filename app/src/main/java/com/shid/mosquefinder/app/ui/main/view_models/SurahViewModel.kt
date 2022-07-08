@@ -9,14 +9,12 @@ import com.shid.mosquefinder.app.ui.main.mappers.toPresentation
 import com.shid.mosquefinder.app.ui.main.states.Error
 import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
-import com.shid.mosquefinder.app.utils.ExceptionHandler
-import com.shid.mosquefinder.app.utils.TimeUtil.day
-import com.shid.mosquefinder.app.utils.TimeUtil.hour
+import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
+import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.day
+import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import com.shid.mosquefinder.app.utils.doAsync
 import com.shid.mosquefinder.app.utils.enums.Prayers
-import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.local.database.entities.SurahDb
-import com.shid.mosquefinder.data.repository.SurahRepositoryImpl
 import com.shid.mosquefinder.domain.usecases.GetAllSurahsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler

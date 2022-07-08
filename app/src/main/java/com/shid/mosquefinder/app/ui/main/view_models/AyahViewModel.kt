@@ -13,13 +13,15 @@ import com.shid.mosquefinder.data.repository.SurahRepositoryImpl
 import com.shid.mosquefinder.data.local.database.QuranDatabase
 import com.shid.mosquefinder.data.local.database.entities.Ayah
 import com.shid.mosquefinder.data.local.database.entities.SurahDb
-import com.shid.mosquefinder.app.utils.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@HiltViewModel
 class AyahViewModel(private val application: Application, ayahRepository: AyahRepository) : ViewModel() {
     private val repository = ayahRepository
     val service = Common.frenchQuranApiService

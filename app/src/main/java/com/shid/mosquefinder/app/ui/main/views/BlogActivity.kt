@@ -4,35 +4,29 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.ConnectivityStateHolder
+import androidx.activity.viewModels
 import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.base.BlogViewModelFactory
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.BlogAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.BlogViewModel
-import com.shid.mosquefinder.app.utils.Network.Event
-import com.shid.mosquefinder.app.utils.Network.NetworkEvents
-import com.shid.mosquefinder.app.utils.Status
+import com.shid.mosquefinder.app.utils.enums.Status
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar
 import kotlinx.android.synthetic.main.activity_blog.*
 import timber.log.Timber
 
-class BlogActivity : AppCompatActivity() {
+class BlogActivity : BaseActivity() {
     private var previousSate = true
     private lateinit var blogAdapter: BlogAdapter
     private var mBlogList: MutableList<Article> = ArrayList()
-    private lateinit var mViewModel: BlogViewModel
+    private val mViewModel: BlogViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         onTransformationStartContainer()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blog)
-        setViewModel()
         setOnClick()
-        setNetworkMonitor()
+        //setNetworkMonitor()
         setObservers()
         Handler().postDelayed(kotlinx.coroutines.Runnable {
             mBlogList = mViewModel.getArticlesFromRepository()
@@ -46,15 +40,6 @@ class BlogActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-    }
-
-    private fun setViewModel() {
-        mViewModel = ViewModelProvider(
-            this,
-            BlogViewModelFactory()
-        ).get(BlogViewModel::class.java)
-
-
     }
 
     private fun setRecycler() {
@@ -82,7 +67,7 @@ class BlogActivity : AppCompatActivity() {
         })
     }
 
-    private fun setNetworkMonitor() {
+   /* private fun setNetworkMonitor() {
         NetworkEvents.observe(this, androidx.lifecycle.Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
@@ -110,5 +95,5 @@ class BlogActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         handleConnectivityChange()
-    }
+    }*/
 }

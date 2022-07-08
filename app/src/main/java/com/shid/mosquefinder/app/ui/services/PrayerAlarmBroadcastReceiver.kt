@@ -15,9 +15,9 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.views.HomeActivity
-import com.shid.mosquefinder.app.utils.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.SharePref
-import com.shid.mosquefinder.app.utils.TimeUtil.hour
+import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import com.shid.mosquefinder.app.utils.showToast
 import timber.log.Timber
 import java.util.*

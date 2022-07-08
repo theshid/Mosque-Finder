@@ -6,7 +6,7 @@ import com.shid.mosquefinder.domain.usecases.GetTranslationUseCase
 import com.shid.mosquefinder.app.ui.main.mappers.toPresentation
 import com.shid.mosquefinder.app.ui.main.states.AzkharViewState
 import com.shid.mosquefinder.app.ui.main.states.Error
-import com.shid.mosquefinder.app.utils.ExceptionHandler
+import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job

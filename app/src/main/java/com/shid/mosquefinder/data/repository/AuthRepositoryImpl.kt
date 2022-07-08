@@ -11,9 +11,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.domain.repository.AuthRepository
-import com.shid.mosquefinder.app.utils.Common.USERS
-import com.shid.mosquefinder.app.utils.Common.logErrorMessage
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USERS
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.logErrorMessage
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import javax.inject.Inject
 
 

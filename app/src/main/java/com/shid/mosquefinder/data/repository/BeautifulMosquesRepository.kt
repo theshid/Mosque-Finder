@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.shid.mosquefinder.data.model.BeautifulMosques
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import timber.log.Timber
 
 class BeautifulMosquesRepository {

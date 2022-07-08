@@ -12,8 +12,8 @@ import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.SplashViewModelFactory
 import com.shid.mosquefinder.app.ui.main.view_models.SplashViewModel
-import com.shid.mosquefinder.app.utils.Common.USER
-import com.shid.mosquefinder.app.utils.PermissionUtils
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USER
+import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import com.shid.mosquefinder.app.utils.setTransparentStatusBar
 
 

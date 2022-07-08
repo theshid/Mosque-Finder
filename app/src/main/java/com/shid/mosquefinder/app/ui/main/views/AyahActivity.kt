@@ -18,7 +18,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.ConnectivityStateHolder
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.pojo.Verse
 import com.shid.mosquefinder.data.repository.AyahRepository
 import com.shid.mosquefinder.data.local.database.QuranDatabase
@@ -29,8 +29,8 @@ import com.shid.mosquefinder.app.ui.base.AyahViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.AyahAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
 import com.shid.mosquefinder.app.ui.services.SurahDLService
-import com.shid.mosquefinder.app.utils.Network.Event
-import com.shid.mosquefinder.app.utils.Network.NetworkEvents
+import com.shid.mosquefinder.app.utils.network.Event
+import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import com.shid.mosquefinder.app.utils.SharePref
 import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*

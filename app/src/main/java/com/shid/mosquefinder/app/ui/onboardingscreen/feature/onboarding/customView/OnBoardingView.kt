@@ -13,7 +13,7 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.views.HomeActivity
 import com.shid.mosquefinder.app.ui.onboardingscreen.domain.OnBoardingPrefManager
 import com.shid.mosquefinder.app.ui.onboardingscreen.feature.onboarding.OnBoardingActivity
-import com.shid.mosquefinder.app.utils.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 import kotlinx.android.synthetic.main.onboarding_view.view.*
 import setParallaxTransformation

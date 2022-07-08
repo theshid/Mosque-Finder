@@ -9,7 +9,7 @@ import com.shid.mosquefinder.data.api.DeeplApiInterface
 import com.shid.mosquefinder.data.remote.toDomain
 import com.shid.mosquefinder.domain.repository.AzkharRepository
 import com.shid.mosquefinder.domain.model.DeepL
-import com.shid.mosquefinder.app.utils.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

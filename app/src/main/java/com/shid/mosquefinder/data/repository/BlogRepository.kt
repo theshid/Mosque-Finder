@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.shid.mosquefinder.data.model.Article
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import timber.log.Timber
+import javax.inject.Inject
 
-class BlogRepository {
-    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val firebaseBeautyMosqueRef: CollectionReference =
+class BlogRepository @Inject constructor(val database:FirebaseFirestore) {
+
+    private val firebaseBlogRef: CollectionReference =
         database.collection("blog")
     private lateinit var mBlogListEventListener: ListenerRegistration
 
@@ -27,7 +28,7 @@ class BlogRepository {
 
     fun getArticlesFromFirebase(): MutableList<Article> {
         mBlogListEventListener =
-            firebaseBeautyMosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
+            firebaseBlogRef.addSnapshotListener(EventListener { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
                     Timber.e(firebaseFirestoreException, "onEvent: Listen failed.")
                     statusMsg.postValue(

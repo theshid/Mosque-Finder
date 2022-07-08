@@ -31,8 +31,10 @@ import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.ui.notification.NotificationWorker
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.app.utils.*
-import com.shid.mosquefinder.app.utils.Common.LOCATION_PERMISSION_REQUEST_CODE
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.enums.Prayers
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

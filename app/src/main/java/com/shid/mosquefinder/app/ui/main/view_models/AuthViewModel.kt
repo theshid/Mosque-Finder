@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import com.google.firebase.auth.AuthCredential
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.AuthRepositoryImpl
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {

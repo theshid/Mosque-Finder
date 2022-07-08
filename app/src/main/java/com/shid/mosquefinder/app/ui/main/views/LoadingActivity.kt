@@ -10,8 +10,8 @@ import androidx.activity.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
-import com.shid.mosquefinder.app.utils.Common
-import com.shid.mosquefinder.app.utils.GsonParser
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
 import com.shid.mosquefinder.app.utils.SharePref
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber

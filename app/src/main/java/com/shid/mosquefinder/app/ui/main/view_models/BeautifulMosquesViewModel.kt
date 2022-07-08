@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.shid.mosquefinder.data.repository.BeautifulMosquesRepository
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 
 class BeautifulMosquesViewModel(var beautifulMosquesRepository: BeautifulMosquesRepository): ViewModel() {
 

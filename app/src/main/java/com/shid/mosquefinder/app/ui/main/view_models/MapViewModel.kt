@@ -12,7 +12,7 @@ import com.shid.mosquefinder.data.model.pojo.GoogleMosque
 import com.shid.mosquefinder.data.model.pojo.Place
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.MapRepository
-import com.shid.mosquefinder.app.utils.Resource
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import java.util.HashMap
 
 class MapViewModel(mapRepository: MapRepository, var application: Application) : ViewModel() {

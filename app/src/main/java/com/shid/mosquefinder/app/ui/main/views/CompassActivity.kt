@@ -14,6 +14,9 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.utils.helper_class.Compass
+import com.shid.mosquefinder.app.utils.helper_class.SOTWFormatter
+import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import kotlinx.android.synthetic.main.activity_compass.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

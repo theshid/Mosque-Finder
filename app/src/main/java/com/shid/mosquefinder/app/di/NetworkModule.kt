@@ -3,7 +3,7 @@ package com.shid.mosquefinder.app.di
 import com.shid.mosquefinder.data.api.DeeplApiInterface
 import com.shid.mosquefinder.data.api.QuranApiInterface
 import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
-import com.shid.mosquefinder.app.utils.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

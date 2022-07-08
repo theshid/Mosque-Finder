@@ -44,7 +44,7 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.collections.MarkerManager
 import com.google.maps.model.PlacesSearchResult
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.ConnectivityStateHolder
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.User
@@ -52,8 +52,12 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.MapViewModelFactory
 import com.shid.mosquefinder.app.ui.main.view_models.MapViewModel
 import com.shid.mosquefinder.app.utils.*
-import com.shid.mosquefinder.app.utils.Network.Event
-import com.shid.mosquefinder.app.utils.Network.NetworkEvents
+import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.helper_class.MyClusterManagerRenderer
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import com.shid.mosquefinder.app.utils.network.Event
+import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
