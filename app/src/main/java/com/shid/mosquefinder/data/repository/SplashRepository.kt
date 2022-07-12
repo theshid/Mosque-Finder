@@ -10,24 +10,23 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USERS
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.logErrorMessage
+import timber.log.Timber
+import javax.inject.Inject
 
 
 @SuppressWarnings("ConstantConditions")
-class SplashRepository {
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    private val user: User = User()
-    private val rootRef = FirebaseFirestore.getInstance()
+class SplashRepository @Inject constructor(private val firebaseAuth:FirebaseAuth, rootRef:FirebaseFirestore, private val crashlytics:FirebaseCrashlytics, val user: User){
+   // private val user: User = User()
     private val usersRef = rootRef.collection(USERS)
-    val crashlytics = FirebaseCrashlytics.getInstance()
 
 
-    fun checkIfUserIsAuthenticatedInFirebase(): MutableLiveData<User>? {
+    fun checkIfUserIsAuthenticatedInFirebase(): MutableLiveData<User> {
         val isUserAuthenticateInFirebaseMutableLiveData: MutableLiveData<User> =
             MutableLiveData<User>()
         val firebaseUser = firebaseAuth.currentUser
         if (firebaseUser == null) {
             user.isAuthenticated = false
-            Log.d("Error", user.isAuthenticated.toString())
+            Timber.d( user.isAuthenticated.toString())
             isUserAuthenticateInFirebaseMutableLiveData.setValue(user)
         } else {
             user.uid = firebaseUser.uid
@@ -37,7 +36,7 @@ class SplashRepository {
         return isUserAuthenticateInFirebaseMutableLiveData
     }
 
-    fun addUserToLiveData(uid: String?): MutableLiveData<User>? {
+    fun addUserToLiveData(uid: String?): MutableLiveData<User> {
         val userMutableLiveData: MutableLiveData<User> = MutableLiveData<User>()
         usersRef.document(uid!!).get()
             .addOnCompleteListener { userTask: Task<DocumentSnapshot?> ->

@@ -6,13 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.shid.mosquefinder.data.model.Quotes
 import com.shid.mosquefinder.app.utils.helper_class.Resource
+import com.shid.mosquefinder.domain.repository.QuoteRepository
+import timber.log.Timber
+import javax.inject.Inject
 
-class QuoteRepository {
-    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
+class QuoteRepositoryImpl @Inject constructor(database: FirebaseFirestore) :QuoteRepository{
+
     private val firebaseQuoteRef: CollectionReference = database.collection("quotes")
     private lateinit var mQuoteListEventListener: ListenerRegistration
 
-    private val TAG: String = "Quote Repository"
     private var mQuoteList: MutableList<Quotes> = ArrayList()
 
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
@@ -25,11 +27,11 @@ class QuoteRepository {
         return statusMsg
     }
 
-    fun getQuotesFromFirebase(): MutableList<Quotes> {
+    override fun getQuotesFromFirebase(): MutableList<Quotes> {
         mQuoteListEventListener =
             firebaseQuoteRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
-                    Log.e(TAG, "onEvent: Listen failed.", firebaseFirestoreException)
+                    Timber.e( "onEvent: Listen failed.", firebaseFirestoreException)
                     statusMsg.postValue(
                         Resource.error(
                             firebaseFirestoreException.toString(),
@@ -43,31 +45,27 @@ class QuoteRepository {
 
                     mQuoteList.clear()
                     for (doc in querySnapshot) {
-                        val quote = doc.toObject(Quotes::class.java)
+                        //val quote = doc.toObject(Quotes::class.java)
 
                         //quote.documentId = doc.id
 
-                        var quoteAuthor: String = doc.get("author") as String
-                        var quoteText: String = doc.get("quote") as String
-                        var quoteFr:String = doc.get("quote_fr") as String
+                        val quoteAuthor: String = doc.get("author") as String
+                        val quoteText: String = doc.get("quote") as String
+                        val quoteFr:String = doc.get("quote_fr") as String
                         //var mosqueId: String = quote.documentId
 
 
-                        var QuoteElem: Quotes =
+                        val quoteElem =
                             Quotes(
                                 quoteAuthor,
                                 quoteText,
                                 quoteFr
                             )
-                        //Log.d(TAG, "the id  is" + QuoteElem.documentId)
-                        mQuoteList.add(QuoteElem)
-                        /* var lieu: LatLng = LatLng(locationMos.latitude,locationMos.longitude)
-                         var marker : Marker = mMap.addMarker(MarkerOptions().position(lieu).title(mosqueName))*/
-                        //Log.d(TAG, "mosque position" + quote.position.latitude)
+                        mQuoteList.add(quoteElem)
                     }
                 }
             })
-        Log.d(TAG, "Mosque firebase" + mQuoteList.isEmpty().toString())
+        Timber.d( "Mosque firebase" + mQuoteList.isEmpty().toString())
         return mQuoteList
     }
 }

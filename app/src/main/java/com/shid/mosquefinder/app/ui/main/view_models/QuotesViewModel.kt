@@ -3,15 +3,18 @@ package com.shid.mosquefinder.app.ui.main.view_models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.shid.mosquefinder.data.model.Quotes
-import com.shid.mosquefinder.data.repository.QuoteRepository
+import com.shid.mosquefinder.data.repository.QuoteRepositoryImpl
 import com.shid.mosquefinder.app.utils.helper_class.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class QuotesViewModel(var quoteRepository: QuoteRepository) : ViewModel() {
+@HiltViewModel
+class QuotesViewModel @Inject constructor(var quoteRepositoryImpl: QuoteRepositoryImpl) : ViewModel() {
 
-    private var mQuoteMutableList: MutableList<Quotes> = ArrayList()
+    private val mQuoteMutableList: MutableList<Quotes> = ArrayList()
 
     init {
-        mQuoteMutableList = quoteRepository.getQuotesFromFirebase()
+        mQuoteMutableList.addAll(quoteRepositoryImpl.getQuotesFromFirebase())
 
     }
 
@@ -20,6 +23,6 @@ class QuotesViewModel(var quoteRepository: QuoteRepository) : ViewModel() {
     }
 
     fun retrieveStatusMsg(): LiveData<Resource<String>> {
-        return quoteRepository.returnStatusMsg()
+        return quoteRepositoryImpl.returnStatusMsg()
     }
 }

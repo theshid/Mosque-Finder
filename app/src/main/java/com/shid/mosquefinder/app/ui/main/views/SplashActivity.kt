@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,16 +16,19 @@ import com.shid.mosquefinder.app.ui.main.view_models.SplashViewModel
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USER
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import com.shid.mosquefinder.app.utils.setTransparentStatusBar
+import com.shid.mosquefinder.app.utils.startActivity
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
-
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
-    private lateinit var splashViewModel: SplashViewModel
-    private lateinit var splashViewModelFactory: SplashViewModelFactory
+    private val splashViewModel: SplashViewModel by viewModels()
+    //private lateinit var splashViewModelFactory: SplashViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        initSplashViewModel()
+        //initSplashViewModel()
         setTransparentStatusBar()
 
         checkIfPermissionActive()
@@ -48,49 +52,46 @@ class SplashActivity : AppCompatActivity() {
 
     private fun checkIfUserIsAuthenticated() {
         splashViewModel.checkIfUserIsAuthenticated()
-        splashViewModel.isUserAuthenticatedLiveData!!.observe(this,
-            Observer { user: User ->
-                if (!user.isAuthenticated!!) {
-                    goToAuthInActivity()
-                    finish()
-                } else {
-                    getUserFromDatabase(user.uid)
-                }
+        splashViewModel.isUserAuthenticatedLiveData!!.observe(this
+        ) { user: User ->
+            if (!user.isAuthenticated!!) {
+                goToAuthInActivity()
+                finish()
+            } else {
+                getUserFromDatabase(user.uid)
             }
-        )
+        }
     }
 
     private fun getUserFromDatabase(uid: String) {
         splashViewModel.setUid(uid)
         splashViewModel.userLiveData!!.observe(
-            this,
-            Observer { user: User? ->
-                goToHomeActivity(user)
-                Log.d("Splash", "user:" + user?.email)
-                finish()
-            }
-        )
+            this
+        ) { user: User? ->
+            goToHomeActivity(user)
+            Timber.d( "user:" + user?.email)
+            finish()
+        }
     }
 
     private fun goToHomeActivity(user: User?) {
-        val intent = Intent(this@SplashActivity, HomeActivity::class.java)
-        intent.putExtra(USER, user)
-        startActivity(intent)
+        startActivity<HomeActivity>{
+            putExtra(USER, user)
+        }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
     private fun goToAuthInActivity() {
-        val intent = Intent(this@SplashActivity, AuthActivity::class.java)
-        startActivity(intent)
+        startActivity<AuthActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
-    private fun initSplashViewModel() {
+    /*private fun initSplashViewModel() {
         splashViewModelFactory =
             SplashViewModelFactory(application)
         splashViewModel = ViewModelProvider(
             this,
             splashViewModelFactory
         ).get(SplashViewModel(application)::class.java)
-    }
+    }*/
 }

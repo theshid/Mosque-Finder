@@ -3,10 +3,10 @@ package com.shid.mosquefinder.app.ui.base
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.shid.mosquefinder.data.repository.ChapterRepository
+import com.shid.mosquefinder.data.repository.ChapterRepositoryImpl
 import com.shid.mosquefinder.app.ui.main.view_models.ChapterViewModel
 
-class ChapterViewModelFactory(application: Application,chapterRepository: ChapterRepository)
+class ChapterViewModelFactory(application: Application,chapterRepository: ChapterRepositoryImpl)
     :ViewModelProvider.Factory {
 
     val mApplication = application

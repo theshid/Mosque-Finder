@@ -1,30 +1,26 @@
 package com.shid.mosquefinder.app.ui.main.views
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.shid.mosquefinder.data.repository.ChapterRepository
-import com.shid.mosquefinder.data.local.database.QuranDatabase
-import com.shid.mosquefinder.data.local.database.entities.Chapter
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.base.ChapterViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.ChapterAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.ChapterViewModel
+import com.shid.mosquefinder.app.utils.startActivity
+import com.shid.mosquefinder.data.local.database.entities.Chapter
+import dagger.hilt.android.AndroidEntryPoint
 import dev.kosrat.muslimdata.models.Language
 import dev.kosrat.muslimdata.repository.MuslimRepository
 import kotlinx.android.synthetic.main.activity_chapter.*
-import kotlinx.android.synthetic.main.activity_chapter.toolbar
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.*
 
+@AndroidEntryPoint
 class ChapterActivity : AppCompatActivity(), ChapterAdapter.ItemAction {
     private lateinit var adapter: ChapterAdapter
     private var categorNum: Int? = null
     private var chapterList: List<Chapter>? = null
-    private lateinit var viewModel: ChapterViewModel
+    private val viewModel: ChapterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,36 +28,24 @@ class ChapterActivity : AppCompatActivity(), ChapterAdapter.ItemAction {
 
         categorNum = intent.getIntExtra("category", 1)
         adapter = ChapterAdapter { it1 -> goToItemActivity(it1) }
-        setViewModel()
+        setData()
         setUI()
         setOnClick()
     }
 
-    private fun setViewModel() {
-        val dao =
-            QuranDatabase.getDatabase(application, lifecycleScope, application.resources).surahDao()
-        viewModel = ViewModelProvider(
-            this,
-            ChapterViewModelFactory(application, ChapterRepository(dao))
-        ).get(ChapterViewModel::class.java)
+    private fun setData() {
+        //Handle French Translation
         categorNum?.let { viewModel.fetchChapters(it) }
     }
 
     private fun setUI() {
         rv_chapter.adapter = adapter
         adapter.setItemClickAction(this)
-        categorNum?.let {
-            if(Locale.getDefault().language.contentEquals("fr")){
-              viewModel.chapters.observe(this, androidx.lifecycle.Observer {
-                  Timber.d("list in Activity$it")
-                  chapterList = it
-                  adapter.setFrenchData(it)
-              })
+        categorNum?.let { item ->
 
-            }else{
-                getChapters(it)
-            }
-             }
+            getChapters(item)
+
+        }
     }
 
     private fun setOnClick() {
@@ -71,9 +55,9 @@ class ChapterActivity : AppCompatActivity(), ChapterAdapter.ItemAction {
     }
 
     private fun goToItemActivity(chapterNum: Int) {
-        val intent = Intent(applicationContext, AzkharActivity::class.java)
-        intent.putExtra("chapter", chapterNum)
-        startActivity(intent)
+        startActivity<AzkharActivity> {
+            putExtra("chapter", chapterNum)
+        }
     }
 
     private fun getChapters(categoryId: Int) {
@@ -81,7 +65,7 @@ class ChapterActivity : AppCompatActivity(), ChapterAdapter.ItemAction {
             val repository = MuslimRepository(this@ChapterActivity)
             val azkarChapters = repository.getAzkarChapters(Language.EN, categoryId)
             if (azkarChapters != null) {
-                adapter.setData(azkarChapters)
+                adapter.submitList(azkarChapters)
             }
             /*Log.i("azkarChapters", "$azkarChapters")
             Log.i("azkarChapters", "${azkarChapters?.size}")*/

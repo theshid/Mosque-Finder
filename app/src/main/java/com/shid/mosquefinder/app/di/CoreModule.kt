@@ -9,6 +9,8 @@ import com.google.android.gms.location.LocationServices
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.SharePref
+import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
+import com.shid.mosquefinder.data.model.User
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,4 +63,8 @@ object CoreModule {
         .requestIdToken(resources.getString(R.string.default_web_client_id))
         .requestEmail()
         .build()
+
+    @Singleton
+    @Provides
+    fun provideUser(): User = User()
 }
