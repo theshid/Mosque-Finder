@@ -4,6 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.shid.mosquefinder.data.local.database.entities.*
+import com.shid.mosquefinder.domain.model.Ayah
+import com.shid.mosquefinder.domain.model.Surah
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QuranDao {
@@ -11,7 +14,7 @@ interface QuranDao {
     suspend fun insertSurah(vararg surahDb: SurahDb)
 
     @Insert
-    suspend fun insertAyah(vararg ayah: Ayah)
+    suspend fun insertAyah(vararg ayah: AyahDb)
 
     @Insert
     suspend fun insertCategory(vararg category: Category)
@@ -29,7 +32,7 @@ interface QuranDao {
     val randomSurahDb: SurahDb
 
     @get:Query("SELECT * FROM ayahs ORDER BY RANDOM() LIMIT 1")
-    val randomAyah: Ayah
+    val randomAyah: AyahDb
 
     @Query("SELECT * FROM surahs ORDER BY number")
     fun getSurahs():List<SurahDb>
@@ -41,7 +44,7 @@ interface QuranDao {
     fun getSurahList(surahNumber: Int):List<SurahDb>
 
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber)")
-    fun getAyah(surahNumber:Int):List<Ayah>
+    fun getAyah(surahNumber:Int):List<AyahDb>
 
     @Query("SELECT * FROM category ")
     fun getCategories():List<Category>
@@ -59,5 +62,5 @@ interface QuranDao {
     fun updateAyah(french:String, verseId:Long)
 
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber) ORDER BY RANDOM() LIMIT 1")
-    fun getRandomAyah(surahNumber:Int):Ayah
+    fun getRandomAyah(surahNumber:Int):AyahDb
 }

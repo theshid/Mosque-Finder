@@ -10,13 +10,9 @@ import com.shid.mosquefinder.app.utils.helper_class.Resource
 
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
-    private lateinit var authRepositoryImpl: AuthRepositoryImpl
+    private var authRepositoryImpl: AuthRepositoryImpl = AuthRepositoryImpl()
     var authenticatedUserLiveData: LiveData<User>? = null
     var createdUserLiveData: LiveData<User>? = null
-
-    init {
-        authRepositoryImpl = AuthRepositoryImpl()
-    }
 
     fun signInWithGoogle(googleAuthCredential: AuthCredential?) {
         authenticatedUserLiveData = authRepositoryImpl?.firebaseSignInWithGoogle(googleAuthCredential)

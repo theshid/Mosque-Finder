@@ -84,9 +84,6 @@
             android:name="com.shid.mosquefinder.app.ui.main.views.SurahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.shid.mosquefinder.app.ui.main.views.TestActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="com.shid.mosquefinder.app.ui.main.views.DetailActivity"
             android:screenOrientation="portrait" />
         <activity

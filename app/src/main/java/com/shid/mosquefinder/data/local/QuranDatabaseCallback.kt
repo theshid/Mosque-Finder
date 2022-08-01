@@ -161,7 +161,7 @@ class QuranDatabaseCallback @Inject constructor(
                     try {
                         Timber.d("Db: insertion ayah")
                         surahDao.insertAyah(
-                            Ayah(
+                            AyahDb(
                                 0,
                                 ayah.getInt("surah_number"), ayah.getInt("verse_number"),
                                 ayah.getString("text"),

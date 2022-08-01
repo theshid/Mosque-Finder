@@ -11,9 +11,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.shid.mosquefinder.data.repository.AyahRepository
+import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
 import com.shid.mosquefinder.data.local.database.QuranDatabase
-import com.shid.mosquefinder.data.local.database.entities.Ayah
+import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.R
 import kotlinx.coroutines.GlobalScope
 import timber.log.Timber
@@ -24,8 +24,8 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
     Worker(context, params) {
 
     private val CHANNEL_ID = "notify-ayah"
-    private var repository: AyahRepository? = null
-    private var randomAyah: Ayah? = null
+    private var repository: AyahRepositoryImpl? = null
+    private var randomAyah: AyahDb? = null
     private val randomSurahNumber = (1..114).random()
 
     companion object {
@@ -34,7 +34,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
 
     init {
         val dao = QuranDatabase.getDatabase(context, GlobalScope, context.resources).surahDao()
-        repository = AyahRepository(dao)
+        repository = AyahRepositoryImpl(dao)
         randomAyah = repository!!.getRandomAyah(randomSurahNumber)
         createNotificationChannel()
     }
@@ -44,7 +44,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
         return Result.success()
     }
 
-    private fun makeNotification(ayah: Ayah) {
+    private fun makeNotification(ayah: AyahDb) {
         if (Locale.getDefault().language.contentEquals("fr")) {
             var contentText: String? = null
             if (ayah.frenchTranslation == null || ayah.frenchTranslation.equals("empty")) {

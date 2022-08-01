@@ -4,10 +4,10 @@ import com.shid.mosquefinder.domain.model.Surah
 import com.shid.mosquefinder.domain.repository.SurahRepository
 import kotlinx.coroutines.flow.Flow
 
-typealias GetAllSurahsBaseUseCase = BaseUseCase<Unit, Flow<List<Surah>>>
+typealias GetAllSurahsBaseUseCase = BaseUseCase<Unit, List<Surah>>
 
 class GetAllSurahsUseCase(private val surahRepository: SurahRepository) : GetAllSurahsBaseUseCase {
-    override suspend fun invoke(params: Unit): Flow<List<Surah>> {
+    override suspend fun invoke(params: Unit): List<Surah> {
         return surahRepository.getAllSurahs()
     }
 

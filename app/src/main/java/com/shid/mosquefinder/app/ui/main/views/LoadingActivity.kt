@@ -10,9 +10,9 @@ import androidx.activity.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
-import com.shid.mosquefinder.app.utils.SharePref
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,12 +20,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LoadingActivity : AppCompatActivity() {
     companion object {
-        val FILTER = "com.shid.mosquefinder.DBLOAD"
+        const val FILTER = "com.shid.mosquefinder.DBLOAD"
     }
 
     private val viewModel: SurahViewModel by viewModels()
     @Inject
-    private lateinit var sharedPref:SharePref
+    private lateinit var sharedPref: SharePref
     private var user:com.shid.mosquefinder.data.model.User ?= null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {

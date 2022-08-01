@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "ayahs")
-data class Ayah(
+data class AyahDb(
     @PrimaryKey(autoGenerate = true)  val id:Long,
     @ColumnInfo(name = "surah_number") val surah_number: Int,
     @ColumnInfo(name = "verse_number") val verse_number: Int,

@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface SurahRepository {
 
-    fun getAllSurahs(): Flow<List<Surah>>
+    fun getAllSurahs(): List<Surah>
 
-    fun getSurahByNumber(surahNumber: Int): Flow<Surah>
+    fun getSurahByNumber(surahNumber: Int): Surah
 
-    fun getListSurahs(surahNumber: Int): Flow<List<Surah>>
+    fun getListSurahs(surahNumber: Int): List<Surah>
 }

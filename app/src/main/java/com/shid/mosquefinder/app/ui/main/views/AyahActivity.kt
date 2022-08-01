@@ -20,18 +20,18 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.pojo.Verse
-import com.shid.mosquefinder.data.repository.AyahRepository
+import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
 import com.shid.mosquefinder.data.local.database.QuranDatabase
-import com.shid.mosquefinder.data.local.database.entities.Ayah
+import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.data.local.database.entities.SurahDb
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.AyahViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.AyahAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
 import com.shid.mosquefinder.app.ui.services.SurahDLService
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.network.Event
 import com.shid.mosquefinder.app.utils.network.NetworkEvents
-import com.shid.mosquefinder.app.utils.SharePref
 import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*
 import kotlinx.android.synthetic.main.activity_ayah.fab
@@ -54,7 +54,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private var baseNumber = 0
     private var surahName: String? = null
     private var surahNumber: Int? = null
-    private lateinit var sharedPref:SharePref
+    private lateinit var sharedPref: SharePref
     private var isFirstTime:Boolean ?= null
     private lateinit var switch: StickySwitch
     private var verseList: List<Verse> ?= null
@@ -135,7 +135,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
             QuranDatabase.getDatabase(application, lifecycleScope, application.resources).surahDao()
         viewModel = ViewModelProvider(
             this,
-            AyahViewModelFactory(application, AyahRepository(dao))
+            AyahViewModelFactory(application, AyahRepositoryImpl(dao))
         ).get(AyahViewModel::class.java)
     }
 
@@ -186,7 +186,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
 
         })
 
-        viewModel.surahDb.observe(this, Observer {
+        viewModel.surah.observe(this, Observer {
             if(it != null){
                 surah_title.text = it.transliteration
                 surahName = it.transliteration
@@ -336,7 +336,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
         previousSate = ConnectivityStateHolder.isConnected
     }
 
-    override fun onClickAyah(ayah: Ayah) {
+    override fun onClickAyah(ayah: AyahDb) {
 
         val verseNumber = baseNumber + ayah.verse_number
         Timber.d("ayaNum:$verseNumber")

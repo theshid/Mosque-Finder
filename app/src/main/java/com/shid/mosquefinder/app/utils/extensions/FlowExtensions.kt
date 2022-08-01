@@ -6,6 +6,8 @@ import com.shid.mosquefinder.data.remote.toDomain
 import com.shid.mosquefinder.domain.model.DeepL
 import com.shid.mosquefinder.domain.model.Translation
 import com.shid.mosquefinder.app.ui.main.mappers.toPresentation
+import com.shid.mosquefinder.data.local.database.entities.AyahDb
+import com.shid.mosquefinder.data.local.toDomain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
