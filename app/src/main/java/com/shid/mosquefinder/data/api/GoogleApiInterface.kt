@@ -21,6 +21,6 @@ interface GoogleApiInterface {
     ): Call<DeepLResponse>
 
     @GET("v1/surah/{surahNumber}/fr.hamidullah")
-    fun getFrenchSurah(@Path("surahNumber") numSurah:Int):Call<Root>
+    fun getFrenchSurah(@Path("surahNumber") numSurah:Int):Call<RootResponse>
 
 }

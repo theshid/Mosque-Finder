@@ -10,18 +10,17 @@ import com.shid.mosquefinder.app.ui.main.states.Error
 import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.models.AyahPresentation
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
+import com.shid.mosquefinder.app.ui.models.VersePresentation
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
 import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.data.local.database.entities.SurahDb
-import com.shid.mosquefinder.data.model.pojo.Root
-import com.shid.mosquefinder.data.model.pojo.Verse
-import com.shid.mosquefinder.domain.usecases.GetAllSurahsUseCase
-import com.shid.mosquefinder.domain.usecases.GetAyahUseCase
-import com.shid.mosquefinder.domain.usecases.GetSurahByNumberUseCase
-import com.shid.mosquefinder.domain.usecases.UpdateAyahUseCase
+import com.shid.mosquefinder.data.model.pojo.RootResponse
+import com.shid.mosquefinder.data.model.pojo.VerseResponse
+import com.shid.mosquefinder.domain.usecases.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,12 +32,14 @@ internal class AyahViewModel @Inject constructor(
     private val getAyahUsecase: GetAyahUseCase,
     private val getAllSurahsUseCase: GetAllSurahsUseCase,
     private val getSurahByNumberUseCase: GetSurahByNumberUseCase,
-    private val updateAyahUseCase: UpdateAyahUseCase
+    private val updateAyahUseCase: UpdateAyahUseCase,
+    private val getSurahInFrenchUseCase: GetSurahInFrenchUseCase
 ) : BaseViewModel() {
 
     private var getAllAyah: Job? = null
     private var getAllSurahs: Job? = null
     private var getSurahByNumber: Job? = null
+    private var getSurahInFrenchJob: Job? = null
 
     val surahsViewState: LiveData<SurahViewState>
         get() = _surahsViewState
@@ -68,7 +69,7 @@ internal class AyahViewModel @Inject constructor(
         getAllSurahs?.cancel()
     }
 
-    private val repository = ayahRepositoryImpl
+
     val service = Common.frenchQuranApiService
 
     private var _ayah = MutableLiveData<List<AyahDb>>()
@@ -83,9 +84,13 @@ internal class AyahViewModel @Inject constructor(
     val listSurahDb: LiveData<List<SurahDb>>
         get() = _listSurahDb
 
-    var _translation = MutableLiveData<List<Verse>>()
-    val translation: LiveData<List<Verse>>
+    var _translation = MutableLiveData<List<VerseResponse>>()
+    val translation: LiveData<List<VerseResponse>>
         get() = _translation
+
+    var _traduction = MutableLiveData<List<VersePresentation>>()
+    val traduction: LiveData<List<VersePresentation>>
+        get() = _traduction
 
     fun getAyahs(surahNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -166,23 +171,32 @@ internal class AyahViewModel @Inject constructor(
 
     }
 
+    private suspend fun loadSurahInFrench(surahId: Int){
+        getSurahInFrenchUseCase(surahId).collect{
+            ayahInFrench -> _traduction.value= ayahInFrench.map { it.toPresentation() }
+        }
+    }
+
     fun getFrenchSurah(surahId: Int) {
-        service.getFrenchSurah(surahId).enqueue(object : Callback<Root> {
-            override fun onResponse(call: Call<Root>, response: Response<Root>) {
+        getSurahInFrenchJob = launchCoroutine {
+
+        }
+        service.getFrenchSurah(surahId).enqueue(object : Callback<RootResponse> {
+            override fun onResponse(call: Call<RootResponse>, response: Response<RootResponse>) {
                 if (response.code() == 200) {
-                    _translation.value = response.body()!!.data.verse
+                    _translation.value = response.body()!!.data.verseResponse
                     /* GlobalScope.launch(Dispatchers.IO){
                          quranDao.updateAyah(response.body()!!.data.verse,ayahId)
                      }*/
 
-                    Log.d("Ayah", "OnResponse OK : " + response.body()!!.data.verse + " " + surahId)
+                    Log.d("Ayah", "OnResponse OK : " + response.body()!!.data.verseResponse + " " + surahId)
                 } else {
 
                     Log.d("Ayah", "OnResponse Fail : ")
                 }
             }
 
-            override fun onFailure(call: Call<Root>, t: Throwable) {
+            override fun onFailure(call: Call<RootResponse>, t: Throwable) {
 
                 Log.d("Ayah", "OnResponse Fail : ")
             }

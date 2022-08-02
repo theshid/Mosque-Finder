@@ -2,7 +2,7 @@ package com.shid.mosquefinder.data.model.pojo
 
 import com.google.gson.annotations.SerializedName
 
-data class Verse(
+data class VerseResponse(
     @SerializedName("number")
     val num:Int,
     @SerializedName("text")

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.shid.mosquefinder.data.model.pojo.Verse
+import com.shid.mosquefinder.data.model.pojo.VerseResponse
 import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
@@ -17,7 +17,7 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
     RecyclerView.Adapter<AyahAdapter.AyahViewHolder>() {
 
     private var listData = ArrayList<AyahDb>()
-    private var frenchList = ArrayList<Verse>()
+    private var frenchList = ArrayList<VerseResponse>()
     lateinit var onClickAyah: OnClickAyah
 
     interface OnClickAyah {
@@ -34,7 +34,7 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
         notifyDataSetChanged()
     }
 
-    fun setNetworkList(list: List<Verse>){
+    fun setNetworkList(list: List<VerseResponse>){
         frenchList.clear()
         frenchList.addAll(list)
     }

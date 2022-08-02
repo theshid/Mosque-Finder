@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.data.model.pojo.Verse
+import com.shid.mosquefinder.data.model.pojo.VerseResponse
 import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
 import com.shid.mosquefinder.data.local.database.QuranDatabase
 import com.shid.mosquefinder.data.local.database.entities.AyahDb
@@ -57,7 +57,7 @@ class AyahActivity : AppCompatActivity(), AyahAdapter.OnClickAyah, Player.EventL
     private lateinit var sharedPref: SharePref
     private var isFirstTime:Boolean ?= null
     private lateinit var switch: StickySwitch
-    private var verseList: List<Verse> ?= null
+    private var verseResponseList: List<VerseResponse> ?= null
     companion object{
         val STATE_SURAH = "state"
     }

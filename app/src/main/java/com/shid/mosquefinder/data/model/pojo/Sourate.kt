@@ -16,5 +16,5 @@ data class Sourate(
     @SerializedName("numberOfAyahs")
     val numAyahs:Int,
     @SerializedName("ayahs")
-    val ayahs:List<Verset>
+    val ayahs:List<VersetResponse>
 )

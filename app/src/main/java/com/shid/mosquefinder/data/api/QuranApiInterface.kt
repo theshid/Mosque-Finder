@@ -1,12 +1,12 @@
 package com.shid.mosquefinder.data.api
 
-import com.shid.mosquefinder.data.model.pojo.Root
-import retrofit2.Call
+import com.shid.mosquefinder.data.model.pojo.RootResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface QuranApiInterface {
 
     @GET("v1/surah/{surahNumber}/fr.hamidullah")
-    fun getFrenchSurah(@Path("surahNumber") numSurah:Int):Root
+    fun getFrenchSurah(@Path("surahNumber") numSurah:Int):Response<RootResponse>
 }

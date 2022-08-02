@@ -2,9 +2,9 @@ package com.shid.mosquefinder.data.model.pojo
 
 import com.google.gson.annotations.SerializedName
 
-data class Verset(
+data class VersetResponse(
     @SerializedName("number")
     val verseNumber:Int,
     @SerializedName("ayahs")
-    val verse:List<Verse>
+    val verseResponse:List<VerseResponse>
 )
