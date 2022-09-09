@@ -185,6 +185,7 @@ internal class AyahViewModel @Inject constructor(
             override fun onResponse(call: Call<RootResponse>, response: Response<RootResponse>) {
                 if (response.code() == 200) {
                     _translation.value = response.body()!!.data.verseResponse
+
                     /* GlobalScope.launch(Dispatchers.IO){
                          quranDao.updateAyah(response.body()!!.data.verse,ayahId)
                      }*/

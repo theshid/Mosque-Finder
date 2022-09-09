@@ -23,8 +23,8 @@ object RemoteDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideBlogRepository(firestore: FirebaseFirestore): BlogRepository =
-        BlogRepository(firestore)
+    fun provideBlogRepository(firestore: FirebaseFirestore): BlogRepositoryImpl =
+        BlogRepositoryImpl(firestore)
 
     @Provides
     @Singleton

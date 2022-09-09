@@ -1,8 +1,7 @@
 package com.shid.mosquefinder.app.ui.main.mappers
 
 import com.shid.mosquefinder.app.ui.models.*
-import com.shid.mosquefinder.app.ui.models.DeeplPresentation
-import com.shid.mosquefinder.app.ui.models.TranslationPresentation
+import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.domain.model.*
 
 internal fun DeepL.toPresentation() =
@@ -27,3 +26,7 @@ internal fun Ayah.toPresentation() = AyahPresentation(
 )
 
 internal fun Verse.toPresentation() = VersePresentation(num, trans, numInSurah)
+
+internal fun Article.toPresentation() =
+    ArticlePresentation(title = this.title, title_fr = this.title_fr, author = this.author,
+    body = this.body, pic = this.pic, body_fr = this.body_fr, tag = this.tag)

@@ -3,15 +3,17 @@ package com.shid.mosquefinder.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
-import com.shid.mosquefinder.data.model.Article
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.Resource
+import com.shid.mosquefinder.data.model.Article
+import com.shid.mosquefinder.domain.repository.BlogRepository
 import timber.log.Timber
 import javax.inject.Inject
 
-class BlogRepository @Inject constructor(val database:FirebaseFirestore) {
+class BlogRepositoryImpl @Inject constructor(val database: FirebaseFirestore) : BlogRepository {
 
     private val firebaseBlogRef: CollectionReference =
-        database.collection("blog")
+        database.collection(Constants.BLOG_COLLECTION_PATH)
     private lateinit var mBlogListEventListener: ListenerRegistration
 
     private var mBlogList: MutableList<Article> = ArrayList()
@@ -26,7 +28,7 @@ class BlogRepository @Inject constructor(val database:FirebaseFirestore) {
         return statusMsg
     }
 
-    fun getArticlesFromFirebase(): MutableList<Article> {
+    override fun getArticlesFromFirebase(): List<Article> {
         mBlogListEventListener =
             firebaseBlogRef.addSnapshotListener(EventListener { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
@@ -45,13 +47,13 @@ class BlogRepository @Inject constructor(val database:FirebaseFirestore) {
                     mBlogList.clear()
                     for (doc in querySnapshot) {
 
-                        val title: String = doc.get("title") as String
-                        val titleFr: String = doc.get("title_fr") as String
-                        val author: String = doc.get("author") as String
-                        val body: String = doc.get("body") as String
-                        val pic: String = doc.get("image_link") as String
-                        val bodyFr: String = doc.get("body_fr") as String
-                        val tag: String = doc.get("tag") as String
+                        val title: String = doc.get(Constants.BLOG_FIELD_TITLE) as String
+                        val titleFr: String = doc.get(Constants.BLOG_FIELD_TITLE_FR) as String
+                        val author: String = doc.get(Constants.BLOG_FIELD_AUTHOR) as String
+                        val body: String = doc.get(Constants.BLOG_FIELD_BODY) as String
+                        val pic: String = doc.get(Constants.BLOG_FIELD_IMAGE) as String
+                        val bodyFr: String = doc.get(Constants.BLOG_FIELD_BODY_FR) as String
+                        val tag: String = doc.get(Constants.BLOG_FIELD_TAG) as String
 
 
                         val article =
@@ -70,6 +72,6 @@ class BlogRepository @Inject constructor(val database:FirebaseFirestore) {
                 }
             })
         Timber.d("Is blog list empty:" + mBlogList.isEmpty())
-        return mBlogList
+        return mBlogList.toList()
     }
 }
