@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.extensions.loadColor
 import com.skydoves.transformationlayout.onTransformationEndContainer
 
 fun AppCompatActivity.onTransformationEndContainerApplyParams() {

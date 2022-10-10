@@ -6,8 +6,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.utils.SharePref
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,8 +26,8 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
-
-        var sharePref: SharePref? = null
+        @Inject
+        lateinit var sharePref: SharePref
 
         companion object {
             const val WORKER_TAG = "notification_worker"
@@ -35,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
             sharePref = SharePref(requireContext())
             val switchPreference =
                 findPreference<SwitchPreference>(requireContext().getString(R.string.pref_notification_key))
-            switchPreference!!.isChecked = sharePref!!.loadSwitchState()
+            switchPreference!!.isChecked = sharePref.loadSwitchState()
         }
 
         override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -44,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
             if (preference.key == notificationKey) {
                 val on =
                     (preference as SwitchPreference).isChecked
-                sharePref!!.saveSwitchState(on)
+                sharePref.saveSwitchState(on)
                 /*val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
                 with (sharedPref.edit()) {
                     putBoolean(getString(R.string.pref_notification_key), on)

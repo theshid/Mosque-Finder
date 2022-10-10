@@ -6,9 +6,11 @@ import com.google.firebase.firestore.*
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import timber.log.Timber
+import javax.inject.Inject
 
 class BeautifulMosquesRepository {
-    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
+    @Inject
+    lateinit var database: FirebaseFirestore
     private val firebaseBeautyMosqueRef: CollectionReference =
         database.collection("beautiful-mosques")
     private lateinit var mBeautyMosqueListEventListener: ListenerRegistration

@@ -5,9 +5,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.ChapterAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.ChapterViewModel
-import com.shid.mosquefinder.app.utils.startActivity
+import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.data.local.database.entities.Chapter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.kosrat.muslimdata.models.Language
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_chapter.*
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ChapterActivity : AppCompatActivity(), ChapterAdapter.ItemAction {
+class ChapterActivity : BaseActivity(), ChapterAdapter.ItemAction {
     private lateinit var adapter: ChapterAdapter
     private var categorNum: Int? = null
     private var chapterList: List<Chapter>? = null
@@ -42,9 +43,7 @@ class ChapterActivity : AppCompatActivity(), ChapterAdapter.ItemAction {
         rv_chapter.adapter = adapter
         adapter.setItemClickAction(this)
         categorNum?.let { item ->
-
             getChapters(item)
-
         }
     }
 

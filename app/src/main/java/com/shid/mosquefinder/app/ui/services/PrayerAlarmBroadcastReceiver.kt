@@ -18,7 +18,7 @@ import com.shid.mosquefinder.app.ui.main.views.HomeActivity
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
-import com.shid.mosquefinder.app.utils.showToast
+import com.shid.mosquefinder.app.utils.extensions.showToast
 import timber.log.Timber
 import java.util.*
 

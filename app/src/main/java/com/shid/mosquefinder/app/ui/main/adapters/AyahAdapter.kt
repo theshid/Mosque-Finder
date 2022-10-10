@@ -9,6 +9,7 @@ import com.shid.mosquefinder.data.model.pojo.VerseResponse
 import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
+import com.shid.mosquefinder.app.ui.models.AyahPresentation
 import kotlinx.android.synthetic.main.item_quran_ayah.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -16,25 +17,25 @@ import kotlin.collections.ArrayList
 class AyahAdapter(val viewmodel:AyahViewModel) :
     RecyclerView.Adapter<AyahAdapter.AyahViewHolder>() {
 
-    private var listData = ArrayList<AyahDb>()
+    private var listData = ArrayList<AyahPresentation>()
     private var frenchList = ArrayList<VerseResponse>()
     lateinit var onClickAyah: OnClickAyah
 
     interface OnClickAyah {
-        fun onClickAyah(ayah: AyahDb)
+        fun onClickAyah(ayah: AyahPresentation)
     }
 
     fun setOnItemClick(mOnClickAyah: OnClickAyah) {
         onClickAyah = mOnClickAyah
     }
 
-    fun setData(newListData: List<AyahDb>) {
+    fun setData(newListData: List<AyahPresentation>) {
         listData.clear()
         listData.addAll(newListData)
         notifyDataSetChanged()
     }
 
-    fun setNetworkList(list: List<VerseResponse>){
+    fun setFrenchAyahList(list: List<VerseResponse>){
         frenchList.clear()
         frenchList.addAll(list)
     }
@@ -59,13 +60,13 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
 
     inner class AyahViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        fun bind(ayah: AyahDb) {
+        fun bind(ayah: AyahPresentation) {
             if(Locale.getDefault().language.contentEquals("fr")){
                 itemView.apply {
                     tv_item_ayah_verse.text = ayah.verse_number.toString()
                     tv_item_ayah_arab.text = ayah.originalText
                 }
-                if(ayah.frenchTranslation == null || ayah.frenchTranslation.equals("empty")){
+                if(ayah.frenchTranslation.equals("empty")){
                     for (item in frenchList){
                         Log.d("Adapter","item number:" + item.numInSurah)
                         Log.d("Adapter","ayah number:" + ayah.verse_number)

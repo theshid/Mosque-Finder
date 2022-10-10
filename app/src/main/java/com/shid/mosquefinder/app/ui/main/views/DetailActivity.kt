@@ -2,27 +2,26 @@ package com.shid.mosquefinder.app.ui.main.views
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueViewPagerAdapter
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.app.utils.network.Event
 import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import com.shid.mosquefinder.app.utils.onTransformationEndContainerApplyParams
+import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_detail.toolbar
-import kotlinx.android.synthetic.main.activity_detail.viewPager2
 import java.util.*
-import kotlin.collections.ArrayList
 
-class DetailActivity : AppCompatActivity() {
-    private var previousSate = true
+@AndroidEntryPoint
+class DetailActivity : BaseActivity() {
     private var mImgLinkList: MutableList<String> = ArrayList()
     private lateinit var viewPagerAdapter: MosqueViewPagerAdapter
 
@@ -31,7 +30,6 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        setNetworkMonitor()
         setOnClick()
         val mosqueItem: BeautifulMosques = requireNotNull(intent.getParcelableExtra(EXTRA_MOSQUE))
         setUi(mosqueItem)
@@ -40,9 +38,9 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setUi(beautifulMosques: BeautifulMosques) {
         name.text = beautifulMosques.name
-        if (Locale.getDefault().getLanguage() == "fr"){
+        if (Locale.getDefault().getLanguage() == "fr") {
             description.text = beautifulMosques.description_fr
-        }else{
+        } else {
             description.text = beautifulMosques.description
         }
 
@@ -66,59 +64,10 @@ class DetailActivity : AppCompatActivity() {
         worm_dots_indicator2.setViewPager2(viewPager2)
 
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-        })
-    }
-
-
-    private fun setNetworkMonitor() {
-        NetworkEvents.observe(this, androidx.lifecycle.Observer {
-
-            if (it is Event.ConnectivityEvent)
-                handleConnectivityChange()
-
 
         })
     }
 
-    private fun handleConnectivityChange() {
-        if (ConnectivityStateHolder.isConnected && !previousSate) {
-            // showSnackBar(textView, "The network is back !")
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_connected))
-                .setMessage(getString(R.string.sneaker_msg_network))
-                .sneakSuccess()
-        }
-
-        if (!ConnectivityStateHolder.isConnected && previousSate) {
-            // showSnackBar(textView, "No Network !")
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_disconnected))
-                .setMessage(getString(R.string.sneaker_msg_network_lost))
-                .sneakError()
-        }
-
-        previousSate = ConnectivityStateHolder.isConnected
-    }
-
-    override fun onResume() {
-        super.onResume()
-        handleConnectivityChange()
-    }
 
     companion object {
 

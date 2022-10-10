@@ -73,11 +73,16 @@ internal class SurahViewModel @Inject constructor( val getAllSurahsUseCase: GetA
     }
 
     private suspend fun loadSurahs() {
-        getAllSurahsUseCase(Unit).collect{surahs ->
-            val surahsList = surahs.map { it.toPresentation() }
+        getAllSurahsUseCase.invoke(Unit).apply {
+            val surahsList = this.map { it.toPresentation() }
             Timber.d("surahs: $surahsList ")
             onSurahsLoadingComplete(surahsList)
         }
+        /*getAllSurahsUseCase(Unit).collect{surahs ->
+            val surahsList = surahs.map { it.toPresentation() }
+            Timber.d("surahs: $surahsList ")
+            onSurahsLoadingComplete(surahsList)
+        }*/
     }
 
     private fun onSurahsLoadingComplete(surahsList: List<SurahPresentation>) {

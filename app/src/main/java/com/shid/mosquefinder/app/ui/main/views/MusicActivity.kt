@@ -3,7 +3,6 @@ package com.shid.mosquefinder.app.ui.main.views
 import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -13,19 +12,21 @@ import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.services.MusicService
 import com.shid.mosquefinder.app.utils.formatTimeInMillisToString
 import kotlinx.android.synthetic.main.activity_music.*
 import timber.log.Timber
 import java.io.File
 
-class MusicActivity : AppCompatActivity() {
+class MusicActivity : BaseActivity() {
 
     private lateinit var playPauseButton: AppCompatImageView
     private lateinit var seekBar: AppCompatSeekBar
@@ -36,9 +37,9 @@ class MusicActivity : AppCompatActivity() {
     private lateinit var txtTotal: TextView
     private lateinit var txtProgress: TextView
     private var isRepeat = false
-    private var statePlayer:Boolean = false
-    private var surahName:String ?= null
-    private var surahNumber:Int ?= null
+    private var statePlayer: Boolean = false
+    private var surahName: String? = null
+    private var surahNumber: Int? = null
 
     private val mp4Url =
         "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/mishary-rashid-alafasy/mishary-rashid-alafasy-001-muslimcentral.com.mp3"
@@ -57,7 +58,7 @@ class MusicActivity : AppCompatActivity() {
                 }
                 playSurah()
                 playPauseBuild()
-                Timber.d( "Controller Connected")
+                Timber.d("Controller Connected")
             }
 
             override fun onConnectionFailed() {
@@ -83,14 +84,14 @@ class MusicActivity : AppCompatActivity() {
             } else if (event == "finish") {
 
                 playPauseButton.setImageResource(R.drawable.ic_play_vector)
-                val intent = Intent(this@MusicActivity,MusicService::class.java)
+                val intent = Intent(this@MusicActivity, MusicService::class.java)
                 stopService(intent)
 
-            } else if (event == "play_pause"){
+            } else if (event == "play_pause") {
                 val status = extras.getBoolean("play_status")
-                if (status){
+                if (status) {
                     playPauseButton.setImageResource(R.drawable.ic_pause_vector)
-                } else{
+                } else {
                     playPauseButton.setImageResource(R.drawable.ic_play_vector)
                 }
             }
@@ -103,53 +104,52 @@ class MusicActivity : AppCompatActivity() {
         mediaController = MediaControllerCompat.getMediaController(this@MusicActivity)
 
 
-            val state = mediaController!!.playbackState.state
+        val state = mediaController!!.playbackState.state
 
-            // if it is not playing then what are you waiting for ? PLAY !
-            if (state == PlaybackStateCompat.STATE_PAUSED || state == PlaybackStateCompat.STATE_STOPPED ||
-                state == PlaybackStateCompat.STATE_NONE
-            ) {
-                var formatNumber:String ?= null
-                formatNumber = when {
-                    surahNumber!! in 1..9 -> {
-                        "00$surahNumber"
-                    }
-                    surahNumber!! in 10..99 -> {
-                        "0$surahNumber"
-                    }
-                    else -> {
-                        surahNumber.toString()
-                    }
+        // if it is not playing then what are you waiting for ? PLAY !
+        if (state == PlaybackStateCompat.STATE_PAUSED || state == PlaybackStateCompat.STATE_STOPPED ||
+            state == PlaybackStateCompat.STATE_NONE
+        ) {
+            var formatNumber: String? = null
+            formatNumber = when {
+                surahNumber!! in 1..9 -> {
+                    "00$surahNumber"
                 }
-                sendSurahToService()
-                val surahUrl =
-                    "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com" +
-                            "/mishary-rashid-alafasy/mishary-rashid-alafasy-$formatNumber-muslimcentral.com.mp3"
-                if (checkIfFileExist()){
-                    val filePath = this.getExternalFilesDir(null).toString()+"/surahs/$surahNumber-$surahName.mp3"
-                    mediaController!!.transportControls.playFromUri(Uri.fromFile(File(filePath)),null)
-                    Toast.makeText(this,"Reading File",Toast.LENGTH_LONG).show()
-                }else{
-                    mediaController!!.transportControls.playFromUri(Uri.parse(surahUrl), null)
+                surahNumber!! in 10..99 -> {
+                    "0$surahNumber"
                 }
-                playPauseButton.setImageResource(R.drawable.ic_pause_vector)
-                song_player_progress_bar.visibility = View.GONE
-
+                else -> {
+                    surahNumber.toString()
+                }
             }
-            // you are playing ? knock it off !
-            else if (state == PlaybackStateCompat.STATE_PLAYING ||
-
-                state == PlaybackStateCompat.STATE_CONNECTING
-            ) {
-                mediaController!!.transportControls.pause()
-                playPauseButton.setImageResource(R.drawable.ic_play_vector)
-                song_player_progress_bar.visibility = View.GONE
-
-            } else if (state == PlaybackStateCompat.STATE_BUFFERING ){
-                song_player_progress_bar.visibility = View.VISIBLE
+            sendSurahToService()
+            val surahUrl =
+                "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com" +
+                        "/mishary-rashid-alafasy/mishary-rashid-alafasy-$formatNumber-muslimcentral.com.mp3"
+            if (checkIfFileExist()) {
+                val filePath = this.getExternalFilesDir(null)
+                    .toString() + "/surahs/$surahNumber-$surahName.mp3"
+                mediaController!!.transportControls.playFromUri(Uri.fromFile(File(filePath)), null)
+                Toast.makeText(this, "Reading File", Toast.LENGTH_LONG).show()
+            } else {
+                mediaController!!.transportControls.playFromUri(Uri.parse(surahUrl), null)
             }
+            playPauseButton.setImageResource(R.drawable.ic_pause_vector)
+            song_player_progress_bar.visibility = View.GONE
 
+        }
+        // you are playing ? knock it off !
+        else if (state == PlaybackStateCompat.STATE_PLAYING ||
 
+            state == PlaybackStateCompat.STATE_CONNECTING
+        ) {
+            mediaController!!.transportControls.pause()
+            playPauseButton.setImageResource(R.drawable.ic_play_vector)
+            song_player_progress_bar.visibility = View.GONE
+
+        } else if (state == PlaybackStateCompat.STATE_BUFFERING) {
+            song_player_progress_bar.visibility = View.VISIBLE
+        }
 
         mediaController!!.registerCallback(mControllerCallback)
 
@@ -159,7 +159,7 @@ class MusicActivity : AppCompatActivity() {
         mediaController = MediaControllerCompat.getMediaController(this@MusicActivity)
 
         playPauseButton.setOnClickListener {
-           playSurah()
+            playSurah()
         }
 
         mediaController!!.registerCallback(mControllerCallback)
@@ -171,23 +171,19 @@ class MusicActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_music)
         surahName = intent.getStringExtra("surah_name")
-        surahNumber = intent.getIntExtra("surah_number",1)
+        surahNumber = intent.getIntExtra("surah_number", 1)
+        statePlayer = intent.getBooleanExtra("state_player", false)
         setUI()
         setMediaBrowser()
-
-        statePlayer = intent.getBooleanExtra("state_player",false)
-        Timber.d( "value of state:$statePlayer")
         setPlayPauseBtnFromIntent(statePlayer)
         setClickListeners()
         trackTimeObserver()
-
-
     }
 
-    private fun sendSurahToService(){
+    private fun sendSurahToService() {
         val b = Bundle()
-        b.putString("surah",surahName)
-        mediaController?.sendCommand("surah",b,null)
+        b.putString("surah", surahName)
+        mediaController?.sendCommand("surah", b, null)
     }
 
     private fun trackTimeObserver() {
@@ -198,18 +194,18 @@ class MusicActivity : AppCompatActivity() {
 
     private fun setClickListeners() {
         repeatBtn.setOnClickListener(View.OnClickListener {
-            if(isRepeat){
+            if (isRepeat) {
                 repeatBtn.setImageResource(R.drawable.ic_repeat_black_vector)
                 isRepeat = false
                 val b = Bundle()
-                b.putBoolean("repeat",isRepeat)
-                mediaController?.sendCommand("repeat",b,null)
-            }else{
+                b.putBoolean("repeat", isRepeat)
+                mediaController?.sendCommand("repeat", b, null)
+            } else {
                 repeatBtn.setImageResource(R.drawable.ic_repeat_one_color_primary_vector)
                 isRepeat = true
                 val b = Bundle()
-                b.putBoolean("repeat",isRepeat)
-                mediaController?.sendCommand("repeat",b,null)
+                b.putBoolean("repeat", isRepeat)
+                mediaController?.sendCommand("repeat", b, null)
             }
         })
 
@@ -219,16 +215,16 @@ class MusicActivity : AppCompatActivity() {
     }
 
     private fun setPlayPauseBtnFromIntent(statePlayer: Boolean) {
-        if (statePlayer){
+        if (statePlayer) {
             playPauseButton.setImageResource(R.drawable.ic_pause_vector)
-        } else if (!statePlayer){
+        } else if (!statePlayer) {
             playPauseButton.setImageResource(R.drawable.ic_play_vector)
         }
     }
 
-    private fun checkIfFileExist():Boolean{
+    private fun checkIfFileExist(): Boolean {
         val fileName = "$surahNumber-$surahName.mp3"
-        val file = File(this.getExternalFilesDir(null).toString()+"/surahs/"+fileName)
+        val file = File(this.getExternalFilesDir(null).toString() + "/surahs/" + fileName)
         //Log.d("Test",this.getExternalFilesDir(null).toString())
         return file.exists()
     }
@@ -244,7 +240,7 @@ class MusicActivity : AppCompatActivity() {
     }
 
 
-    private fun setUI(){
+    private fun setUI() {
         seekBar = findViewById(R.id.song_player_progress_seek_bar)
         playPauseButton = findViewById(R.id.song_player_toggle_image_view)
         txtTotal = findViewById(R.id.song_player_total_time_text_view)

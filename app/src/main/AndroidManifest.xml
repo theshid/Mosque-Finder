@@ -153,7 +153,7 @@
 
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.example.composeanime.androidx-startup"
+            android:authorities="com.shid.mosquefinder.androidx-startup"
             android:exported="false"
             tools:node="merge">
 
@@ -161,7 +161,7 @@
                 android:name="com.shid.mosquefinder.app.initializer.TimberInitializer"
                 android:value="androidx.startup" />
             <meta-data
-                android:name="com.example.composeanime.initializer.MavericksInitializer"
+                android:name="com.shid.mosquefinder.app.initializer.WorkManagerInitializer"
                 android:value="androidx.startup" />
         </provider>
 

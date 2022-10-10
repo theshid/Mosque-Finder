@@ -1,13 +1,14 @@
 package com.shid.mosquefinder.app.ui.main.views
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.extensions.startActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_categories.*
-import kotlinx.android.synthetic.main.activity_categories.toolbar
 
+@AndroidEntryPoint
 class CategoriesActivity : AppCompatActivity() {
 
 
@@ -58,9 +59,9 @@ class CategoriesActivity : AppCompatActivity() {
         }
     }
 
-    private fun goToChapterActivity(categoryNum:Int){
-        val intent = Intent(this,ChapterActivity::class.java)
-        intent.putExtra("category",categoryNum)
-        startActivity(intent)
+    private fun goToChapterActivity(categoryNum: Int) {
+        startActivity<ChapterActivity> {
+            putExtra("category", categoryNum)
+        }
     }
 }

@@ -32,7 +32,7 @@ class AzkharActivity : AppCompatActivity() {
         //setViewModel()
         translation?.value = ""
         chapterId = intent.getIntExtra("chapter", 1)
-        adapter = AzkharAdapter(viewModel) { azkarItem ->
+        adapter = AzkharAdapter() { azkarItem ->
             viewModel.getTranslation(azkarItem.translation)
         }
         setUI()

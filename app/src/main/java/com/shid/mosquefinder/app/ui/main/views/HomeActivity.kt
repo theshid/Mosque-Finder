@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -27,14 +26,19 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.model.LatLng
 import com.judemanutd.autostarter.AutoStartPermissionHelper
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.ui.notification.NotificationWorker
 import com.shid.mosquefinder.data.model.User
-import com.shid.mosquefinder.app.utils.*
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.enums.Prayers
+import com.shid.mosquefinder.app.utils.extensions.showToast
+import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -44,22 +48,23 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class HomeActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class HomeActivity : BaseActivity() {
     private var user: User? = null
     var userPosition: LatLng? = null
     private var timeZone: Double? = null
     private val viewModel: SurahViewModel by viewModels()
 
     @Inject
-    private lateinit var sharedPref: SharePref
+    lateinit var sharedPref: SharePref
 
     @Inject
     @OptIn(ExperimentalCoroutinesApi::class)
-    private lateinit var fusedLocationWrapper: FusedLocationWrapper
+    lateinit var fusedLocationWrapper: FusedLocationWrapper
     private var isFirstTime: Boolean? = null
 
     @Inject
-    private lateinit var workManager: WorkManager
+    lateinit var workManager: WorkManager
     private val scope = lifecycleScope
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
@@ -69,7 +74,6 @@ class HomeActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -120,7 +124,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setWorkManagerNotification() {
-        workManager = WorkManager.getInstance(this)
+       // workManager = WorkManager.getInstance(this)
         val saveRequest: PeriodicWorkRequest =
             PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
                 .addTag("notification")
@@ -402,7 +406,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun getUserFromIntent(): User {
-        return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.data.model.User
+        return intent.getSerializableExtra(Common.USER) as User
     }
 
     private fun checkGooglePlayServices(): Boolean {

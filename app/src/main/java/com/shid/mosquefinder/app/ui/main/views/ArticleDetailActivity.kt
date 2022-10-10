@@ -14,11 +14,13 @@ import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import com.shid.mosquefinder.app.utils.onTransformationEndContainerApplyParams
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_article_detail.*
 import kotlinx.android.synthetic.main.activity_detail.toolbar
 import kotlinx.android.synthetic.main.content_post_details.*
 import java.util.*
 
+@AndroidEntryPoint
 class ArticleDetailActivity : AppCompatActivity() {
     private var previousSate = true
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -20,16 +20,16 @@ import javax.inject.Inject
 class AuthRepositoryImpl: AuthRepository {
 
     @Inject
-    private lateinit var firebaseAuth :FirebaseAuth
+    lateinit var firebaseAuth :FirebaseAuth
 
     @Inject
-    private lateinit var rootRef : FirebaseFirestore
+    lateinit var rootRef : FirebaseFirestore
 
     private val usersRef = rootRef.collection(USERS)
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     @Inject
-    private lateinit var crashlytics : FirebaseCrashlytics
+    lateinit var crashlytics : FirebaseCrashlytics
 
 
     override fun firebaseSignInWithGoogle(googleAuthCredential: AuthCredential?): MutableLiveData<User> {

@@ -28,7 +28,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-internal class AyahViewModel @Inject constructor(
+ class AyahViewModel @Inject constructor(
     private val getAyahUsecase: GetAyahUseCase,
     private val getAllSurahsUseCase: GetAllSurahsUseCase,
     private val getSurahByNumberUseCase: GetSurahByNumberUseCase,
@@ -60,7 +60,7 @@ internal class AyahViewModel @Inject constructor(
 
     init {
         _surahsViewState.value = SurahViewState(isLoading = true, error = null, surahs = null)
-        _ayahViewState.value = AyahViewState(isLoading = true, error = null, surahs = null)
+        _ayahViewState.value = AyahViewState(isLoading = true, error = null, ayahs = null)
     }
 
     override fun onCleared() {
@@ -118,7 +118,7 @@ internal class AyahViewModel @Inject constructor(
     }
 
     private fun onAyahsLoadingComplete(ayahsList: List<AyahPresentation>) {
-        _ayahViewState.value = _ayahViewState.value?.copy(isLoading = false, surahs = ayahsList)
+        _ayahViewState.value = _ayahViewState.value?.copy(isLoading = false, ayahs = ayahsList)
     }
 
     private suspend fun loadSurahs() {
@@ -185,10 +185,6 @@ internal class AyahViewModel @Inject constructor(
             override fun onResponse(call: Call<RootResponse>, response: Response<RootResponse>) {
                 if (response.code() == 200) {
                     _translation.value = response.body()!!.data.verseResponse
-
-                    /* GlobalScope.launch(Dispatchers.IO){
-                         quranDao.updateAyah(response.body()!!.data.verse,ayahId)
-                     }*/
 
                     Log.d("Ayah", "OnResponse OK : " + response.body()!!.data.verseResponse + " " + surahId)
                 } else {

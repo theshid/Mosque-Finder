@@ -26,9 +26,11 @@ import retrofit2.Response
 import timber.log.Timber
 import java.lang.StringBuilder
 import java.util.HashMap
+import javax.inject.Inject
 
-class MapRepository constructor(mService: GoogleApiInterface, application: Application) {
-    private val database: FirebaseFirestore = FirebaseFirestore.getInstance()
+class MapRepository @Inject constructor(private val mService: GoogleApiInterface, val application: Application) {
+    @Inject
+    lateinit var database: FirebaseFirestore
     private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private val realDatabase: DatabaseReference = Firebase.database.reference
@@ -41,7 +43,6 @@ class MapRepository constructor(mService: GoogleApiInterface, application: Appli
 
     private val TAG: String = "Map Repository"
     private val mApp: Application = application
-    private val service = Common.googleApiService
     val crashlytics = FirebaseCrashlytics.getInstance()
 
     var mMosqueList: MutableList<Mosque> = ArrayList()
@@ -51,19 +52,10 @@ class MapRepository constructor(mService: GoogleApiInterface, application: Appli
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     init {
-
-
         getGoogleMosqueFromFirebase()
         getTotalMosquesFromFirebase()
         getNigerGoogleMosqueFromFirebase()
-
-       /* if (SplashActivity.userPosition != null){
-            googlePlaceNearbyMosques("mosque",SplashActivity.userPosition!!)
-        }*/
-
     }
-
-
 
 
     fun getNigerGoogleMosqueFromFirebase(): MutableList<GoogleMosque> {
@@ -89,13 +81,13 @@ class MapRepository constructor(mService: GoogleApiInterface, application: Appli
 
                         //mosque.documentId = doc.id
 
-                        var mosqueLat: Double = doc.get("Latitude") as Double
-                        var mosqueLg = doc.get("Longitude") as Double
-                        var mosqueId: String = doc.get("Place ID") as String
-                        var mosqueName: String = doc.get("Place Name") as String
+                        val mosqueLat: Double = doc.get("Latitude") as Double
+                        val mosqueLg = doc.get("Longitude") as Double
+                        val mosqueId: String = doc.get("Place ID") as String
+                        val mosqueName: String = doc.get("Place Name") as String
 
 
-                        var mosqueElem: GoogleMosque =
+                        val mosqueElem: GoogleMosque =
                             GoogleMosque(
                                 mosqueLat,
                                 mosqueLg,
@@ -138,13 +130,13 @@ class MapRepository constructor(mService: GoogleApiInterface, application: Appli
 
                         //mosque.documentId = doc.id
 
-                        var mosqueLat: Double = doc.get("Latitude") as Double
-                        var mosqueLg = doc.get("Longitude") as Double
-                        var mosqueId: String = doc.get("Place ID") as String
-                        var mosqueName: String = doc.get("Place Name") as String
+                        val mosqueLat: Double = doc.get("Latitude") as Double
+                        val mosqueLg = doc.get("Longitude") as Double
+                        val mosqueId: String = doc.get("Place ID") as String
+                        val mosqueName: String = doc.get("Place Name") as String
 
 
-                        var mosqueElem: GoogleMosque =
+                        val mosqueElem: GoogleMosque =
                             GoogleMosque(
                                 mosqueLat,
                                 mosqueLg,
@@ -185,12 +177,12 @@ class MapRepository constructor(mService: GoogleApiInterface, application: Appli
 
                         mosque.documentId = doc.id
 
-                        var mosqueName: String = doc.get("name") as String
-                        var locationMos: GeoPoint = doc.get("position") as GeoPoint
-                        var mosqueId: String = mosque.documentId
-                        var reportIndex: Long = doc.get("report") as Long
+                        val mosqueName: String = doc.get("name") as String
+                        val locationMos: GeoPoint = doc.get("position") as GeoPoint
+                        val mosqueId: String = mosque.documentId
+                        val reportIndex: Long = doc.get("report") as Long
 
-                        var mosqueElem: Mosque =
+                        val mosqueElem: Mosque =
                             Mosque(
                                 mosqueName,
                                 locationMos,
@@ -240,7 +232,7 @@ class MapRepository constructor(mService: GoogleApiInterface, application: Appli
         val requestUrl =
             getRequestUrl(userPosition.latitude, userPosition.longitude, keyword, nextToken)
 
-        service.getNearbyPlaces(requestUrl)
+        mService.getNearbyPlaces(requestUrl)
             .enqueue(object : Callback<Place> {
                 override fun onFailure(call: Call<Place>, t: Throwable) {
                     /*Toast.makeText(mApp.applicationContext, "" + t.message, Toast.LENGTH_LONG)

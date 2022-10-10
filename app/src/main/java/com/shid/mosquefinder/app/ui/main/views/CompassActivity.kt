@@ -3,25 +3,30 @@ package com.shid.mosquefinder.app.ui.main.views
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.helper_class.Compass
+import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SOTWFormatter
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_compass.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
+import javax.inject.Inject
+@AndroidEntryPoint
 class CompassActivity : AppCompatActivity() {
     companion object {
 
@@ -35,8 +40,10 @@ class CompassActivity : AppCompatActivity() {
     private var arrowView: ImageView? = null
     private var dialView: ImageView? = null
     private lateinit var sharedPref: SharePref
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    private lateinit var fusedLocationWrapper: FusedLocationWrapper
+    @Inject
+    lateinit var fusedLocationWrapper: FusedLocationWrapper
 
     private var sotwLabel: TextView? = null // SOTW is for "side of the world"
     private var currentAzimuth = 0f
@@ -48,13 +55,9 @@ class CompassActivity : AppCompatActivity() {
         setContentView(R.layout.activity_compass)
 
         sotwFormatter = SOTWFormatter(this)
-
         arrowView = findViewById(R.id.main_image_hands)
         dialView = findViewById(R.id.main_image_dial)
         sotwLabel = findViewById(R.id.sotw_label)
-
-        fusedLocationWrapper = fusedLocationWrapper()
-        sharedPref = SharePref(this)
 
         toolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -118,11 +121,7 @@ class CompassActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.permisson_not_granted),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    showToast(getString(R.string.permisson_not_granted))
                 }
             }
         }

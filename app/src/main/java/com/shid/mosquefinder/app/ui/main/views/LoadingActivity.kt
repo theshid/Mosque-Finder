@@ -13,6 +13,7 @@ import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
+import com.shid.mosquefinder.app.utils.extensions.startActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class LoadingActivity : AppCompatActivity() {
 
     private val viewModel: SurahViewModel by viewModels()
     @Inject
-    private lateinit var sharedPref: SharePref
+    lateinit var sharedPref: SharePref
     private var user:com.shid.mosquefinder.data.model.User ?= null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -74,8 +75,8 @@ class LoadingActivity : AppCompatActivity() {
 
 
     fun goToHomeActivity() {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra(Common.USER,user)
-        startActivity(intent)
+        startActivity<HomeActivity> {
+            putExtra(Common.USER,user)
+        }
     }
 }

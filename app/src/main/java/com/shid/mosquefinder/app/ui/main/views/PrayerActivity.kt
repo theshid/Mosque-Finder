@@ -22,8 +22,12 @@ import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -31,38 +35,39 @@ import timber.log.Timber
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PrayerActivity : AppCompatActivity() {
 
     private var userPosition: LatLng? = null
     private lateinit var date: SimpleDate
     private var timeZone: Double? = null
     private var isFirstTime: Boolean? = null
-    private lateinit var sharedPref: SharePref
+    @Inject
+    lateinit var sharedPref: SharePref
     private var _broadcastReceiver: BroadcastReceiver? = null
     private val _sdfWatchTime = SimpleDateFormat("HH:mm")
 
 
     val prayerAlarm = PrayerAlarmBroadcastReceiver()
 
+    @Inject
     @OptIn(ExperimentalCoroutinesApi::class)
-    private lateinit var fusedLocationWrapper: FusedLocationWrapper
+    lateinit var fusedLocationWrapper: FusedLocationWrapper
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
-        sharedPref = SharePref(this)
+        //sharedPref = SharePref(this)
         isFirstTime = sharedPref.loadFirstTimePrayerNotification()
-        fusedLocationWrapper = fusedLocationWrapper()
+        //fusedLocationWrapper = fusedLocationWrapper()
         permissionCheck(fusedLocationWrapper)
         setUI()
         clickListeners()
-        if (isFirstTime == true) {
-            activateShowcase()
-            sharedPref.setFirstTimePrayerNotification(false)
-        }
+
     }
 
     override fun onStart() {
@@ -75,17 +80,21 @@ class PrayerActivity : AppCompatActivity() {
             }
         }
 
-registerReceiver(_broadcastReceiver, IntentFilter(Intent.ACTION_TIME_TICK))
+        registerReceiver(_broadcastReceiver, IntentFilter(Intent.ACTION_TIME_TICK))
     }
 
     override fun onStop() {
         super.onStop()
-        if (_broadcastReceiver!= null){
+        if (_broadcastReceiver != null) {
             unregisterReceiver(_broadcastReceiver)
         }
     }
 
     private fun setUI() {
+        if (isFirstTime == true) {
+            activateShowcase()
+            sharedPref.setFirstTimePrayerNotification(false)
+        }
         if (userPosition == null) {
             userPosition = sharedPref.loadSavedPosition()
         }
@@ -376,7 +385,7 @@ registerReceiver(_broadcastReceiver, IntentFilter(Intent.ACTION_TIME_TICK))
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_prayer, menu)
         return true
     }

@@ -19,20 +19,22 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
 import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.AuthViewModel
 import com.shid.mosquefinder.app.ui.onboardingscreen.feature.onboarding.OnBoardingActivity
-import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USER
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.logErrorMessage
-import com.shid.mosquefinder.app.utils.enums.Status
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.app.utils.network.Event
 import com.shid.mosquefinder.app.utils.network.NetworkEvents
+import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.data.model.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -45,8 +47,8 @@ import javax.inject.Inject
 class AuthActivity : BaseActivity() {
 
     var userPosition: LatLng? = null
-   /* @Inject
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient*/
+    /* @Inject
+     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient*/
     /*private var locationCallback: LocationCallback ?= null
     private var locationRequest:LocationRequest ?= null*/
 
@@ -58,15 +60,15 @@ class AuthActivity : BaseActivity() {
     private var previousSate = true
 
     @Inject
-    private lateinit var googleSignInOptions: GoogleSignInOptions
+    lateinit var googleSignInOptions: GoogleSignInOptions
 
     @Inject
-    private lateinit var sharePref: SharePref
+    lateinit var sharePref: SharePref
     private var isFirstTime: Boolean? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Inject
-    private lateinit var fusedLocationWrapper: FusedLocationWrapper
+    lateinit var fusedLocationWrapper: FusedLocationWrapper
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,16 +96,16 @@ class AuthActivity : BaseActivity() {
         initGoogleSignInClient()
     }
 
-   /* private fun setLocationUtils() {
-        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest.create().apply {
-            interval = 5000
-            fastestInterval = 50
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            maxWaitTime = 5000
-        }
+    /* private fun setLocationUtils() {
+         //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+         locationRequest = LocationRequest.create().apply {
+             interval = 5000
+             fastestInterval = 50
+             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+             maxWaitTime = 5000
+         }
 
-    }*/
+     }*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
@@ -167,16 +169,16 @@ class AuthActivity : BaseActivity() {
         }
     }*/
 
-   /* @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        fusedLocationProviderClient!!.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
+    /* @SuppressLint("MissingPermission")
+     private fun startLocationUpdates() {
+         fusedLocationProviderClient!!.requestLocationUpdates(
+             locationRequest,
+             locationCallback,
+             Looper.getMainLooper()
+         )
 
 
-    }*/
+     }*/
 
     override fun onResume() {
         super.onResume()
@@ -185,16 +187,6 @@ class AuthActivity : BaseActivity() {
         /*setLocationUtils()
         retrieveLocation()
         startLocationUpdates()*/
-    }
-
-    override fun onPause() {
-        super.onPause()
-        /*   if (fusedLocationProviderClient != null){
-               fusedLocationProviderClient!!.removeLocationUpdates(locationCallback)
-           }
-           fusedLocationProviderClient = null
-           locationCallback = null
-           locationRequest = null*/
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -223,24 +215,24 @@ class AuthActivity : BaseActivity() {
 
     }
 
-  /*  @SuppressLint("MissingPermission")
-    fun setUpLocationListener() {
-        fusedLocationProviderClient!!.lastLocation
-            .addOnSuccessListener { location: android.location.Location? ->
-                userPosition =
-                    location?.longitude?.let {
-                        LatLng(
-                            location.latitude,
-                            it
-                        )
-                    } // Got last known location. In some rare situations this can be null.
-                userPosition?.let {
-                    Timber.d("value of position:$userPosition")
-                    sharePref!!.saveUserPosition(LatLng(it.latitude, it.longitude))
-                }
-            }
+    /*  @SuppressLint("MissingPermission")
+      fun setUpLocationListener() {
+          fusedLocationProviderClient!!.lastLocation
+              .addOnSuccessListener { location: android.location.Location? ->
+                  userPosition =
+                      location?.longitude?.let {
+                          LatLng(
+                              location.latitude,
+                              it
+                          )
+                      } // Got last known location. In some rare situations this can be null.
+                  userPosition?.let {
+                      Timber.d("value of position:$userPosition")
+                      sharePref!!.saveUserPosition(LatLng(it.latitude, it.longitude))
+                  }
+              }
 
-    }*/
+      }*/
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -313,7 +305,7 @@ class AuthActivity : BaseActivity() {
     }*/
 
     private fun initGoogleSignInClient() {
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
     }
 
 
@@ -376,7 +368,7 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun goToOnBoardingActivity(user: User) {
-        startActivity<OnBoardingActivity>{
+        startActivity<OnBoardingActivity> {
             putExtra(USER, user)
         }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
@@ -385,16 +377,16 @@ class AuthActivity : BaseActivity() {
 
     private fun goToHomeActivity(user: User) {
         val convertUserJson = GsonParser.gsonParser?.toJson(user)
-        convertUserJson?.let {  sharePref.saveUser(convertUserJson) }
-       /* if (convertUserJson != null) {
-            sharePref.saveUser(convertUserJson)
-        }*/
+        convertUserJson?.let { sharePref.saveUser(convertUserJson) }
+        /* if (convertUserJson != null) {
+             sharePref.saveUser(convertUserJson)
+         }*/
         if (isFirstTime == true) {
             startActivity<LoadingActivity>()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             finish()
         } else {
-            startActivity<HomeActivity>{
+            startActivity<HomeActivity> {
                 putExtra(USER, user)
             }
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)

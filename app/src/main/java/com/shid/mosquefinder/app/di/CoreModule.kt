@@ -7,9 +7,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.utils.FusedLocationWrapper
-import com.shid.mosquefinder.app.utils.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.data.model.User
 import dagger.Module
 import dagger.Provides

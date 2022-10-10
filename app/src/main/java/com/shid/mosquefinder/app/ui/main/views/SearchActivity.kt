@@ -2,39 +2,37 @@ package com.shid.mosquefinder.app.ui.main.views
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
-import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.base.SearchViewModelFactory
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.SearchAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.SearchViewModel
-import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
-import com.shid.mosquefinder.app.utils.network.Event
-import com.shid.mosquefinder.app.utils.network.NetworkEvents
 import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.data.model.ClusterMarker
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_search.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class SearchActivity : AppCompatActivity(), SearchAdapter.OnClickSearch {
+@AndroidEntryPoint
+class SearchActivity : BaseActivity(), SearchAdapter.OnClickSearch {
 
     companion object {
         const val SEARCH_RESULT = "search_result"
     }
+
     private lateinit var searchAdapter: SearchAdapter
-    private lateinit var searchViewModel: SearchViewModel
-    private var previousSate = true
+    private val searchViewModel: SearchViewModel by viewModels()
+
     private var sortedMosqueList: List<ClusterMarker> = ArrayList()
     private var listFromApi = arrayListOf<ClusterMarker>()
 
@@ -42,37 +40,23 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.OnClickSearch {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        savedInstanceState?.let {
-            previousSate = it.getBoolean("LOST_CONNECTION")
-        }
         val bundle = intent.extras
         if (bundle != null) {
             listFromApi =
                 bundle.getParcelableArrayList<ClusterMarker>("test") as ArrayList<ClusterMarker>
         }
-        setViewModel()
         setRecycler()
-
         setObservers()
-
-        setNetworkMonitor()
         setOnClick()
-        Handler().postDelayed(kotlinx.coroutines.Runnable {
-
+        Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
             progressBar.visibility = View.GONE
             sortClusterMarkerList()
-
             searchAdapter.list = sortedMosqueList as MutableList<ClusterMarker>
             searchAdapter.mosqueList = sortedMosqueList as MutableList<ClusterMarker>
             searchAdapter.notifyDataSetChanged()
             setSearch()
 
         }, 1000)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        handleConnectivityChange()
     }
 
     private fun setSearch() {
@@ -133,38 +117,6 @@ class SearchActivity : AppCompatActivity(), SearchAdapter.OnClickSearch {
             finish()
         }
         searchRecycler.adapter = searchAdapter
-    }
-
-    private fun setViewModel() {
-        searchViewModel = ViewModelProvider(
-            this,
-            SearchViewModelFactory(Common.googleApiService, application)
-        ).get(SearchViewModel::class.java)
-    }
-
-    private fun setNetworkMonitor() {
-        NetworkEvents.observe(this, androidx.lifecycle.Observer {
-            if (it is Event.ConnectivityEvent)
-                handleConnectivityChange()
-        })
-    }
-
-    private fun handleConnectivityChange() {
-        if (ConnectivityStateHolder.isConnected && !previousSate) {
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_connected))
-                .setMessage(getString(R.string.sneaker_msg_network))
-                .sneakSuccess()
-        }
-
-        if (!ConnectivityStateHolder.isConnected && previousSate) {
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_disconnected))
-                .setMessage(getString(R.string.sneaker_msg_network_lost))
-                .sneakError()
-        }
-
-        previousSate = ConnectivityStateHolder.isConnected
     }
 
     override fun onClickSearch(clusterMarker: ClusterMarker) {

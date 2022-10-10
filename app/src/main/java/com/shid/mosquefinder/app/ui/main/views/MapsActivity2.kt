@@ -13,13 +13,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -43,21 +43,21 @@ import com.google.maps.android.SphericalUtil
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.collections.MarkerManager
 import com.google.maps.model.PlacesSearchResult
-import com.irozon.sneaker.Sneaker
-import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.data.model.ClusterMarker
-import com.shid.mosquefinder.data.model.Mosque
-import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.base.MapViewModelFactory
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.MapViewModel
 import com.shid.mosquefinder.app.utils.*
 import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.extensions.showToast
+import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.MyClusterManagerRenderer
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
-import com.shid.mosquefinder.app.utils.network.Event
-import com.shid.mosquefinder.app.utils.network.NetworkEvents
+import com.shid.mosquefinder.data.model.ClusterMarker
+import com.shid.mosquefinder.data.model.Mosque
+import com.shid.mosquefinder.data.model.User
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,8 +69,9 @@ import uk.co.markormesher.android_fab.SpeedDialMenuItem
 import uk.co.markormesher.android_fab.SpeedDialMenuOpenListener
 import java.math.BigDecimal
 import java.math.RoundingMode
+import javax.inject.Inject
 
-class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener,
+class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener,
     OnMapsSdkInitializedCallback {
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
@@ -84,7 +85,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     private lateinit var mMap: GoogleMap
     private var userPosition: LatLng? = null
     private var testPlaces: List<PlacesSearchResult>? = null
-    private lateinit var mapViewModel: MapViewModel
+    private val mapViewModel: MapViewModel by viewModels()
 
     //Markers
     private var mClusterManager: ClusterManager<ClusterMarker>? = null
@@ -101,15 +102,17 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
     private lateinit var mMapBoundary: LatLngBounds
 
-    private var previousSate = true
-
-    private val firebaseAuth = FirebaseAuth.getInstance()
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
     private var googleSignInClient: GoogleSignInClient? = null
     private var user: User? = null
 
+    @Inject
     @OptIn(ExperimentalCoroutinesApi::class)
-    private lateinit var fusedLocationWrapper: FusedLocationWrapper
-    private var sharePref: SharePref? = null
+    lateinit var fusedLocationWrapper: FusedLocationWrapper
+
+    @Inject
+    lateinit var sharePref: SharePref
     private var isFirstTime: Boolean? = null
     private var useCount: Int = 0
     private var didUserRate: Boolean? = null
@@ -142,8 +145,6 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         permissionCheck(fusedLocationWrapper)
         setDrawerLayout()
         setTransparentStatusBar()
-        setNetworkMonitor()
-        setupViewModel()
         fetchGoogleMapMosques()
         initGoogleSignInClient()
         setMessageForToast(user!!)
@@ -167,10 +168,9 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun initialSetUp() {
-        fusedLocationWrapper = fusedLocationWrapper()
-        sharePref = SharePref(this)
+        //fusedLocationWrapper = fusedLocationWrapper()
+        //sharePref = SharePref(this)
 
         searchText.isClickable = false
         searchText.isEnabled = false
@@ -217,21 +217,20 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
         } else {
             Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
+            startActivity<AuthActivity>()
         }
     }
 
     private fun loadUseCount(): Int {
-        return sharePref!!.loadUseCount()
+        return sharePref.loadUseCount()
     }
 
     private fun loadIfUserRated(): Boolean {
-        return sharePref!!.loadIfUserRated()
+        return sharePref.loadIfUserRated()
     }
 
     private fun checkPrefFirstTime(): Boolean {
-        isFirstTime = sharePref!!.loadIsFirstTimePref()
+        isFirstTime = sharePref.loadIsFirstTimePref()
         return isFirstTime!!
     }
 
@@ -290,27 +289,27 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun setIfUserRated(didUserRate: Boolean) {
-        sharePref!!.saveIfUserRated(didUserRate)
+        sharePref.saveIfUserRated(didUserRate)
     }
 
     private fun setUserCount(use_count: Int) {
-        sharePref!!.saveUseCount(use_count)
+        sharePref.saveUseCount(use_count)
     }
 
     private fun setFirstTimePref(value: Boolean) {
-        sharePref!!.setIsFirstTime(value)
+        sharePref.setIsFirstTime(value)
     }
 
     private fun checkPref() {
-        userPosition = sharePref!!.loadSavedPosition()
+        userPosition = sharePref.loadSavedPosition()
     }
 
-    private fun setNetworkMonitor() {
+    /*private fun setNetworkMonitor() {
         NetworkEvents.observe(this, Observer {
             if (it is Event.ConnectivityEvent)
                 handleConnectivityChange()
         })
-    }
+    }*/
 
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(navigationView)) {
@@ -383,29 +382,25 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun goToSettings() {
-        val intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
+        startActivity<HomeActivity>()
     }
 
     private fun goToQibla() {
-        val intent = Intent(this, CompassActivity::class.java)
-        startActivity(intent)
+        startActivity<CompassActivity>()
     }
 
     private fun goToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.putExtra("user", user)
-        startActivity(intent)
+        startActivity<HomeActivity> {
+            putExtra("user", user)
+        }
     }
 
     private fun goToNames() {
-        val intent = Intent(this, NamesActivity::class.java)
-        startActivity(intent)
+        startActivity<NamesActivity>()
     }
 
     private fun goToCategories() {
-        val intent = Intent(this, CategoriesActivity::class.java)
-        startActivity(intent)
+        startActivity<CategoriesActivity>()
     }
 
     private fun activateShowcase() {
@@ -467,11 +462,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                                     addMapMarkers(userPosition!!)
                                 }
                                 else -> {
-                                    Toast.makeText(
-                                        this@MapsActivity2,
-                                        getString(R.string.offline),
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    showToast(getString(R.string.offline))
                                 }
                             }
 
@@ -487,18 +478,15 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun goToQuran() {
-        val intent = Intent(this, SurahActivity::class.java)
-        startActivity(intent)
+        startActivity<SurahActivity>()
     }
 
     private fun goToBeautifulMosques() {
-        val intent = Intent(this, BeautifulMosquesActivity::class.java)
-        startActivity(intent)
+        startActivity<BeautifulMosquesActivity>()
     }
 
     private fun goToQuotes() {
-        val intent = Intent(this, QuotesActivity::class.java)
-        startActivity(intent)
+        startActivity<QuotesActivity>()
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
@@ -512,13 +500,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun goToFeedback() {
-        startActivity(Intent(this, FeedbackActivity::class.java))
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+        startActivity<FeedbackActivity>()
     }
 
 
     private fun sendEmail() {
-        Toast.makeText(this, getString(R.string.email_message), Toast.LENGTH_LONG).show()
+        showToast(getString(R.string.email_message))
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.data = Uri.parse("mailto:")
         emailIntent.type = "message/rfc822"
@@ -587,21 +574,16 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
 
     private fun setMessageForToast(user: User) {
-        Toast.makeText(
-            this,
-            String.format(resources.getString(R.string.toast_log_in_msg, user.name)),
-            Toast.LENGTH_LONG
-        ).show()
+        showToast(String.format(resources.getString(R.string.toast_log_in_msg, user.name)))
     }
 
     private fun goToAuthInActivity() {
-        val intent = Intent(this@MapsActivity2, AuthActivity::class.java)
-        startActivity(intent)
+        startActivity<AuthActivity> {  }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
-    private fun getUserFromIntent(): User? {
-        return intent.getSerializableExtra(Common.USER) as com.shid.mosquefinder.data.model.User
+    private fun getUserFromIntent(): User {
+        return intent.getSerializableExtra(Common.USER) as User
     }
 
     private fun initGoogleSignInClient() {
@@ -611,7 +593,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
     }
 
-    private fun handleConnectivityChange() {
+    /*private fun handleConnectivityChange() {
         if (ConnectivityStateHolder.isConnected && !previousSate) {
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_connected))
@@ -627,12 +609,12 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
         }
 
         previousSate = ConnectivityStateHolder.isConnected
-    }
+    }*/
 
     @SuppressLint("MissingPermission")
     override fun onResume() {
         super.onResume()
-        handleConnectivityChange()
+        //handleConnectivityChange()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -659,15 +641,14 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
 
         when {
             userPosition != null -> {
-                Handler().postDelayed(kotlinx.coroutines.Runnable {
-
+                Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
                     addMapMarkers(userPosition!!)
                     searchText.isClickable = true
                     searchText.isEnabled = true
                 }, 3000)
             }
             else -> {
-                Handler().postDelayed(kotlinx.coroutines.Runnable {
+                Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
                     checkPref()
                     userPosition?.let {
                         addMapMarkers(it)
@@ -683,7 +664,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
     private fun savePositionToSharePref(position: LatLng) {
-        sharePref!!.saveUserPosition(position)
+        sharePref.saveUserPosition(position)
     }
 
     private fun btnClickListeners() {
@@ -691,7 +672,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
                 setCameraView(sortedMosqueList[1].position)
             } else {
-                Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
+                showToast(getString(R.string.refresh_map))
             }
 
         }
@@ -700,7 +681,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
                 setCameraView(sortedMosqueList[2].position)
             } else {
-                Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
+                showToast(getString(R.string.refresh_map))
             }
 
         }
@@ -709,7 +690,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             if (sortedMosqueList.isNotEmpty() && sortedMosqueList.size > 5) {
                 setCameraView(sortedMosqueList[3].position)
             } else {
-                Toast.makeText(this, getString(R.string.refresh_map), Toast.LENGTH_LONG).show()
+                showToast(getString(R.string.refresh_map))
             }
 
         }
@@ -765,23 +746,27 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
 
             override fun onMenuItemClick(position: Int): Boolean {
-                if (position == 0) {
-                    mosqueeDePlace(userPosition!!)
-                    Handler().postDelayed(Runnable {
-                        addMapMarkers(userPosition!!)
-                    }, 2000)
-                } else if (position == 1) {
-                    setCameraView()
-                    Handler().postDelayed(kotlinx.coroutines.Runnable {
-                        mosquePromptDialog()
-                    }, 2000)
-                } else {
-                    when {
-                        userPosition != null -> {
-                            setCameraView(userPosition!!)
-                        }
-                        else -> {
-                            setCameraView()
+                when (position) {
+                    0 -> {
+                        mosqueeDePlace(userPosition!!)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            addMapMarkers(userPosition!!)
+                        }, 2000)
+                    }
+                    1 -> {
+                        setCameraView()
+                        Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
+                            mosquePromptDialog()
+                        }, 2000)
+                    }
+                    else -> {
+                        when {
+                            userPosition != null -> {
+                                setCameraView(userPosition!!)
+                            }
+                            else -> {
+                                setCameraView()
+                            }
                         }
                     }
                 }
@@ -935,13 +920,13 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
     }
 
 
-    private fun setupViewModel() {
+    /*private fun setupViewModel() {
         mapViewModel = ViewModelProvider(
             this,
             MapViewModelFactory(Common.googleApiService, application)
         ).get(MapViewModel::class.java)
 
-    }
+    }*/
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1295,11 +1280,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
             }
         } catch (e: java.lang.NullPointerException) {
             Timber.d("onClick: NullPointerException: Couldn't open map.%s", e.message)
-            Toast.makeText(
-                applicationContext,
-                getString(R.string.map_error),
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast(getString(R.string.map_error))
         }
     }
 
@@ -1403,11 +1384,7 @@ class MapsActivity2 : AppCompatActivity(), OnMapReadyCallback, FirebaseAuth.Auth
                         }
                     }
                 } else {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.location_permission_not_granted),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    showToast(getString(R.string.location_permission_not_granted))
                 }
             }
         }
