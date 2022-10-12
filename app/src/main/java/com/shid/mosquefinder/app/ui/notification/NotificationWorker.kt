@@ -9,32 +9,43 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
+import com.shid.mosquefinder.R
+import com.shid.mosquefinder.data.api.QuranApiInterface
+import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.local.database.QuranDatabase
 import com.shid.mosquefinder.data.local.database.entities.AyahDb
-import com.shid.mosquefinder.R
+import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
+import com.shid.mosquefinder.domain.model.Ayah
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.GlobalScope
 import timber.log.Timber
 import java.util.*
 
-
-class NotificationWorker(var context: Context, params: WorkerParameters) :
+@HiltWorker
+class NotificationWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    val api:QuranApiInterface,
+    val dao: QuranDao
+) :
     Worker(context, params) {
 
     private val CHANNEL_ID = "notify-ayah"
     private var repository: AyahRepositoryImpl? = null
-    private var randomAyah: AyahDb? = null
+    private var randomAyah: Ayah? = null
     private val randomSurahNumber = (1..114).random()
+    private val mContext = context
 
     companion object {
-         var notificationId = 90
+        var notificationId = 90
     }
 
     init {
-        val dao = QuranDatabase.getDatabase(context, GlobalScope, context.resources).surahDao()
-        repository = AyahRepositoryImpl(dao)
+        repository = AyahRepositoryImpl(dao,api)
         randomAyah = repository!!.getRandomAyah(randomSurahNumber)
         createNotificationChannel()
     }
@@ -44,7 +55,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
         return Result.success()
     }
 
-    private fun makeNotification(ayah: AyahDb) {
+    private fun makeNotification(ayah: Ayah) {
         if (Locale.getDefault().language.contentEquals("fr")) {
             var contentText: String? = null
             if (ayah.frenchTranslation == null || ayah.frenchTranslation.equals("empty")) {
@@ -53,46 +64,50 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
                 contentText = ayah.frenchTranslation
             }
             val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logo2)
-            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            val largeIcon = BitmapFactory.decodeResource(mContext.resources, R.drawable.logo2)
+            val builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo2)
                 .setLargeIcon(largeIcon)
-                .setContentTitle(context.getString(R.string.notification_title))
-                .setContentText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText)
-                .setStyle(NotificationCompat.BigTextStyle()
-                    .bigText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText))
+                .setContentTitle(mContext.getString(R.string.notification_title))
+                .setContentText(ayah.surah_number.toString() + ":" + ayah.verse_number + " " + contentText)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(ayah.surah_number.toString() + ":" + ayah.verse_number + " " + contentText)
+                )
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setColor(context.resources.getColor(R.color.whiteTransparent))
+                .setColor(mContext.resources.getColor(R.color.whiteTransparent))
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setSound(alarmSound)
                 .setAutoCancel(true)
 
-            Timber.d("value of surah:"+ayah.surah_number)
-            Timber.d("value of verse:"+ayah.verse_number)
+            Timber.d("value of surah:" + ayah.surah_number)
+            Timber.d("value of verse:" + ayah.verse_number)
 
-            with(NotificationManagerCompat.from(context)) {
+            with(NotificationManagerCompat.from(mContext)) {
                 // notificationId is a unique int for each notification that you must define
                 notify(notificationId, builder.build())
             }
         } else {
             val contentText = ayah.translation
             val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logo2)
-            var builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            val largeIcon = BitmapFactory.decodeResource(mContext.resources, R.drawable.logo2)
+            var builder = NotificationCompat.Builder(mContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo2)
                 .setLargeIcon(largeIcon)
-                .setContentTitle(context.getString(R.string.notification_title))
-                .setContentText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText)
-                .setStyle(NotificationCompat.BigTextStyle()
-                    .bigText(ayah.surah_number.toString() + ":"+ayah.verse_number+" "+contentText))
+                .setContentTitle(mContext.getString(R.string.notification_title))
+                .setContentText(ayah.surah_number.toString() + ":" + ayah.verse_number + " " + contentText)
+                .setStyle(
+                    NotificationCompat.BigTextStyle()
+                        .bigText(ayah.surah_number.toString() + ":" + ayah.verse_number + " " + contentText)
+                )
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setColor(context.resources.getColor(R.color.whiteTransparent))
+                .setColor(mContext.resources.getColor(R.color.whiteTransparent))
                 .setSound(alarmSound)
                 .setAutoCancel(true)
-            Timber.d("value of surah:"+ayah.surah_number)
-            Timber.d("value of verse:"+ayah.verse_number)
-            with(NotificationManagerCompat.from(context)) {
+            Timber.d("value of surah:" + ayah.surah_number)
+            Timber.d("value of verse:" + ayah.verse_number)
+            with(NotificationManagerCompat.from(mContext)) {
                 // notificationId is a unique int for each notification that you must define
                 notify(notificationId, builder.build())
             }
@@ -113,7 +128,7 @@ class NotificationWorker(var context: Context, params: WorkerParameters) :
             }
             // Register the channel with the system
             val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }

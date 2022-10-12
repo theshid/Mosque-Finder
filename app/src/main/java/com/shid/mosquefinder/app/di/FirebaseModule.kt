@@ -1,8 +1,6 @@
 package com.shid.mosquefinder.app.di
 
 
-
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,11 +16,11 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseAuth():FirebaseAuth= FirebaseAuth.getInstance()
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Singleton
     @Provides
-    fun provideFirebaseFirestore():FirebaseFirestore = FirebaseFirestore.getInstance()
+    fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     @Singleton
     @Provides

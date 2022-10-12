@@ -6,10 +6,10 @@ import android.os.Looper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.shid.mosquefinder.app.utils.SharePref
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 
 
-class MyFirebaseMessagingService: FirebaseMessagingService()  {
+class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private var broadcaster: LocalBroadcastManager? = null
 

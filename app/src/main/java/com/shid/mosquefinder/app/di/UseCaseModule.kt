@@ -4,9 +4,14 @@ import com.shid.mosquefinder.domain.repository.AyahRepository
 import com.shid.mosquefinder.domain.repository.AzkharRepository
 import com.shid.mosquefinder.domain.repository.SurahRepository
 import com.shid.mosquefinder.domain.usecases.*
+import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 object UseCaseModule {
 
     @Provides
@@ -39,7 +44,7 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideUpdateAyahUseCase(ayahRepository: AyahRepository):UpdateAyahUseCase{
+    fun provideUpdateAyahUseCase(ayahRepository: AyahRepository): UpdateAyahUseCase {
         return UpdateAyahUseCase(ayahRepository)
     }
 }

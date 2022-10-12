@@ -1,21 +1,22 @@
 package com.shid.mosquefinder.app.ui.main.view_models
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.Mosque
+import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.model.pojo.GoogleMosque
 import com.shid.mosquefinder.data.model.pojo.Place
-import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.MapRepository
-import com.shid.mosquefinder.app.utils.helper_class.Resource
-import java.util.HashMap
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MapViewModel(mapRepository: MapRepository, var application: Application) : ViewModel() {
+@HiltViewModel
+class MapViewModel @Inject constructor(mapRepository: MapRepository) : ViewModel() {
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
     private var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
@@ -45,7 +46,7 @@ class MapViewModel(mapRepository: MapRepository, var application: Application) :
     }
 
     fun getGoogleMapMosqueFromRepository(userLocation: LatLng): MutableLiveData<Place>? {
-        getPlace =  mRepository.googlePlaceNearbyMosques("mosque", userLocation)
+        getPlace = mRepository.googlePlaceNearbyMosques("mosque", userLocation)
 
         return getPlace
 

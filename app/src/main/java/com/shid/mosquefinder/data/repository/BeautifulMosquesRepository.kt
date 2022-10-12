@@ -3,14 +3,13 @@ package com.shid.mosquefinder.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
-import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.shid.mosquefinder.app.utils.helper_class.Resource
+import com.shid.mosquefinder.data.model.BeautifulMosques
 import timber.log.Timber
 import javax.inject.Inject
 
-class BeautifulMosquesRepository {
-    @Inject
-    lateinit var database: FirebaseFirestore
+class BeautifulMosquesRepository @Inject constructor(val database: FirebaseFirestore) {
+
     private val firebaseBeautyMosqueRef: CollectionReference =
         database.collection("beautiful-mosques")
     private lateinit var mBeautyMosqueListEventListener: ListenerRegistration
@@ -69,7 +68,7 @@ class BeautifulMosquesRepository {
                     }
                 }
             })
-      Timber.d("Mosque firebase%s", mBeautyList.isEmpty().toString())
+        Timber.d("Mosque firebase%s", mBeautyList.isEmpty().toString())
         return mBeautyList
     }
 }

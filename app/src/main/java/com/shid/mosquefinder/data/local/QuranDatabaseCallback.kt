@@ -12,6 +12,7 @@ import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.local.database.entities.*
 import com.shid.mosquefinder.app.ui.main.views.LoadingActivity
 import com.shid.mosquefinder.app.utils.loadJsonArray
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -21,12 +22,13 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import javax.inject.Inject
+import javax.inject.Provider
 
 class QuranDatabaseCallback @Inject constructor(
     private val scope: CoroutineScope,
     private val resources: Resources,
-    private val mContext: Context,
-    private val dao: QuranDao
+    @ApplicationContext  private val mContext: Context,
+    private val dao: Provider<QuranDao>
 ) : RoomDatabase.Callback() {
 
 
@@ -34,9 +36,9 @@ class QuranDatabaseCallback @Inject constructor(
         super.onCreate(db)
 
         scope.launch {
-            async { loadAyah(dao, mContext) }.await()
-            async { loadNames(dao) }.await()
-            async { loadSurahs(dao) }.await()
+            async { loadAyah(dao.get(), mContext) }.await()
+            async { loadNames(dao.get()) }.await()
+            async { loadSurahs(dao.get()) }.await()
             val intent = Intent(LoadingActivity.FILTER)
             LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)
         }

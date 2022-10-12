@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         firebaseAuth.removeAuthStateListener(this)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }

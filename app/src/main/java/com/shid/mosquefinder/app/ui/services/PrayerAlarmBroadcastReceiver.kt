@@ -15,10 +15,10 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.Timestamp
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.views.HomeActivity
-import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
-import com.shid.mosquefinder.app.utils.SharePref
-import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import com.shid.mosquefinder.app.utils.extensions.showToast
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import timber.log.Timber
 import java.util.*
 
@@ -46,13 +46,13 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
         val sharePref = SharePref(context)
         intent.extras?.getInt(EXTRA_ALARM)?.let {
             Timber.d("Inside intent extras")
-           when(it){
-               Common.FAJR_INDEX -> handleOnReceive(sharePref.loadFajr(),it,context)
-               Common.DHUR_INDEX -> handleOnReceive(sharePref.loadDhur(),it,context)
-               Common.ASR_INDEX -> handleOnReceive(sharePref.loadAsr(),it,context)
-               Common.MAGHRIB_INDEX -> handleOnReceive(sharePref.loadMaghrib(),it,context)
-               Common.ISHA_INDEX -> handleOnReceive(sharePref.loadIsha(),it,context)
-           }
+            when (it) {
+                Common.FAJR_INDEX -> handleOnReceive(sharePref.loadFajr(), it, context)
+                Common.DHUR_INDEX -> handleOnReceive(sharePref.loadDhur(), it, context)
+                Common.ASR_INDEX -> handleOnReceive(sharePref.loadAsr(), it, context)
+                Common.MAGHRIB_INDEX -> handleOnReceive(sharePref.loadMaghrib(), it, context)
+                Common.ISHA_INDEX -> handleOnReceive(sharePref.loadIsha(), it, context)
+            }
         }
     }
 

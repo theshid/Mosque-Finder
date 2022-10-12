@@ -1,16 +1,18 @@
 package com.shid.mosquefinder.app.ui.main.view_models
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.pojo.GoogleMosque
 import com.shid.mosquefinder.data.repository.MapRepository
-import com.shid.mosquefinder.app.utils.helper_class.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SearchViewModel(mapRepository: MapRepository, application: Application) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(mapRepository: MapRepository) : ViewModel() {
 
     private var mMosqueList: MutableList<Mosque> = ArrayList()
     private var mGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
@@ -34,11 +36,11 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
         return mRepository.returnStatusMsg()
     }
 
-    fun getGoogleMosqueFromRepository():MutableList<GoogleMosque>{
+    fun getGoogleMosqueFromRepository(): MutableList<GoogleMosque> {
         return mGoogleMosqueList
     }
 
-    fun getNigerGoogleMosqueFromRepository():MutableList<GoogleMosque>{
+    fun getNigerGoogleMosqueFromRepository(): MutableList<GoogleMosque> {
         return mNigerGoogleMosqueList
     }
 
@@ -47,7 +49,7 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
         return mMosqueList
     }
 
-    fun getClusterMarkers():MutableList<ClusterMarker>{
+    fun getClusterMarkers(): MutableList<ClusterMarker> {
         var newClusterMarker: ClusterMarker? = null
         var newClusterMarker2: ClusterMarker? = null
         for (mosqueLocation in mMosqueList) {
@@ -59,8 +61,7 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
                 ClusterMarker(
 
                     mosqueLocation.position.latitude,
-                    mosqueLocation.position.longitude
-                    ,
+                    mosqueLocation.position.longitude,
                     title,
                     snippet,
                     "verified",
@@ -77,11 +78,11 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
             val mosqueLg: Double = mosqueLocation.longitude.toDouble()
 
             try {
-                val snippet =""
+                val snippet = ""
                 val title = mosqueLocation.placeName
                 val distanceFromUser = 0.0
 
-                 newClusterMarker2 =
+                newClusterMarker2 =
                     ClusterMarker(
 
                         mosqueLat,
@@ -101,9 +102,9 @@ class SearchViewModel(mapRepository: MapRepository, application: Application) : 
                 )
             }
         }
-        Log.d("model",mClusterMarkerList.size.toString())
-        Log.d("model",mMosqueList.size.toString())
-        Log.d("model",mGoogleMosqueList.size.toString())
+        Log.d("model", mClusterMarkerList.size.toString())
+        Log.d("model", mMosqueList.size.toString())
+        Log.d("model", mGoogleMosqueList.size.toString())
 
         return mClusterMarkerList
     }

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 
 const val defaultLat = 33.97159194946289F
 const val defaultLng = -6.849812984466553F

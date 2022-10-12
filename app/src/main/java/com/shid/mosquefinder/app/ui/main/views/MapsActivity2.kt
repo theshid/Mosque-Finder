@@ -46,7 +46,6 @@ import com.google.maps.model.PlacesSearchResult
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.MapViewModel
-import com.shid.mosquefinder.app.utils.*
 import com.shid.mosquefinder.app.utils.enums.Status
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.extensions.startActivity
@@ -55,6 +54,10 @@ import com.shid.mosquefinder.app.utils.helper_class.MyClusterManagerRenderer
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import com.shid.mosquefinder.app.utils.remove
+import com.shid.mosquefinder.app.utils.setTransparentStatusBar
+import com.shid.mosquefinder.app.utils.show
+import com.shid.mosquefinder.app.utils.showSnackbar
 import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.User
@@ -578,7 +581,7 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
     }
 
     private fun goToAuthInActivity() {
-        startActivity<AuthActivity> {  }
+        startActivity<AuthActivity> { }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
@@ -591,35 +594,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .build()
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
-    }
-
-    /*private fun handleConnectivityChange() {
-        if (ConnectivityStateHolder.isConnected && !previousSate) {
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_connected))
-                .setMessage(getString(R.string.sneaker_msg_network))
-                .sneakSuccess()
-        }
-
-        if (!ConnectivityStateHolder.isConnected && previousSate) {
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_disconnected))
-                .setMessage(getString(R.string.sneaker_msg_network_lost))
-                .sneakError()
-        }
-
-        previousSate = ConnectivityStateHolder.isConnected
-    }*/
-
-    @SuppressLint("MissingPermission")
-    override fun onResume() {
-        super.onResume()
-        //handleConnectivityChange()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean("LOST_CONNECTION", previousSate)
-        super.onSaveInstanceState(outState)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

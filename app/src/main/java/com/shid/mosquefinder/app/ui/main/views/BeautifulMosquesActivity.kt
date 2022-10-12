@@ -8,11 +8,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
-import com.shid.mosquefinder.app.ui.base.BeautifulMosquesViewModelFactory
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.BeautifulMosquesViewModel
 import com.shid.mosquefinder.app.utils.enums.Status

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,7 +18,7 @@ object PermissionUtils {
     /**
      * Function to request permission from the user
      */
-    fun requestAccessFineLocationPermission(activity: AppCompatActivity, requestId: Int) {
+    fun requestAccessFineLocationPermission(activity: ComponentActivity, requestId: Int) {
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),

@@ -12,16 +12,15 @@ class ClusterMarker(
     private var title: String,
     private var snippet: String,
     var pic: String,
-    var  place:Boolean,
-    var distance:Double
-): ClusterItem ,Parcelable{
-     val distanceFromUser:Double = distance
-     val isMarkerFromGooglePlace: Boolean = place
-    private val  mPosition: LatLng = LatLng(lat,lng)
+    var place: Boolean,
+    var distance: Double
+) : ClusterItem, Parcelable {
+    val distanceFromUser: Double = distance
+    val isMarkerFromGooglePlace: Boolean = place
+    private val mPosition: LatLng = LatLng(lat, lng)
     private val mTitle: String = title
     private val mSnippet: String = snippet
-     var mPic: String = pic
-    get() = field
+    var mPic: String = pic
 
     override fun getSnippet(): String? {
         return mSnippet
@@ -40,27 +39,26 @@ class ClusterMarker(
           distanceFromUser = 0.0
       }*/
 
-   /* constructor(lat: Double, lng: Double, title: String, snippet: String, pic: String, place:Boolean,distance:Double) {
-        mPosition = LatLng(lat, lng)
-        mTitle = title
-        mSnippet = snippet
-        mPic = pic
-        isMarkerFromGooglePlace = place
-        distanceFromUser = distance
-    }*/
+    /* constructor(lat: Double, lng: Double, title: String, snippet: String, pic: String, place:Boolean,distance:Double) {
+         mPosition = LatLng(lat, lng)
+         mTitle = title
+         mSnippet = snippet
+         mPic = pic
+         isMarkerFromGooglePlace = place
+         distanceFromUser = distance
+     }*/
 
     override fun getPosition(): LatLng {
         return mPosition
     }
 
-   /* override fun getTitle(): String {
-        return mTitle
-    }
+    /* override fun getTitle(): String {
+         return mTitle
+     }
 
-    override fun getSnippet(): String {
-        return mSnippet
-    }*/
-
+     override fun getSnippet(): String {
+         return mSnippet
+     }*/
 
 
 }

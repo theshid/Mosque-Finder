@@ -47,17 +47,10 @@ import javax.inject.Inject
 class AuthActivity : BaseActivity() {
 
     var userPosition: LatLng? = null
-    /* @Inject
-     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient*/
-    /*private var locationCallback: LocationCallback ?= null
-    private var locationRequest:LocationRequest ?= null*/
-
-
     private val authViewModel: AuthViewModel by viewModels()
 
     /*private lateinit var authViewModelFactory: AuthViewModelFactory*/
     private lateinit var googleSignInClient: GoogleSignInClient
-    private var previousSate = true
 
     @Inject
     lateinit var googleSignInOptions: GoogleSignInOptions

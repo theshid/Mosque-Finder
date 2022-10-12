@@ -80,14 +80,14 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGoogleApiService(retrofit: Retrofit): GoogleApiInterface = retrofit.create(GoogleApiInterface::class.java)
+    fun provideGoogleApiService(@Named(Common.GOOGLE) retrofit: Retrofit): GoogleApiInterface = retrofit.create(GoogleApiInterface::class.java)
 
     @Provides
     @Singleton
-    fun provideDeeplApiService(retrofit: Retrofit): DeeplApiInterface = retrofit.create(DeeplApiInterface::class.java)
+    fun provideDeeplApiService(@Named(Common.DEEPL) retrofit: Retrofit): DeeplApiInterface = retrofit.create(DeeplApiInterface::class.java)
 
     @Provides
     @Singleton
-    fun provideQuranApiService(retrofit: Retrofit):QuranApiInterface = retrofit.create(
+    fun provideQuranApiService(@Named(Common.QURAN) retrofit: Retrofit):QuranApiInterface = retrofit.create(
         QuranApiInterface::class.java)
 }

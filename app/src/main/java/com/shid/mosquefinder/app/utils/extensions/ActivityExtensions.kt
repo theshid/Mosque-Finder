@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +17,10 @@ import com.shid.mosquefinder.app.utils.extensions.loadColor
 import com.skydoves.transformationlayout.onTransformationEndContainer
 
 fun AppCompatActivity.onTransformationEndContainerApplyParams() {
+    onTransformationEndContainer(intent.getParcelableExtra("com.skydoves.transformationlayout"))
+}
+
+fun ComponentActivity.onTransformationEndContainerApplyParams() {
     onTransformationEndContainer(intent.getParcelableExtra("com.skydoves.transformationlayout"))
 }
 
@@ -29,11 +34,11 @@ internal fun Activity.showSnackbar(view: View, message: String, isError: Boolean
 
     if (isError){
         sb.setBackgroundTint(loadColor(R.color.colorRed))
-            .setTextColor(loadColor(R.color.white))
+            .setTextColor(loadColor(R.color.colorWhite))
             .show()
     } else{
         sb.setBackgroundTint(loadColor(R.color.colorPrimary))
-            .setTextColor(loadColor(R.color.white))
+            .setTextColor(loadColor(R.color.colorWhite))
             .show()
     }
 

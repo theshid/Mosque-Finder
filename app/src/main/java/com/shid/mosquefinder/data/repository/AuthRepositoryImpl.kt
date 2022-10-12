@@ -9,27 +9,24 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.shid.mosquefinder.data.model.User
-import com.shid.mosquefinder.domain.repository.AuthRepository
+import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USERS
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.logErrorMessage
-import com.shid.mosquefinder.app.utils.helper_class.Resource
+import com.shid.mosquefinder.data.model.User
+import com.shid.mosquefinder.domain.repository.AuthRepository
 import javax.inject.Inject
 
 
-class AuthRepositoryImpl: AuthRepository {
-
-    @Inject
-    lateinit var firebaseAuth :FirebaseAuth
-
-    @Inject
-    lateinit var rootRef : FirebaseFirestore
+class AuthRepositoryImpl @Inject constructor(
+    val firebaseAuth: FirebaseAuth,
+    val rootRef: FirebaseFirestore
+) : AuthRepository {
 
     private val usersRef = rootRef.collection(USERS)
     private val statusMsg: MutableLiveData<Resource<String>> = MutableLiveData()
 
     @Inject
-    lateinit var crashlytics : FirebaseCrashlytics
+    lateinit var crashlytics: FirebaseCrashlytics
 
 
     override fun firebaseSignInWithGoogle(googleAuthCredential: AuthCredential?): MutableLiveData<User> {

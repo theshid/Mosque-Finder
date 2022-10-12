@@ -25,8 +25,6 @@ class QuotesActivity : BaseActivity() {
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private val viewModel: QuotesViewModel by viewModels()
 
-    //private lateinit var viewModelFactory: QuotesViewModelFactory
-    private var previousSate = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quotes)

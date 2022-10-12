@@ -1,7 +1,7 @@
 package com.shid.mosquefinder.data.repository
 
 
-import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,23 +12,26 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.*
 import com.google.firebase.ktx.Firebase
+import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.helper_class.Resource
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.Mosque
+import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.model.pojo.GoogleMosque
 import com.shid.mosquefinder.data.model.pojo.Place
-import com.shid.mosquefinder.data.model.User
-import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
-import com.shid.mosquefinder.app.utils.helper_class.Resource
+import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
-import java.lang.StringBuilder
-import java.util.HashMap
 import javax.inject.Inject
+import javax.inject.Named
 
-class MapRepository @Inject constructor(private val mService: GoogleApiInterface, val application: Application) {
+class MapRepository @Inject constructor(
+    @Named(Common.QURAN) private val mService: GoogleApiInterface,
+    @ApplicationContext val application: Context
+) {
     @Inject
     lateinit var database: FirebaseFirestore
     private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
@@ -42,7 +45,7 @@ class MapRepository @Inject constructor(private val mService: GoogleApiInterface
     var mNigerGoogleMosqueList: MutableList<GoogleMosque> = ArrayList()
 
     private val TAG: String = "Map Repository"
-    private val mApp: Application = application
+    private val mApp: Context = application
     val crashlytics = FirebaseCrashlytics.getInstance()
 
     var mMosqueList: MutableList<Mosque> = ArrayList()

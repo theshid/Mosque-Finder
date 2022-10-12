@@ -2,6 +2,7 @@ package com.shid.mosquefinder.app.ui.base
 
 import android.os.Bundle
 import android.os.PersistableBundle
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.irozon.sneaker.Sneaker
@@ -10,7 +11,9 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.NetworkUtil
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.app.utils.network.Event
 import com.shid.mosquefinder.app.utils.network.NetworkEvents
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 open class BaseActivity : AppCompatActivity() {
     protected var previousSate = true
 

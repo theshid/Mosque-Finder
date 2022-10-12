@@ -8,7 +8,6 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.app.ui.main.views.CompassActivity
-import com.shid.mosquefinder.app.utils.SharePref
 import timber.log.Timber
 import kotlin.math.atan2
 import kotlin.math.cos

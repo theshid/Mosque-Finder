@@ -38,7 +38,7 @@ class DetailActivity : BaseActivity() {
 
     private fun setUi(beautifulMosques: BeautifulMosques) {
         name.text = beautifulMosques.name
-        if (Locale.getDefault().getLanguage() == "fr") {
+        if (Locale.getDefault().language == "fr") {
             description.text = beautifulMosques.description_fr
         } else {
             description.text = beautifulMosques.description

@@ -3,17 +3,18 @@ package com.shid.mosquefinder.data.repository
 import com.shid.mosquefinder.data.api.QuranApiInterface
 import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.local.toDomain
-import com.shid.mosquefinder.data.model.pojo.RootResponse
 import com.shid.mosquefinder.data.remote.toDomain
 import com.shid.mosquefinder.domain.model.Ayah
 import com.shid.mosquefinder.domain.model.Verse
-import com.shid.mosquefinder.domain.model.Verset
 import com.shid.mosquefinder.domain.repository.AyahRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class AyahRepositoryImpl @Inject constructor(private val quranDao: QuranDao, private val api:QuranApiInterface) : AyahRepository {
+class AyahRepositoryImpl @Inject constructor(
+    private val quranDao: QuranDao,
+    private val api: QuranApiInterface
+) : AyahRepository {
 
     override fun getAyah(surahNumber: Int): List<Ayah> =
         quranDao.getAyah(surahNumber).map { it.toDomain() }
@@ -30,7 +31,7 @@ class AyahRepositoryImpl @Inject constructor(private val quranDao: QuranDao, pri
         val response = api.getFrenchSurah(surahNumber)
         val surahInFrench = mutableListOf<Verse>()
 
-        for (ayah in response.body()!!.data.verseResponse){
+        for (ayah in response.body()!!.data.verseResponse) {
             surahInFrench.add(ayah.toDomain())
         }
         emit(surahInFrench)

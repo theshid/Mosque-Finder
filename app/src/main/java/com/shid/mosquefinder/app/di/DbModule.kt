@@ -15,6 +15,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -57,7 +58,7 @@ object DbModule {
     @Provides
     @Singleton
     fun provideQuranDatabaseCallback(scope: CoroutineScope,resources: Resources,
-    @ApplicationContext context: Context, dao: QuranDao):QuranDatabaseCallback{
+    @ApplicationContext context: Context, dao: Provider<QuranDao>):QuranDatabaseCallback{
         return QuranDatabaseCallback(scope,resources,context,dao)
     }
 
