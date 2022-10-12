@@ -116,7 +116,8 @@
             android:theme="@style/AppTheme.OnBoarding" />
         <activity
             android:name="com.shid.mosquefinder.app.ui.main.views.AuthActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -162,7 +163,8 @@
                 android:value="androidx.startup" />
             <meta-data
                 android:name="com.shid.mosquefinder.app.initializer.WorkManagerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
 
     </application>

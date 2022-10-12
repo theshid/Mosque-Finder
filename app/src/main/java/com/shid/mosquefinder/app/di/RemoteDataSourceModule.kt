@@ -11,9 +11,7 @@ import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.*
-import com.shid.mosquefinder.domain.repository.AzkharRepository
-import com.shid.mosquefinder.domain.repository.ChapterRepository
-import com.shid.mosquefinder.domain.repository.QuoteRepository
+import com.shid.mosquefinder.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,7 +30,7 @@ object RemoteDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideBlogRepository(firestore: FirebaseFirestore): BlogRepositoryImpl =
+    fun provideBlogRepository(firestore: FirebaseFirestore): BlogRepository =
         BlogRepositoryImpl(firestore)
 
     @Provides
@@ -55,7 +53,7 @@ object RemoteDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideAyahRepository(dao: QuranDao, api: QuranApiInterface) = AyahRepositoryImpl(dao, api)
+    fun provideAyahRepository(dao: QuranDao, api: QuranApiInterface):AyahRepository = AyahRepositoryImpl(dao, api)
 
     @Provides
     @Singleton
@@ -64,10 +62,12 @@ object RemoteDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth, rootRef: FirebaseFirestore) =
+    fun provideAuthRepository(firebaseAuth: FirebaseAuth, rootRef: FirebaseFirestore):AuthRepository =
         AuthRepositoryImpl(firebaseAuth, rootRef)
 
     @Provides
     @Singleton
-    fun provideBeautifulMosqueRepository(firestore: FirebaseFirestore) = BeautifulMosquesRepository(firestore)
+    fun provideBeautifulMosqueRepository(firestore: FirebaseFirestore) =
+        BeautifulMosquesRepository(firestore)
+
 }

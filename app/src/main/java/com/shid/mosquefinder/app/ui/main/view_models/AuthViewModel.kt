@@ -6,12 +6,12 @@ import com.google.firebase.auth.AuthCredential
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.AuthRepositoryImpl
+import com.shid.mosquefinder.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(): ViewModel() {
-    private var authRepositoryImpl: AuthRepositoryImpl = AuthRepositoryImpl()
+class AuthViewModel @Inject constructor(private val authRepositoryImpl: AuthRepository): ViewModel() {
     var authenticatedUserLiveData: LiveData<User>? = null
     var createdUserLiveData: LiveData<User>? = null
 

@@ -2,6 +2,7 @@ package com.shid.mosquefinder.app.di
 
 import com.shid.mosquefinder.domain.repository.AyahRepository
 import com.shid.mosquefinder.domain.repository.AzkharRepository
+import com.shid.mosquefinder.domain.repository.BlogRepository
 import com.shid.mosquefinder.domain.repository.SurahRepository
 import com.shid.mosquefinder.domain.usecases.*
 import dagger.Module
@@ -47,4 +48,8 @@ object UseCaseModule {
     fun provideUpdateAyahUseCase(ayahRepository: AyahRepository): UpdateAyahUseCase {
         return UpdateAyahUseCase(ayahRepository)
     }
+
+    @Provides
+    @Singleton
+    fun provideGetArticleUseCase(blogRepository: BlogRepository):GetArticlesUseCase = GetArticlesUseCase(blogRepository)
 }

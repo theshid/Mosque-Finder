@@ -24,6 +24,8 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.AuthViewModel
 import com.shid.mosquefinder.app.ui.onboardingscreen.feature.onboarding.OnBoardingActivity
 import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.extensions.showToast
+import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
@@ -32,9 +34,6 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.logErrorMes
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.app.utils.network.Event
-import com.shid.mosquefinder.app.utils.network.NetworkEvents
-import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.data.model.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -49,8 +48,8 @@ class AuthActivity : BaseActivity() {
     var userPosition: LatLng? = null
     private val authViewModel: AuthViewModel by viewModels()
 
-    /*private lateinit var authViewModelFactory: AuthViewModelFactory*/
-    private lateinit var googleSignInClient: GoogleSignInClient
+    @Inject
+    lateinit var googleSignInClient: GoogleSignInClient
 
     @Inject
     lateinit var googleSignInOptions: GoogleSignInOptions
@@ -63,42 +62,16 @@ class AuthActivity : BaseActivity() {
     @Inject
     lateinit var fusedLocationWrapper: FusedLocationWrapper
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        savedInstanceState?.let {
-            previousSate = it.getBoolean("LOST_CONNECTION")
-        }
-        //fusedLocationWrapper = fusedLocationWrapper()
-        //sharePref = SharePref(this)
         isFirstTime = sharePref.loadFirstTime()
-        //setLocationUtils()
-
-        NetworkEvents.observe(this, Observer {
-            if (it is Event.ConnectivityEvent)
-                handleConnectivityChange()
-        })
-        //initAuthViewModel()
-
         checkIfPermissionIsActive()
         initSignInButton()
         setObservers()
 
-        initGoogleSignInClient()
     }
-
-    /* private fun setLocationUtils() {
-         //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-         locationRequest = LocationRequest.create().apply {
-             interval = 5000
-             fastestInterval = 50
-             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-             maxWaitTime = 5000
-         }
-
-     }*/
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
@@ -107,7 +80,7 @@ class AuthActivity : BaseActivity() {
             getUserLocation(fusedLocationWrapper)
 
         } else {
-            Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
+            showToast(getString(R.string.toast_permission))
         }
     }
 
@@ -145,48 +118,6 @@ class AuthActivity : BaseActivity() {
         }
     }
 
-    /*private fun retrieveLocation() {
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    userPosition = LatLng(location.latitude, location.longitude)
-
-                    sharePref!!.saveUserPosition(userPosition!!)
-                    // Update UI with location data
-                    // ...
-                }
-            }
-
-
-        }
-    }*/
-
-    /* @SuppressLint("MissingPermission")
-     private fun startLocationUpdates() {
-         fusedLocationProviderClient!!.requestLocationUpdates(
-             locationRequest,
-             locationCallback,
-             Looper.getMainLooper()
-         )
-
-
-     }*/
-
-    override fun onResume() {
-        super.onResume()
-        handleConnectivityChange()
-        //setUpLocationListener()
-        /*setLocationUtils()
-        retrieveLocation()
-        startLocationUpdates()*/
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean("LOST_CONNECTION", previousSate)
-        super.onSaveInstanceState(outState)
-    }
-
     private fun setObservers() {
 
         authViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer {
@@ -208,26 +139,6 @@ class AuthActivity : BaseActivity() {
 
     }
 
-    /*  @SuppressLint("MissingPermission")
-      fun setUpLocationListener() {
-          fusedLocationProviderClient!!.lastLocation
-              .addOnSuccessListener { location: android.location.Location? ->
-                  userPosition =
-                      location?.longitude?.let {
-                          LatLng(
-                              location.latitude,
-                              it
-                          )
-                      } // Got last known location. In some rare situations this can be null.
-                  userPosition?.let {
-                      Timber.d("value of position:$userPosition")
-                      sharePref!!.saveUserPosition(LatLng(it.latitude, it.longitude))
-                  }
-              }
-
-      }*/
-
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -247,34 +158,10 @@ class AuthActivity : BaseActivity() {
                         }
                     }
                 } else {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.location_permission_not_granted),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    showToast(getString(R.string.location_permission_not_granted))
                 }
             }
         }
-    }
-
-    private fun handleConnectivityChange() {
-        if (ConnectivityStateHolder.isConnected && !previousSate) {
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_connected))
-                .setMessage(getString(R.string.sneaker_msg_network))
-                .sneakSuccess()
-            google_sign_in_button.isClickable = true
-        }
-
-        if (!ConnectivityStateHolder.isConnected && previousSate) {
-            Sneaker.with(this) // Activity, Fragment or ViewGroup
-                .setTitle(getString(R.string.sneaker_disconnected))
-                .setMessage(getString(R.string.sneaker_msg_network_lost))
-                .sneakError()
-            google_sign_in_button.isClickable = false
-        }
-
-        previousSate = ConnectivityStateHolder.isConnected
     }
 
     private fun initSignInButton() {
@@ -284,28 +171,17 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun signIn() {
+        Timber.d("sign: ")
         val signInIntent = googleSignInClient.signInIntent
         resultLauncher.launch(signInIntent)
     }
-
-    /*private fun initAuthViewModel() {
-        authViewModelFactory =
-            AuthViewModelFactory(application)
-        authViewModel = ViewModelProvider(
-            this,
-            authViewModelFactory
-        ).get(AuthViewModel(application)::class.java)
-    }*/
-
-    private fun initGoogleSignInClient() {
-        googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
-    }
-
-
+    
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Timber.d("test: ${result.resultCode} ")
             if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
+                Timber.d("registerForActivityResult: ")
                 val data: Intent? = result.data
                 val task =
                     GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -321,6 +197,7 @@ class AuthActivity : BaseActivity() {
         }
 
     private fun getGoogleAuthCredential(googleSignInAccount: GoogleSignInAccount) {
+        Timber.d("getGoogleAuthCredential: ")
         val googleTokenId = googleSignInAccount.idToken
         val googleAuthCredential =
             GoogleAuthProvider.getCredential(googleTokenId, null)
@@ -328,11 +205,14 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun signInWithGoogleAuthCredential(googleAuthCredential: AuthCredential) {
+        Timber.d("signInWithGoogleAuthCredential: ")
         authViewModel.signInWithGoogle(googleAuthCredential)
         authViewModel.authenticatedUserLiveData?.observe(this, Observer {
             if (it.isNew!!) {
+                Timber.d("new: ")
                 createNewUser(it)
             } else {
+                Timber.d("go to home: ")
                 goToHomeActivity(it)
             }
         })
@@ -371,9 +251,6 @@ class AuthActivity : BaseActivity() {
     private fun goToHomeActivity(user: User) {
         val convertUserJson = GsonParser.gsonParser?.toJson(user)
         convertUserJson?.let { sharePref.saveUser(convertUserJson) }
-        /* if (convertUserJson != null) {
-             sharePref.saveUser(convertUserJson)
-         }*/
         if (isFirstTime == true) {
             startActivity<LoadingActivity>()
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out)

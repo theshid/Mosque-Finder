@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class BlogViewModel @Inject constructor(val getArticlesUseCase: GetArticlesUseCase) : BaseViewModel() {
+internal class BlogViewModel @Inject constructor(private val getArticlesUseCase: GetArticlesUseCase) : BaseViewModel() {
 
     private var getArticlesJob: Job?= null
 

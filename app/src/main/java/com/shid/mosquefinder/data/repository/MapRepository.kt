@@ -29,7 +29,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class MapRepository @Inject constructor(
-    @Named(Common.QURAN) private val mService: GoogleApiInterface,
+    private val mService: GoogleApiInterface,
     @ApplicationContext val application: Context
 ) {
     @Inject
