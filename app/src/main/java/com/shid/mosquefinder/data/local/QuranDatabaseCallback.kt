@@ -53,7 +53,7 @@ class QuranDatabaseCallback @Inject constructor(
                     val surah = surahs.getJSONObject(i)
 
                     try {
-                        Log.d("Db", "insertion surah")
+                        Timber.d( "insertion surah")
                         surahDao.insertSurah(
                             SurahDb(
                                 surah.getInt("number"), surah.getString("name"),

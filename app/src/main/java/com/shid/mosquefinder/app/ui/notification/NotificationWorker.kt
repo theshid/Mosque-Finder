@@ -15,13 +15,10 @@ import androidx.work.WorkerParameters
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.data.api.QuranApiInterface
 import com.shid.mosquefinder.data.local.database.QuranDao
-import com.shid.mosquefinder.data.local.database.QuranDatabase
-import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
 import com.shid.mosquefinder.domain.model.Ayah
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.GlobalScope
 import timber.log.Timber
 import java.util.*
 
@@ -29,7 +26,7 @@ import java.util.*
 class NotificationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    val api:QuranApiInterface,
+    val api: QuranApiInterface,
     val dao: QuranDao
 ) :
     Worker(context, params) {
@@ -45,7 +42,7 @@ class NotificationWorker @AssistedInject constructor(
     }
 
     init {
-        repository = AyahRepositoryImpl(dao,api)
+        repository = AyahRepositoryImpl(dao, api)
         randomAyah = repository!!.getRandomAyah(randomSurahNumber)
         createNotificationChannel()
     }

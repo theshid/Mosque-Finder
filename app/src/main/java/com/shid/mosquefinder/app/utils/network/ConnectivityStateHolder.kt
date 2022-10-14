@@ -26,6 +26,7 @@ object ConnectivityStateHolder : ConnectivityState {
                     NetworkEvents.notify(Event.ConnectivityEvent(state.isAvailable))
                 }
             }
+            else -> {}
         }
     }
 

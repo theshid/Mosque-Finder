@@ -54,10 +54,10 @@ class LoadingActivity : AppCompatActivity() {
             SurahViewModelFactory(application)
         ).get(SurahViewModel::class.java)*/
 
-        viewModel.getSurahs()
-        viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
+        //viewModel.getSurahs()
+        //viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
 
-        })
+       // })
 
     }
 

@@ -1,6 +1,6 @@
 package com.shid.mosquefinder.data.model.pojo
 
-class GoogleMosque (
+data class GoogleMosque (
     var latitude:Double = 0.0,
     var longitude:Double = 0.0,
     var placeId:String= "jdieo",
@@ -9,7 +9,4 @@ class GoogleMosque (
     var types:List<String> = listOf(),
     var vicinity:String = "default"
 ){
-    fun Googlemosque(){
-
-    }
 }

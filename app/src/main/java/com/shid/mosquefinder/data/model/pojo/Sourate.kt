@@ -1,20 +1,20 @@
 package com.shid.mosquefinder.data.model.pojo
 
-import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 
 data class Sourate(
-    @SerializedName("number")
-    val surahNumber:Int,
-    @SerializedName("name")
-    val name:String,
-    @SerializedName("englishName")
-    val engName:String,
-    @SerializedName("englishNameTranslation")
-    val engTranslation:String,
-    @SerializedName("revelationType")
-    val revelationType:String,
-    @SerializedName("numberOfAyahs")
-    val numAyahs:Int,
-    @SerializedName("ayahs")
-    val ayahs:List<VersetResponse>
+    @field:Json(name = "number")
+    val surahNumber: Int,
+    @field:Json(name = "name")
+    val name: String,
+    @field:Json(name = "englishName")
+    val engName: String,
+    @field:Json(name = "englishNameTranslation")
+    val engTranslation: String,
+    @field:Json(name = "revelationType")
+    val revelationType: String,
+    @field:Json(name = "numberOfAyahs")
+    val numAyahs: Int,
+    @field:Json(name = "ayahs")
+    val ayahs: List<VersetResponse>
 )

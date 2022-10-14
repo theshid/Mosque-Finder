@@ -39,7 +39,8 @@ class CompassActivity : AppCompatActivity() {
     private var compass: Compass? = null
     private var arrowView: ImageView? = null
     private var dialView: ImageView? = null
-    private lateinit var sharedPref: SharePref
+    @Inject
+    lateinit var sharedPref: SharePref
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Inject

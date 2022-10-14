@@ -8,6 +8,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.data.model.User
@@ -53,7 +54,7 @@ object CoreModule {
     @Provides
     fun provideGoogleSignInOptions(resources: Resources): GoogleSignInOptions =
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("478378697299-gu5brmfqnlm6f9k2k0vigdakb4ki2l3f.apps.googleusercontent.com")
+            .requestIdToken(resources.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 

@@ -2,8 +2,10 @@ package com.shid.mosquefinder.app.di
 
 import com.shid.mosquefinder.data.api.DeeplApiInterface
 import com.shid.mosquefinder.data.api.QuranApiInterface
-import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
+import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -19,6 +22,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    private val moshi = Moshi.Builder()
+        .addLast(KotlinJsonAdapterFactory())
+        .build()
 
     @Provides
     @Singleton
@@ -39,7 +46,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(Common.GOOGLE_API_URL)
             .client(client)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
@@ -47,7 +54,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(Common.QURAN_API_URL)
             .client(client)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 
@@ -55,7 +62,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(Common.DEEPL_API_URL)
             .client(client)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 
@@ -80,7 +87,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGoogleApiService(@Named(Common.GOOGLE) retrofit: Retrofit): GoogleApiInterface = retrofit.create(GoogleApiInterface::class.java)
+    fun provideGoogleApiService(@Named(Common.GOOGLE) retrofit: Retrofit): GoogleApiInterface = retrofit.create(
+        GoogleApiInterface::class.java)
 
     @Provides
     @Singleton

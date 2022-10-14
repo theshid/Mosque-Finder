@@ -14,8 +14,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.ktx.Firebase
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.helper_class.Resource
-import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
-import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
+import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.model.pojo.GoogleMosque
@@ -26,14 +25,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 class MapRepository @Inject constructor(
     private val mService: GoogleApiInterface,
-    @ApplicationContext val application: Context
+    @ApplicationContext val application: Context,
+    val database: FirebaseFirestore
 ) {
-    @Inject
-    lateinit var database: FirebaseFirestore
     private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private val realDatabase: DatabaseReference = Firebase.database.reference

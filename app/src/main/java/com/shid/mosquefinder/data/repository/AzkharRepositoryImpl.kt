@@ -18,9 +18,9 @@ import javax.inject.Inject
 class AzkharRepositoryImpl @Inject constructor(val resources: Resources, private val deeplApiInterface: DeeplApiInterface):
     AzkharRepository {
 
-    val service = Common.deeplApiService
+    //val service = Common.deeplApiService
     val TARGET_LG = "FR"
-    var _translationResponse = MutableLiveData<TranslationResponse>()
+    private var _translationResponse = MutableLiveData<TranslationResponse>()
     val translationResponse: LiveData<TranslationResponse>
         get() = _translationResponse
 

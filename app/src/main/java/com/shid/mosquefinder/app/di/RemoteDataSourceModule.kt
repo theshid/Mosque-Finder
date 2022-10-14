@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.data.api.DeeplApiInterface
 import com.shid.mosquefinder.data.api.QuranApiInterface
 import com.shid.mosquefinder.data.local.database.QuranDao
-import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
+import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.*
 import com.shid.mosquefinder.domain.repository.*
@@ -57,8 +57,8 @@ object RemoteDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideMapRepository(service: GoogleApiInterface, @ApplicationContext context: Context) =
-        MapRepository(service, context)
+    fun provideMapRepository(service: GoogleApiInterface, @ApplicationContext context: Context, firestore: FirebaseFirestore) =
+        MapRepository(service, context,firestore)
 
     @Provides
     @Singleton

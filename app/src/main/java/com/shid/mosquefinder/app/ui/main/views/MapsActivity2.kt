@@ -61,6 +61,7 @@ import com.shid.mosquefinder.app.utils.showSnackbar
 import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.User
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_maps2.*
 import kotlinx.android.synthetic.main.dialog_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -74,6 +75,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthStateListener,
     OnMapsSdkInitializedCallback {
     companion object {

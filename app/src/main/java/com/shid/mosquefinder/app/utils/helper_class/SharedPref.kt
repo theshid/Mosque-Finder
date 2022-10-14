@@ -10,6 +10,7 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 const val defaultLat = 33.97159194946289F
 const val defaultLng = -6.849812984466553F
 
+
 class SharePref(context: Context) {
     private val mySharePref: SharedPreferences =
         context.getSharedPreferences("filename", Context.MODE_PRIVATE)

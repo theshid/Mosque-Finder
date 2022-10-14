@@ -5,7 +5,7 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.data.api.ApiClient
-import com.shid.mosquefinder.data.model.Api.GoogleApiInterface
+import com.shid.mosquefinder.data.api.GoogleApiInterface
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
