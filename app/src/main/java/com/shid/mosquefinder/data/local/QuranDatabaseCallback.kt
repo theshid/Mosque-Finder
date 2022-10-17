@@ -7,10 +7,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.main.views.LoadingActivity
-import com.shid.mosquefinder.app.utils.loadJsonArray
+import com.shid.mosquefinder.app.di.CoroutinesScopesModule
 import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.local.database.entities.*
+import com.shid.mosquefinder.app.ui.main.views.LoadingActivity
+import com.shid.mosquefinder.app.utils.loadJsonArray
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import org.json.JSONArray
@@ -24,7 +25,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class QuranDatabaseCallback @Inject constructor(
-    private val scope: CoroutineScope,
+    @CoroutinesScopesModule.ApplicationScope private val scope: CoroutineScope,
     private val resources: Resources,
     @ApplicationContext private val mContext: Context,
     private val dao: Provider<QuranDao>

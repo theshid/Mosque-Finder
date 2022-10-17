@@ -24,35 +24,43 @@ object DbModule {
 
     @Singleton
     @Provides
-    @Synchronized
-    fun provideAppDb(@ApplicationContext context: Context, quranDatabaseCallback: QuranDatabaseCallback): QuranDatabase {
-        val MIGRATION_1_2 = object : Migration(1, 2){
+    fun provideAppDb(
+        @ApplicationContext context: Context,
+        quranDatabaseCallback: QuranDatabaseCallback
+    ): QuranDatabase {
+        val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE ayahs ADD COLUMN french_text TEXT" )
+                database.execSQL("ALTER TABLE ayahs ADD COLUMN french_text TEXT")
             }
         }
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE `category` (`id` INTEGER NOT NULL," +
-                        " `category_name` TEXT NOT NULL, " +
-                        "PRIMARY KEY(`id`))");
-                database.execSQL("CREATE TABLE `chapter` (`id` INTEGER NOT NULL," +
-                        " `chapter_name` TEXT NOT NULL, " +
-                        " `category_id` INTEGER NOT NULL, PRIMARY KEY(`id`))");
-                database.execSQL("CREATE TABLE `item` (`id` INTEGER NOT NULL, " +
-                        "`item_translation` TEXT NOT NULL, " +
-                        "`chapter_id` INTEGER NOT NULL, PRIMARY KEY(`id`))");
-                database.execSQL("CREATE TABLE `noms` (`id` INTEGER NOT NULL," +
-                        " `name` TEXT NOT NULL, " +
-                        "PRIMARY KEY(`id`))")
+                database.execSQL(
+                    "CREATE TABLE `category` (`id` INTEGER NOT NULL," +
+                            " `category_name` TEXT NOT NULL, " +
+                            "PRIMARY KEY(`id`))"
+                );
+                database.execSQL(
+                    "CREATE TABLE `chapter` (`id` INTEGER NOT NULL," +
+                            " `chapter_name` TEXT NOT NULL, " +
+                            " `category_id` INTEGER NOT NULL, PRIMARY KEY(`id`))"
+                );
+                database.execSQL(
+                    "CREATE TABLE `item` (`id` INTEGER NOT NULL, " +
+                            "`item_translation` TEXT NOT NULL, " +
+                            "`chapter_id` INTEGER NOT NULL, PRIMARY KEY(`id`))"
+                );
+                database.execSQL(
+                    "CREATE TABLE `noms` (`id` INTEGER NOT NULL," +
+                            " `name` TEXT NOT NULL, " +
+                            "PRIMARY KEY(`id`))"
+                )
             }
         }
-
-
-        return  Room
+        return Room
             .databaseBuilder(context, QuranDatabase::class.java, QuranDatabase.DATABASE_NAME)
-            .addMigrations(MIGRATION_1_2,MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .addCallback(quranDatabaseCallback)
             .setJournalMode(RoomDatabase.JournalMode.AUTOMATIC)
             .build()
@@ -60,13 +68,16 @@ object DbModule {
 
     @Provides
     @Singleton
-    fun provideQuranDatabaseCallback(scope: CoroutineScope,resources: Resources,
-    @ApplicationContext context: Context, dao: Provider<QuranDao>):QuranDatabaseCallback{
-        return QuranDatabaseCallback(scope,resources,context,dao)
+    fun provideQuranDatabaseCallback(
+        @CoroutinesScopesModule.ApplicationScope
+        scope: CoroutineScope, resources: Resources,
+        @ApplicationContext context: Context, dao: Provider<QuranDao>
+    ): QuranDatabaseCallback {
+        return QuranDatabaseCallback(scope, resources, context, dao)
     }
 
 
     @Provides
     @Singleton
-    fun provideSurahDao(db:QuranDatabase): QuranDao = db.surahDao()
+    fun provideSurahDao(db: QuranDatabase): QuranDao = db.surahDao()
 }
