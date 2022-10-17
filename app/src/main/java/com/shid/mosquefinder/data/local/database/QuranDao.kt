@@ -35,7 +35,7 @@ interface QuranDao {
     val randomAyah: AyahDb
 
     @Query("SELECT * FROM surahs ORDER BY number")
-    fun getSurahs():List<SurahDb>
+    suspend fun getSurahs():List<SurahDb>
 
     @Query("SELECT * FROM surahs WHERE number IN (:surahNumber)")
     fun getSurahByNumber(surahNumber: Int):SurahDb

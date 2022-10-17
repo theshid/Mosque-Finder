@@ -8,29 +8,33 @@ import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.shid.mosquefinder.data.local.database.entities.SurahDb
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
-import dev.kosrat.muslimdata.models.AzkarItem
 import kotlinx.android.synthetic.main.item_quran_surah.view.*
 import java.util.*
-import kotlin.collections.ArrayList
 
-class SurahAdapter() :
-    ListAdapter<SurahPresentation,SurahAdapter.SurahViewHolder>(DIFF_CALLBACK),Filterable {
+class SurahAdapter :
+    ListAdapter<SurahPresentation, SurahAdapter.SurahViewHolder>(DIFF_CALLBACK), Filterable {
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SurahPresentation>() {
-            override fun areItemsTheSame(oldItem: SurahPresentation, newItem: SurahPresentation): Boolean =
+            override fun areItemsTheSame(
+                oldItem: SurahPresentation,
+                newItem: SurahPresentation
+            ): Boolean =
                 oldItem.number == newItem.number
 
-            override fun areContentsTheSame(oldItem: SurahPresentation, newItem: SurahPresentation): Boolean =
+            override fun areContentsTheSame(
+                oldItem: SurahPresentation,
+                newItem: SurahPresentation
+            ): Boolean =
                 oldItem == newItem
         }
     }
+
     lateinit var onClickSurah: OnClickSurah
-     var list:MutableList<SurahPresentation>?=null
-    private var listData  = ArrayList<SurahPresentation>()
+    var list: MutableList<SurahPresentation>? = null
+    private var listData = ArrayList<SurahPresentation>()
 
     /*fun setData(newListData: List<SurahDb>) {
         listData.clear()
@@ -64,8 +68,8 @@ class SurahAdapter() :
         fun onClickSurah(surahPresentation: SurahPresentation)
     }
 
-    fun setItemClick(mOnClickSurah: OnClickSurah){
-       onClickSurah = mOnClickSurah
+    fun setItemClick(mOnClickSurah: OnClickSurah) {
+        onClickSurah = mOnClickSurah
     }
 
 
@@ -77,7 +81,7 @@ class SurahAdapter() :
                 tv_item_surah_surah.text = surahDb.transliteration
                 tv_item_surah_arab.text = surahDb.name
                 tv_item_surah_revelation_type.text = surahDb.revelationType
-                tv_item_surah_total_ayah.text = surahDb.totalVerses.toString() + " " +"Ayah"
+                tv_item_surah_total_ayah.text = surahDb.totalVerses.toString() + " " + "Ayah"
 
             }
         }
@@ -85,20 +89,24 @@ class SurahAdapter() :
     }
 
     override fun getFilter(): Filter {
-        return object:Filter(){
+        return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
-                    if (list?.isNotEmpty() == true){
+                    if (list?.isNotEmpty() == true) {
                         listData = list as ArrayList<SurahPresentation>
                     }
 
                 } else {
                     val resultList = ArrayList<SurahPresentation>()
-                    if (list != null){
+                    if (list != null) {
                         for (row in list!!) {
-                            if (row.transliteration.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(
-                                    Locale.ROOT))) {
+                            if (row.transliteration.toLowerCase(Locale.ROOT).contains(
+                                    charSearch.toLowerCase(
+                                        Locale.ROOT
+                                    )
+                                )
+                            ) {
                                 resultList.add(row)
                             }
                         }

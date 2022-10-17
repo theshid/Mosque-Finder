@@ -122,9 +122,11 @@ import javax.inject.Inject
     }
 
     private suspend fun loadSurahs() {
-        val surahsList = getAllSurahsUseCase(Unit).map { it.toPresentation() }
-        Timber.d("surahs: $surahsList ")
-        onSurahsLoadingComplete(surahsList)
+         getAllSurahsUseCase.invoke(Unit).collect { surahList ->
+            val surahs = surahList.map { it.toPresentation() }
+            onSurahsLoadingComplete(surahs)
+            }
+
     }
 
 

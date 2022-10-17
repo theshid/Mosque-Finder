@@ -16,6 +16,7 @@ import com.shid.mosquefinder.app.utils.showSnackbar
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_surah.*
+import timber.log.Timber
 
 @AndroidEntryPoint
 class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
@@ -34,10 +35,12 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
     }
 
     private fun observeSurahViewState() {
+        viewModel.getSurahs()
         viewModel.surahViewState.observe(this) { state ->
             handleSurahLoading(state)
             state.surahs?.let { list ->
                 if (list.isNotEmpty()) {
+                    Timber.d("list:$list")
                     surahAdapter.submitList(list)
                 }
             }
@@ -81,6 +84,7 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
 
     private fun setUI() {
         surahAdapter = SurahAdapter()
+        surahRecycler.adapter = surahAdapter
         surahAdapter.setItemClick(this@SurahActivity)
         //setRecycler()
     }

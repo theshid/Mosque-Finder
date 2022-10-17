@@ -36,12 +36,6 @@ class QuranDatabaseCallback @Inject constructor(
         super.onCreate(db)
         Timber.d("Called")
         scope.launch(Dispatchers.IO) {
-            /*withContext(Dispatchers.Default) {
-                loadAyah(
-                    dao.get(),
-                    mContext
-                )
-            }*/
             async { loadAyah(dao.get()) }.await()
             async { loadNames(dao.get()) }.await()
             async { loadSurahs(dao.get()) }.await()
@@ -192,7 +186,7 @@ class QuranDatabaseCallback @Inject constructor(
 
                 }
                 /*val intent = Intent(LoadingActivity.FILTER)
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)*/
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent)*/
             } catch (e: JSONException) {
                 e.printStackTrace()
                 Timber.e("error:${e.message}")
