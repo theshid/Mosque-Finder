@@ -3,15 +3,14 @@ package com.shid.mosquefinder.data.local
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.data.local.database.QuranDao
-import com.shid.mosquefinder.data.local.database.entities.*
 import com.shid.mosquefinder.app.ui.main.views.LoadingActivity
 import com.shid.mosquefinder.app.utils.loadJsonArray
+import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.entities.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import org.json.JSONArray
@@ -27,16 +26,22 @@ import javax.inject.Provider
 class QuranDatabaseCallback @Inject constructor(
     private val scope: CoroutineScope,
     private val resources: Resources,
-    @ApplicationContext  private val mContext: Context,
+    @ApplicationContext private val mContext: Context,
     private val dao: Provider<QuranDao>
 ) : RoomDatabase.Callback() {
 
 
     override fun onCreate(db: SupportSQLiteDatabase) {
         super.onCreate(db)
-
-        scope.launch {
-            async { loadAyah(dao.get(), mContext) }.await()
+        Timber.d("Called")
+        scope.launch(Dispatchers.IO) {
+            /*withContext(Dispatchers.Default) {
+                loadAyah(
+                    dao.get(),
+                    mContext
+                )
+            }*/
+            async { loadAyah(dao.get()) }.await()
             async { loadNames(dao.get()) }.await()
             async { loadSurahs(dao.get()) }.await()
             val intent = Intent(LoadingActivity.FILTER)
@@ -53,7 +58,7 @@ class QuranDatabaseCallback @Inject constructor(
                     val surah = surahs.getJSONObject(i)
 
                     try {
-                        Timber.d( "insertion surah")
+                        Timber.d("insertion surah")
                         surahDao.insertSurah(
                             SurahDb(
                                 surah.getInt("number"), surah.getString("name"),
@@ -64,6 +69,7 @@ class QuranDatabaseCallback @Inject constructor(
                             )
                         )
                     } catch (e: JSONException) {
+                        Timber.e("error:${e.message}")
                         e.printStackTrace()
                     }
 
@@ -71,6 +77,7 @@ class QuranDatabaseCallback @Inject constructor(
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
+                Timber.e("error:${e.message}")
             }
         }
     }
@@ -94,12 +101,14 @@ class QuranDatabaseCallback @Inject constructor(
                         )
                     } catch (e: JSONException) {
                         e.printStackTrace()
+                        Timber.e("error:${e.message}")
                     }
 
 
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
+                Timber.e("error:${e.message}")
             }
 
             val chapters = loadJsonArray(resources, R.raw.chapter, "chapters")
@@ -119,12 +128,14 @@ class QuranDatabaseCallback @Inject constructor(
                         )
                     } catch (e: JSONException) {
                         e.printStackTrace()
+                        Timber.e("error:${e.message}")
                     }
 
 
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
+                Timber.e("error:${e.message}")
             }
 
             val divineNames = loadJsonArray(resources, R.raw.noms, "noms")
@@ -142,17 +153,19 @@ class QuranDatabaseCallback @Inject constructor(
                         )
                     } catch (e: JSONException) {
                         e.printStackTrace()
+                        Timber.e("error:${e.message}")
                     }
 
 
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
+                Timber.e("error:${e.message}")
             }
         }
     }
 
-    private suspend fun loadAyah(surahDao: QuranDao, context: Context) {
+    private suspend fun loadAyah(surahDao: QuranDao) {
         GlobalScope.launch(Dispatchers.IO) {
             val ayahs = loadJsonArray(resources, R.raw.quran, "ayahs")
 
@@ -173,6 +186,7 @@ class QuranDatabaseCallback @Inject constructor(
                         )
                     } catch (e: JSONException) {
                         e.printStackTrace()
+                        Timber.e("error:${e.message}")
                     }
 
                 }
@@ -180,6 +194,7 @@ class QuranDatabaseCallback @Inject constructor(
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent)*/
             } catch (e: JSONException) {
                 e.printStackTrace()
+                Timber.e("error:${e.message}")
             }
         }
 
@@ -200,8 +215,10 @@ class QuranDatabaseCallback @Inject constructor(
             return json.getJSONArray("surahs")
         } catch (exception: IOException) {
             exception.printStackTrace()
+            Timber.e("error:${exception.message}")
         } catch (exception: JSONException) {
             exception.printStackTrace()
+            Timber.e("error:${exception.message}")
         }
         return null
     }

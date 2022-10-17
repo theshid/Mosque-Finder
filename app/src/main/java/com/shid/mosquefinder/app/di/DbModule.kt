@@ -24,6 +24,7 @@ object DbModule {
 
     @Singleton
     @Provides
+    @Synchronized
     fun provideAppDb(@ApplicationContext context: Context, quranDatabaseCallback: QuranDatabaseCallback): QuranDatabase {
         val MIGRATION_1_2 = object : Migration(1, 2){
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -47,7 +48,9 @@ object DbModule {
                         "PRIMARY KEY(`id`))")
             }
         }
-        return Room
+
+
+        return  Room
             .databaseBuilder(context, QuranDatabase::class.java, QuranDatabase.DATABASE_NAME)
             .addMigrations(MIGRATION_1_2,MIGRATION_2_3)
             .addCallback(quranDatabaseCallback)

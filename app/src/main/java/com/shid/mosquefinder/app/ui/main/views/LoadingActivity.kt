@@ -4,16 +4,17 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
+import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
-import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.data.local.database.QuranDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -25,9 +26,11 @@ class LoadingActivity : AppCompatActivity() {
     }
 
     private val viewModel: SurahViewModel by viewModels()
+
     @Inject
     lateinit var sharedPref: SharePref
-    private var user:com.shid.mosquefinder.data.model.User ?= null
+
+    private var user: com.shid.mosquefinder.data.model.User? = null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             goToHomeActivity()
@@ -37,27 +40,24 @@ class LoadingActivity : AppCompatActivity() {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //sharedPref = SharePref(this)
-        user = GsonParser.gsonParser?.fromJson(sharedPref.loadUser(),com.shid.mosquefinder.data.model.User::class.java)
+        user = GsonParser.gsonParser?.fromJson(
+            sharedPref.loadUser(),
+            com.shid.mosquefinder.data.model.User::class.java
+        )
         val filter = IntentFilter(FILTER)
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,filter)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
         setContentView(R.layout.activity_loading)
         setViewModel()
     }
 
     private fun setViewModel() {
-        /*viewModel = ViewModelProvider(
-            this,
-            SurahViewModelFactory(application)
-        ).get(SurahViewModel::class.java)*/
 
-        //viewModel.getSurahs()
-        //viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
-
-       // })
+        viewModel.test()
+        viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
+            Timber.d("Inserting...")
+        })
 
     }
 
@@ -73,10 +73,9 @@ class LoadingActivity : AppCompatActivity() {
     }
 
 
-
     fun goToHomeActivity() {
         startActivity<HomeActivity> {
-            putExtra(Common.USER,user)
+            putExtra(Common.USER, user)
         }
     }
 }

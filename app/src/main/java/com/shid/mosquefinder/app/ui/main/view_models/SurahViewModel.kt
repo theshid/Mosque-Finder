@@ -42,8 +42,8 @@ internal class SurahViewModel @Inject constructor( val getAllSurahsUseCase: GetA
             _surahViewState.value?.copy(isLoading = false, error = Error(message))
     }
 
-    private var _list = MutableLiveData<List<SurahDb>>()
-    val surahDbList: LiveData<List<SurahDb>>
+    private var _list = MutableLiveData<List<SurahPresentation>>()
+    val surahDbList: LiveData<List<SurahPresentation>>
         get() = _list
     //private var repository: SurahRepositoryImpl
     var nextPray = MutableStateFlow("-")
@@ -72,11 +72,21 @@ internal class SurahViewModel @Inject constructor( val getAllSurahsUseCase: GetA
         }
     }
 
+    fun test(){
+        viewModelScope.launch(Dispatchers.IO){
+            //onSurahsLoading()
+            loadSurahs()
+            /*val listSurah = repository.getAllSurahs()
+            _list.postValue(listSurah)*/
+        }
+    }
+
     private suspend fun loadSurahs() {
         getAllSurahsUseCase.invoke(Unit).apply {
             val surahsList = this.map { it.toPresentation() }
             Timber.d("surahs: $surahsList ")
-            onSurahsLoadingComplete(surahsList)
+            _list.postValue(surahsList)
+            //onSurahsLoadingComplete(surahsList)
         }
         /*getAllSurahsUseCase(Unit).collect{surahs ->
             val surahsList = surahs.map { it.toPresentation() }

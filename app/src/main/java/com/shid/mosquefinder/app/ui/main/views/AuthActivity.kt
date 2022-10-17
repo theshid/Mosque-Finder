@@ -171,17 +171,14 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun signIn() {
-        Timber.d("sign: ")
         val signInIntent = googleSignInClient.signInIntent
         resultLauncher.launch(signInIntent)
     }
     
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Timber.d("test: ${result.resultCode} ")
             if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
-                Timber.d("registerForActivityResult: ")
                 val data: Intent? = result.data
                 val task =
                     GoogleSignIn.getSignedInAccountFromIntent(data)
