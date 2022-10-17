@@ -17,7 +17,6 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import com.shid.mosquefinder.domain.usecases.GetAllSurahsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -43,11 +42,6 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
             _surahViewState.value?.copy(isLoading = false, error = Error(message))
     }
 
-    private var _list = MutableLiveData<List<SurahPresentation>>()
-    val surahDbList: LiveData<List<SurahPresentation>>
-        get() = _list
-
-    //private var repository: SurahRepositoryImpl
     var nextPray = MutableStateFlow("-")
     var descNextPray = MutableStateFlow("-")
     private lateinit var countDownTimer: CountDownTimer
@@ -63,26 +57,10 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
     }
 
     fun getSurahs() {
-
         getAllSurahsJob = launchCoroutine {
             Timber.d("inside Coroutine")
             onSurahsLoading()
             loadSurahs()
-        }
-        /*viewModelScope.launch(Dispatchers.IO) {
-            onSurahsLoading()
-            loadSurahs()
-            *//*val listSurah = repository.getAllSurahs()
-            _list.postValue(listSurah)*//*
-        }*/
-    }
-
-    fun test() {
-        viewModelScope.launch(Dispatchers.IO) {
-            //onSurahsLoading()
-            loadSurahs()
-            /*val listSurah = repository.getAllSurahs()
-            _list.postValue(listSurah)*/
         }
     }
 
@@ -90,14 +68,8 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
         getAllSurahsUseCase.invoke(Unit).collect { surahList ->
             val surahsList = surahList.map { it.toPresentation() }
             Timber.d("surahs: $surahsList ")
-            //_list.postValue(surahsList)
             onSurahsLoadingComplete(surahsList)
         }
-        /*getAllSurahsUseCase(Unit).collect{surahs ->
-            val surahsList = surahs.map { it.toPresentation() }
-            Timber.d("surahs: $surahsList ")
-            onSurahsLoadingComplete(surahsList)
-        }*/
     }
 
     private fun onSurahsLoadingComplete(surahsList: List<SurahPresentation>) {
@@ -147,17 +119,5 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
             }
         }.start()
     }
-
-
-    /*private suspend fun getPushId(context: Context):String?{
-        val sharePref = SharePref(context)
-        val pushId = sharePref.loadFirebaseToken()
-        return if (pushId.isNullOrBlank()){
-            Common.retrievePushId(context)
-        }else{
-            pushId
-        }
-    }*/
-
 
 }

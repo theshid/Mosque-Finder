@@ -53,12 +53,7 @@ class LoadingActivity : AppCompatActivity() {
     }
 
     private fun setViewModel() {
-
-        viewModel.test()
-        viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
-            Timber.d("Inserting...")
-        })
-
+        viewModel.getSurahs()
     }
 
     override fun onStart() {

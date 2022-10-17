@@ -46,7 +46,6 @@ class QuranDatabaseCallback @Inject constructor(
     }
 
     private suspend fun loadSurahs(surahDao: QuranDao) {
-        GlobalScope.launch(Dispatchers.IO) {
             val surahs = loadSurahsJsonArray()
             try {
                 for (i in 0 until surahs!!.length()) {
@@ -74,11 +73,10 @@ class QuranDatabaseCallback @Inject constructor(
                 e.printStackTrace()
                 Timber.e("error:${e.message}")
             }
-        }
+
     }
 
     private suspend fun loadNames(surahDao: QuranDao) {
-        GlobalScope.launch(Dispatchers.IO) {
             val categories = loadJsonArray(resources, R.raw.category, "categories")
 
             try {
@@ -157,11 +155,10 @@ class QuranDatabaseCallback @Inject constructor(
                 e.printStackTrace()
                 Timber.e("error:${e.message}")
             }
-        }
+
     }
 
     private suspend fun loadAyah(surahDao: QuranDao) {
-        GlobalScope.launch(Dispatchers.IO) {
             val ayahs = loadJsonArray(resources, R.raw.quran, "ayahs")
 
             try {
@@ -191,7 +188,7 @@ class QuranDatabaseCallback @Inject constructor(
                 e.printStackTrace()
                 Timber.e("error:${e.message}")
             }
-        }
+
 
     }
 
