@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
@@ -29,15 +28,17 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.ui.notification.NotificationWorker
-import com.shid.mosquefinder.data.model.User
-import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.enums.Prayers
+import com.shid.mosquefinder.app.utils.extensions.serializable
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import com.shid.mosquefinder.data.model.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,7 +70,7 @@ class HomeActivity : BaseActivity() {
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent) {
-            intent.extras?.getString("message")?.let { showToast(it) }
+            intent.extras?.getString(Constants.EXTRA_KEY_MESSAGE)?.let { showToast(it) }
         }
     }
 
@@ -77,12 +78,11 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        setViewModel()
+        
         user = getUserFromIntent()
         timeZone = getTimeZone()
-        //sharedPref = SharePref(this)
         isFirstTime = sharedPref.loadFirstTime()
-        //fusedLocationWrapper = fusedLocationWrapper()
+
         val bundle = intent.extras
         if (bundle != null) {
             Timber.d("bundle coming in:%s", bundle.keySet())
@@ -95,21 +95,28 @@ class HomeActivity : BaseActivity() {
         displayAutoStartDialog()
         setWorkManagerNotification()
         checkIfPermissionIsActive()
-        scope.launch { viewModel.nextPray.collect { tv_countdown_time.text = it } }
-        scope.launch { viewModel.descNextPray.collect { tv_next_prayer_name.text = it } }
+        setPrayerTime()
         setClickListeners()
     }
 
     override fun onStart() {
         super.onStart()
         LocalBroadcastManager.getInstance(this)
-            .registerReceiver(messageReceiver, IntentFilter("MyData"))
+            .registerReceiver(
+                messageReceiver,
+                IntentFilter(Constants.INTENT_FILTER_MESSAGE_RECEIVER)
+            )
 
     }
 
     override fun onStop() {
         super.onStop()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    }
+
+    private fun setPrayerTime() {
+        scope.launch { viewModel.nextPray.collect { tv_countdown_time.text = it } }
+        scope.launch { viewModel.descNextPray.collect { tv_next_prayer_name.text = it } }
     }
 
     private fun displayAutoStartDialog() {
@@ -124,41 +131,20 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setWorkManagerNotification() {
-       // workManager = WorkManager.getInstance(this)
+        // workManager = WorkManager.getInstance(this)
         val saveRequest: PeriodicWorkRequest =
             PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
-                .addTag("notification")
+                .addTag(Constants.WORKER_TAG)
                 .build()
         if (sharedPref.loadSwitchState()) {
             workManager.enqueueUniquePeriodicWork(
-                "Daily Ayah",
+                Constants.WORKER_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
                 saveRequest
             )
         } else {
             workManager.cancelAllWorkByTag(SettingsActivity.SettingsFragment.WORKER_TAG)
         }
-    }
-
-    private fun setViewModel() {
-        /*viewModel = ViewModelProvider(
-            this,
-            SurahViewModelFactory(application)
-        ).get(SurahViewModel::class.java)*/
-
-       /* viewModel.getSurahs()
-        viewModel.surahDbList.observe(this, androidx.lifecycle.Observer {
-            Timber.d("value of :$it")
-        })*/
-
-        if (checkGooglePlayServices()) {
-            viewModel.update()
-        } else {
-            //You won't be able to send notifications to this device
-            Timber.w("Device doesn't have google play services")
-        }
-
-
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -192,7 +178,7 @@ class HomeActivity : BaseActivity() {
                 userPosition = sharedPref.loadSavedPosition()
             }
         } else {
-            Toast.makeText(this, getString(R.string.toast_permission), Toast.LENGTH_LONG).show()
+            showToast(getString(R.string.toast_permission))
         }
     }
 
@@ -241,9 +227,7 @@ class HomeActivity : BaseActivity() {
         )
         val azan = Azan(location, Method.EGYPT_SURVEY)
         val prayerTimes = azan.getPrayerTimes(date)
-
         setNextPrayer(prayerTimes)
-
     }
 
     private fun initializePrayerDate(time: String): Date {
@@ -275,33 +259,23 @@ class HomeActivity : BaseActivity() {
         val simpleDateFormat = SimpleDateFormat("HH:mm")
         val nowTime = simpleDateFormat.parse(simpleDateFormat.format(calendar.time))
         if (nowTime.after(fajrDate) && nowTime.before(dhurDate)) {
-            val salatTime = prayerTimes.thuhr().toString().dropLast(3)
-            tv_prayer_time.text = Prayers.DHUR.prayer
-            tv_home_salat_time.text = salatTime
-            viewModel.getIntervalText(Prayers.DHUR, salatTime)
+            setPrayerUI(Prayers.DHUR, prayerTimes.thuhr().toString().dropLast(3))
         } else if (nowTime.after(dhurDate) && nowTime.before(asrDate)) {
-            val salatTime = prayerTimes.assr().toString().dropLast(3)
-            tv_prayer_time.text = Prayers.ASR.prayer
-            tv_home_salat_time.text = prayerTimes.assr().toString().dropLast(3)
-            viewModel.getIntervalText(Prayers.ASR, salatTime)
+            setPrayerUI(Prayers.ASR, prayerTimes.assr().toString().dropLast(3))
         } else if (nowTime.after(asrDate) && nowTime.before(maghribDate)) {
-            val salatTime = prayerTimes.maghrib().toString().dropLast(3)
-            tv_prayer_time.text = Prayers.MAGHRIB.prayer
-            tv_home_salat_time.text = prayerTimes.maghrib().toString().dropLast(3)
-            viewModel.getIntervalText(Prayers.MAGHRIB, salatTime)
+            setPrayerUI(Prayers.MAGHRIB, prayerTimes.maghrib().toString().dropLast(3))
         } else if (nowTime.after(maghribDate) && nowTime.before(ishaDate)) {
-            val salatTime = prayerTimes.ishaa().toString().dropLast(3)
-            tv_prayer_time.text = Prayers.ISHA.prayer
-            tv_home_salat_time.text = prayerTimes.ishaa().toString().dropLast(3)
-            viewModel.getIntervalText(Prayers.ISHA, salatTime)
+            setPrayerUI(Prayers.ISHA, prayerTimes.ishaa().toString().dropLast(3))
         } else {
-            val salatTime = prayerTimes.fajr().toString().dropLast(3)
-
-            tv_prayer_time.text = Prayers.FAJR.prayer
-            tv_home_salat_time.text = prayerTimes.fajr().toString().dropLast(3)
-            viewModel.getIntervalText(Prayers.FAJR, salatTime)
+            setPrayerUI(Prayers.FAJR, prayerTimes.fajr().toString().dropLast(3))
         }
 
+    }
+
+    private fun setPrayerUI(prayerName: Prayers, prayerTime: String) {
+        tv_prayer_time.text = prayerName.prayer
+        tv_home_salat_time.text = prayerTime
+        viewModel.getIntervalText(prayerName, prayerTime)
     }
 
     private fun setClickListeners() {
@@ -405,8 +379,8 @@ class HomeActivity : BaseActivity() {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 
-    private fun getUserFromIntent(): User {
-        return intent.getSerializableExtra(Common.USER) as User
+    private fun getUserFromIntent(): User? {
+        return intent.serializable(Common.USER)
     }
 
     private fun checkGooglePlayServices(): Boolean {

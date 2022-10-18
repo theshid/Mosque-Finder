@@ -36,12 +36,6 @@ class SurahAdapter :
     var list: MutableList<SurahPresentation>? = null
     private var listData = ArrayList<SurahPresentation>()
 
-    /*fun setData(newListData: List<SurahDb>) {
-        listData.clear()
-        listData.addAll(newListData)
-        notifyDataSetChanged()
-    }*/
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SurahViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_quran_surah, parent, false)
@@ -59,10 +53,6 @@ class SurahAdapter :
         })
 
     }
-
-    /*override fun getItemCount(): Int {
-        return listData.size
-    }*/
 
     interface OnClickSurah {
         fun onClickSurah(surahPresentation: SurahPresentation)

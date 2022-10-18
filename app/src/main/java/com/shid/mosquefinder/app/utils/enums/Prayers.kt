@@ -7,9 +7,3 @@ enum class Prayers(val prayer:String) {
     MAGHRIB("Maghrib"),
     ISHA("Isha")
 }
-
-enum class CardType(val color: String) {
-    SILVER("gray"),
-    GOLD("yellow"),
-    PLATINUM("black")
-}

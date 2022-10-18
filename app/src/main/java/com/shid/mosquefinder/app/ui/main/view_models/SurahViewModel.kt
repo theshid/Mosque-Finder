@@ -11,6 +11,7 @@ import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
 import com.shid.mosquefinder.app.utils.doAsync
 import com.shid.mosquefinder.app.utils.enums.Prayers
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
 import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.day
 import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
@@ -58,7 +59,6 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
 
     fun getSurahs() {
         getAllSurahsJob = launchCoroutine {
-            Timber.d("inside Coroutine")
             onSurahsLoading()
             loadSurahs()
         }
@@ -67,7 +67,6 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
     private suspend fun loadSurahs() {
         getAllSurahsUseCase.invoke(Unit).collect { surahList ->
             val surahsList = surahList.map { it.toPresentation() }
-            Timber.d("surahs: $surahsList ")
             onSurahsLoadingComplete(surahsList)
         }
     }
@@ -78,13 +77,6 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
 
     private fun onSurahsLoading() {
         _surahViewState.value = _surahViewState.value?.copy(isLoading = true)
-    }
-
-    fun update() {
-        doAsync {
-            // val context = application.applicationContext
-            //val pushId = runBlocking { getPushId(context) }
-        }
     }
 
     fun getIntervalText(prayerName: Prayers, prayerTime: String) = viewModelScope.launch {
@@ -111,9 +103,9 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
 
             override fun onFinish() {
                 if (this@SurahViewModel::countDownTimer.isInitialized) countDownTimer.cancel()
-                nextPray.value = "Now"
+                nextPray.value = Constants.PRAYER_NOW
                 descNextPray.value = buildString {
-                    append(" it's time to pray ")
+                    append(Constants.PRAYER_TIME)
                     append(prayerName.prayer)
                 }
             }

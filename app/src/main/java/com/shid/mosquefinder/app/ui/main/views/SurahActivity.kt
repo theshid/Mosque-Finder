@@ -10,10 +10,11 @@ import com.shid.mosquefinder.app.ui.main.adapters.SurahAdapter
 import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
+import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.hide
 import com.shid.mosquefinder.app.utils.show
 import com.shid.mosquefinder.app.utils.showSnackbar
-import com.shid.mosquefinder.app.utils.extensions.startActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_surah.*
 import timber.log.Timber
@@ -23,6 +24,7 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
 
     private val viewModel: SurahViewModel by viewModels()
     private lateinit var surahAdapter: SurahAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_surah)
@@ -71,13 +73,6 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
         }
     }
 
-    /* private fun setViewModel() {
-         viewModel = ViewModelProvider(
-             this,
-             SurahViewModelFactory(application)
-         ).get(SurahViewModel::class.java)
-     }*/
-
     private fun hideSoftKeyboard() {
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     }
@@ -89,23 +84,6 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
         //setRecycler()
     }
 
-    /*private fun setRecycler() {
-        viewModel.getSurahs()
-        viewModel.surahDbList.observe(this, Observer {
-            if (it.isNotEmpty()) {
-
-                surahAdapter.setData(it)
-                surahAdapter.setItemClick(this@SurahActivity)
-                surahRecycler.adapter = surahAdapter
-                surahAdapter.list = it as MutableList<SurahDb>
-                surahAdapter.notifyDataSetChanged()
-            }
-
-        })
-
-
-    }*/
-
     private fun setOnClick() {
         backButton.setOnClickListener {
             onBackPressed()
@@ -114,7 +92,7 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
 
     override fun onClickSurah(surahPresentation: SurahPresentation) {
         startActivity<AyahActivity> {
-            putExtra("surah_number", surahPresentation.number)
+            putExtra(Constants.EXTRA_SURAH_NUMBER, surahPresentation.number)
         }
 
     }
