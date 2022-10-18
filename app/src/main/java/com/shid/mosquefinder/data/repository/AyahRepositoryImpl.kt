@@ -16,8 +16,11 @@ class AyahRepositoryImpl @Inject constructor(
     private val api: QuranApiInterface
 ) : AyahRepository {
 
-    override fun getAyah(surahNumber: Int): List<Ayah> =
-        quranDao.getAyah(surahNumber).map { it.toDomain() }
+    override fun getAyah(surahNumber: Int): Flow<List<Ayah>> = flow {
+        val ayahList = quranDao.getAyah(surahNumber)
+        emit(ayahList.map { it.toDomain() })
+    }
+
 
     override fun updateAyah(text: String, ayahId: Long) {
         quranDao.updateAyah(text, ayahId)

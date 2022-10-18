@@ -7,7 +7,7 @@ interface SurahRepository {
 
     fun getAllSurahs(): Flow<List<Surah>>
 
-    fun getSurahByNumber(surahNumber: Int): Surah
+    fun getSurahByNumber(surahNumber: Int): Flow<Surah>
 
-    fun getListSurahs(surahNumber: Int): List<Surah>
+    fun getListSurahs(surahNumber: Int): Flow<List<Surah>>
 }

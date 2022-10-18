@@ -38,6 +38,11 @@ object Constants {
 
     //Intent extras
     const val EXTRA_SURAH_NUMBER = "surah_number"
+    const val EXTRA_SURAH_NAME = "surah"
+    const val EXTRA_SURAH_LINK = "link"
+    const val EXTRA_SURAH_NUMBER_AYAH = "number"
+    const val EXTRA_SURAH_NAME_AYAH = "number"
+
 
     //Intent keys
     const val EXTRA_KEY_MESSAGE = "message"
@@ -49,9 +54,18 @@ object Constants {
     const val PRAYER_NOW = "Now"
     const val PRAYER_TIME = "It's time to pray"
 
+    //AyahActivity
+    const val SURAH_STATE = "state"
+
     //Workers
     const val WORKER_TAG = "notification"
     const val WORKER_NAME = "Daily Ayah"
+
+    //Version
+    const val FRENCH_VERSION = "fr"
+
+    //ExoPlayer
+    const val PLAYER_TYPE = "default"
 
 
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.shid.mosquefinder.app.ui.main.mappers.toPresentation
 import com.shid.mosquefinder.app.ui.main.states.AyahViewState
 import com.shid.mosquefinder.app.ui.main.states.Error
+import com.shid.mosquefinder.app.ui.main.states.SurahByNumberViewState
 import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.models.AyahPresentation
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
@@ -19,8 +20,10 @@ import com.shid.mosquefinder.data.model.pojo.RootResponse
 import com.shid.mosquefinder.data.model.pojo.VerseResponse
 import com.shid.mosquefinder.domain.usecases.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,7 +31,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
- class AyahViewModel @Inject constructor(
+class AyahViewModel @Inject constructor(
     private val getAyahUsecase: GetAyahUseCase,
     private val getAllSurahsUseCase: GetAllSurahsUseCase,
     private val getSurahByNumberUseCase: GetSurahByNumberUseCase,
@@ -44,22 +47,32 @@ import javax.inject.Inject
     val surahsViewState: LiveData<SurahViewState>
         get() = _surahsViewState
 
+    val surahByNumberViewState: LiveData<SurahByNumberViewState>
+        get() = _surahByNumberViewState
+
     val ayahViewState: LiveData<AyahViewState>
         get() = _ayahViewState
 
     private var _ayahViewState = MutableLiveData<AyahViewState>()
     private var _surahsViewState = MutableLiveData<SurahViewState>()
+    private var _surahByNumberViewState = MutableLiveData<SurahByNumberViewState>()
 
     override val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         val message = ExceptionHandler.parse(exception)
+        Timber.d("exception:${exception.message}")
         _surahsViewState.value =
             _surahsViewState.value?.copy(isLoading = false, error = Error(message))
+
+        _surahByNumberViewState.value =
+            _surahByNumberViewState.value?.copy(error = Error(message))
+
         _ayahViewState.value =
             _ayahViewState.value?.copy(isLoading = false, error = Error(message))
     }
 
     init {
         _surahsViewState.value = SurahViewState(isLoading = true, error = null, surahs = null)
+        _surahByNumberViewState.value = SurahByNumberViewState(error = null, surah = null)
         _ayahViewState.value = AyahViewState(isLoading = true, error = null, ayahs = null)
     }
 
@@ -67,12 +80,13 @@ import javax.inject.Inject
         super.onCleared()
         getAllAyah?.cancel()
         getAllSurahs?.cancel()
+        getSurahByNumber?.cancel()
     }
 
 
-    val service = Common.frenchQuranApiService
+    private val service = Common.frenchQuranApiService
 
-    private var _ayah = MutableLiveData<List<AyahDb>>()
+    /*private var _ayah = MutableLiveData<List<AyahDb>>()
     val ayah: LiveData<List<AyahDb>>
         get() = _ayah
 
@@ -82,7 +96,7 @@ import javax.inject.Inject
 
     private var _listSurahDb = MutableLiveData<List<SurahDb>>()
     val listSurahDb: LiveData<List<SurahDb>>
-        get() = _listSurahDb
+        get() = _listSurahDb*/
 
     var _translation = MutableLiveData<List<VerseResponse>>()
     val translation: LiveData<List<VerseResponse>>
@@ -93,23 +107,35 @@ import javax.inject.Inject
         get() = _traduction
 
     fun getAyahs(surahNumber: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        getAllAyah = launchCoroutine {
             onAyahsLoading()
             loadAyahs(surahNumber)
         }
+        /*viewModelScope.launch(Dispatchers.IO) {
+            onAyahsLoading()
+            loadAyahs(surahNumber)
+        }*/
     }
 
     fun getSurahs() {
-        viewModelScope.launch(Dispatchers.IO) {
+        getAllSurahs = launchCoroutine {
             onSurahsLoading()
             loadSurahs()
         }
     }
 
+    fun getSurahByNumber(surahNumber: Int) {
+        getSurahByNumber = launchCoroutine {
+            getSurahInfo(surahNumber)
+        }
+    }
+
     private suspend fun loadAyahs(surahNumber: Int) {
-        val ayahsList = getAyahUsecase(surahNumber).map { it.toPresentation() }
-        Timber.d("surahs: $ayahsList ")
-        onAyahsLoadingComplete(ayahsList)
+        getAyahUsecase(surahNumber).collect { ayahList ->
+            val ayahsList = ayahList.map { it.toPresentation() }
+            Timber.d("surahs: $ayahsList ")
+            onAyahsLoadingComplete(ayahsList)
+        }
     }
 
 
@@ -122,10 +148,10 @@ import javax.inject.Inject
     }
 
     private suspend fun loadSurahs() {
-         getAllSurahsUseCase.invoke(Unit).collect { surahList ->
+        getAllSurahsUseCase.invoke(Unit).collect { surahList ->
             val surahs = surahList.map { it.toPresentation() }
             onSurahsLoadingComplete(surahs)
-            }
+        }
 
     }
 
@@ -139,19 +165,30 @@ import javax.inject.Inject
             _surahsViewState.value?.copy(isLoading = false, surahs = surahsList)
     }
 
-   /* fun getSurahList(surahNumber: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val list = surahRepositoryImpl.getListSurahs(surahNumber)
-            _listSurahDb.postValue(list)
+    private fun onSurahLoadingComplete(surah: SurahPresentation) {
+        _surahByNumberViewState.value =
+            _surahByNumberViewState.value?.copy(surah = surah)
+    }
+
+    /* fun getSurahList(surahNumber: Int) {
+         viewModelScope.launch(Dispatchers.IO) {
+             val list = surahRepositoryImpl.getListSurahs(surahNumber)
+             _listSurahDb.postValue(list)
+         }
+     }*/
+
+
+    private suspend fun getSurahInfo(surahNumber: Int) {
+        getSurahByNumberUseCase(surahNumber).collect {
+            onSurahLoadingComplete(it.toPresentation())
         }
-    }*/
 
+        /*viewModelScope.launch(Dispatchers.IO) {
+            val surah = getSurahByNumberUseCase(surahNumber).collect {
 
-    fun getSurahInfo(surahNumber: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val surah = getSurahByNumberUseCase(surahNumber).toPresentation()
+            }
             _surah.postValue(surah)
-        }
+        }*/
     }
 
     /*fun getAllAyah(surahNumber: Int) {
@@ -166,16 +203,16 @@ import javax.inject.Inject
     }*/
 
     fun updateAyah(text: String, id: Long) {
-        val pairData = Pair(text,id)
+        val pairData = Pair(text, id)
         viewModelScope.launch(Dispatchers.IO) {
             updateAyahUseCase(pairData)
         }
 
     }
 
-    private suspend fun loadSurahInFrench(surahId: Int){
-        getSurahInFrenchUseCase(surahId).collect{
-            ayahInFrench -> _traduction.value= ayahInFrench.map { it.toPresentation() }
+    private suspend fun loadSurahInFrench(surahId: Int) {
+        getSurahInFrenchUseCase(surahId).collect { ayahInFrench ->
+            _traduction.value = ayahInFrench.map { it.toPresentation() }
         }
     }
 
@@ -188,7 +225,10 @@ import javax.inject.Inject
                 if (response.code() == 200) {
                     _translation.value = response.body()!!.data.verseResponse
 
-                    Log.d("Ayah", "OnResponse OK : " + response.body()!!.data.verseResponse + " " + surahId)
+                    Log.d(
+                        "Ayah",
+                        "OnResponse OK : " + response.body()!!.data.verseResponse + " " + surahId
+                    )
                 } else {
 
                     Log.d("Ayah", "OnResponse Fail : ")

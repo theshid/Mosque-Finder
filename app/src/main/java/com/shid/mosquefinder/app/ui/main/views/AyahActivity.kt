@@ -19,12 +19,15 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.AyahAdapter
 import com.shid.mosquefinder.app.ui.main.states.AyahViewState
+import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
 import com.shid.mosquefinder.app.ui.models.AyahPresentation
+import com.shid.mosquefinder.app.ui.models.SurahPresentation
 import com.shid.mosquefinder.app.ui.services.SurahDLService
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.extensions.startService
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.hide
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
@@ -61,30 +64,27 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
     private lateinit var switch: StickySwitch
     private var verseResponseList: List<VerseResponse>? = null
 
-    companion object {
-        val STATE_SURAH = "state"
-    }
+
+    private val STATE_SURAH = Constants.SURAH_STATE
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ayah)
-        //sharedPref = SharePref(this)
+
         isFirstTime = sharedPref.loadFirstTimeAyah()
-        // Check whether we're recreating a previously destroyed instance
+
         if (savedInstanceState != null) {
             with(savedInstanceState) {
                 // Restore value of members from saved state
                 surahNumber = getInt(STATE_SURAH)
-
             }
         } else {
-            // Probably initialize members with default values for a new instance
-            surahNumber = intent.getIntExtra("surah_number", 1)
+            surahNumber = intent.getIntExtra(Constants.EXTRA_SURAH_NUMBER, 1)
         }
 
         setUI(surahNumber!!)
-        setViewModel()
+        setViewStates(surahNumber!!)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -93,9 +93,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             Timber.d("saved surah number to saveInstance")
 
         }
-
         super.onSaveInstanceState(outState)
-
     }
 
 
@@ -122,15 +120,49 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             .show() //Display the ShowCaseSequence
     }
 
-    private fun setViewModel() {
+    private fun setViewStates(number_surah: Int) {
+        viewModel.surahByNumberViewState.observe(this) { state ->
+            state.surah?.let {
+                surah_title.text = it.transliteration
+                surahName = it.transliteration
+                verse_number.text = it.totalVerses.toString() + " " + "Ayah"
+            }
+        }
+
         viewModel.ayahViewState.observe(this) { state ->
             handleAyahLoading(state)
             state.ayahs?.let { list ->
                 if (list.isNotEmpty()) {
                     ayahAdapter.setData(list)
+                    if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
+                        if (list[0].frenchTranslation == null || list[0].frenchTranslation == "empty"
+                        ) {
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                viewModel.getFrenchSurah(number_surah)
+                                delay(2000)
+                                viewModel.translation.observe(this@AyahActivity, Observer {
+                                    if (it.isNotEmpty()) {
+                                        ayahAdapter.setFrenchAyahList(it)
+                                    }
+                                })
+                            }
+
+                        }
+                    }
                 }
+
             }
             handleAyahError(state)
+        }
+
+        viewModel.surahsViewState.observe(this) { state ->
+            handleSurahLoading(state)
+            state.surahs?.let { list ->
+                if (list.isNotEmpty()) {
+                    calculateBase(list)
+                }
+            }
+            handleSurahError(state)
         }
     }
 
@@ -148,6 +180,28 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         }
     }
 
+    private fun handleSurahError(state: SurahViewState) {
+        state.error?.run {
+            showSnackbar(
+                ayahRecycler, getString(this.message), isError = true
+            )
+        }
+    }
+
+    private fun handleSurahLoading(surahViewState: SurahViewState) {
+        if (surahViewState.isLoading) {
+            progressBar.show()
+        } else {
+            progressBar.hide()
+        }
+    }
+
+    private fun setViewModelData(number_surah: Int) {
+        viewModel.getAyahs(number_surah)
+        viewModel.getSurahs()
+        viewModel.getSurahByNumber(number_surah)
+    }
+
 
     private fun setUI(number_surah: Int) {
         if (isFirstTime == true) {
@@ -158,22 +212,20 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         ayahRecycler.adapter = ayahAdapter
         ayahAdapter.setOnItemClick(this@AyahActivity)
 
-        viewModel.getAyahs(number_surah)
-        viewModel.getSurahs()
-        viewModel.getSurahInfo(number_surah)
+        setViewModelData(number_surah)
 
 
-        viewModel.listSurahDb.observe(this, Observer {
+        /*viewModel.listSurahDb.observe(this, Observer {
             surahDbList = it
             Log.d("Test", it.size.toString())
             if (it.isNotEmpty()) {
                 calculateBase()
             }
 
-        })
-        viewModel.ayah.observe(this, Observer { ayahDbList ->
+        })*/
+        /*viewModel.ayah.observe(this, Observer { ayahDbList ->
             if (ayahDbList.isNotEmpty()) {
-                if (Locale.getDefault().language.contentEquals("fr")) {
+                if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
                     if (ayahDbList[0].frenchTranslation == null || ayahDbList[0].frenchTranslation.equals(
                             "empty"
                         )
@@ -186,9 +238,9 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
                                     ayahAdapter.setFrenchAyahList(it)
                                 }
                             })
-                            /*ayahRecycler.adapter = ayahAdapter
+                            *//*ayahRecycler.adapter = ayahAdapter
                             ayahAdapter.setData(ayahDbList)
-                            ayahAdapter.setOnItemClick(this@AyahActivity)*/
+                            ayahAdapter.setOnItemClick(this@AyahActivity)*//*
                         }
 
                     }
@@ -198,16 +250,16 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
 
             }
 
-        })
+        })*/
 
-        viewModel.surah.observe(this, Observer {
+        /*viewModel.surah.observe(this, Observer {
             if (it != null) {
                 surah_title.text = it.transliteration
                 surahName = it.transliteration
                 verse_number.text = it.totalVerses.toString() + " " + "Ayah"
             }
 
-        })
+        })*/
 
 
 
@@ -225,27 +277,31 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
 
         }
 
-        txt_play_all.setOnClickListener(View.OnClickListener {
-            sendDataToPlayer()
-        })
+        setClickListeners()
 
-        play_all.setOnClickListener(View.OnClickListener {
-            sendDataToPlayer()
-        })
+    }
 
-        fab.setOnClickListener(View.OnClickListener {
+    private fun setClickListeners() {
+        txt_play_all.setOnClickListener {
+            sendDataToPlayer()
+        }
+
+        play_all.setOnClickListener {
+            sendDataToPlayer()
+        }
+
+        fab.setOnClickListener {
             if (checkIfFileExist()) {
                 showToast(getString(R.string.dl_available))
             } else {
                 downloadDialog()
             }
 
-        })
+        }
 
-        btn_back.setOnClickListener(View.OnClickListener {
+        btn_back.setOnClickListener {
             onBackPressed()
-        })
-
+        }
     }
 
     private fun checkIfFileExist(): Boolean {
@@ -277,9 +333,9 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/mishary" +
                     "-rashid-alafasy/mishary-rashid-alafasy-$number-muslimcentral.com.mp3"
         startService<SurahDLService> {
-            putExtra("surah", surahName)
-            putExtra("link", surahUrl)
-            putExtra("number", surahNumber)
+            putExtra(Constants.EXTRA_SURAH_NAME, surahName)
+            putExtra(Constants.EXTRA_SURAH_LINK, surahUrl)
+            putExtra(Constants.EXTRA_SURAH_NUMBER_AYAH, surahNumber)
         }
         showToast(getString(R.string.dl_started))
         /*val intent = Intent(this, SurahDLService::class.java)
@@ -313,14 +369,23 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
 
     private fun sendDataToPlayer() {
         startActivity<MusicActivity> {
-            putExtra("surah_name", surahName)
-            putExtra("surah_number", surahNumber)
+            putExtra(Constants.EXTRA_SURAH_NAME_AYAH, surahName)
+            putExtra(Constants.EXTRA_SURAH_NUMBER, surahNumber)
         }
     }
 
-    private fun calculateBase() {
-        for (item in surahDbList!!) {
+    private fun calculateBase(surahList: List<SurahPresentation>) {
+        for (item in surahList) {
             baseNumber += item.totalVerses
+        }
+    }
+
+    private fun initializeExoPlayer(ayahNumber: Int) {
+        if (simpleExoplayer.isPlaying) {
+            simpleExoplayer.stop()
+            initializePlayer(ayahNumber)
+        } else {
+            initializePlayer(ayahNumber)
         }
     }
 
@@ -331,16 +396,9 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         switch.visibility = View.VISIBLE
         switch.setDirection(StickySwitch.Direction.RIGHT)
 
-        if (simpleExoplayer.isPlaying) {
-            simpleExoplayer.stop()
-            initializePlayer(verseNumber)
-        } else {
-            initializePlayer(verseNumber)
-        }
+        initializeExoPlayer(verseNumber)
 
         if (!ConnectivityStateHolder.isConnected && previousSate) {
-            // showSnackBar(textView, "No Network !")
-            // Toast.makeText(this,getString(R.string.internet_ayah),Toast.LENGTH_LONG).show()
             Sneaker.with(this) // Activity, Fragment or ViewGroup
                 .setTitle(getString(R.string.sneaker_disconnected))
                 .setMessage(getString(R.string.internet_ayah))
@@ -364,7 +422,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
     private fun initializePlayer(ayaNum: Int) {
 
         val link = "http://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayaNum.mp3"
-        preparePlayer(link, "default")
+        preparePlayer(link, Constants.PLAYER_TYPE)
         exoplayerView.player = simpleExoplayer
         //exoplayerView.visibility = View.VISIBLE
         exoplayerView.controllerShowTimeoutMs = 0;
