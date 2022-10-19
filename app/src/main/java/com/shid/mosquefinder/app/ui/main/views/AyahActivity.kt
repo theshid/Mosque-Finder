@@ -2,11 +2,11 @@ package com.shid.mosquefinder.app.ui.main.views
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
@@ -31,16 +31,12 @@ import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.hide
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
+import com.shid.mosquefinder.app.utils.remove
 import com.shid.mosquefinder.app.utils.show
 import com.shid.mosquefinder.app.utils.showSnackbar
-import com.shid.mosquefinder.data.local.database.entities.SurahDb
-import com.shid.mosquefinder.data.model.pojo.VerseResponse
 import dagger.hilt.android.AndroidEntryPoint
 import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -49,11 +45,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListener {
     private val viewModel: AyahViewModel by viewModels()
-    private var surahDbList: List<SurahDb>? = null
+    private var ayahList: List<AyahPresentation>? = null
     private lateinit var ayahAdapter: AyahAdapter
     private lateinit var simpleExoplayer: SimpleExoPlayer
     private var playbackPosition: Long = 0
-    private var ayahNumber = 1
     private var baseNumber = 0
     private var surahName: String? = null
     private var surahNumber: Int? = null
@@ -62,9 +57,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
     lateinit var sharedPref: SharePref
     private var isFirstTime: Boolean? = null
     private lateinit var switch: StickySwitch
-    private var verseResponseList: List<VerseResponse>? = null
-
-
     private val STATE_SURAH = Constants.SURAH_STATE
 
 
@@ -84,7 +76,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         }
 
         setUI(surahNumber!!)
-        setViewStates(surahNumber!!)
+        setViewStates()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -109,9 +101,9 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
                     .textColorResourceId(R.color.colorWhite)
             ) //First BubbleShowCase to show
             .addShowCase(
-                BubbleShowCaseBuilder(this) //Activity instance
-                    .title(getString(R.string.bubble_ayah_title3)) //Any title for the bubble view
-                    .targetView(fab) //View to point out
+                BubbleShowCaseBuilder(this)
+                    .title(getString(R.string.bubble_ayah_title3))
+                    .targetView(fab)
                     .description(getString(R.string.bubble_ayah_desc3))
                     .backgroundColorResourceId(R.color.colorPrimary)
                     .imageResourceId(R.drawable.logo2)
@@ -120,12 +112,12 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             .show() //Display the ShowCaseSequence
     }
 
-    private fun setViewStates(number_surah: Int) {
+    private fun setViewStates() {
         viewModel.surahByNumberViewState.observe(this) { state ->
             state.surah?.let {
                 surah_title.text = it.transliteration
                 surahName = it.transliteration
-                verse_number.text = it.totalVerses.toString() + " " + "Ayah"
+                verse_number.text = it.totalVerses.toString() + " " + "Ayahs"
             }
         }
 
@@ -133,26 +125,34 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             handleAyahLoading(state)
             state.ayahs?.let { list ->
                 if (list.isNotEmpty()) {
-                    ayahAdapter.setData(list)
-                    if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
-                        if (list[0].frenchTranslation == null || list[0].frenchTranslation == "empty"
-                        ) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                viewModel.getFrenchSurah(number_surah)
-                                delay(2000)
-                                viewModel.translation.observe(this@AyahActivity, Observer {
-                                    if (it.isNotEmpty()) {
-                                        ayahAdapter.setFrenchAyahList(it)
-                                    }
-                                })
-                            }
+                    ayahList = list
+                    ayahAdapter.submitList(list)
+                    Timber.d("Testing")
 
-                        }
-                    }
                 }
 
             }
             handleAyahError(state)
+        }
+
+        viewModel.surahInFrenchViewState.observe(this) { state ->
+            state.surahInFrench?.let { frenchList ->
+                if (!ayahList.isNullOrEmpty()) {
+                    if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
+                        if (ayahList!![0].frenchTranslation == null || ayahList!![0].frenchTranslation == "empty"
+                        ) {
+                            for (ayahs in frenchList) {
+                                val verseToSave =
+                                    ayahList!!.first { it.verse_number == ayahs.numInSurah }
+                                viewModel.updateAyah(ayahs.trans, verseToSave.id)
+                            }
+                            viewModel.getAyahs(surahNumber!!)
+
+                        }
+                    }
+
+                }
+            }
         }
 
         viewModel.surahsViewState.observe(this) { state ->
@@ -196,73 +196,38 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         }
     }
 
-    private fun setViewModelData(number_surah: Int) {
-        viewModel.getAyahs(number_surah)
-        viewModel.getSurahs()
-        viewModel.getSurahByNumber(number_surah)
+    private fun fetchFrenchSurah() {
+        if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
+            if (ayahList!![0].frenchTranslation == "empty") {
+                viewModel.getFrenchSurahJob(surahNumber!!)
+            }
+        }
     }
 
 
     private fun setUI(number_surah: Int) {
+        checkIfFirstTime()
+        setAdapter()
+        setViewModelData(number_surah)
+        setViews()
+        setClickListeners()
+    }
+
+    private fun setViewModelData(number_surah: Int) {
+        viewModel.getAyahs(number_surah)
+        viewModel.getSurahs()
+        viewModel.getSurahByNumber(number_surah)
+        Handler(Looper.getMainLooper()).postDelayed({ fetchFrenchSurah() }, 1000)
+    }
+
+    private fun checkIfFirstTime() {
         if (isFirstTime == true) {
             activateShowcase()
             sharedPref.setFirstTimeAyah(false)
         }
-        ayahAdapter = AyahAdapter(viewModel)
-        ayahRecycler.adapter = ayahAdapter
-        ayahAdapter.setOnItemClick(this@AyahActivity)
+    }
 
-        setViewModelData(number_surah)
-
-
-        /*viewModel.listSurahDb.observe(this, Observer {
-            surahDbList = it
-            Log.d("Test", it.size.toString())
-            if (it.isNotEmpty()) {
-                calculateBase()
-            }
-
-        })*/
-        /*viewModel.ayah.observe(this, Observer { ayahDbList ->
-            if (ayahDbList.isNotEmpty()) {
-                if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
-                    if (ayahDbList[0].frenchTranslation == null || ayahDbList[0].frenchTranslation.equals(
-                            "empty"
-                        )
-                    ) {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            viewModel.getFrenchSurah(number_surah)
-                            delay(2000)
-                            viewModel.translation.observe(this@AyahActivity, Observer {
-                                if (it.isNotEmpty()) {
-                                    ayahAdapter.setFrenchAyahList(it)
-                                }
-                            })
-                            *//*ayahRecycler.adapter = ayahAdapter
-                            ayahAdapter.setData(ayahDbList)
-                            ayahAdapter.setOnItemClick(this@AyahActivity)*//*
-                        }
-
-                    }
-                }
-
-                //ayahAdapter.setData(ayahDbList)
-
-            }
-
-        })*/
-
-        /*viewModel.surah.observe(this, Observer {
-            if (it != null) {
-                surah_title.text = it.transliteration
-                surahName = it.transliteration
-                verse_number.text = it.totalVerses.toString() + " " + "Ayah"
-            }
-
-        })*/
-
-
-
+    private fun setViews() {
         switch = findViewById(R.id.switch_control)
         switch.visibility = View.GONE
         switch.onSelectedChangeListener = object : StickySwitch.OnSelectedChangeListener {
@@ -276,9 +241,12 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             }
 
         }
+    }
 
-        setClickListeners()
-
+    private fun setAdapter() {
+        ayahAdapter = AyahAdapter()
+        ayahRecycler.adapter = ayahAdapter
+        ayahAdapter.setOnItemClick(this@AyahActivity)
     }
 
     private fun setClickListeners() {
@@ -393,7 +361,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
 
         val verseNumber = baseNumber + ayah.verse_number
         Timber.d("ayaNum:$verseNumber")
-        switch.visibility = View.VISIBLE
+        switch.show()
         switch.setDirection(StickySwitch.Direction.RIGHT)
 
         initializeExoPlayer(verseNumber)
@@ -468,14 +436,14 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        if (playbackState == Player.STATE_BUFFERING)
-            progressBar.visibility = View.VISIBLE
-        else if (playbackState == Player.STATE_READY)
-            progressBar.visibility = View.INVISIBLE
-        else if (playbackState == Player.STATE_ENDED) {
-            progressBar.visibility = View.INVISIBLE
-            exoplayerView.visibility = View.GONE
-            switch.visibility = View.GONE
+        when (playbackState) {
+            Player.STATE_BUFFERING -> progressBar.show()
+            Player.STATE_READY -> progressBar.hide()
+            Player.STATE_ENDED -> {
+                progressBar.hide()
+                exoplayerView.remove()
+                switch.remove()
+            }
         }
 
     }

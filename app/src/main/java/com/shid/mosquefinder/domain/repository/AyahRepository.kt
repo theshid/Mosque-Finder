@@ -8,7 +8,7 @@ interface AyahRepository {
 
     fun getAyah(surahNumber: Int): Flow<List<Ayah>>
 
-    fun updateAyah(text: String, ayahId: Long)
+    suspend fun updateAyah(text: String, ayahId: Long)
 
     fun getRandomAyah(surahNumber: Int): Ayah
 

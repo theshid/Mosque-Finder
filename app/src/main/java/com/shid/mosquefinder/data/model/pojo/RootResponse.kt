@@ -1,8 +1,8 @@
 package com.shid.mosquefinder.data.model.pojo
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class RootResponse(
-    @field:Json(name = "data")
+    @SerializedName("data")
     val data: VersetResponse,
-    )
+)

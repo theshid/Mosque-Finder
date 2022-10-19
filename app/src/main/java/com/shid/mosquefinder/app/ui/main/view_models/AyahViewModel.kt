@@ -1,32 +1,17 @@
 package com.shid.mosquefinder.app.ui.main.view_models
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.shid.mosquefinder.app.ui.main.mappers.toPresentation
-import com.shid.mosquefinder.app.ui.main.states.AyahViewState
-import com.shid.mosquefinder.app.ui.main.states.Error
-import com.shid.mosquefinder.app.ui.main.states.SurahByNumberViewState
-import com.shid.mosquefinder.app.ui.main.states.SurahViewState
+import com.shid.mosquefinder.app.ui.main.states.*
 import com.shid.mosquefinder.app.ui.models.AyahPresentation
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
 import com.shid.mosquefinder.app.ui.models.VersePresentation
-import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
-import com.shid.mosquefinder.data.local.database.entities.AyahDb
-import com.shid.mosquefinder.data.local.database.entities.SurahDb
-import com.shid.mosquefinder.data.model.pojo.RootResponse
-import com.shid.mosquefinder.data.model.pojo.VerseResponse
 import com.shid.mosquefinder.domain.usecases.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -50,16 +35,23 @@ class AyahViewModel @Inject constructor(
     val surahByNumberViewState: LiveData<SurahByNumberViewState>
         get() = _surahByNumberViewState
 
+    val surahInFrenchViewState: LiveData<FrenchSurahViewState>
+        get() = _surahInFrenchViewState
+
     val ayahViewState: LiveData<AyahViewState>
         get() = _ayahViewState
 
     private var _ayahViewState = MutableLiveData<AyahViewState>()
     private var _surahsViewState = MutableLiveData<SurahViewState>()
     private var _surahByNumberViewState = MutableLiveData<SurahByNumberViewState>()
+    private var _surahInFrenchViewState = MutableLiveData<FrenchSurahViewState>()
 
     override val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         val message = ExceptionHandler.parse(exception)
         Timber.d("exception:${exception.message}")
+        _surahInFrenchViewState.value =
+            _surahInFrenchViewState.value?.copy(isLoading = false, error = Error(message))
+
         _surahsViewState.value =
             _surahsViewState.value?.copy(isLoading = false, error = Error(message))
 
@@ -72,6 +64,8 @@ class AyahViewModel @Inject constructor(
 
     init {
         _surahsViewState.value = SurahViewState(isLoading = true, error = null, surahs = null)
+        _surahInFrenchViewState.value =
+            FrenchSurahViewState(isLoading = true, error = null, surahInFrench = null)
         _surahByNumberViewState.value = SurahByNumberViewState(error = null, surah = null)
         _ayahViewState.value = AyahViewState(isLoading = true, error = null, ayahs = null)
     }
@@ -81,46 +75,28 @@ class AyahViewModel @Inject constructor(
         getAllAyah?.cancel()
         getAllSurahs?.cancel()
         getSurahByNumber?.cancel()
+        getSurahInFrenchJob?.cancel()
     }
-
-
-    private val service = Common.frenchQuranApiService
-
-    /*private var _ayah = MutableLiveData<List<AyahDb>>()
-    val ayah: LiveData<List<AyahDb>>
-        get() = _ayah
-
-    private var _surah = MutableLiveData<SurahPresentation>()
-    val surah: LiveData<SurahPresentation>
-        get() = _surah
-
-    private var _listSurahDb = MutableLiveData<List<SurahDb>>()
-    val listSurahDb: LiveData<List<SurahDb>>
-        get() = _listSurahDb*/
-
-    var _translation = MutableLiveData<List<VerseResponse>>()
-    val translation: LiveData<List<VerseResponse>>
-        get() = _translation
-
-    var _traduction = MutableLiveData<List<VersePresentation>>()
-    val traduction: LiveData<List<VersePresentation>>
-        get() = _traduction
 
     fun getAyahs(surahNumber: Int) {
         getAllAyah = launchCoroutine {
             onAyahsLoading()
             loadAyahs(surahNumber)
         }
-        /*viewModelScope.launch(Dispatchers.IO) {
-            onAyahsLoading()
-            loadAyahs(surahNumber)
-        }*/
     }
 
     fun getSurahs() {
         getAllSurahs = launchCoroutine {
             onSurahsLoading()
             loadSurahs()
+        }
+    }
+
+    fun getFrenchSurahJob(surahId: Int) {
+        getSurahInFrenchJob = launchCoroutine {
+            onFrenchSurahLoading()
+            loadSurahInFrench(surahId)
+            delay(2000)
         }
     }
 
@@ -138,7 +114,6 @@ class AyahViewModel @Inject constructor(
         }
     }
 
-
     private fun onAyahsLoading() {
         _ayahViewState.value = _ayahViewState.value?.copy(isLoading = true)
     }
@@ -152,9 +127,7 @@ class AyahViewModel @Inject constructor(
             val surahs = surahList.map { it.toPresentation() }
             onSurahsLoadingComplete(surahs)
         }
-
     }
-
 
     private fun onSurahsLoading() {
         _surahsViewState.value = _surahsViewState.value?.copy(isLoading = true)
@@ -170,76 +143,36 @@ class AyahViewModel @Inject constructor(
             _surahByNumberViewState.value?.copy(surah = surah)
     }
 
-    /* fun getSurahList(surahNumber: Int) {
-         viewModelScope.launch(Dispatchers.IO) {
-             val list = surahRepositoryImpl.getListSurahs(surahNumber)
-             _listSurahDb.postValue(list)
-         }
-     }*/
-
-
     private suspend fun getSurahInfo(surahNumber: Int) {
         getSurahByNumberUseCase(surahNumber).collect {
             onSurahLoadingComplete(it.toPresentation())
         }
 
-        /*viewModelScope.launch(Dispatchers.IO) {
-            val surah = getSurahByNumberUseCase(surahNumber).collect {
-
-            }
-            _surah.postValue(surah)
-        }*/
     }
-
-    /*fun getAllAyah(surahNumber: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val ayahs = repository.getAyah(surahNumber)
-            _ayah.postValue(ayahs)
-        }
-    }*/
-
-    /*fun fetchFrenchSurah(ayahId:Int){
-        repository.getFrenchSurah(ayahId)
-    }*/
 
     fun updateAyah(text: String, id: Long) {
         val pairData = Pair(text, id)
+
         viewModelScope.launch(Dispatchers.IO) {
             updateAyahUseCase(pairData)
         }
 
     }
 
+    private fun onFrenchSurahLoading() {
+        _surahInFrenchViewState.value = _surahInFrenchViewState.value?.copy(isLoading = true)
+    }
+
+    private fun onFrenchSurahLoadingComplete(surahInFrench: List<VersePresentation>) {
+        _surahInFrenchViewState.value =
+            _surahInFrenchViewState.value?.copy(isLoading = false, surahInFrench = surahInFrench)
+    }
+
     private suspend fun loadSurahInFrench(surahId: Int) {
         getSurahInFrenchUseCase(surahId).collect { ayahInFrench ->
-            _traduction.value = ayahInFrench.map { it.toPresentation() }
+            Timber.d("french list:$ayahInFrench")
+            onFrenchSurahLoadingComplete(ayahInFrench.map { it.toPresentation() })
         }
     }
 
-    fun getFrenchSurah(surahId: Int) {
-        getSurahInFrenchJob = launchCoroutine {
-
-        }
-        service.getFrenchSurah(surahId).enqueue(object : Callback<RootResponse> {
-            override fun onResponse(call: Call<RootResponse>, response: Response<RootResponse>) {
-                if (response.code() == 200) {
-                    _translation.value = response.body()!!.data.verseResponse
-
-                    Log.d(
-                        "Ayah",
-                        "OnResponse OK : " + response.body()!!.data.verseResponse + " " + surahId
-                    )
-                } else {
-
-                    Log.d("Ayah", "OnResponse Fail : ")
-                }
-            }
-
-            override fun onFailure(call: Call<RootResponse>, t: Throwable) {
-
-                Log.d("Ayah", "OnResponse Fail : ")
-            }
-
-        })
-    }
 }

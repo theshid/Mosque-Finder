@@ -1,13 +1,13 @@
 package com.shid.mosquefinder.data.model.pojo
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class VerseResponse(
-    @field:Json(name = "number")
+    @SerializedName("number")
     val num: Int,
-    @field:Json(name = "text")
+    @SerializedName("text")
     val trans: String,
-    @field:Json(name = "numberInSurah")
+    @SerializedName("numberInSurah")
     val numInSurah: Int
 
 )

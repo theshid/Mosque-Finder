@@ -1,24 +1,36 @@
 package com.shid.mosquefinder.app.ui.main.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.shid.mosquefinder.data.model.pojo.VerseResponse
-import com.shid.mosquefinder.data.local.database.entities.AyahDb
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
 import com.shid.mosquefinder.app.ui.models.AyahPresentation
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import kotlinx.android.synthetic.main.item_quran_ayah.view.*
 import java.util.*
-import kotlin.collections.ArrayList
 
-class AyahAdapter(val viewmodel:AyahViewModel) :
-    RecyclerView.Adapter<AyahAdapter.AyahViewHolder>() {
+class AyahAdapter :
+    ListAdapter<AyahPresentation, AyahAdapter.AyahViewHolder>(DIFF_CALLBACK) {
 
-    private var listData = ArrayList<AyahPresentation>()
-    private var frenchList = ArrayList<VerseResponse>()
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<AyahPresentation>() {
+            override fun areItemsTheSame(
+                oldItem: AyahPresentation,
+                newItem: AyahPresentation
+            ): Boolean =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(
+                oldItem: AyahPresentation,
+                newItem: AyahPresentation
+            ): Boolean =
+                oldItem == newItem
+        }
+    }
+
     lateinit var onClickAyah: OnClickAyah
 
     interface OnClickAyah {
@@ -29,17 +41,6 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
         onClickAyah = mOnClickAyah
     }
 
-    fun setData(newListData: List<AyahPresentation>) {
-        listData.clear()
-        listData.addAll(newListData)
-        notifyDataSetChanged()
-    }
-
-    fun setFrenchAyahList(list: List<VerseResponse>){
-        frenchList.clear()
-        frenchList.addAll(list)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AyahViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_quran_ayah, parent, false)
@@ -47,57 +48,30 @@ class AyahAdapter(val viewmodel:AyahViewModel) :
     }
 
     override fun onBindViewHolder(holder: AyahViewHolder, position: Int) {
-        listData[position].run { holder.bind(this) }
-        holder.itemView.setOnClickListener(View.OnClickListener {
-            listData[position].let { it -> onClickAyah.onClickAyah(it) }
-        })
-    }
-
-    override fun getItemCount(): Int {
-        return listData.size
+        holder.bind(getItem(position))
+        holder.itemView.setOnClickListener {
+            getItem(position).let { onClickAyah.onClickAyah(it) }
+        }
     }
 
 
     inner class AyahViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bind(ayah: AyahPresentation) {
-            if(Locale.getDefault().language.contentEquals("fr")){
+            itemView.apply {
+                tv_item_ayah_verse.text = ayah.verse_number.toString()
+                tv_item_ayah_arab.text = ayah.originalText
+            }
+            if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
+
+                itemView.tv_item_ayah_translate.text = ayah.frenchTranslation
+
+            } else {
                 itemView.apply {
-                    tv_item_ayah_verse.text = ayah.verse_number.toString()
-                    tv_item_ayah_arab.text = ayah.originalText
-                }
-                if(ayah.frenchTranslation.equals("empty")){
-                    for (item in frenchList){
-                        Log.d("Adapter","item number:" + item.numInSurah)
-                        Log.d("Adapter","ayah number:" + ayah.verse_number)
-                        if (item.numInSurah == ayah.verse_number){
-                            itemView.tv_item_ayah_translate.text = item.trans
-                            viewmodel.updateAyah(item.trans,ayah.id)
-                            break
-                        }
-                    }
-                }
-
-                else{
-                    itemView.tv_item_ayah_translate.text = ayah.frenchTranslation
-
-                }
-
-            } else{
-                itemView.apply {
-                    tv_item_ayah_verse.text = ayah.verse_number.toString()
-                    tv_item_ayah_arab.text = ayah.originalText
                     tv_item_ayah_translate.text = ayah.translation
                 }
             }
-             /*else{
-                itemView.apply {
-                    tv_item_ayah_verse.text = ayah.verse_number.toString()
-                    tv_item_ayah_arab.text = ayah.originalText
-                    tv_item_ayah_translate.text = ayah.translation
 
-                }
-            }*/
 
         }
 

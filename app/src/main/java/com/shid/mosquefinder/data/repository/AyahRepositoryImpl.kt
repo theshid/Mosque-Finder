@@ -22,7 +22,7 @@ class AyahRepositoryImpl @Inject constructor(
     }
 
 
-    override fun updateAyah(text: String, ayahId: Long) {
+    override suspend fun updateAyah(text: String, ayahId: Long) {
         quranDao.updateAyah(text, ayahId)
     }
 

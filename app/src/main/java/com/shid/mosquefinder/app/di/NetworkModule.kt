@@ -54,7 +54,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(Common.QURAN_API_URL)
             .client(client)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
