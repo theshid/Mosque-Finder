@@ -22,6 +22,12 @@ object Constants {
     const val B_MOSQUE_PIC3 = "pic3"
     const val B_MOSQUE_DESCRIPTION_FR = "description_fr"
 
+    //Quotes Repository
+    const val QUOTE_COLLECTION = "quotes"
+    const val QUOTE_AUTHOR = "author"
+    const val QUOTE_TEXT = "quote"
+    const val QUOTE_TRANSLATION = "quote_fr"
+
 
     //Json fields
     const val SURAHS = "surahs"

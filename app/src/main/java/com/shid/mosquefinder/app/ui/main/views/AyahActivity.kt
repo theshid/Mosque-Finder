@@ -127,10 +127,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
                 if (list.isNotEmpty()) {
                     ayahList = list
                     ayahAdapter.submitList(list)
-                    Timber.d("Testing")
-
                 }
-
             }
             handleAyahError(state)
         }
@@ -162,16 +159,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
                 }
             }
         }
-
-        /*viewModel.surahsViewState.observe(this) { state ->
-            handleSurahLoading(state)
-            state.surahs?.let { list ->
-                if (list.isNotEmpty()) {
-                    calculateBase(list)
-                }
-            }
-            handleSurahError(state)
-        }*/
     }
 
     private fun handleAyahError(state: AyahViewState) {
@@ -188,22 +175,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
         }
     }
 
-    /*private fun handleSurahError(state: SurahViewState) {
-        state.error?.run {
-            showSnackbar(
-                ayahRecycler, getString(this.message), isError = true
-            )
-        }
-    }
-
-    private fun handleSurahLoading(surahViewState: SurahViewState) {
-        if (surahViewState.isLoading) {
-            progressBar.show()
-        } else {
-            progressBar.hide()
-        }
-    }*/
-
     private fun fetchFrenchSurah() {
         if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
             if (ayahList!![0].frenchTranslation == "empty") {
@@ -211,7 +182,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
             }
         }
     }
-
 
     private fun setUI(number_surah: Int) {
         checkIfFirstTime()
@@ -314,17 +284,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
             putExtra(Constants.EXTRA_SURAH_NUMBER_AYAH, surahNumber)
         }
         showToast(getString(R.string.dl_started))
-        /*val intent = Intent(this, SurahDLService::class.java)
-        intent.putExtra("link", surahUrl)
-        intent.putExtra("number", surahNumber)
-        intent.putExtra("surah", surahName)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-            Toast.makeText(this, getString(R.string.dl_started), Toast.LENGTH_LONG).show()
-        } else {
-            startService(intent)
-            Toast.makeText(this, getString(R.string.dl_started), Toast.LENGTH_LONG).show()
-        }*/
     }
 
     private fun formatSurahNumber(): String {
@@ -400,7 +359,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
         val link = "http://cdn.islamic.network/quran/audio/128/ar.alafasy/$ayaNum.mp3"
         preparePlayer(link, Constants.PLAYER_TYPE)
         exoplayerView.player = simpleExoplayer
-        //exoplayerView.visibility = View.VISIBLE
         exoplayerView.controllerShowTimeoutMs = 0;
         exoplayerView.controllerHideOnTouch = false;
         simpleExoplayer.playWhenReady = true
@@ -438,10 +396,6 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
         playbackPosition = simpleExoplayer.currentPosition
         simpleExoplayer.release()
     }
-
-    /*override fun onPlayerError(error: ExoPlaybackException) {
-        // handle error
-    }*/
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         when (playbackState) {

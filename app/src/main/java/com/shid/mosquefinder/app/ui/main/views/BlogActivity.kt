@@ -13,7 +13,6 @@ import com.shid.mosquefinder.app.utils.hide
 import com.shid.mosquefinder.app.utils.remove
 import com.shid.mosquefinder.app.utils.show
 import com.shid.mosquefinder.app.utils.showSnackbar
-import com.shid.mosquefinder.data.model.Article
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar
@@ -24,7 +23,6 @@ import timber.log.Timber
 class BlogActivity : BaseActivity() {
 
     private lateinit var blogAdapter: BlogAdapter
-    private var mBlogList: List<Article> = ArrayList()
     private val mViewModel: BlogViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         onTransformationStartContainer()
@@ -36,7 +34,6 @@ class BlogActivity : BaseActivity() {
             mViewModel.getArticles()
             progressBar_blog.remove()
         }, 2000)
-
         setObservers()
     }
 

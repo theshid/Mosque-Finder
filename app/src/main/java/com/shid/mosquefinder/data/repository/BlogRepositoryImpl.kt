@@ -7,8 +7,6 @@ import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.domain.repository.BlogRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,7 +28,7 @@ class BlogRepositoryImpl @Inject constructor(val database: FirebaseFirestore) : 
         return statusMsg
     }
 
-    override fun getArticlesFromFirebase(): MutableList<Article>  {
+    override fun getArticlesFromFirebase(): MutableList<Article> {
         mBlogListEventListener =
             firebaseBlogRef.addSnapshotListener(EventListener { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
