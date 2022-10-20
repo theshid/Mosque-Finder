@@ -45,6 +45,12 @@ object UseCaseModule {
 
     @Provides
     @Singleton
+    fun provideGetSurahsForBaseCalculationUseCase(surahRepository: SurahRepository): GetSurahsForBaseCalculationUseCase{
+        return GetSurahsForBaseCalculationUseCase(surahRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideUpdateAyahUseCase(ayahRepository: AyahRepository): UpdateAyahUseCase {
         return UpdateAyahUseCase(ayahRepository)
     }

@@ -1,7 +1,5 @@
 package com.shid.mosquefinder.app.utils.helper_class
 
-import com.shid.mosquefinder.app.ui.main.views.HomeActivity
-
 object Constants {
 
     //Blog fields
@@ -41,11 +39,17 @@ object Constants {
     const val EXTRA_SURAH_NAME = "surah"
     const val EXTRA_SURAH_LINK = "link"
     const val EXTRA_SURAH_NUMBER_AYAH = "number"
-    const val EXTRA_SURAH_NAME_AYAH = "number"
+    const val EXTRA_SURAH_NAME_AYAH = "surah_name"
+    const val EXTRA_STATE_PLAYER = "state_player"
 
 
     //Intent keys
     const val EXTRA_KEY_MESSAGE = "message"
+
+    //Bundles
+    const val BUNDLE_KEY_DURATION = "duration"
+    const val BUNDLE_KEY_CURRENT_POSITION = "current_position"
+    const val BUNDLE_KEY_PLAYER_STATUS = "play_status"
 
     //Intent Filters
     const val INTENT_FILTER_MESSAGE_RECEIVER = "MyData"
@@ -66,6 +70,17 @@ object Constants {
 
     //ExoPlayer
     const val PLAYER_TYPE = "default"
+
+    //Service
+    const val QARI_MISHARY = "Mishary bin Rashid Alafasy"
+
+    //Player Command
+    const val COMMAND_SEEK = "seek"
+    const val COMMAND_REPEAT = "repeat"
+    const val COMMAND_SURAH = "surah"
+    const val EVENT_MEDIA_INFORMATION = "player_information"
+    const val EVENT_PLAYER_PAUSE = "play_pause"
+    const val EVENT_PLAYER_FINISH = "finish"
 
 
 }

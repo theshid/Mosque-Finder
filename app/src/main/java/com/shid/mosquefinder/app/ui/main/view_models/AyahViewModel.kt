@@ -18,19 +18,19 @@ import javax.inject.Inject
 @HiltViewModel
 class AyahViewModel @Inject constructor(
     private val getAyahUsecase: GetAyahUseCase,
-    private val getAllSurahsUseCase: GetAllSurahsUseCase,
     private val getSurahByNumberUseCase: GetSurahByNumberUseCase,
     private val updateAyahUseCase: UpdateAyahUseCase,
-    private val getSurahInFrenchUseCase: GetSurahInFrenchUseCase
+    private val getSurahInFrenchUseCase: GetSurahInFrenchUseCase,
+    private val getSurahsForBaseCalculationUseCase: GetSurahsForBaseCalculationUseCase
 ) : BaseViewModel() {
 
     private var getAllAyah: Job? = null
-    private var getAllSurahs: Job? = null
     private var getSurahByNumber: Job? = null
     private var getSurahInFrenchJob: Job? = null
+    private var getSurahsForCalculationJob: Job? = null
 
-    val surahsViewState: LiveData<SurahViewState>
-        get() = _surahsViewState
+    val surahsForBaseCalculationViewState: LiveData<SurahsForBaseCalculationViewState>
+        get() = _surahsForBaseCalculationViewState
 
     val surahByNumberViewState: LiveData<SurahByNumberViewState>
         get() = _surahByNumberViewState
@@ -42,9 +42,10 @@ class AyahViewModel @Inject constructor(
         get() = _ayahViewState
 
     private var _ayahViewState = MutableLiveData<AyahViewState>()
-    private var _surahsViewState = MutableLiveData<SurahViewState>()
     private var _surahByNumberViewState = MutableLiveData<SurahByNumberViewState>()
     private var _surahInFrenchViewState = MutableLiveData<FrenchSurahViewState>()
+    private var _surahsForBaseCalculationViewState =
+        MutableLiveData<SurahsForBaseCalculationViewState>()
 
     override val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         val message = ExceptionHandler.parse(exception)
@@ -52,30 +53,31 @@ class AyahViewModel @Inject constructor(
         _surahInFrenchViewState.value =
             _surahInFrenchViewState.value?.copy(isLoading = false, error = Error(message))
 
-        _surahsViewState.value =
-            _surahsViewState.value?.copy(isLoading = false, error = Error(message))
-
         _surahByNumberViewState.value =
             _surahByNumberViewState.value?.copy(error = Error(message))
+
+        _surahsForBaseCalculationViewState.value =
+            _surahsForBaseCalculationViewState.value?.copy(error = Error(message))
 
         _ayahViewState.value =
             _ayahViewState.value?.copy(isLoading = false, error = Error(message))
     }
 
     init {
-        _surahsViewState.value = SurahViewState(isLoading = true, error = null, surahs = null)
         _surahInFrenchViewState.value =
             FrenchSurahViewState(isLoading = true, error = null, surahInFrench = null)
         _surahByNumberViewState.value = SurahByNumberViewState(error = null, surah = null)
         _ayahViewState.value = AyahViewState(isLoading = true, error = null, ayahs = null)
+        _surahsForBaseCalculationViewState.value =
+            SurahsForBaseCalculationViewState(error = null, surahs = null)
     }
 
     override fun onCleared() {
         super.onCleared()
         getAllAyah?.cancel()
-        getAllSurahs?.cancel()
         getSurahByNumber?.cancel()
         getSurahInFrenchJob?.cancel()
+        getSurahsForCalculationJob?.cancel()
     }
 
     fun getAyahs(surahNumber: Int) {
@@ -85,10 +87,9 @@ class AyahViewModel @Inject constructor(
         }
     }
 
-    fun getSurahs() {
-        getAllSurahs = launchCoroutine {
-            onSurahsLoading()
-            loadSurahs()
+    fun getSurahsForCalculation(surahNumber: Int) {
+        getSurahsForCalculationJob = launchCoroutine {
+            loadSurahsForBaseCalculation(surahNumber)
         }
     }
 
@@ -103,6 +104,12 @@ class AyahViewModel @Inject constructor(
     fun getSurahByNumber(surahNumber: Int) {
         getSurahByNumber = launchCoroutine {
             getSurahInfo(surahNumber)
+        }
+    }
+
+    private suspend fun loadSurahsForBaseCalculation(surahNumber: Int) {
+        getSurahsForBaseCalculationUseCase(surahNumber).collect { surahsList ->
+            onSurahsForCalculationLoadingComplete(surahsList.map { it.toPresentation() })
         }
     }
 
@@ -122,20 +129,9 @@ class AyahViewModel @Inject constructor(
         _ayahViewState.value = _ayahViewState.value?.copy(isLoading = false, ayahs = ayahsList)
     }
 
-    private suspend fun loadSurahs() {
-        getAllSurahsUseCase.invoke(Unit).collect { surahList ->
-            val surahs = surahList.map { it.toPresentation() }
-            onSurahsLoadingComplete(surahs)
-        }
-    }
-
-    private fun onSurahsLoading() {
-        _surahsViewState.value = _surahsViewState.value?.copy(isLoading = true)
-    }
-
-    private fun onSurahsLoadingComplete(surahsList: List<SurahPresentation>) {
-        _surahsViewState.value =
-            _surahsViewState.value?.copy(isLoading = false, surahs = surahsList)
+    private fun onSurahsForCalculationLoadingComplete(surahsList: List<SurahPresentation>) {
+        _surahsForBaseCalculationViewState.value =
+            _surahsForBaseCalculationViewState.value?.copy(surahs = surahsList)
     }
 
     private fun onSurahLoadingComplete(surah: SurahPresentation) {

@@ -42,7 +42,7 @@ interface QuranDao {
 
     @Transaction
     @Query("SELECT * FROM surahs WHERE number < :surahNumber")
-    suspend fun getSurahList(surahNumber: Int): List<SurahDb>
+    suspend fun getSurahListForBaseCalculation(surahNumber: Int): List<SurahDb>
 
     @Transaction
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber)")

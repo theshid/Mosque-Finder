@@ -22,7 +22,6 @@ android {
     }
 
 
-
     buildTypes {
         release {
             minifyEnabled false
@@ -109,7 +108,7 @@ dependencies {
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:18.1.0'
     //annotationProcessor 'androidx.room:room-compiler:2.4.3'
-    def room_version ="2.4.3"
+    def room_version = "2.4.3"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
@@ -164,7 +163,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$activity_version"
 
     //ExoPLayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
 
     implementation 'com.github.GwonHyeok:StickySwitch:0.0.16'
 
@@ -177,6 +176,10 @@ dependencies {
     implementation 'com.github.mumayank:AirLocation:2.5.2'
 
     implementation "androidx.work:work-runtime-ktx:2.8.0-alpha01"
+
+
+    implementation("androidx.media:media:1.6.0")
+
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.orhanobut:logger:2.2.0'
@@ -201,9 +204,6 @@ dependencies {
     debugImplementation 'com.facebook.soloader:soloader:0.10.1'
 
     releaseImplementation 'com.facebook.flipper:flipper-noop:0.94.1'*/
-
-
-
 
 
 }

@@ -9,5 +9,5 @@ interface SurahRepository {
 
     fun getSurahByNumber(surahNumber: Int): Flow<Surah>
 
-    fun getListSurahs(surahNumber: Int): Flow<List<Surah>>
+    fun getListSurahsForBaseCalculation(surahNumber: Int): Flow<List<Surah>>
 }

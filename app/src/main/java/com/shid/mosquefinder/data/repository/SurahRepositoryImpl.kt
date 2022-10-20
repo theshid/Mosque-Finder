@@ -22,7 +22,7 @@ class SurahRepositoryImpl @Inject constructor(private val quranDao: QuranDao) : 
         emit(surah.toDomain())
     }
 
-    override fun getListSurahs(surahNumber: Int): Flow<List<Surah>> = flow {
-        emit(quranDao.getSurahList(surahNumber).map { surahDb -> surahDb.toDomain() })
+    override fun getListSurahsForBaseCalculation(surahNumber: Int): Flow<List<Surah>> = flow {
+        emit(quranDao.getSurahListForBaseCalculation(surahNumber).map { surahDb -> surahDb.toDomain() })
     }
 }

@@ -43,7 +43,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListener {
+class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.Listener {
     private val viewModel: AyahViewModel by viewModels()
     private var ayahList: List<AyahPresentation>? = null
     private lateinit var ayahAdapter: AyahAdapter
@@ -155,7 +155,15 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
             }
         }
 
-        viewModel.surahsViewState.observe(this) { state ->
+        viewModel.surahsForBaseCalculationViewState.observe(this) { state ->
+            state.surahs?.let { list ->
+                if (list.isNotEmpty()) {
+                    calculateBase(list)
+                }
+            }
+        }
+
+        /*viewModel.surahsViewState.observe(this) { state ->
             handleSurahLoading(state)
             state.surahs?.let { list ->
                 if (list.isNotEmpty()) {
@@ -163,7 +171,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
                 }
             }
             handleSurahError(state)
-        }
+        }*/
     }
 
     private fun handleAyahError(state: AyahViewState) {
@@ -180,7 +188,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         }
     }
 
-    private fun handleSurahError(state: SurahViewState) {
+    /*private fun handleSurahError(state: SurahViewState) {
         state.error?.run {
             showSnackbar(
                 ayahRecycler, getString(this.message), isError = true
@@ -194,7 +202,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         } else {
             progressBar.hide()
         }
-    }
+    }*/
 
     private fun fetchFrenchSurah() {
         if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
@@ -215,7 +223,7 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
 
     private fun setViewModelData(number_surah: Int) {
         viewModel.getAyahs(number_surah)
-        viewModel.getSurahs()
+        viewModel.getSurahsForCalculation(number_surah)
         viewModel.getSurahByNumber(number_surah)
         Handler(Looper.getMainLooper()).postDelayed({ fetchFrenchSurah() }, 1000)
     }
@@ -431,9 +439,9 @@ class AyahActivity : BaseActivity(), AyahAdapter.OnClickAyah, Player.EventListen
         simpleExoplayer.release()
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
+    /*override fun onPlayerError(error: ExoPlaybackException) {
         // handle error
-    }
+    }*/
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         when (playbackState) {
