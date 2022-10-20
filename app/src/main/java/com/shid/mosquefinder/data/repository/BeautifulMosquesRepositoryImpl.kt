@@ -13,10 +13,11 @@ import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_PIC2
 import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_PIC3
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.BeautifulMosques
+import com.shid.mosquefinder.domain.repository.BeautifulMosquesRepository
 import timber.log.Timber
 import javax.inject.Inject
 
-class BeautifulMosquesRepository @Inject constructor(val database: FirebaseFirestore) {
+class BeautifulMosquesRepositoryImpl @Inject constructor(val database: FirebaseFirestore):BeautifulMosquesRepository {
 
     private val firebaseBeautyMosqueRef: CollectionReference =
         database.collection(B_MOSQUE_COLLECTION)
@@ -34,7 +35,7 @@ class BeautifulMosquesRepository @Inject constructor(val database: FirebaseFires
         return statusMsg
     }
 
-    fun getMosquesFromFirebase(): MutableList<BeautifulMosques> {
+    override fun getMosquesFromFirebase(): MutableList<BeautifulMosques> {
         mBeautyMosqueListEventListener =
             firebaseBeautyMosqueRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {

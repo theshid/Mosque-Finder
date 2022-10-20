@@ -68,6 +68,6 @@ object RemoteDataSourceModule {
     @Provides
     @Singleton
     fun provideBeautifulMosqueRepository(firestore: FirebaseFirestore) =
-        BeautifulMosquesRepository(firestore)
+        BeautifulMosquesRepositoryImpl(firestore)
 
 }

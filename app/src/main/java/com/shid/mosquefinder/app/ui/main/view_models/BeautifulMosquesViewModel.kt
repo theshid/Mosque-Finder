@@ -4,18 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.BeautifulMosques
-import com.shid.mosquefinder.data.repository.BeautifulMosquesRepository
+import com.shid.mosquefinder.data.repository.BeautifulMosquesRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class BeautifulMosquesViewModel @Inject constructor(var beautifulMosquesRepository: BeautifulMosquesRepository) :
+class BeautifulMosquesViewModel @Inject constructor(var beautifulMosquesRepositoryImpl: BeautifulMosquesRepositoryImpl) :
     ViewModel() {
 
     private var mBeautyMutableList: MutableList<BeautifulMosques> = ArrayList()
 
     init {
-        mBeautyMutableList = beautifulMosquesRepository.getMosquesFromFirebase()
+        mBeautyMutableList = beautifulMosquesRepositoryImpl.getMosquesFromFirebase()
 
     }
 
@@ -24,6 +24,6 @@ class BeautifulMosquesViewModel @Inject constructor(var beautifulMosquesReposito
     }
 
     fun retrieveStatusMsg(): LiveData<Resource<String>> {
-        return beautifulMosquesRepository.returnStatusMsg()
+        return beautifulMosquesRepositoryImpl.returnStatusMsg()
     }
 }
