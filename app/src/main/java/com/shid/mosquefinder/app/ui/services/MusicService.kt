@@ -96,12 +96,6 @@ class MusicService : MediaBrowserServiceCompat(), Player.Listener {
         context = this
         initializePlayer()
         initializeAttributes()
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        val pendingItent = PendingIntent.getBroadcast(
-            baseContext,
-            0, mediaButtonIntent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
 
         mMediaSession = MediaSessionCompat(baseContext, "tag for debugging").apply {
             // Set initial PlaybackState with ACTION_PLAY, so media buttons can start the player

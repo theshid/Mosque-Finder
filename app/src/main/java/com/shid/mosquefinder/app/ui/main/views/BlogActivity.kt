@@ -3,7 +3,6 @@ package com.shid.mosquefinder.app.ui.main.views
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import androidx.activity.viewModels
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
@@ -11,6 +10,7 @@ import com.shid.mosquefinder.app.ui.main.adapters.BlogAdapter
 import com.shid.mosquefinder.app.ui.main.states.BlogViewState
 import com.shid.mosquefinder.app.ui.main.view_models.BlogViewModel
 import com.shid.mosquefinder.app.utils.hide
+import com.shid.mosquefinder.app.utils.remove
 import com.shid.mosquefinder.app.utils.show
 import com.shid.mosquefinder.app.utils.showSnackbar
 import com.shid.mosquefinder.data.model.Article
@@ -18,6 +18,7 @@ import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar
 import kotlinx.android.synthetic.main.activity_blog.*
+import timber.log.Timber
 
 @AndroidEntryPoint
 class BlogActivity : BaseActivity() {
@@ -30,15 +31,13 @@ class BlogActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blog)
         setOnClick()
-        //setNetworkMonitor()
-
+        setRecycler()
         Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
-            //mBlogList = mViewModel.getArticlesFromRepository()
-            progressBar_blog.visibility = View.GONE
-            setRecycler()
-            setObservers()
-            //blogAdapter.notifyDataSetChanged()
-        }, 1000)
+            mViewModel.getArticles()
+            progressBar_blog.remove()
+        }, 2000)
+
+        setObservers()
     }
 
     private fun setOnClick() {
@@ -50,7 +49,6 @@ class BlogActivity : BaseActivity() {
     private fun setRecycler() {
         blogAdapter = BlogAdapter()
         blog_recycler.adapter = blogAdapter
-        //blogAdapter.submitList(mBlogList)
     }
 
     private fun setObservers() {
@@ -58,6 +56,7 @@ class BlogActivity : BaseActivity() {
             handleArticleLoading(state)
             state.articles?.let { list ->
                 if (list.isNotEmpty()) {
+                    Timber.d("articles:$list")
                     blogAdapter.submitList(list)
                 }
                 handleArticleError(state)

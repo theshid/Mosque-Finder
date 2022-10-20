@@ -10,6 +10,9 @@
     <string name="splash_message">Find a mosque at all times</string>
     <string name="brought_you_by_shidtech">ShidApps</string>
 
+    //Music Activity
+    <string name="read_file">Reading File</string>
+
     //Toast
     <string name="location_permission_not_granted">Location Permission not granted</string>
     <string name="toast_auth_salutation">Hi %1$s !\nYour account was successfully created.</string>

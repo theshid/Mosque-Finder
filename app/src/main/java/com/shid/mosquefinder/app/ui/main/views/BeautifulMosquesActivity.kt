@@ -14,6 +14,7 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.BeautifulMosquesViewModel
 import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.remove
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +36,7 @@ class BeautifulMosquesActivity : BaseActivity() {
         Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
             //anything you want to start after 3s
             mMosqueList = mosqueViewModel.getMosquesFromRepository()
-            progressBar2.visibility = View.GONE
+            progressBar2.remove()
             setRecycler()
             mosqueAdapter.notifyDataSetChanged()
             // addUserMarker()

@@ -12,6 +12,17 @@ object Constants {
     const val BLOG_FIELD_BODY_FR = "body_fr"
     const val BLOG_FIELD_TAG = "tag"
 
+    //Beautiful Mosques
+    const val B_MOSQUE_COLLECTION = "beautiful-mosques"
+    const val B_MOSQUE_NAME = "name"
+    const val B_MOSQUE_DESCRIPTION = "description"
+    const val B_MOSQUE_LINK = "link"
+    const val B_MOSQUE_PIC = "pic"
+    const val B_MOSQUE_PIC2 = "pic2"
+    const val B_MOSQUE_PIC3 = "pic3"
+    const val B_MOSQUE_DESCRIPTION_FR = "description_fr"
+
+
     //Json fields
     const val SURAHS = "surahs"
     const val SURAH_NUMBER = "number"
@@ -50,6 +61,8 @@ object Constants {
     const val BUNDLE_KEY_DURATION = "duration"
     const val BUNDLE_KEY_CURRENT_POSITION = "current_position"
     const val BUNDLE_KEY_PLAYER_STATUS = "play_status"
+    const val BUNDLE_KEY_PLAYER_SEEK = "seek"
+    const val BUNDLE_KEY_PLAYER_REPEAT = "repeat"
 
     //Intent Filters
     const val INTENT_FILTER_MESSAGE_RECEIVER = "MyData"

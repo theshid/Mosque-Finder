@@ -11,6 +11,9 @@
     <string name="splash_message">Trouvez une Mosquée en tout temps</string>
     <string name="brought_you_by_shidtech">ShidApps</string>
 
+    //Music Activity
+    <string name="read_file">Lecture du Fichier</string>
+
     //Toast
     <string name="location_permission_not_granted">Permission de localisation non accordé</string>
     <string name="toast_auth_salutation">Bonjour %1$s !\n Votre compte a été crée!.</string>

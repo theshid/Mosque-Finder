@@ -3,6 +3,14 @@ package com.shid.mosquefinder.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_COLLECTION
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_DESCRIPTION
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_DESCRIPTION_FR
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_LINK
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_NAME
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_PIC
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_PIC2
+import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_PIC3
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import timber.log.Timber
@@ -11,7 +19,7 @@ import javax.inject.Inject
 class BeautifulMosquesRepository @Inject constructor(val database: FirebaseFirestore) {
 
     private val firebaseBeautyMosqueRef: CollectionReference =
-        database.collection("beautiful-mosques")
+        database.collection(B_MOSQUE_COLLECTION)
     private lateinit var mBeautyMosqueListEventListener: ListenerRegistration
 
     private var mBeautyList: MutableList<BeautifulMosques> = ArrayList()
@@ -45,13 +53,13 @@ class BeautifulMosquesRepository @Inject constructor(val database: FirebaseFires
                     mBeautyList.clear()
                     for (doc in querySnapshot) {
 
-                        val mosqueName: String = doc.get("name") as String
-                        val description: String = doc.get("description") as String
-                        val link: String = doc.get("link") as String
-                        val pic: String = doc.get("pic") as String
-                        val pic2: String = doc.get("pic2") as String
-                        val pic3: String = doc.get("pic3") as String
-                        val descriptionFr: String = doc.get("description_fr") as String
+                        val mosqueName: String = doc.get(B_MOSQUE_NAME) as String
+                        val description: String = doc.get(B_MOSQUE_DESCRIPTION) as String
+                        val link: String = doc.get(B_MOSQUE_LINK) as String
+                        val pic: String = doc.get(B_MOSQUE_PIC) as String
+                        val pic2: String = doc.get(B_MOSQUE_PIC2) as String
+                        val pic3: String = doc.get(B_MOSQUE_PIC3) as String
+                        val descriptionFr: String = doc.get(B_MOSQUE_DESCRIPTION_FR) as String
 
 
                         val beautyElem =

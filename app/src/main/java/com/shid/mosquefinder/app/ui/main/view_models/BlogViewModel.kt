@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,21 +48,26 @@ internal class BlogViewModel @Inject constructor(private val getArticlesUseCase:
     }
 
     fun getArticles(){
-        viewModelScope.launch(Dispatchers.IO) {
+        getArticlesJob = launchCoroutine {
             onArticlesLoading()
             loadArticles()
         }
+        /*viewModelScope.launch(Dispatchers.IO) {
+            onArticlesLoading()
+            loadArticles()
+        }*/
     }
 
     private fun onArticlesLoading() {
-        _blogViewState.value = _blogViewState.value?.copy(isLoading = false)
+        _blogViewState.value = _blogViewState.value?.copy(isLoading = true)
     }
 
     private suspend fun loadArticles() {
-        onArticleLoadingComplete(getArticlesUseCase.invoke(Unit))
+       onArticleLoadingComplete(getArticlesUseCase.invoke(Unit))
     }
 
     private fun onArticleLoadingComplete(list: List<Article>) {
+        Timber.d("list:$list")
         _blogViewState.value = _blogViewState.value?.copy(isLoading = false, articles = list)
     }
 

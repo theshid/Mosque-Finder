@@ -30,11 +30,12 @@ class QuotesActivity : BaseActivity() {
         setContentView(R.layout.activity_quotes)
 
         Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
-            /*mQuoteList = viewModel.getQuotesFromRepository()
-            mQuoteList.shuffle()*/
+            mQuoteList = viewModel.getQuotesFromRepository()
+            mQuoteList.shuffle()
             progressBar.remove()
-            setUpViewPager()
+
         }, 2000)
+        setUpViewPager()
         setOnClick()
         setObservers()
         //setUpViewPager()

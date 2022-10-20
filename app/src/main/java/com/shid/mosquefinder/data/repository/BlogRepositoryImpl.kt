@@ -7,6 +7,8 @@ import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.domain.repository.BlogRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,7 +30,7 @@ class BlogRepositoryImpl @Inject constructor(val database: FirebaseFirestore) : 
         return statusMsg
     }
 
-    override fun getArticlesFromFirebase(): List<Article> {
+    override fun getArticlesFromFirebase(): MutableList<Article>  {
         mBlogListEventListener =
             firebaseBlogRef.addSnapshotListener(EventListener { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
                 if (firebaseFirestoreException != null) {
@@ -55,7 +57,7 @@ class BlogRepositoryImpl @Inject constructor(val database: FirebaseFirestore) : 
                         val bodyFr: String = doc.get(Constants.BLOG_FIELD_BODY_FR) as String
                         val tag: String = doc.get(Constants.BLOG_FIELD_TAG) as String
 
-
+                        Timber.d("title:$title")
                         val article =
                             Article(
                                 title,
@@ -67,11 +69,14 @@ class BlogRepositoryImpl @Inject constructor(val database: FirebaseFirestore) : 
                                 tag
                             )
                         mBlogList.add(article)
-                        Timber.d("Is blog list empty:" + mBlogList.isEmpty())
+
                     }
+
                 }
+
             })
-        Timber.d("Is blog list empty:" + mBlogList.isEmpty())
-        return mBlogList.toList()
+
+        Timber.d("Is blog list empty:" + mBlogList)
+        return mBlogList
     }
 }
