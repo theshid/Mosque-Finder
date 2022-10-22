@@ -4,18 +4,17 @@ package com.shid.mosquefinder.app.ui.main.views
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueAdapter
+import com.shid.mosquefinder.app.ui.main.states.BeautyMosqueViewState
 import com.shid.mosquefinder.app.ui.main.view_models.BeautifulMosquesViewModel
-import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.hide
 import com.shid.mosquefinder.app.utils.remove
-import com.shid.mosquefinder.data.model.BeautifulMosques
+import com.shid.mosquefinder.app.utils.show
+import com.shid.mosquefinder.app.utils.showSnackbar
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.*
@@ -25,23 +24,17 @@ class BeautifulMosquesActivity : BaseActivity() {
     private lateinit var mosqueAdapter: MosqueAdapter
     private val mosqueViewModel: BeautifulMosquesViewModel by viewModels()
     private lateinit var layoutManager: GridLayoutManager
-    private var mMosqueList: MutableList<BeautifulMosques> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         onTransformationStartContainer()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beautiful_mosques)
-
         setOnClick()
-        setObservers()
+        setRecycler()
         Handler(Looper.getMainLooper()).postDelayed(kotlinx.coroutines.Runnable {
-            //anything you want to start after 3s
-            mMosqueList = mosqueViewModel.getMosquesFromRepository()
+            mosqueViewModel.getBeautifulMosques()
             progressBar2.remove()
-            setRecycler()
-            mosqueAdapter.notifyDataSetChanged()
-            // addUserMarker()
-
         }, 2000)
+        setObservers()
     }
 
     private fun setOnClick() {
@@ -53,31 +46,38 @@ class BeautifulMosquesActivity : BaseActivity() {
     private fun setRecycler() {
         layoutManager = GridLayoutManager(this, 2)
         mosque_recycler.layoutManager = layoutManager
-        mMosqueList.shuffle()
-        mosqueAdapter = MosqueAdapter(mMosqueList, this)
+        mosqueAdapter = MosqueAdapter()
         mosque_recycler.adapter = mosqueAdapter
     }
 
     private fun setObservers() {
 
-        mosqueViewModel.retrieveStatusMsg().observe(this, androidx.lifecycle.Observer {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
+        mosqueViewModel.beautyMosqueViewState.observe(this) { state ->
+            handleBeautyMosquesLoading(state)
+            state.mosques?.let { list ->
+                if (list.isNotEmpty()) {
+                    mosqueAdapter.submitList(list.shuffled())
                 }
-                Status.LOADING -> {
-
-                }
-                Status.ERROR -> {
-                    //Handle Error
-
-                    Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
-                    Log.d("Search", it.message.toString())
-                }
+                handleBeautyMosquesError(state)
             }
-        })
+
+        }
 
 
+    }
+
+    private fun handleBeautyMosquesError(state: BeautyMosqueViewState) {
+        state.error?.run {
+            showSnackbar(mosque_recycler, getString(this.message), isError = true)
+        }
+    }
+
+    private fun handleBeautyMosquesLoading(viewState: BeautyMosqueViewState) {
+        if (viewState.isLoading) {
+            progressBar2.show()
+        } else {
+            progressBar2.hide()
+        }
     }
 
 }

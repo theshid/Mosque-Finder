@@ -61,4 +61,9 @@ object UseCaseModule {
     @Singleton
     fun provideGetQuotesUseCase(quoteRepository: QuoteRepository): GetQuotesUseCase =
         GetQuotesUseCase(quoteRepository)
+
+    @Provides
+    @Singleton
+    fun provideBeautifulMosqueUseCase(beautifulMosquesRepository: BeautifulMosquesRepository): GetBeautifulMosquesUseCase =
+        GetBeautifulMosquesUseCase(beautifulMosquesRepository)
 }

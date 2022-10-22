@@ -1,6 +1,5 @@
 package com.shid.mosquefinder.data.repository
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.*
 import com.shid.mosquefinder.app.utils.helper_class.Constants.B_MOSQUE_COLLECTION
@@ -17,7 +16,8 @@ import com.shid.mosquefinder.domain.repository.BeautifulMosquesRepository
 import timber.log.Timber
 import javax.inject.Inject
 
-class BeautifulMosquesRepositoryImpl @Inject constructor(val database: FirebaseFirestore):BeautifulMosquesRepository {
+class BeautifulMosquesRepositoryImpl @Inject constructor(val database: FirebaseFirestore) :
+    BeautifulMosquesRepository {
 
     private val firebaseBeautyMosqueRef: CollectionReference =
         database.collection(B_MOSQUE_COLLECTION)
@@ -29,10 +29,6 @@ class BeautifulMosquesRepositoryImpl @Inject constructor(val database: FirebaseF
 
     init {
         getMosquesFromFirebase()
-    }
-
-    fun returnStatusMsg(): LiveData<Resource<String>> {
-        return statusMsg
     }
 
     override fun getMosquesFromFirebase(): MutableList<BeautifulMosques> {

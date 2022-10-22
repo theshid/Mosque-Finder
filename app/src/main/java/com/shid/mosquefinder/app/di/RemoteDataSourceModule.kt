@@ -6,9 +6,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.data.api.DeeplApiInterface
+import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.data.api.QuranApiInterface
 import com.shid.mosquefinder.data.local.database.QuranDao
-import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.*
 import com.shid.mosquefinder.domain.repository.*
@@ -53,21 +53,29 @@ object RemoteDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideAyahRepository(dao: QuranDao, api: QuranApiInterface):AyahRepository = AyahRepositoryImpl(dao, api)
+    fun provideAyahRepository(dao: QuranDao, api: QuranApiInterface): AyahRepository =
+        AyahRepositoryImpl(dao, api)
 
     @Provides
     @Singleton
-    fun provideMapRepository(service: GoogleApiInterface, @ApplicationContext context: Context, firestore: FirebaseFirestore) =
-        MapRepository(service, context,firestore)
+    fun provideMapRepository(
+        service: GoogleApiInterface,
+        @ApplicationContext context: Context,
+        firestore: FirebaseFirestore
+    ) =
+        MapRepository(service, context, firestore)
 
     @Provides
     @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth, rootRef: FirebaseFirestore):AuthRepository =
+    fun provideAuthRepository(
+        firebaseAuth: FirebaseAuth,
+        rootRef: FirebaseFirestore
+    ): AuthRepository =
         AuthRepositoryImpl(firebaseAuth, rootRef)
 
     @Provides
     @Singleton
-    fun provideBeautifulMosqueRepository(firestore: FirebaseFirestore) =
+    fun provideBeautifulMosqueRepository(firestore: FirebaseFirestore): BeautifulMosquesRepository =
         BeautifulMosquesRepositoryImpl(firestore)
 
 }

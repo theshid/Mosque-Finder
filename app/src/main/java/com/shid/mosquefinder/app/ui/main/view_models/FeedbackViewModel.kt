@@ -24,6 +24,7 @@ class FeedbackViewModel @Inject constructor(val application: Application, val da
     var showLoadingLiveData = MutableLiveData<Boolean>()
     var sendFeedbackSuccessfulLiveData = MutableLiveData<String>()
     var sendFeedbackFailedLiveData = MutableLiveData<String>()
+
     /*private val viewModelJob = SupervisorJob()
 
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)*/
