@@ -24,6 +24,6 @@ class WorkManagerInitializer : Initializer<Unit> {
 
     override fun dependencies(): List<Class<out Initializer<*>>> {
         // No dependencies on other libraries.
-        return emptyList()
+        return listOf(TimberInitializer::class.java, DependencyGraphInitializer::class.java)
     }
 }

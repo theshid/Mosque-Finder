@@ -93,7 +93,7 @@ class HomeActivity : BaseActivity() {
         }
 
         displayAutoStartDialog()
-        setWorkManagerNotification()
+       // setWorkManagerNotification()
         checkIfPermissionIsActive()
         setPrayerTime()
         setClickListeners()
