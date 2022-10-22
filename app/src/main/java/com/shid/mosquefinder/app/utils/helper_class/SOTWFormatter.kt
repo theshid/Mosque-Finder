@@ -8,7 +8,7 @@ class SOTWFormatter(context: Context) {
     private var names: Array<String>? = null
 
 
-    init{
+    init {
         initLocalizedNames(context)
     }
 

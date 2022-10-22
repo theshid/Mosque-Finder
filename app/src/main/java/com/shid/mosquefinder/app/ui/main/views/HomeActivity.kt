@@ -374,7 +374,7 @@ class HomeActivity : BaseActivity() {
 
     private fun goToPrayerActivity() {
         startActivity<PrayerActivity> {
-            putExtra("user", user)
+            putExtra(Constants.EXTRA_USER, user)
         }
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }

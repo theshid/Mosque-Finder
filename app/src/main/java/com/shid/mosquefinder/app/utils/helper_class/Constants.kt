@@ -58,6 +58,7 @@ object Constants {
     const val EXTRA_SURAH_NUMBER_AYAH = "number"
     const val EXTRA_SURAH_NAME_AYAH = "surah_name"
     const val EXTRA_STATE_PLAYER = "state_player"
+    const val EXTRA_USER = "user"
 
 
     //Intent keys

@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.app.ui.services
 
+
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,7 +8,9 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -21,6 +24,7 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import timber.log.Timber
 import java.util.*
+
 
 class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
     val String.hour get() : Int = if (this != "-") this.split(":", " ").first().toInt() else 0
@@ -155,13 +159,27 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
+            val soundUri: Uri = Uri.parse(
+                "android.resource://" +
+                        context.packageName +
+                        "/" +
+                        R.raw.adzan_makkah
+            )
+
+            val audioAttributes: AudioAttributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .build()
+
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 enableVibration(true)
+                setSound(soundUri,audioAttributes)
                 vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
+
             }
 
             builder.setChannelId(CHANNEL_ID)

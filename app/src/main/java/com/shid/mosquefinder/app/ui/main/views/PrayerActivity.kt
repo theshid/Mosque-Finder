@@ -61,9 +61,7 @@ class PrayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
-        //sharedPref = SharePref(this)
         isFirstTime = sharedPref.loadFirstTimePrayerNotification()
-        //fusedLocationWrapper = fusedLocationWrapper()
         permissionCheck(fusedLocationWrapper)
         setUI()
         clickListeners()
@@ -119,7 +117,6 @@ class PrayerActivity : AppCompatActivity() {
         setDate()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun clickListeners() {
 
         toolbar.setNavigationOnClickListener {
@@ -172,24 +169,24 @@ class PrayerActivity : AppCompatActivity() {
         btnSoundFajr.setOnClickListener {
             val fajr: String?
             fajr = sharedPref.loadFajr()
-            val isReminderSet = !sharedPref.loadFajrState()
+            val isReminderSet = sharedPref.loadFajrState()
 
-            ivSoundFajr.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+            ivSoundFajr.setImageResource(setReminderStateImage(isReminderSet))
 
-            if (isReminderSet) {
-                sharedPref.saveFajrState(isReminderSet)
+            if (!isReminderSet) {
+                sharedPref.saveFajrState(true)
                 fajr.let { it1 ->
                     prayerAlarm.setPrayerAlarm(
                         this,
                         it1,
                         Common.FAJR,
-                        isReminderSet,
+                        true,
                         Common.FAJR_INDEX
                     )
                 }
             } else {
                 prayerAlarm.cancelAlarm(this, Common.FAJR_INDEX)
-                sharedPref.saveFajrState(isReminderSet)
+                sharedPref.saveFajrState(false)
 
             }
 
@@ -198,25 +195,25 @@ class PrayerActivity : AppCompatActivity() {
         btnSoundDhur.setOnClickListener {
             val dhur: String?
             dhur = sharedPref.loadDhur()
-            val isReminderSet = !sharedPref.loadDhurState()
+            val isReminderSet = sharedPref.loadDhurState()
 
-            ivSoundDhur.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+            ivSoundDhur.setImageResource(setReminderStateImage(isReminderSet))
 
-            if (isReminderSet) {
+            if (!isReminderSet) {
                 Timber.d("value of Dhur:$dhur")
-                sharedPref.saveDhurState(isReminderSet)
+                sharedPref.saveDhurState(true)
                 dhur.let { it1 ->
                     prayerAlarm.setPrayerAlarm(
                         this,
                         it1,
                         Common.DHUR,
-                        isReminderSet,
+                        true,
                         Common.DHUR_INDEX
                     )
                 }
             } else {
                 prayerAlarm.cancelAlarm(this, Common.DHUR_INDEX)
-                sharedPref.saveDhurState(isReminderSet)
+                sharedPref.saveDhurState(false)
 
             }
 
@@ -225,12 +222,12 @@ class PrayerActivity : AppCompatActivity() {
         btnSoundAsr.setOnClickListener {
             val asr: String?
             asr = sharedPref.loadAsr()
-            val isReminderSet = !sharedPref.loadAsrState()
+            val isReminderSet = sharedPref.loadAsrState()
 
-            ivSoundAsr.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+            ivSoundAsr.setImageResource(setReminderStateImage(isReminderSet))
 
-            if (isReminderSet) {
-                sharedPref.saveAsrState(isReminderSet)
+            if (!isReminderSet) {
+                sharedPref.saveAsrState(true)
                 asr.let { it1 ->
                     prayerAlarm.setPrayerAlarm(
                         this,
@@ -242,7 +239,7 @@ class PrayerActivity : AppCompatActivity() {
                 }
             } else {
                 prayerAlarm.cancelAlarm(this, Common.ASR_INDEX)
-                sharedPref.saveAsrState(isReminderSet)
+                sharedPref.saveAsrState(true)
 
             }
 
@@ -251,24 +248,24 @@ class PrayerActivity : AppCompatActivity() {
         btnSoundMaghrib.setOnClickListener {
             val maghrib: String?
             maghrib = sharedPref.loadMaghrib()
-            val isReminderSet = !sharedPref.loadMaghribState()
+            val isReminderSet = sharedPref.loadMaghribState()
 
-            ivSoundMaghrib.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+            ivSoundMaghrib.setImageResource(setReminderStateImage(isReminderSet))
 
-            if (isReminderSet) {
-                sharedPref.saveMaghribState(isReminderSet)
+            if (!isReminderSet) {
+                sharedPref.saveMaghribState(true)
                 maghrib.let { it1 ->
                     prayerAlarm.setPrayerAlarm(
                         this,
                         it1,
                         Common.MAGHRIB,
-                        isReminderSet,
+                        true,
                         Common.MAGHRIB_INDEX
                     )
                 }
             } else {
                 prayerAlarm.cancelAlarm(this, Common.MAGHRIB_INDEX)
-                sharedPref.saveMaghribState(isReminderSet)
+                sharedPref.saveMaghribState(false)
 
             }
 
@@ -277,30 +274,31 @@ class PrayerActivity : AppCompatActivity() {
         btnSoundIsha.setOnClickListener {
             val isha: String?
             isha = sharedPref.loadIsha()
-            val isReminderSet = !sharedPref.loadIshaState()
+            val isReminderSet = sharedPref.loadIshaState()
 
-            ivSoundIsha.setImageResource(if (isReminderSet) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
+            ivSoundIsha.setImageResource(setReminderStateImage(isReminderSet))
 
-            if (isReminderSet) {
-                sharedPref.saveIshaState(isReminderSet)
+            if (!isReminderSet) {
+                sharedPref.saveIshaState(true)
                 isha.let { it1 ->
                     prayerAlarm.setPrayerAlarm(
                         this,
                         it1,
                         Common.ISHA,
-                        isReminderSet,
+                        true,
                         Common.ISHA_INDEX
                     )
                 }
             } else {
                 prayerAlarm.cancelAlarm(this, Common.ISHA_INDEX)
-                sharedPref.saveIshaState(isReminderSet)
+                sharedPref.saveIshaState(false)
 
             }
-
         }
+    }
 
-
+    private fun setReminderStateImage(state:Boolean):Int{
+        return if (state) R.drawable.ic_sound_off else R.drawable.ic_sound_on
     }
 
     private fun goToQibla() {
