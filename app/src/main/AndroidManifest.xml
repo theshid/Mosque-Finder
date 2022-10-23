@@ -149,6 +149,11 @@
             </intent-filter>
         </service>
 
+        <receiver
+            android:name="com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logo2" />

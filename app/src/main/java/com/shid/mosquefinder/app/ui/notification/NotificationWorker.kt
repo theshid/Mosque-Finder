@@ -34,7 +34,7 @@ class NotificationWorker @AssistedInject constructor(
 ) :
     CoroutineWorker(context, params) {
 
-    private val CHANNEL_ID = "notify-ayah"
+    private val CHANNEL_ID = context.resources.getString(R.string.channel_id)
     private val randomSurahNumber = (1..114).random()
     private val mContext = context
 

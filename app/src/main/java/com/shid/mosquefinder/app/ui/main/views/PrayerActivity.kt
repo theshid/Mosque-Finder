@@ -20,6 +20,7 @@ import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.*
 import com.shid.mosquefinder.app.utils.extensions.startActivity
@@ -38,7 +39,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PrayerActivity : AppCompatActivity() {
+class PrayerActivity : BaseActivity() {
 
     private var userPosition: LatLng? = null
     private lateinit var date: SimpleDate
@@ -50,7 +51,7 @@ class PrayerActivity : AppCompatActivity() {
     private val _sdfWatchTime = SimpleDateFormat("HH:mm")
 
 
-    val prayerAlarm = PrayerAlarmBroadcastReceiver()
+    private val prayerAlarm = PrayerAlarmBroadcastReceiver()
 
     @Inject
     @OptIn(ExperimentalCoroutinesApi::class)

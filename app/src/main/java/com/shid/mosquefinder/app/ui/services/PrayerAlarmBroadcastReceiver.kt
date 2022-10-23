@@ -22,13 +22,15 @@ import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.*
 
-
+@AndroidEntryPoint
 class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
-    val String.hour get() : Int = if (this != "-") this.split(":", " ").first().toInt() else 0
-    val String.minutes get() : Int = if (this != "-") this.split(":", " ")[1].toInt() else 0
+    private val String.hour get() : Int = if (this != "-") this.split(":", " ").first().toInt() else 0
+    private val String.minutes get() : Int = if (this != "-") this.split(":", " ")[1].toInt() else 0
+
 
     companion object {
         const val EXTRA_ALARM = "extra_alarm"
@@ -61,6 +63,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun handleOnReceive(prayerTime: String, prayerIndex: Int, context: Context) {
+        Timber.d("redeive")
         val reminderHour = prayerTime.split(":").first().toInt()
         if (reminderHour >= Timestamp.now().hour) {
             showAlarmNotification(context, prayerIndex, NOTIFICATION_TITLE, buildString {
@@ -88,6 +91,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
         showToast: Boolean? = true,
         index: Int
     ) {
+        Timber.d("setPrayerAlarm")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, PrayerAlarmBroadcastReceiver::class.java)
         intent.putExtra(EXTRA_ALARM, index)
@@ -97,6 +101,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
             set(Calendar.MINUTE, prayerType.minutes)
             set(Calendar.SECOND, 0)
         }
+        Timber.d("calendar:$calendar")
 
         val pendingIntent = PendingIntent.getBroadcast(
             context, index,
@@ -121,7 +126,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
         pendingIntent.cancel()
         alarmManager.cancel(pendingIntent)
         message?.let {
-            if (it.isNotBlank()) {
+            if (it.isBlank()) {
                 val text = "Reminder for ${getScheduleName(id)} pray is unset"
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
             }
@@ -134,7 +139,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
         title: String,
         content: String
     ) {
-
+        Timber.d("showNotif")
         val notificationManagerCompat =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -168,7 +173,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
 
             val audioAttributes: AudioAttributes = AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .build()
 
             val channel = NotificationChannel(
@@ -177,7 +182,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 enableVibration(true)
-                setSound(soundUri,audioAttributes)
+                setSound(soundUri, audioAttributes)
                 vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
 
             }

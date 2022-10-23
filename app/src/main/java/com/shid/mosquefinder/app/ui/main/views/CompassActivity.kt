@@ -8,12 +8,11 @@ import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.utils.*
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.helper_class.Compass
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
@@ -26,19 +25,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
 @AndroidEntryPoint
-class CompassActivity : AppCompatActivity() {
+class CompassActivity : BaseActivity() {
     companion object {
 
         const val LOCATION_PERMISSION_REQUEST_CODE = 999
         var userPosition: LatLng = LatLng(0.0, 0.0)
-        var userLocation: Location? = null
-
     }
 
     private var compass: Compass? = null
     private var arrowView: ImageView? = null
     private var dialView: ImageView? = null
+
     @Inject
     lateinit var sharedPref: SharePref
 

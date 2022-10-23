@@ -1,8 +1,10 @@
 package com.shid.mosquefinder.app.di
 
+import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Resources
+import androidx.core.content.getSystemService
 import androidx.work.WorkManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -74,5 +76,11 @@ object CoreModule {
     @Singleton
     fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
         return context.getSystemService(NotificationManager::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAlarmManager(@ApplicationContext context: Context):AlarmManager{
+        return context.getSystemService(AlarmManager::class.java)
     }
 }
