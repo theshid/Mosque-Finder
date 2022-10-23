@@ -5,6 +5,7 @@ import androidx.startup.Initializer
 import androidx.work.WorkManager
 import com.shid.mosquefinder.app.di.InitializerEntryPoint
 import com.shid.mosquefinder.app.workers.DailyAyahWorker
+import timber.log.Timber
 import javax.inject.Inject
 
 @Suppress("unused")
@@ -17,6 +18,7 @@ class ScheduledWorkInitializer : Initializer<Unit> {
     internal lateinit var trigger: DailyAyahWorker
 
     override fun create(context: Context) {
+        Timber.d("Create")
         InitializerEntryPoint(context).inject(this)
         trigger.triggerWork()
     }

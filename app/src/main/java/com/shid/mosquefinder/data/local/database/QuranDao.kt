@@ -64,5 +64,5 @@ interface QuranDao {
     suspend fun updateAyah(french: String, verseId: Long)
 
     @Query("SELECT * FROM ayahs WHERE surah_number IN (:surahNumber) ORDER BY RANDOM() LIMIT 1")
-    fun getRandomAyah(surahNumber: Int): AyahDb
+    suspend fun getRandomAyah(surahNumber: Int): AyahDb
 }

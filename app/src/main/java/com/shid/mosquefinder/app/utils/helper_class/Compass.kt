@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.app.utils.helper_class
 
+import android.R.attr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
@@ -7,10 +8,10 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import com.google.android.gms.maps.model.LatLng
-import com.shid.mosquefinder.app.ui.main.views.CompassActivity
 import timber.log.Timber
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -19,6 +20,7 @@ class Compass(context: Context) : SensorEventListener {
 
     interface CompassListener {
         fun onNewAzimuth(azimuth: Float)
+
     }
 
     private var listener: CompassListener? = null
@@ -34,6 +36,7 @@ class Compass(context: Context) : SensorEventListener {
     private var userPosition: LatLng = LatLng(0.0, 0.0)
 
     private var azimuth = 0f
+    private var northAzimuth = 0f
     private var azimuthFix = 0f
     private val kaabaLocation = LatLng(21.422487, 39.826206)
     private var sharePref: SharePref? = null
@@ -44,11 +47,9 @@ class Compass(context: Context) : SensorEventListener {
             .getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gsensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         msensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
-        userPosition = CompassActivity.userPosition
-        if (userPosition == LatLng(0.0, 0.0)) {
-            if (sharePref?.loadSavedPosition() != null) {
-                userPosition = sharePref!!.loadSavedPosition()
-            }
+
+        if (sharePref?.loadSavedPosition() != null) {
+            userPosition = sharePref!!.loadSavedPosition()
         }
 
 
@@ -111,38 +112,22 @@ class Compass(context: Context) : SensorEventListener {
                 // Log.d(TAG, "azimuth (rad): " + azimuth);
                 azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat() // orientation
                 azimuth = (azimuth + azimuthFix + 360) % 360
-                azimuth -= if (userPosition != LatLng(0.0, 0.0)) {
-                    Timber.d(
-                        "user location:%s %s", userPosition.latitude.toString(),
-                        userPosition.longitude.toString()
-                    )
 
-                    bearing(
+                azimuth -= bearing(
                         userPosition.latitude,
                         userPosition.longitude, kaabaLocation.latitude, kaabaLocation.longitude
                     )
                         .toFloat()
-                } else {
-                    Timber.d(
-                        "user location:%s %s",
-                        CompassActivity.userPosition.latitude.toString(),
-                        CompassActivity.userPosition.longitude.toString()
-                    )
-
-                    bearing(
-                        CompassActivity.userPosition.latitude,
-                        CompassActivity.userPosition.longitude,
-                        kaabaLocation.latitude,
-                        kaabaLocation.longitude
-                    )
-                        .toFloat()
                 }
-
                 if (listener != null) {
                     listener!!.onNewAzimuth(azimuth)
                 }
             }
         }
+
+
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 
     private fun bearing(
@@ -162,5 +147,7 @@ class Compass(context: Context) : SensorEventListener {
         return (Math.toDegrees(atan2(y, x)) + 360) % 360
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 }
+
+
+

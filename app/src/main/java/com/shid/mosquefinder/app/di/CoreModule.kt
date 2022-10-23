@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.app.di
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Resources
 import androidx.work.WorkManager
@@ -68,4 +69,10 @@ object CoreModule {
     @Singleton
     @Provides
     fun provideUser(): User = User()
+
+    @Provides
+    @Singleton
+    fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
+        return context.getSystemService(NotificationManager::class.java)
+    }
 }

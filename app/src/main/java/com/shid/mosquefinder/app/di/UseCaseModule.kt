@@ -66,4 +66,9 @@ object UseCaseModule {
     @Singleton
     fun provideBeautifulMosqueUseCase(beautifulMosquesRepository: BeautifulMosquesRepository): GetBeautifulMosquesUseCase =
         GetBeautifulMosquesUseCase(beautifulMosquesRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetRandomAyahUseCase(ayahRepository: AyahRepository): GetRandomAyahUseCase =
+        GetRandomAyahUseCase(ayahRepository)
 }

@@ -118,8 +118,8 @@
             android:theme="@style/AppTheme.OnBoarding" />
         <activity
             android:name="com.shid.mosquefinder.app.ui.main.views.AuthActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -140,6 +140,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme" />
+
         <service
             android:name="com.shid.mosquefinder.app.ui.services.MyFirebaseMessagingService"
             android:exported="false">
@@ -147,6 +148,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logo2" />
@@ -158,13 +160,17 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="com.shid.mosquefinder.androidx-startup"
             android:exported="false"
-            tools:node="merge">
+            tools:node="merge"
+            >
 
             <meta-data
                 android:name="com.shid.mosquefinder.app.initializer.TimberInitializer"
                 android:value="androidx.startup" />
             <meta-data
                 android:name="com.shid.mosquefinder.app.initializer.WorkManagerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>

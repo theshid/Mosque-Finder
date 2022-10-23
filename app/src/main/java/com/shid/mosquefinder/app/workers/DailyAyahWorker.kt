@@ -8,6 +8,7 @@ import com.shid.mosquefinder.app.ui.main.views.SettingsActivity
 import com.shid.mosquefinder.app.ui.notification.NotificationWorker
 import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +24,7 @@ class DailyAyahWorker @Inject constructor(
             PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
                 .addTag(Constants.WORKER_TAG)
                 .build()
-
+        Timber.d("value of state:"+ sharePref.loadSwitchState())
         if (sharePref.loadSwitchState()) {
             workManager.enqueueUniquePeriodicWork(
                 Constants.WORKER_NAME,

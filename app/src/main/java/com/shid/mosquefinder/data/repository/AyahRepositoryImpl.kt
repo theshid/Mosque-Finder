@@ -1,5 +1,6 @@
 package com.shid.mosquefinder.data.repository
 
+import com.shid.mosquefinder.app.utils.toDomain
 import com.shid.mosquefinder.data.api.QuranApiInterface
 import com.shid.mosquefinder.data.local.database.QuranDao
 import com.shid.mosquefinder.data.local.toDomain
@@ -26,8 +27,8 @@ class AyahRepositoryImpl @Inject constructor(
         quranDao.updateAyah(text, ayahId)
     }
 
-    override fun getRandomAyah(surahNumber: Int): Ayah {
-        return quranDao.randomAyah.toDomain()
+    override suspend fun getRandomAyah(surahNumber: Int): Flow<Ayah> = flow {
+        emit(quranDao.getRandomAyah(surahNumber).toDomain())
     }
 
     override fun getSurahInFrench(surahNumber: Int): Flow<List<Verse>> = flow {

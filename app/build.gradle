@@ -175,7 +175,7 @@ dependencies {
 
     implementation 'com.github.mumayank:AirLocation:2.5.2'
 
-    implementation "androidx.work:work-runtime-ktx:2.8.0-alpha01"
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
 
 
     implementation("androidx.media:media:1.6.0")

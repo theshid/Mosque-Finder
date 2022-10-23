@@ -78,7 +78,7 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        
+
         user = getUserFromIntent()
         timeZone = getTimeZone()
         isFirstTime = sharedPref.loadFirstTime()
@@ -93,7 +93,7 @@ class HomeActivity : BaseActivity() {
         }
 
         displayAutoStartDialog()
-       // setWorkManagerNotification()
+        setWorkManagerNotification()
         checkIfPermissionIsActive()
         setPrayerTime()
         setClickListeners()
@@ -131,7 +131,7 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setWorkManagerNotification() {
-        // workManager = WorkManager.getInstance(this)
+        Timber.d("state:"+sharedPref.loadSwitchState())
         val saveRequest: PeriodicWorkRequest =
             PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
                 .addTag(Constants.WORKER_TAG)

@@ -50,7 +50,6 @@ class CompassActivity : AppCompatActivity() {
     private var currentAzimuth = 0f
     private var sotwFormatter: SOTWFormatter? = null
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compass)
@@ -165,11 +164,29 @@ class CompassActivity : AppCompatActivity() {
             0.5f
         )
         currentAzimuth = azimuth
+
+        an.apply {
+            duration = 500
+            repeatCount = 0
+            fillAfter = true
+        }
+
+        arrowView!!.startAnimation(an)
+    }
+
+    private fun adjustDial(azimuth: Float) {
+        Timber.d("will set rotation from $currentAzimuth to $azimuth")
+        val an: Animation = RotateAnimation(
+            -currentAzimuth, -azimuth,
+            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+            0.5f
+        )
+        currentAzimuth = azimuth
         an.duration = 500
         an.repeatCount = 0
         an.fillAfter = true
 
-        arrowView!!.startAnimation(an)
+        dialView!!.startAnimation(an)
     }
 
     private fun adjustSotwLabel(azimuth: Float) {
@@ -182,10 +199,12 @@ class CompassActivity : AppCompatActivity() {
                 // UI updates only in UI thread
                 // https://stackoverflow.com/q/11140285/444966
                 runOnUiThread {
+                    adjustDial(azimuth)
                     adjustArrow(azimuth)
                     adjustSotwLabel(azimuth)
                 }
             }
+
         }
     }
 }

@@ -10,7 +10,7 @@ interface AyahRepository {
 
     suspend fun updateAyah(text: String, ayahId: Long)
 
-    fun getRandomAyah(surahNumber: Int): Ayah
+    suspend fun getRandomAyah(surahNumber: Int): Flow<Ayah>
 
     fun getSurahInFrench(surahNumber: Int): Flow<List<Verse>>
 
