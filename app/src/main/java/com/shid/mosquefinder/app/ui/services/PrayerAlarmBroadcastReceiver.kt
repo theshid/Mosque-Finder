@@ -74,7 +74,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
             })
 
             val mediaPlayer = MediaPlayer.create(
-                context, R.raw.adzan_makkah
+                context, R.raw.islamic_hd_ringtone
             )
             mediaPlayer.apply {
                 isLooping = false
@@ -168,7 +168,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
                 "android.resource://" +
                         context.packageName +
                         "/" +
-                        R.raw.adzan_makkah
+                        R.raw.islamic_hd_ringtone
             )
 
             val audioAttributes: AudioAttributes = AudioAttributes.Builder()
