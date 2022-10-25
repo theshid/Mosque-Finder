@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.azan.Azan
 import com.azan.Method
@@ -22,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
-import com.shid.mosquefinder.app.utils.*
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
@@ -45,6 +43,7 @@ class PrayerActivity : BaseActivity() {
     private lateinit var date: SimpleDate
     private var timeZone: Double? = null
     private var isFirstTime: Boolean? = null
+
     @Inject
     lateinit var sharedPref: SharePref
     private var _broadcastReceiver: BroadcastReceiver? = null
@@ -119,6 +118,11 @@ class PrayerActivity : BaseActivity() {
     }
 
     private fun clickListeners() {
+        val fajr = sharedPref.loadFajr()
+        val dhur = sharedPref.loadDhur()
+        val asr = sharedPref.loadAsr()
+        val maghrib = sharedPref.loadMaghrib()
+        val isha = sharedPref.loadIsha()
 
         toolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -133,172 +137,97 @@ class PrayerActivity : BaseActivity() {
         }
 
         btn_activate_notification.setOnClickListener {
-            if (sharedPref.loadIsAllPrayersNotificationActivated()) {
-                sharedPref.saveFajrState(false)
-                sharedPref.saveDhurState(false)
-                sharedPref.saveAsrState(false)
-                sharedPref.saveMaghribState(false)
-                sharedPref.saveIshaState(false)
-                sharedPref.setAllPrayerNotifications(false)
+            val allNotificationState = sharedPref.loadIsAllPrayersNotificationActivated()
 
-                ivSoundFajr.setImageResource(R.drawable.ic_sound_off)
-                ivSoundDhur.setImageResource(R.drawable.ic_sound_off)
-                ivSoundAsr.setImageResource(R.drawable.ic_sound_off)
-                ivSoundMaghrib.setImageResource(R.drawable.ic_sound_off)
-                ivSoundIsha.setImageResource(R.drawable.ic_sound_off)
+            setPrayerNotification(allNotificationState, fajr, Common.FAJR, Common.FAJR_INDEX)
+            setPrayerNotification(allNotificationState, dhur, Common.DHUR, Common.DHUR_INDEX)
+            setPrayerNotification(allNotificationState, asr, Common.ASR, Common.ASR_INDEX)
+            setPrayerNotification(allNotificationState, maghrib, Common.MAGHRIB, Common.MAGHRIB_INDEX)
+            setPrayerNotification(allNotificationState, isha, Common.ISHA, Common.ISHA_INDEX)
 
+            ivSoundFajr.setImageResource(setReminderStateImage(allNotificationState))
+            ivSoundDhur.setImageResource(setReminderStateImage(allNotificationState))
+            ivSoundAsr.setImageResource(setReminderStateImage(allNotificationState))
+            ivSoundMaghrib.setImageResource(setReminderStateImage(allNotificationState))
+            ivSoundIsha.setImageResource(setReminderStateImage(allNotificationState))
+
+            if (allNotificationState) {
                 btn_activate_notification.text = getString(R.string.activate_all_notification)
             } else {
-                sharedPref.saveFajrState(true)
-                sharedPref.saveDhurState(true)
-                sharedPref.saveAsrState(true)
-                sharedPref.saveMaghribState(true)
-                sharedPref.saveIshaState(true)
-                sharedPref.setAllPrayerNotifications(true)
-
-                ivSoundFajr.setImageResource(R.drawable.ic_sound_on)
-                ivSoundDhur.setImageResource(R.drawable.ic_sound_on)
-                ivSoundAsr.setImageResource(R.drawable.ic_sound_on)
-                ivSoundMaghrib.setImageResource(R.drawable.ic_sound_on)
-                ivSoundIsha.setImageResource(R.drawable.ic_sound_on)
-
                 btn_activate_notification.text = getString(R.string.disactivate_all_notification)
             }
 
         }
 
         btnSoundFajr.setOnClickListener {
-            val fajr: String?
-            fajr = sharedPref.loadFajr()
             val isReminderSet = sharedPref.loadFajrState()
-
             ivSoundFajr.setImageResource(setReminderStateImage(isReminderSet))
-
-            if (!isReminderSet) {
-                sharedPref.saveFajrState(true)
-                fajr.let { it1 ->
-                    prayerAlarm.setPrayerAlarm(
-                        this,
-                        it1,
-                        Common.FAJR,
-                        true,
-                        Common.FAJR_INDEX
-                    )
-                }
-            } else {
-                prayerAlarm.cancelAlarm(this, Common.FAJR_INDEX)
-                sharedPref.saveFajrState(false)
-
-            }
-
+            setPrayerNotification(isReminderSet, fajr, Common.FAJR, Common.FAJR_INDEX)
         }
 
         btnSoundDhur.setOnClickListener {
-            val dhur: String?
-            dhur = sharedPref.loadDhur()
             val isReminderSet = sharedPref.loadDhurState()
-
             ivSoundDhur.setImageResource(setReminderStateImage(isReminderSet))
-
-            if (!isReminderSet) {
-                Timber.d("value of Dhur:$dhur")
-                sharedPref.saveDhurState(true)
-                dhur.let { it1 ->
-                    prayerAlarm.setPrayerAlarm(
-                        this,
-                        it1,
-                        Common.DHUR,
-                        true,
-                        Common.DHUR_INDEX
-                    )
-                }
-            } else {
-                prayerAlarm.cancelAlarm(this, Common.DHUR_INDEX)
-                sharedPref.saveDhurState(false)
-
-            }
-
+            setPrayerNotification(isReminderSet, dhur, Common.DHUR, Common.DHUR_INDEX)
         }
 
         btnSoundAsr.setOnClickListener {
-            val asr: String?
-            asr = sharedPref.loadAsr()
             val isReminderSet = sharedPref.loadAsrState()
-
             ivSoundAsr.setImageResource(setReminderStateImage(isReminderSet))
-
-            if (!isReminderSet) {
-                sharedPref.saveAsrState(true)
-                asr.let { it1 ->
-                    prayerAlarm.setPrayerAlarm(
-                        this,
-                        it1,
-                        Common.ASR,
-                        isReminderSet,
-                        Common.ASR_INDEX
-                    )
-                }
-            } else {
-                prayerAlarm.cancelAlarm(this, Common.ASR_INDEX)
-                sharedPref.saveAsrState(true)
-
-            }
-
+            setPrayerNotification(isReminderSet, asr, Common.ASR, Common.ASR_INDEX)
         }
 
         btnSoundMaghrib.setOnClickListener {
-            val maghrib: String?
-            maghrib = sharedPref.loadMaghrib()
             val isReminderSet = sharedPref.loadMaghribState()
-
             ivSoundMaghrib.setImageResource(setReminderStateImage(isReminderSet))
-
-            if (!isReminderSet) {
-                sharedPref.saveMaghribState(true)
-                maghrib.let { it1 ->
-                    prayerAlarm.setPrayerAlarm(
-                        this,
-                        it1,
-                        Common.MAGHRIB,
-                        true,
-                        Common.MAGHRIB_INDEX
-                    )
-                }
-            } else {
-                prayerAlarm.cancelAlarm(this, Common.MAGHRIB_INDEX)
-                sharedPref.saveMaghribState(false)
-
-            }
-
+            setPrayerNotification(isReminderSet, maghrib, Common.MAGHRIB, Common.MAGHRIB_INDEX)
         }
 
         btnSoundIsha.setOnClickListener {
-            val isha: String?
-            isha = sharedPref.loadIsha()
             val isReminderSet = sharedPref.loadIshaState()
-
             ivSoundIsha.setImageResource(setReminderStateImage(isReminderSet))
+            setPrayerNotification(isReminderSet, isha, Common.ISHA, Common.ISHA_INDEX)
+        }
+    }
 
-            if (!isReminderSet) {
-                sharedPref.saveIshaState(true)
-                isha.let { it1 ->
-                    prayerAlarm.setPrayerAlarm(
-                        this,
-                        it1,
-                        Common.ISHA,
-                        true,
-                        Common.ISHA_INDEX
-                    )
-                }
-            } else {
-                prayerAlarm.cancelAlarm(this, Common.ISHA_INDEX)
-                sharedPref.saveIshaState(false)
+    private fun setPrayerNotification(
+        reminderState: Boolean,
+        prayerTime: String,
+        prayerName: String,
+        prayerIndex: Int
+    ) {
+        setPrayerState(reminderState, prayerName)
+        if (!reminderState) {
+            prayerTime.let { time ->
+                prayerAlarm.setPrayerAlarm(this, time, prayerName, true, prayerIndex)
+            }
 
+        } else {
+            prayerAlarm.cancelAlarm(this, prayerIndex)
+        }
+    }
+
+    private fun setPrayerState(reminderState: Boolean, prayerName: String) {
+        if (!reminderState) {
+            when (prayerName) {
+                Common.FAJR -> sharedPref.saveFajrState(true)
+                Common.DHUR -> sharedPref.saveDhurState(true)
+                Common.ASR -> sharedPref.saveAsrState(true)
+                Common.MAGHRIB -> sharedPref.saveMaghribState(true)
+                Common.ISHA -> sharedPref.saveIshaState(true)
+            }
+        } else {
+            when (prayerName) {
+                Common.FAJR -> sharedPref.saveFajrState(false)
+                Common.DHUR -> sharedPref.saveDhurState(false)
+                Common.ASR -> sharedPref.saveAsrState(false)
+                Common.MAGHRIB -> sharedPref.saveMaghribState(false)
+                Common.ISHA -> sharedPref.saveIshaState(false)
             }
         }
     }
 
-    private fun setReminderStateImage(state:Boolean):Int{
+    private fun setReminderStateImage(state: Boolean): Int {
         return if (state) R.drawable.ic_sound_off else R.drawable.ic_sound_on
     }
 
