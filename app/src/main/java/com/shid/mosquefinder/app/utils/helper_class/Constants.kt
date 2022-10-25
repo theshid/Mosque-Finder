@@ -47,9 +47,9 @@ object Constants {
     const val DIVINE_NAME = "name"
     const val AYAHS = "ayahs"
     const val AYAH_SURAH_NUMBER = "surah_number"
-    const val AYAH_NUMBER = "ayahs"
-    const val AYAH_TEXT = "ayahs"
-    const val AYAH_TRANSLATION = "ayahs"
+    const val AYAH_NUMBER = "verse_number"
+    const val AYAH_TEXT = "text"
+    const val AYAH_TRANSLATION = "translation"
 
     //Intent extras
     const val EXTRA_SURAH_NUMBER = "surah_number"
