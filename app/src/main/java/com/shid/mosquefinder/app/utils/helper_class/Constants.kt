@@ -102,5 +102,8 @@ object Constants {
     const val EVENT_PLAYER_PAUSE = "play_pause"
     const val EVENT_PLAYER_FINISH = "finish"
 
+    //SharedPReferences
+    const val FILENAME =  "filename"
+
 
 }

@@ -1,10 +1,8 @@
 package com.shid.mosquefinder.app.ui.main.views
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.app.NotificationManager
+import android.content.*
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -24,9 +22,12 @@ import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
+import com.shid.mosquefinder.app.utils.helper_class.SharedPreferenceBooleanLiveData
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import de.coldtea.smplr.smplralarm.*
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -43,9 +44,27 @@ class PrayerActivity : BaseActivity() {
     private lateinit var date: SimpleDate
     private var timeZone: Double? = null
     private var isFirstTime: Boolean? = null
+    private lateinit var fajrLiveState: SharedPreferenceBooleanLiveData
+    private lateinit var dhurLiveState: SharedPreferenceBooleanLiveData
+    private lateinit var asrLiveState: SharedPreferenceBooleanLiveData
+    private lateinit var maghribLiveState: SharedPreferenceBooleanLiveData
+    private lateinit var ishaLiveState: SharedPreferenceBooleanLiveData
+
+    private var fajrC: Boolean? = null
+    private var dhurC: Boolean? = null
+    private var asrC: Boolean? = null
+    private var maghribC: Boolean? = null
+    private var ishaC: Boolean? = null
 
     @Inject
     lateinit var sharedPref: SharePref
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    @ApplicationContext lateinit var aContext:Context
+
     private var _broadcastReceiver: BroadcastReceiver? = null
     private val _sdfWatchTime = SimpleDateFormat("HH:mm")
 
@@ -63,9 +82,73 @@ class PrayerActivity : BaseActivity() {
         setContentView(R.layout.activity_prayer)
         isFirstTime = sharedPref.loadFirstTimePrayerNotification()
         permissionCheck(fusedLocationWrapper)
+        initLiveDataPreferences()
         setUI()
         clickListeners()
+        initObservers()
 
+    }
+
+    private fun initObservers() {
+
+        fajrLiveState.observe(this) {
+            fajrC = it
+            setEnableAllTextButton()
+            Timber.d("faje:$it")
+        }
+
+        dhurLiveState.observe(this) {
+            dhurC = it
+            setEnableAllTextButton()
+        }
+
+        asrLiveState.observe(this) {
+            asrC = it
+            setEnableAllTextButton()
+        }
+
+        maghribLiveState.observe(this) {
+            maghribC = it
+            setEnableAllTextButton()
+        }
+
+        ishaLiveState.observe(this) {
+            ishaC = it
+            setEnableAllTextButton()
+        }
+    }
+
+    private fun setEnableAllTextButton(){
+        if (fajrC == true && dhurC == true && asrC == true &&
+            maghribC == true && ishaC == true
+        ) {
+            btn_activate_notification.text = getString(R.string.disactivate_all_notification)
+            sharedPref.setAllPrayerNotifications(true)
+        } else {
+            btn_activate_notification.text = getString(R.string.activate_all_notification)
+        }
+    }
+
+    private fun initLiveDataPreferences() {
+        val fajrIsReminderSet = sharedPref.loadFajrState()
+        val dhurIsReminderSet = sharedPref.loadDhurState()
+        val asrIsReminderSet = sharedPref.loadAsrState()
+        val maghribIsReminderSet = sharedPref.loadMaghribState()
+        val ishaIsReminderSet = sharedPref.loadIshaState()
+
+        fajrLiveState =
+            SharedPreferenceBooleanLiveData(sharedPreferences, Common.FAJR_STATE, fajrIsReminderSet)
+        dhurLiveState =
+            SharedPreferenceBooleanLiveData(sharedPreferences, Common.DHUR_STATE, dhurIsReminderSet)
+        asrLiveState =
+            SharedPreferenceBooleanLiveData(sharedPreferences, Common.ASR_STATE, asrIsReminderSet)
+        maghribLiveState = SharedPreferenceBooleanLiveData(
+            sharedPreferences,
+            Common.MAGHRIB_STATE,
+            maghribIsReminderSet
+        )
+        ishaLiveState =
+            SharedPreferenceBooleanLiveData(sharedPreferences, Common.ISHA_STATE, ishaIsReminderSet)
     }
 
     override fun onStart() {
@@ -142,7 +225,12 @@ class PrayerActivity : BaseActivity() {
             setPrayerNotification(allNotificationState, fajr, Common.FAJR, Common.FAJR_INDEX)
             setPrayerNotification(allNotificationState, dhur, Common.DHUR, Common.DHUR_INDEX)
             setPrayerNotification(allNotificationState, asr, Common.ASR, Common.ASR_INDEX)
-            setPrayerNotification(allNotificationState, maghrib, Common.MAGHRIB, Common.MAGHRIB_INDEX)
+            setPrayerNotification(
+                allNotificationState,
+                maghrib,
+                Common.MAGHRIB,
+                Common.MAGHRIB_INDEX
+            )
             setPrayerNotification(allNotificationState, isha, Common.ISHA, Common.ISHA_INDEX)
 
             ivSoundFajr.setImageResource(setReminderStateImage(allNotificationState))
@@ -151,11 +239,11 @@ class PrayerActivity : BaseActivity() {
             ivSoundMaghrib.setImageResource(setReminderStateImage(allNotificationState))
             ivSoundIsha.setImageResource(setReminderStateImage(allNotificationState))
 
-            if (allNotificationState) {
+            /*if (allNotificationState) {
                 btn_activate_notification.text = getString(R.string.activate_all_notification)
             } else {
                 btn_activate_notification.text = getString(R.string.disactivate_all_notification)
-            }
+            }*/
 
         }
 
@@ -201,9 +289,57 @@ class PrayerActivity : BaseActivity() {
             prayerTime.let { time ->
                 prayerAlarm.setPrayerAlarm(this, time, prayerName, true, prayerIndex)
             }
+            sharedPref.saveTestId(testAlarm())
 
         } else {
             prayerAlarm.cancelAlarm(this, prayerIndex)
+           updateAlarm()
+        }
+    }
+
+    private fun updateAlarm(){
+        smplrAlarmCancel(applicationContext) {
+            requestCode { sharedPref.loadTestId() }
+        }
+    }
+
+    private fun testAlarm():Int{
+        val alarmReceivedIntent = Intent(
+            applicationContext,
+            PrayerAlarmBroadcastReceiver::class.java
+        )
+        return smplrAlarmSet(aContext){
+            hour { 22 }
+            min { 30 }
+            weekdays {
+                monday()
+                tuesday()
+                wednesday()
+                thursday()
+                friday()
+                saturday()
+                sunday()
+            }
+            alarmReceivedIntent { alarmReceivedIntent }
+            notification {
+                alarmNotification {
+                    smallIcon { R.drawable.logo2 }
+                    title { "Simple alarm is ringing" }
+                    message { "Simple alarm is ringing" }
+                    bigText { "Simple alarm is ringing" }
+                    autoCancel { true }
+
+                }
+            }
+            notificationChannel {
+                channel {
+                    importance { NotificationManager.IMPORTANCE_HIGH }
+                    showBadge { false }
+                    name { "de.coldtea.smplr.alarm.channel" }
+                    description { "This notification channel is created by SmplrAlarm" }
+
+                }
+            }
         }
     }
 

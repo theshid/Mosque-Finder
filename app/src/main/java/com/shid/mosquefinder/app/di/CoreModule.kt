@@ -3,6 +3,7 @@ package com.shid.mosquefinder.app.di
 import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.core.content.getSystemService
 import androidx.work.WorkManager
@@ -12,6 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.data.model.User
@@ -40,6 +42,12 @@ object CoreModule {
     @Singleton
     fun provideSharedPrefManager(@ApplicationContext context: Context): SharePref {
         return SharePref(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences(Constants.FILENAME, Context.MODE_PRIVATE)
     }
 
     @Singleton

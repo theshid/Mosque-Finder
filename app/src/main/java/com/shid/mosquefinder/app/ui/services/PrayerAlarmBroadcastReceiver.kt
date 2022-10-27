@@ -23,6 +23,7 @@ import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.TimeUtil.hour
 import dagger.hilt.android.AndroidEntryPoint
+import de.coldtea.smplr.smplralarm.apis.SmplrAlarmAPI
 import timber.log.Timber
 import java.util.*
 
@@ -60,12 +61,16 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
                 Common.ISHA_INDEX -> handleOnReceive(sharePref.loadIsha(), it, context)
             }
         }
+        intent.extras?.getInt(SmplrAlarmAPI.SMPLR_ALARM_REQUEST_ID)?.let {
+            Timber.d("Inside intent extras 2")
+            handleOnReceive(sharePref.loadFajr(), it, context)
+        }
     }
 
     private fun handleOnReceive(prayerTime: String, prayerIndex: Int, context: Context) {
         Timber.d("redeive")
         val reminderHour = prayerTime.split(":").first().toInt()
-        if (reminderHour >= Timestamp.now().hour) {
+        /*if (reminderHour >= Timestamp.now().hour) {
             showAlarmNotification(context, prayerIndex, NOTIFICATION_TITLE, buildString {
                 append("Now it's time for ")
                 append(getScheduleName(prayerIndex))
@@ -81,6 +86,13 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
                 start()
             }
 
+        }*/
+        val mediaPlayer = MediaPlayer.create(
+            context, R.raw.islamic_hd_ringtone
+        )
+        mediaPlayer.apply {
+            isLooping = false
+            start()
         }
     }
 
@@ -107,6 +119,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
             context, index,
             intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
@@ -156,7 +169,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
             .setSmallIcon(R.drawable.logo2)
             .setContentTitle(title)
             .setContentText(content)
-            .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            .setColor(ContextCompat.getColor(context, R.color.colorWhite))
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
@@ -173,7 +186,7 @@ class PrayerAlarmBroadcastReceiver : BroadcastReceiver() {
 
             val audioAttributes: AudioAttributes = AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setUsage(AudioAttributes.USAGE_ALARM)
                 .build()
 
             val channel = NotificationChannel(

@@ -128,6 +128,15 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
+    fun saveTestId(id:Int){
+        editor.putInt("test", id)
+        editor.apply()
+    }
+
+    fun loadTestId():Int{
+        return mySharePref.getInt("test",0)
+    }
+
     fun loadIsAllPrayersNotificationActivated(): Boolean {
         return mySharePref.getBoolean("activate", false)
     }
