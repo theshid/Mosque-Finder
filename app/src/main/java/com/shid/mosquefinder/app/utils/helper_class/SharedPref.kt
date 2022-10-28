@@ -128,49 +128,49 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
-    fun saveFajrId(id:Int){
+    fun saveFajrId(id: Int) {
         editor.putInt(Common.FAJR_ID, id)
         editor.apply()
     }
 
-    fun saveDhurId(id:Int){
+    fun saveDhurId(id: Int) {
         editor.putInt(Common.DHUR_ID, id)
         editor.apply()
     }
 
-    fun saveAsrId(id:Int){
+    fun saveAsrId(id: Int) {
         editor.putInt(Common.ASR_ID, id)
         editor.apply()
     }
 
-    fun saveMaghribId(id:Int){
+    fun saveMaghribId(id: Int) {
         editor.putInt(Common.MAGHRIB_ID, id)
         editor.apply()
     }
 
-    fun saveIshaId(id:Int){
+    fun saveIshaId(id: Int) {
         editor.putInt(Common.ISHA_ID, id)
         editor.apply()
     }
 
-    fun loadFajrId():Int{
-        return mySharePref.getInt(Common.FAJR_ID,0)
+    fun loadFajrId(): Int {
+        return mySharePref.getInt(Common.FAJR_ID, 0)
     }
 
-    fun loadDhurId():Int{
-        return mySharePref.getInt(Common.DHUR_ID,0)
+    fun loadDhurId(): Int {
+        return mySharePref.getInt(Common.DHUR_ID, 0)
     }
 
-    fun loadAsrId():Int{
-        return mySharePref.getInt(Common.ASR_ID,0)
+    fun loadAsrId(): Int {
+        return mySharePref.getInt(Common.ASR_ID, 0)
     }
 
-    fun loadMaghribId():Int{
-        return mySharePref.getInt(Common.MAGHRIB_ID,0)
+    fun loadMaghribId(): Int {
+        return mySharePref.getInt(Common.MAGHRIB_ID, 0)
     }
 
-    fun loadIshaId():Int{
-        return mySharePref.getInt(Common.ISHA_ID,0)
+    fun loadIshaId(): Int {
+        return mySharePref.getInt(Common.ISHA_ID, 0)
     }
 
     fun loadIsAllPrayersNotificationActivated(): Boolean {
@@ -264,6 +264,15 @@ class SharePref(context: Context) {
     fun loadUser(): String {
         return mySharePref.getString("user", "")!!
     }
+
+    fun isAppInBackground(state: Boolean) {
+        editor.apply {
+            putBoolean(Constants.APP_STATE_KEY, state)
+            apply()
+        }
+    }
+
+    fun getIsAppInBackground() = mySharePref.getBoolean(Constants.APP_STATE_KEY, false)
 
 
 }

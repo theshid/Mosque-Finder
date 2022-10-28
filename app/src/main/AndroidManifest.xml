@@ -42,7 +42,7 @@
         <receiver
             android:name="com.shid.mosquefinder.app.ui.broadcast_receiver.DbReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.shid.mosquefinder.DBLOAD" />
             </intent-filter>
@@ -153,6 +153,15 @@
             android:name="com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
+
+        <receiver
+            android:name="com.shid.mosquefinder.app.ui.broadcast_receiver.AyahReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="ACTION_RETRY" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

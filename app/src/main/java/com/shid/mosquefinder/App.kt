@@ -3,8 +3,12 @@ package com.shid.mosquefinder
 import android.app.Application
 import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import androidx.work.impl.Scheduler.MAX_SCHEDULER_LIMIT
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
 
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder.registerConnectivityBroadcaster
 import dagger.hilt.EntryPoint
@@ -14,50 +18,39 @@ import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class App : Application(), Configuration.Provider {
-    /*@EntryPoint
-    @InstallIn(SingletonComponent::class)
-    interface HiltWorkerFactoryEntryPoint {
-        fun workerFactory(): HiltWorkerFactory
-    }*/
+class App : Application() {
+
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-    companion object {
-        var context: Context? = null
-        lateinit var application: App
-    }
+    lateinit var sharedPref: SharePref
+    private val lifecycle = ProcessLifecycleOwner.get().lifecycle
+
 
     override fun onCreate() {
         super.onCreate()
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                sharedPref.isAppInBackground(false)
+                Timber.d("foreground")
+            }
 
-        context = this;
-        application = this
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+                sharedPref.isAppInBackground(true)
+                Timber.d("background")
+            }
+        })
         registerConnectivityBroadcaster()
-        /*SoLoader.init(this, false)
-
-        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
-            val client = AndroidFlipperClient.getInstance(this)
-            client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
-            client.addPlugin(DatabasesFlipperPlugin(this))
-            client.start()
-        }*/
     }
 
-    override fun getWorkManagerConfiguration(): Configuration {
+   /* override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
             .build()
-    }
-
-    /*override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
-            .setExecutor(Dispatchers.Default.asExecutor())
-            .setWorkerFactory(EntryPoints.get(this, HiltWorkerFactoryEntryPoint::class.java).workerFactory())
-            .setTaskExecutor(Dispatchers.Default.asExecutor())
-            .setMaxSchedulerLimit(MAX_SCHEDULER_LIMIT)
-            .build()
     }*/
+
 }

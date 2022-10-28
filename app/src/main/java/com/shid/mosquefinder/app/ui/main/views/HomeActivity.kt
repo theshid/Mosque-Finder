@@ -38,6 +38,7 @@ import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.LOCATION_PERMISSION_REQUEST_CODE
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
+import com.shid.mosquefinder.app.workers.PeriodicWorkTrigger
 import com.shid.mosquefinder.data.model.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_home.*
@@ -66,6 +67,9 @@ class HomeActivity : BaseActivity() {
 
     @Inject
     lateinit var workManager: WorkManager
+
+    @Inject
+    lateinit var periodicWorkTrigger: PeriodicWorkTrigger
     private val scope = lifecycleScope
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
@@ -132,6 +136,9 @@ class HomeActivity : BaseActivity() {
 
     private fun setWorkManagerNotification() {
         Timber.d("state:"+sharedPref.loadSwitchState())
+        if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
+            periodicWorkTrigger.triggerWork()
+        }
         val saveRequest: PeriodicWorkRequest =
             PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
                 .addTag(Constants.WORKER_TAG)

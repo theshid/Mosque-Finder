@@ -275,5 +275,34 @@
     <string name="prayer_toast2">&#160;is set </string>
     <string name="prayer_toast3">&#160;is unset </string>
 
+    //BackgroundInfoFactory
+    <string name="list_title">xkcd</string>
+    <string name="list_empty">No Surahs available!</string>
+    <string name="list_worker_active">Fetching data…</string>
+    <string name="list_error">Error while syncing Surahs!</string>
+    <string name="detail_error">Error while loading a Surah!</string>
+
+    <string name="notification_channel_work_label">Surah Finder Updates</string>
+    <string name="notification_work_title">Surah Finder</string>
+    <string name="notification_work_cancel_label">Cancel</string>
+
+
+    <string name="notification_channel_work_retry_label">Surah Finder Retry</string>
+    <string name="notification_work_retry_label">Retry</string>
+    <string name="notification_work_retry_title">Error syncing, retry?</string>
+
+    <string name="notification_channel_work_id">work-updates</string>
+    <string name="notification_channel_work_retry_id">work-retry</string>
+
+    <string name="comic_crawler_work_name">Surah-strip-crawler</string>
+
+    <string name="surah_crawler_work_name">surah-crawler-worker</string>
+
+    <plurals name="notification_work_status">
+        <item quantity="zero">Looking for new surahs…</item>
+        <item quantity="one">%d new surah found…</item>
+        <item quantity="other">%d new surahs found…</item>
+    </plurals>
+
 
 </resources>

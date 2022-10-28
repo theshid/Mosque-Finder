@@ -5,6 +5,7 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 
 
 android {
@@ -19,6 +20,12 @@ android {
         versionName "3.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String","DB_NAME","\"ayah.db\"")
+        buildConfigField("Integer","DB_CACHE_SIZE","32")
+        buildConfigField("String","WORKER_STATE_STORE_NAME","\"crawler.json\"")
+        buildConfigField("String","HOST_NAME","\"http://api.alquran.cloud.com/\"")
+        buildConfigField("String","DATE_FORMAT","\"dd MMM yyyy\"")
     }
 
 
@@ -53,6 +60,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'com.google.firebase:firebase-messaging-ktx:23.0.6'
+    implementation 'androidx.lifecycle:lifecycle-process:2.5.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -201,7 +209,13 @@ dependencies {
     // startup
     implementation "androidx.startup:startup-runtime:1.1.1"
 
+    //Simple Alarm
     implementation 'com.github.ColdTea-Projects:SmplrAlarm:2.1.0'
 
+    //Data Store
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    //Kotlin Serialization
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3"
 
 }

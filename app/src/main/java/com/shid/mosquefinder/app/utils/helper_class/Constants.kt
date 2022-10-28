@@ -75,8 +75,8 @@ object Constants {
     const val INTENT_FILTER_MESSAGE_RECEIVER = "MyData"
 
     //Surah ViewModel
-    const val PRAYER_NOW = "Now"
-    const val PRAYER_TIME = "It's time to pray"
+    const val PRAYER_NOW = "Now "
+    const val PRAYER_TIME = "It's time to pray "
 
     //AyahActivity
     const val SURAH_STATE = "state"
@@ -104,6 +104,10 @@ object Constants {
 
     //SharedPReferences
     const val FILENAME =  "filename"
+
+    const val notificationId = 77
+    const val ACTION_RETRY = "ACTION_RETRY"
+    const val APP_STATE_KEY = "APP_STATE"
 
 
 }
