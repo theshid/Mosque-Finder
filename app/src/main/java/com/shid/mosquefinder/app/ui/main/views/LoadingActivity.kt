@@ -14,7 +14,6 @@ import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
-import com.shid.mosquefinder.data.local.database.QuranDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,6 +28,8 @@ class LoadingActivity : AppCompatActivity() {
 
     @Inject
     lateinit var sharedPref: SharePref
+
+    private lateinit var intentFilter: IntentFilter
 
     private var user: com.shid.mosquefinder.data.model.User? = null
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -46,8 +47,8 @@ class LoadingActivity : AppCompatActivity() {
             sharedPref.loadUser(),
             com.shid.mosquefinder.data.model.User::class.java
         )
-        val filter = IntentFilter(FILTER)
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+        intentFilter = IntentFilter(FILTER)
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
         setContentView(R.layout.activity_loading)
         setViewModel()
     }
@@ -59,7 +60,7 @@ class LoadingActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        //registerReceiver(receiver, filter)
+        registerReceiver(receiver, intentFilter)
     }
 
     override fun onDestroy() {
@@ -72,5 +73,6 @@ class LoadingActivity : AppCompatActivity() {
         startActivity<HomeActivity> {
             putExtra(Common.USER, user)
         }
+        finish()
     }
 }

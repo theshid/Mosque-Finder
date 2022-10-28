@@ -190,8 +190,8 @@ class HomeActivity : BaseActivity() {
             userPosition = LatLng(location.latitude, location.longitude)
             userPosition?.let {
                 calculatePrayerTime(it)
-                sharedPref.saveUserPosition(LatLng(it.latitude, it.longitude))
             }
+            sharedPref.saveUserPosition(LatLng(location.latitude, location.longitude))
         }
     }
 

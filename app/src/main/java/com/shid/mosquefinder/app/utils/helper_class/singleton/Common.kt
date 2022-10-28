@@ -30,6 +30,12 @@ object Common {
     const val MAGHRIB_STATE = "Maghrib_STATE"
     const val ISHA_STATE = "Isha_STATE"
 
+    const val FAJR_ID = "Fajr_ID"
+    const val DHUR_ID = "Dhur_ID"
+    const val ASR_ID = "Asr_ID"
+    const val MAGHRIB_ID = "Maghrib_ID"
+    const val ISHA_ID = "Isha_ID"
+
     const val FAJR_INDEX = 0
     const val DHUR_INDEX = 1
     const val ASR_INDEX = 2

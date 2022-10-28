@@ -7,14 +7,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 
-const val defaultLat = 33.97159194946289F
-const val defaultLng = -6.849812984466553F
+const val defaultLat = 33.971592F
+const val defaultLng = -6.849813F
 
 
 class SharePref(context: Context) {
     private val mySharePref: SharedPreferences =
         context.getSharedPreferences("filename", Context.MODE_PRIVATE)
-    val mContext = context
+    private val mContext = context
     var editor: SharedPreferences.Editor = mySharePref.edit()
 
 
@@ -128,13 +128,49 @@ class SharePref(context: Context) {
         editor.apply()
     }
 
-    fun saveTestId(id:Int){
-        editor.putInt("test", id)
+    fun saveFajrId(id:Int){
+        editor.putInt(Common.FAJR_ID, id)
         editor.apply()
     }
 
-    fun loadTestId():Int{
-        return mySharePref.getInt("test",0)
+    fun saveDhurId(id:Int){
+        editor.putInt(Common.DHUR_ID, id)
+        editor.apply()
+    }
+
+    fun saveAsrId(id:Int){
+        editor.putInt(Common.ASR_ID, id)
+        editor.apply()
+    }
+
+    fun saveMaghribId(id:Int){
+        editor.putInt(Common.MAGHRIB_ID, id)
+        editor.apply()
+    }
+
+    fun saveIshaId(id:Int){
+        editor.putInt(Common.ISHA_ID, id)
+        editor.apply()
+    }
+
+    fun loadFajrId():Int{
+        return mySharePref.getInt(Common.FAJR_ID,0)
+    }
+
+    fun loadDhurId():Int{
+        return mySharePref.getInt(Common.DHUR_ID,0)
+    }
+
+    fun loadAsrId():Int{
+        return mySharePref.getInt(Common.ASR_ID,0)
+    }
+
+    fun loadMaghribId():Int{
+        return mySharePref.getInt(Common.MAGHRIB_ID,0)
+    }
+
+    fun loadIshaId():Int{
+        return mySharePref.getInt(Common.ISHA_ID,0)
     }
 
     fun loadIsAllPrayersNotificationActivated(): Boolean {

@@ -267,6 +267,13 @@
 
     //Notification
     <string name="channel_id" translatable="false">"notify-ayah"</string>
+    <string name="notification_title_">Prayer Reminder</string>
+    <string name="notification_msg1">Now it\'s time for&#160;</string>
+    <string name="notification_msg2">pray at&#160;</string>
+    <string name="prayer_toast">Reminder for&#160;</string>
+    <string name="prayer_toast1">&#160;at&#160;</string>
+    <string name="prayer_toast2">&#160;is set </string>
+    <string name="prayer_toast3">&#160;is unset </string>
 
 
 </resources>

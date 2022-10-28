@@ -1,7 +1,6 @@
 package com.shid.mosquefinder.app.ui.main.views
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.content.*
 import android.location.Address
 import android.location.Geocoder
@@ -9,6 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.azan.Azan
 import com.azan.Method
@@ -18,6 +18,7 @@ import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
+import com.shid.mosquefinder.app.ui.main.view_models.PrayerViewModel
 import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
@@ -27,7 +28,6 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
-import de.coldtea.smplr.smplralarm.*
 import kotlinx.android.synthetic.main.activity_prayer.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -63,13 +63,14 @@ class PrayerActivity : BaseActivity() {
     lateinit var sharedPreferences: SharedPreferences
 
     @Inject
-    @ApplicationContext lateinit var aContext:Context
+    @ApplicationContext
+    lateinit var aContext: Context
+
+    private val viewModel: PrayerViewModel by viewModels()
 
     private var _broadcastReceiver: BroadcastReceiver? = null
     private val _sdfWatchTime = SimpleDateFormat("HH:mm")
 
-
-    private val prayerAlarm = PrayerAlarmBroadcastReceiver()
 
     @Inject
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -81,6 +82,7 @@ class PrayerActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prayer)
         isFirstTime = sharedPref.loadFirstTimePrayerNotification()
+        userPosition = sharedPref.loadSavedPosition()
         permissionCheck(fusedLocationWrapper)
         initLiveDataPreferences()
         setUI()
@@ -118,7 +120,7 @@ class PrayerActivity : BaseActivity() {
         }
     }
 
-    private fun setEnableAllTextButton(){
+    private fun setEnableAllTextButton() {
         if (fajrC == true && dhurC == true && asrC == true &&
             maghribC == true && ishaC == true
         ) {
@@ -126,6 +128,7 @@ class PrayerActivity : BaseActivity() {
             sharedPref.setAllPrayerNotifications(true)
         } else {
             btn_activate_notification.text = getString(R.string.activate_all_notification)
+            sharedPref.setAllPrayerNotifications(false)
         }
     }
 
@@ -176,9 +179,6 @@ class PrayerActivity : BaseActivity() {
             activateShowcase()
             sharedPref.setFirstTimePrayerNotification(false)
         }
-        if (userPosition == null) {
-            userPosition = sharedPref.loadSavedPosition()
-        }
 
         val fajrIsReminderSet = sharedPref.loadFajrState()
         val dhurIsReminderSet = sharedPref.loadDhurState()
@@ -196,7 +196,7 @@ class PrayerActivity : BaseActivity() {
         timeZone = getTimeZone()
         Timber.d("timeZone:${timeZone.toString()}")
         calculatePrayerTime(userPosition!!)
-        findCity(userPosition!!.latitude, userPosition!!.longitude)
+        //findCity(userPosition!!.latitude, userPosition!!.longitude)
         setDate()
     }
 
@@ -222,16 +222,15 @@ class PrayerActivity : BaseActivity() {
         btn_activate_notification.setOnClickListener {
             val allNotificationState = sharedPref.loadIsAllPrayersNotificationActivated()
 
-            setPrayerNotification(allNotificationState, fajr, Common.FAJR, Common.FAJR_INDEX)
-            setPrayerNotification(allNotificationState, dhur, Common.DHUR, Common.DHUR_INDEX)
-            setPrayerNotification(allNotificationState, asr, Common.ASR, Common.ASR_INDEX)
+            setPrayerNotification(allNotificationState, fajr, Common.FAJR)
+            setPrayerNotification(allNotificationState, dhur, Common.DHUR)
+            setPrayerNotification(allNotificationState, asr, Common.ASR)
             setPrayerNotification(
                 allNotificationState,
                 maghrib,
-                Common.MAGHRIB,
-                Common.MAGHRIB_INDEX
+                Common.MAGHRIB
             )
-            setPrayerNotification(allNotificationState, isha, Common.ISHA, Common.ISHA_INDEX)
+            setPrayerNotification(allNotificationState, isha, Common.ISHA)
 
             ivSoundFajr.setImageResource(setReminderStateImage(allNotificationState))
             ivSoundDhur.setImageResource(setReminderStateImage(allNotificationState))
@@ -239,109 +238,127 @@ class PrayerActivity : BaseActivity() {
             ivSoundMaghrib.setImageResource(setReminderStateImage(allNotificationState))
             ivSoundIsha.setImageResource(setReminderStateImage(allNotificationState))
 
-            /*if (allNotificationState) {
+            if (allNotificationState) {
                 btn_activate_notification.text = getString(R.string.activate_all_notification)
             } else {
                 btn_activate_notification.text = getString(R.string.disactivate_all_notification)
-            }*/
+            }
 
         }
 
         btnSoundFajr.setOnClickListener {
             val isReminderSet = sharedPref.loadFajrState()
             ivSoundFajr.setImageResource(setReminderStateImage(isReminderSet))
-            setPrayerNotification(isReminderSet, fajr, Common.FAJR, Common.FAJR_INDEX)
+            setPrayerNotification(isReminderSet, fajr, Common.FAJR)
         }
 
         btnSoundDhur.setOnClickListener {
             val isReminderSet = sharedPref.loadDhurState()
             ivSoundDhur.setImageResource(setReminderStateImage(isReminderSet))
-            setPrayerNotification(isReminderSet, dhur, Common.DHUR, Common.DHUR_INDEX)
+            setPrayerNotification(isReminderSet, dhur, Common.DHUR)
         }
 
         btnSoundAsr.setOnClickListener {
             val isReminderSet = sharedPref.loadAsrState()
             ivSoundAsr.setImageResource(setReminderStateImage(isReminderSet))
-            setPrayerNotification(isReminderSet, asr, Common.ASR, Common.ASR_INDEX)
+            setPrayerNotification(isReminderSet, asr, Common.ASR)
         }
 
         btnSoundMaghrib.setOnClickListener {
             val isReminderSet = sharedPref.loadMaghribState()
             ivSoundMaghrib.setImageResource(setReminderStateImage(isReminderSet))
-            setPrayerNotification(isReminderSet, maghrib, Common.MAGHRIB, Common.MAGHRIB_INDEX)
+            setPrayerNotification(isReminderSet, maghrib, Common.MAGHRIB)
         }
 
         btnSoundIsha.setOnClickListener {
             val isReminderSet = sharedPref.loadIshaState()
             ivSoundIsha.setImageResource(setReminderStateImage(isReminderSet))
-            setPrayerNotification(isReminderSet, isha, Common.ISHA, Common.ISHA_INDEX)
+            setPrayerNotification(isReminderSet, isha, Common.ISHA)
         }
     }
 
     private fun setPrayerNotification(
         reminderState: Boolean,
         prayerTime: String,
-        prayerName: String,
-        prayerIndex: Int
+        prayerName: String
     ) {
         setPrayerState(reminderState, prayerName)
         if (!reminderState) {
-            prayerTime.let { time ->
-                prayerAlarm.setPrayerAlarm(this, time, prayerName, true, prayerIndex)
+
+            when (prayerName) {
+                Common.FAJR -> sharedPref.saveFajrId(
+                    viewModel.setPrayerAlarm(
+                        aContext,
+                        prayerTime,
+                        prayerName,
+                        true
+                    )
+                )
+                Common.DHUR -> sharedPref.saveDhurId(
+                    viewModel.setPrayerAlarm(
+                        aContext,
+                        prayerTime,
+                        prayerName,
+                        true
+                    )
+                )
+                Common.ASR -> sharedPref.saveAsrId(
+                    viewModel.setPrayerAlarm(
+                        aContext,
+                        prayerTime,
+                        prayerName,
+                        true
+                    )
+                )
+                Common.MAGHRIB -> sharedPref.saveMaghribId(
+                    viewModel.setPrayerAlarm(
+                        aContext,
+                        prayerTime,
+                        prayerName,
+                        true
+                    )
+                )
+                Common.ISHA -> sharedPref.saveIshaId(
+                    viewModel.setPrayerAlarm(
+                        aContext,
+                        prayerTime,
+                        prayerName,
+                        true
+                    )
+                )
             }
-            sharedPref.saveTestId(testAlarm())
 
         } else {
-            prayerAlarm.cancelAlarm(this, prayerIndex)
-           updateAlarm()
+            cancelPrayerNotification(prayerName)
         }
     }
 
-    private fun updateAlarm(){
-        smplrAlarmCancel(applicationContext) {
-            requestCode { sharedPref.loadTestId() }
-        }
-    }
-
-    private fun testAlarm():Int{
-        val alarmReceivedIntent = Intent(
-            applicationContext,
-            PrayerAlarmBroadcastReceiver::class.java
-        )
-        return smplrAlarmSet(aContext){
-            hour { 22 }
-            min { 30 }
-            weekdays {
-                monday()
-                tuesday()
-                wednesday()
-                thursday()
-                friday()
-                saturday()
-                sunday()
+    private fun cancelPrayerNotification(prayerName: String) {
+        val requestId: Int
+        when (prayerName) {
+            Common.FAJR -> {
+                requestId = sharedPref.loadFajrId()
+                viewModel.cancelPrayerNotification(requestId, aContext, prayerName)
             }
-            alarmReceivedIntent { alarmReceivedIntent }
-            notification {
-                alarmNotification {
-                    smallIcon { R.drawable.logo2 }
-                    title { "Simple alarm is ringing" }
-                    message { "Simple alarm is ringing" }
-                    bigText { "Simple alarm is ringing" }
-                    autoCancel { true }
-
-                }
+            Common.DHUR -> {
+                requestId = sharedPref.loadDhurId()
+                viewModel.cancelPrayerNotification(requestId, aContext, prayerName)
             }
-            notificationChannel {
-                channel {
-                    importance { NotificationManager.IMPORTANCE_HIGH }
-                    showBadge { false }
-                    name { "de.coldtea.smplr.alarm.channel" }
-                    description { "This notification channel is created by SmplrAlarm" }
-
-                }
+            Common.ASR -> {
+                requestId = sharedPref.loadAsrId()
+                viewModel.cancelPrayerNotification(requestId, aContext, prayerName)
+            }
+            Common.MAGHRIB -> {
+                requestId = sharedPref.loadMaghribId()
+                viewModel.cancelPrayerNotification(requestId, aContext, prayerName)
+            }
+            Common.ISHA -> {
+                requestId = sharedPref.loadIshaId()
+                viewModel.cancelPrayerNotification(requestId, aContext, prayerName)
             }
         }
     }
+
 
     private fun setPrayerState(reminderState: Boolean, prayerName: String) {
         if (!reminderState) {
@@ -375,9 +392,12 @@ class PrayerActivity : BaseActivity() {
         val geocoder = Geocoder(this, Locale.getDefault())
         var addresses: List<Address>? = null
         try {
+            Timber.d("latitude:$MyLat")
+            Timber.d("latitude:$MyLong")
             addresses = geocoder.getFromLocation(MyLat, MyLong, 1)
         } catch (ex: IOException) {
             ex.printStackTrace()
+            Timber.e("exception:${ex.message}")
         }
         val cityName = addresses!![0].locality
         val country = addresses[0].countryName

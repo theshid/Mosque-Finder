@@ -238,4 +238,14 @@
     <string name="blog">Blog</string>
     <string name="blog_description">Apprenez à mieux connaitre votre religion</string>
 
+    //Notification
+    <string name="notification_title_">Rappel des prières</string>
+    <string name="notification_msg1">Il est l\'heure de  </string>
+    <string name="notification_msg2">prier à </string>
+
+    <string name="prayer_toast">Rappel pour </string>
+    <string name="prayer_toast1">à </string>
+    <string name="prayer_toast2">est fixé </string>
+    <string name="prayer_toast3">n\'est pas activé </string>
+
 </resources>
