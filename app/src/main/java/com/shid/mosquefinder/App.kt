@@ -22,10 +22,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class App : Application() {
+class App : Application(),Configuration.Provider {
 
     @Inject
     lateinit var sharedPref: SharePref
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
     private val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
 
@@ -47,10 +49,16 @@ class App : Application() {
         registerConnectivityBroadcaster()
     }
 
-   /* override fun getWorkManagerConfiguration(): Configuration {
+    override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder().setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
             .build()
-    }*/
+    }
+
+    /* override fun getWorkManagerConfiguration(): Configuration {
+         return Configuration.Builder().setWorkerFactory(workerFactory)
+             .setMinimumLoggingLevel(android.util.Log.DEBUG)
+             .build()
+     }*/
 
 }

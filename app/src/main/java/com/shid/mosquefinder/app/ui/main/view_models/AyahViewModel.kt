@@ -165,7 +165,7 @@ class AyahViewModel @Inject constructor(
     }
 
     private suspend fun loadSurahInFrench(surahId: Int) {
-        getSurahInFrenchUseCase(surahId).collect { ayahInFrench ->
+        getSurahInFrenchUseCase(surahId.toLong()).collect { ayahInFrench ->
             Timber.d("french list:$ayahInFrench")
             onFrenchSurahLoadingComplete(ayahInFrench.map { it.toPresentation() })
         }
