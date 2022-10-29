@@ -9,7 +9,6 @@ import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.hour
 import com.shid.mosquefinder.app.utils.minutes
-import dagger.hilt.android.lifecycle.HiltViewModel
 import de.coldtea.smplr.smplralarm.alarmNotification
 import de.coldtea.smplr.smplralarm.channel
 import de.coldtea.smplr.smplralarm.smplrAlarmCancel
@@ -61,7 +60,14 @@ class PrayerViewModel : ViewModel() {
                             append(prayerType)
                         }
                     }
-                    bigText { "Mosque Finder" }
+                    bigText {
+                        buildString {
+                            append(context.getString(R.string.notification_msg1))
+                            append(prayer)
+                            append(context.getString(R.string.notification_msg2))
+                            append(prayerType)
+                        }
+                    }
                     autoCancel { true }
 
                 }

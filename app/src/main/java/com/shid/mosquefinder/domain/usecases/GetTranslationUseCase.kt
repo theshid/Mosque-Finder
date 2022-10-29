@@ -11,7 +11,7 @@ class GetTranslationUseCase(private val azkharRepository: AzkharRepository) :
 
     GetTranslationBaseUseCase {
     override suspend fun invoke(params: String): Flow<DeepL> {
-        return azkharRepository.setTranslation(input = params).toPresentation()
+        return azkharRepository.setTranslation(input = params)//.toPresentation()
     }
 
 }

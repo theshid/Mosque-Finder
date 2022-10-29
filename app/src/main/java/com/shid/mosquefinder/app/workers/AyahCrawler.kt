@@ -54,13 +54,10 @@ class AyahCrawler @AssistedInject constructor(
                 val stripResponse = surahService.getFrenchSurah(nextId)
                 if (stripResponse.isSuccessful && stripResponse.body() != null) {
                     val strip = stripResponse.requireBody()
-                    val surahNum = strip.data.surahNumber
-                    //val surahName = strip.data.title
                     val ayahs = strip.data.verseResponse
                     if (ayahs.isNotEmpty()) {
                         for (ayah in ayahs) {
-                            updateAyahUseCase(Pair(ayah.trans, surahNum.toLong()))
-                            //localDb.addAyah(AyahDb(surahName, surahNum, ayah.num, ayah.trans))
+                            updateAyahUseCase(Pair(ayah.trans, ayah.verseNumber.toLong()))
 
                             Timber.d("insert in DB: ")
                         }

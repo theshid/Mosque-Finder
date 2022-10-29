@@ -10,27 +10,25 @@ import com.shid.mosquefinder.app.ui.main.adapters.AzkharAdapter
 import com.shid.mosquefinder.app.ui.main.states.AzkharViewState
 import com.shid.mosquefinder.app.ui.main.view_models.AzkharViewModel
 import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.data.model.AzkarII
 import dagger.hilt.android.AndroidEntryPoint
 import dev.kosrat.muslimdata.models.Language
 import dev.kosrat.muslimdata.repository.MuslimRepository
 import kotlinx.android.synthetic.main.activity_item.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class AzkharActivity : AppCompatActivity() {
     private lateinit var adapter: AzkharAdapter
     private var chapterId: Int? = null
     private val viewModel by viewModels<AzkharViewModel>()
-
-    companion object {
-        var translation: MutableLiveData<String>? = null
-    }
+    private var list: ArrayList<AzkarII> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item)
-        //setViewModel()
-        translation?.value = ""
+
         chapterId = intent.getIntExtra("chapter", 1)
         adapter = AzkharAdapter() { azkarItem ->
             viewModel.getTranslation(azkarItem.translation)
@@ -38,20 +36,38 @@ class AzkharActivity : AppCompatActivity() {
         setUI()
         observeAzkharViewState()
         setOnClick()
+    }
 
+    override fun onPause() {
+        super.onPause()
+        AzkharAdapter.itemToSend = null
     }
 
     private fun observeAzkharViewState() {
-        viewModel.azkharViewState.observe(this) {
-            translation?.value = it.translation?.translation?.get(0)?.textTranslation
-            handleListError(it)
+        viewModel.azkharViewState.observe(this) { viewState ->
+            if (AzkharAdapter.itemToSend != null){
+                val element = list.first { AzkharAdapter.itemToSend!!.itemId == it.itemId }
+                Timber.d("ele:$element")
+                val translationFr = viewState.translation?.translation?.get(0)?.textTranslation
+                Timber.d("trans:$translationFr")
+                val index = list.indexOf(element)
+                Timber.d("index:$index")
+                if (translationFr != null) {
+                    list[index] = AzkarII(
+                        AzkharAdapter.itemToSend!!.itemId,
+                        AzkharAdapter.itemToSend!!.chapterId,
+                        AzkharAdapter.itemToSend!!.item,
+                        translationFr,
+                        AzkharAdapter.itemToSend!!.reference
+                    )
+                    Timber.d("new ele:${list[index]}")
+
+                }
+                adapter.notifyDataSetChanged()
+            }
+            handleListError(viewState)
         }
     }
-
-    /*private fun setViewModel() {
-        viewModel = ViewModelProvider(this,AzkharViewModelFactory(application))
-            .get(AzkharViewModel::class.java)
-    }*/
 
     private fun handleListError(communityInfoListViewState: AzkharViewState) {
         communityInfoListViewState.error?.run {
@@ -79,11 +95,19 @@ class AzkharActivity : AppCompatActivity() {
             val repository = MuslimRepository(this@AzkharActivity)
             val azkarItems = repository.getAzkarItems(chapterNum, Language.EN)
             if (azkarItems != null) {
-                adapter.submitList(azkarItems)
-                // adapter.setData(azkarItems)
+                for (item in azkarItems) {
+                    list.add(
+                        AzkarII(
+                            item.itemId,
+                            item.chapterId,
+                            item.item,
+                            item.translation,
+                            item.reference
+                        )
+                    )
+                }
+                adapter.submitList(list)
             }
-            /*Log.i("azkarItems", "$azkarItems")
-            Log.i("azkarItems", "${azkarItems?.size}")*/
         }
     }
 }

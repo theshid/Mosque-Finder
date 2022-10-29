@@ -1,8 +1,8 @@
 package com.shid.mosquefinder.data.model.pojo
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class DeepLResponse(
-    @field:Json(name = "translations")
+    @SerializedName("translations")
     val translationResponse: List<TranslationResponse>
 )

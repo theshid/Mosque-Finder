@@ -10,6 +10,7 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,7 +57,9 @@ internal class AzkharViewModel @Inject constructor(private val getTranslationUse
 
     private suspend fun loadTranslation(input: String) {
         getTranslationUseCase(input).collect { deepL ->
+            Timber.d("depp:${deepL.translation}")
             val deeplPresentation = deepL.toPresentation()
+            Timber.d("depp:${deeplPresentation.translation}")
             _azkharViewState.value = _azkharViewState.value?.copy(translation = deeplPresentation)
 
         }
@@ -70,6 +73,7 @@ internal class AzkharViewModel @Inject constructor(private val getTranslationUse
 
     override val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         val message = ExceptionHandler.parse(exception)
+        Timber.e("exception:${exception.message}")
         _azkharViewState.value = _azkharViewState.value?.copy(error = Error(message))
     }
 }

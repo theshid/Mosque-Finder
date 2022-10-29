@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface DeeplApiInterface {
 
     @POST("v2/translate")
-    fun getTranslation(
+    suspend fun getTranslation(
         @Query("auth_key") key:String,
         @Query("text") inputText:String,
         @Query("target_lang") targetLg:String

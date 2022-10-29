@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class VerseResponse(
     @SerializedName("number")
-    val num: Int,
+    val verseNumber: Int,
     @SerializedName("text")
     val trans: String,
     @SerializedName("numberInSurah")

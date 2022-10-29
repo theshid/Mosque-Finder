@@ -1,10 +1,10 @@
 package com.shid.mosquefinder.data.model.pojo
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class TranslationResponse(
-    @field:Json(name = "detected_source_language")
+    @SerializedName("detected_source_language")
     val srcLg: String,
-    @field:Json(name = "text")
+    @SerializedName("text")
     val textTranslation: String
 )

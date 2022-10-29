@@ -11,4 +11,4 @@ internal fun DeepLResponse.toDomain():DeepL = DeepL(this.translationResponse.map
 
 internal fun TranslationResponse.toDomain():Translation = Translation(this.srcLg,this.textTranslation)
 
-internal fun VerseResponse.toDomain():Verse = Verse(this.num,this.trans,this.numInSurah)
+internal fun VerseResponse.toDomain():Verse = Verse(this.verseNumber,this.trans,this.numInSurah)

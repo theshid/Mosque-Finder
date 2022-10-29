@@ -1,15 +1,16 @@
 package com.shid.mosquefinder.app.ui.main.view_models
 
+import android.content.res.Resources
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.mappers.toPresentation
 import com.shid.mosquefinder.app.ui.main.states.Error
 import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
-import com.shid.mosquefinder.app.utils.doAsync
 import com.shid.mosquefinder.app.utils.enums.Prayers
 import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.singleton.ExceptionHandler
@@ -26,7 +27,10 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCase: GetAllSurahsUseCase) :
+internal class SurahViewModel @Inject constructor(
+    private val getAllSurahsUseCase: GetAllSurahsUseCase,
+    val resources: Resources
+) :
     BaseViewModel() {
 
     private var getAllSurahsJob: Job? = null
@@ -96,7 +100,7 @@ internal class SurahViewModel @Inject constructor(private val getAllSurahsUseCas
                 val hours = minutes / 60
                 nextPray.value = "${hours}h ${minutes - (hours * 60)}m ${seconds - (minutes * 60)}s"
                 descNextPray.value = buildString {
-                    append(" to ")
+                    append(resources.getString(R.string.to))
                     append(prayerName.prayer)
                 }
             }
