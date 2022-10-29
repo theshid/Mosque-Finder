@@ -1,9 +1,6 @@
 package com.shid.mosquefinder.app.factory
 
 
-
-
-
 import com.shid.mosquefinder.BuildConfig
 import com.shid.mosquefinder.app.utils.extensions.toUri
 import java.time.format.DateTimeFormatter

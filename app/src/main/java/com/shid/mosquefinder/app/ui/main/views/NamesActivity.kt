@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.NameAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.NameViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_names.*
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class NamesActivity : AppCompatActivity() {
+class NamesActivity : BaseActivity() {
     private val viewModel: NameViewModel by viewModels()
     private lateinit var nameAdapter: NameAdapter
 

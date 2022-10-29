@@ -18,7 +18,6 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.GoogleAuthProvider
-import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.AuthViewModel
@@ -33,7 +32,6 @@ import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USER
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.logErrorMessage
 import com.shid.mosquefinder.app.utils.helper_class.singleton.GsonParser
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
-import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.data.model.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_auth.*
@@ -174,7 +172,7 @@ class AuthActivity : BaseActivity() {
         val signInIntent = googleSignInClient.signInIntent
         resultLauncher.launch(signInIntent)
     }
-    
+
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {

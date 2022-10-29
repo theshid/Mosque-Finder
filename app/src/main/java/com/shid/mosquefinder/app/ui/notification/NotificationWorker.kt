@@ -13,10 +13,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.main.factories.DailyAyahInfoFactory
-import com.shid.mosquefinder.data.api.QuranApiInterface
-import com.shid.mosquefinder.data.local.database.QuranDao
-import com.shid.mosquefinder.data.repository.AyahRepositoryImpl
 import com.shid.mosquefinder.domain.model.Ayah
 import com.shid.mosquefinder.domain.usecases.GetRandomAyahUseCase
 import dagger.assisted.Assisted

@@ -3,15 +3,12 @@ package com.shid.mosquefinder.app.ui.main.views
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueViewPagerAdapter
-import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.app.utils.network.Event
-import com.shid.mosquefinder.app.utils.network.NetworkEvents
+import com.shid.mosquefinder.app.utils.extensions.parcelable
+import com.shid.mosquefinder.app.utils.helper_class.Constants.FRENCH_VERSION
 import com.shid.mosquefinder.app.utils.onTransformationEndContainerApplyParams
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.skydoves.transformationlayout.TransformationCompat
@@ -29,16 +26,15 @@ class DetailActivity : BaseActivity() {
         onTransformationEndContainerApplyParams()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-
         setOnClick()
-        val mosqueItem: BeautifulMosques = requireNotNull(intent.getParcelableExtra(EXTRA_MOSQUE))
+        val mosqueItem: BeautifulMosques = requireNotNull(intent.parcelable(EXTRA_MOSQUE))
         setUi(mosqueItem)
         setUpViewPager()
     }
 
     private fun setUi(beautifulMosques: BeautifulMosques) {
         name.text = beautifulMosques.name
-        if (Locale.getDefault().language == "fr") {
+        if (Locale.getDefault().language == FRENCH_VERSION) {
             description.text = beautifulMosques.description_fr
         } else {
             description.text = beautifulMosques.description
@@ -48,7 +44,6 @@ class DetailActivity : BaseActivity() {
         mImgLinkList.add(beautifulMosques.pic)
         mImgLinkList.add(beautifulMosques.pic2)
         mImgLinkList.add(beautifulMosques.pic3)
-
     }
 
     private fun setOnClick() {

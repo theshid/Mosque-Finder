@@ -17,11 +17,11 @@ import com.shid.mosquefinder.app.ui.main.views.AyahActivity
 class NotificationHelper(val context: Context) {
 
 
-    companion object{
-         var CHANNEL_DESCRIPTION = "download"
-         var CHANNEL_ID = "mosque_dl"
-         var CHANNEL_NAME = "download_surah"
-         var NOTIFICATION_ID = 1234
+    companion object {
+        var CHANNEL_DESCRIPTION = "download"
+        var CHANNEL_ID = "mosque_dl"
+        var CHANNEL_NAME = "download_surah"
+        var NOTIFICATION_ID = 1234
     }
 
     private val progressMax = 100
@@ -32,11 +32,11 @@ class NotificationHelper(val context: Context) {
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
-     val notificationBuilder: NotificationCompat.Builder by lazy {
+    val notificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle(context.getString(R.string.app_name))
             .setContentText("Download in progress")
-            .setProgress(progressMax,0,false)
+            .setProgress(progressMax, 0, false)
             .setSound(null)
             .setOngoing(true)
             .setContentIntent(contentIntent)
@@ -46,8 +46,8 @@ class NotificationHelper(val context: Context) {
     }
 
     private val contentIntent by lazy {
-        val intent = Intent(context,AyahActivity::class.java)
-        intent.putExtra("surah_number",surahNumber)
+        val intent = Intent(context, AyahActivity::class.java)
+        intent.putExtra("surah_number", surahNumber)
         PendingIntent.getActivity(
             context,
             0,

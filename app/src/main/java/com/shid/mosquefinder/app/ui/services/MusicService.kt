@@ -174,7 +174,7 @@ class MusicService : MediaBrowserServiceCompat(), Player.Listener {
                             context, 0, intent,
                             PendingIntent.FLAG_MUTABLE
                         )
-                    } else{
+                    } else {
                         PendingIntent.getActivity(
                             context, 0, intent,
                             PendingIntent.FLAG_UPDATE_CURRENT

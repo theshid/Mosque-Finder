@@ -33,6 +33,8 @@ import com.shid.mosquefinder.app.utils.extensions.serializable
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.Constants
+import com.shid.mosquefinder.app.utils.helper_class.Constants.BUNDLE_KEY_TEXT
+import com.shid.mosquefinder.app.utils.helper_class.Constants.HOUR_PATTERN
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
@@ -71,6 +73,7 @@ class HomeActivity : BaseActivity() {
     @Inject
     lateinit var periodicWorkTrigger: PeriodicWorkTrigger
     private val scope = lifecycleScope
+
     private val messageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent) {
@@ -90,7 +93,7 @@ class HomeActivity : BaseActivity() {
         val bundle = intent.extras
         if (bundle != null) {
             Timber.d("bundle coming in:%s", bundle.keySet())
-            if (bundle.getString("text") != null) {
+            if (bundle.getString(BUNDLE_KEY_TEXT) != null) {
                 startActivity<BlogActivity>()
             }
 
@@ -135,7 +138,7 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun setWorkManagerNotification() {
-        Timber.d("state:"+sharedPref.loadSwitchState())
+        Timber.d("state:" + sharedPref.loadSwitchState())
         if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
             periodicWorkTrigger.triggerWork()
         }
@@ -212,7 +215,6 @@ class HomeActivity : BaseActivity() {
             }
             negativeButton(text = getString(R.string.cancel)) { dialog ->
                 dialog.cancel()
-
             }
             icon(R.drawable.logo2)
         }
@@ -238,7 +240,7 @@ class HomeActivity : BaseActivity() {
     }
 
     private fun initializePrayerDate(time: String): Date {
-        val simpleDateFormat = SimpleDateFormat("HH:mm")
+        val simpleDateFormat = SimpleDateFormat(HOUR_PATTERN)
         return simpleDateFormat.parse(time)
     }
 
@@ -263,7 +265,7 @@ class HomeActivity : BaseActivity() {
         sharedPref.saveIsha(isha)
 
         val calendar = Calendar.getInstance()
-        val simpleDateFormat = SimpleDateFormat("HH:mm")
+        val simpleDateFormat = SimpleDateFormat(HOUR_PATTERN)
         val nowTime = simpleDateFormat.parse(simpleDateFormat.format(calendar.time))
         if (nowTime.after(fajrDate) && nowTime.before(dhurDate)) {
             setPrayerUI(Prayers.DHUR, prayerTimes.thuhr().toString().dropLast(3))

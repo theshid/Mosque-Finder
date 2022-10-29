@@ -2,11 +2,11 @@ package com.shid.mosquefinder.app.ui.base
 
 import android.os.Bundle
 import android.os.PersistableBundle
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.irozon.sneaker.Sneaker
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.helper_class.Constants.BUNDLE_KEY_CONNECTION
 import com.shid.mosquefinder.app.utils.helper_class.singleton.NetworkUtil
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
 import com.shid.mosquefinder.app.utils.network.Event
@@ -20,7 +20,7 @@ open class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
         savedInstanceState?.let {
-            previousSate = it.getBoolean("LOST_CONNECTION")
+            previousSate = it.getBoolean(BUNDLE_KEY_CONNECTION)
         }
         setNetworkMonitor()
     }

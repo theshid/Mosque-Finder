@@ -29,7 +29,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CompassActivity : BaseActivity() {
     companion object {
-
         const val LOCATION_PERMISSION_REQUEST_CODE = 999
         var userPosition: LatLng = LatLng(0.0, 0.0)
     }
@@ -61,7 +60,6 @@ class CompassActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-
         checkIfPermissionIsActive()
         setupCompass()
     }

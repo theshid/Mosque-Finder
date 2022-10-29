@@ -8,10 +8,8 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
-import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.lifecycle.LiveData
@@ -58,8 +56,6 @@ class MusicActivity : BaseActivity() {
     private var surahName: String? = null
     private var surahNumber: Int? = null
 
-    private val mp4Url =
-        "https://media.blubrry.com/muslim_central_quran/podcasts.qurancentral.com/mishary-rashid-alafasy/mishary-rashid-alafasy-001-muslimcentral.com.mp3"
     var _time = MutableLiveData<Long>()
     val time: LiveData<Long>
         get() = _time
@@ -97,7 +93,6 @@ class MusicActivity : BaseActivity() {
                 txtProgress.text = formatTimeInMillisToString(currentPosition)
 
             } else if (event == EVENT_PLAYER_FINISH) {
-
                 playPauseButton.setImageResource(R.drawable.ic_play_vector)
                 val intent = Intent(this@MusicActivity, MusicService::class.java)
                 stopService(intent)
@@ -143,7 +138,10 @@ class MusicActivity : BaseActivity() {
                 if (checkIfFileExist()) {
                     val filePath = this.getExternalFilesDir(null)
                         .toString() + "/surahs/$surahNumber-$surahName.mp3"
-                    mediaController!!.transportControls.playFromUri(Uri.fromFile(File(filePath)), null)
+                    mediaController!!.transportControls.playFromUri(
+                        Uri.fromFile(File(filePath)),
+                        null
+                    )
                     showToast(getString(R.string.read_file))
                 } else {
                     mediaController!!.transportControls.playFromUri(Uri.parse(surahUrl), null)

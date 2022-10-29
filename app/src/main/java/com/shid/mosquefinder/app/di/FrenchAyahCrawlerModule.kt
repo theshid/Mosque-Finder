@@ -24,11 +24,5 @@ internal object FrenchAyahCrawlerModule {
         return store
     }
 
-    /*@Provides
-    @Singleton
-    internal fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
-        return context.getSystemService(NotificationManager::class.java)
-    }*/
-
 }
 

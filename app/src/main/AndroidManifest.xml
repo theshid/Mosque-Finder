@@ -150,7 +150,7 @@
         </service>
 
         <receiver
-            android:name="com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver"
+            android:name="com.shid.mosquefinder.app.ui.broadcast_receiver.PrayerAlarmBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
 

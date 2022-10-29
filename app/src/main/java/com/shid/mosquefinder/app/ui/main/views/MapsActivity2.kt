@@ -47,8 +47,18 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.MapViewModel
 import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.extensions.parcelable
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.Constants.BUNDLE_KEY_SEARCH
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EMAIL
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_SEARCH
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_USER
+import com.shid.mosquefinder.app.utils.helper_class.Constants.MESSAGE_TYPE
+import com.shid.mosquefinder.app.utils.helper_class.Constants.MOSQUE_DOC_ID
+import com.shid.mosquefinder.app.utils.helper_class.Constants.MOSQUE_NAME
+import com.shid.mosquefinder.app.utils.helper_class.Constants.MOSQUE_POSITION
+import com.shid.mosquefinder.app.utils.helper_class.Constants.MOSQUE_REPORT
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.MyClusterManagerRenderer
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
@@ -143,9 +153,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
 
         MapsInitializer.initialize(applicationContext, MapsInitializer.Renderer.LATEST, this);
         setContentView(R.layout.activity_maps2)
-        savedInstanceState?.let {
-            previousSate = it.getBoolean("LOST_CONNECTION")
-        }
         initialSetUp()
         permissionCheck(fusedLocationWrapper)
         setDrawerLayout()
@@ -174,9 +181,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
     }
 
     private fun initialSetUp() {
-        //fusedLocationWrapper = fusedLocationWrapper()
-        //sharePref = SharePref(this)
-
         searchText.isClickable = false
         searchText.isEnabled = false
         useCount = loadUseCount()
@@ -309,13 +313,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
         userPosition = sharePref.loadSavedPosition()
     }
 
-    /*private fun setNetworkMonitor() {
-        NetworkEvents.observe(this, Observer {
-            if (it is Event.ConnectivityEvent)
-                handleConnectivityChange()
-        })
-    }*/
-
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView)
@@ -396,7 +393,7 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
 
     private fun goToHome() {
         startActivity<HomeActivity> {
-            putExtra("user", user)
+            putExtra(EXTRA_USER, user)
         }
     }
 
@@ -513,8 +510,8 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
         showToast(getString(R.string.email_message))
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.data = Uri.parse("mailto:")
-        emailIntent.type = "message/rfc822"
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("mosquefinder@gmail.com"))
+        emailIntent.type = MESSAGE_TYPE
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(EMAIL))
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello!")
 
@@ -531,13 +528,11 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
                 Status.SUCCESS -> {
                     val rootView = findViewById<View>(android.R.id.content)
                     it.data?.let { it1 -> showSnackbar(rootView, it1) }
-                    //Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
                 }
                 Status.LOADING -> {
 
                 }
                 Status.ERROR -> {
-                    //Handle Error
                     Toast.makeText(this, it.data, Toast.LENGTH_LONG).show()
                     Timber.d(it.message.toString())
                 }
@@ -778,7 +773,7 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
         val bundle = Bundle()
         val list = arrayListOf<ClusterMarker>()
         list.addAll(mClusterMarkers)
-        bundle.putParcelableArrayList("test", list)
+        bundle.putParcelableArrayList(BUNDLE_KEY_SEARCH, list)
         intent.putExtras(bundle)
         startActivityForResult(intent, RQ_SEARCH)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
@@ -803,7 +798,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
         resetMap()
         val rootView = findViewById<View>(android.R.id.content)
         showSnackbar(rootView, getString(R.string.toast_marker), duration = -2)
-        //Toast.makeText(this, getString(R.string.toast_marker), Toast.LENGTH_LONG).show()
         addSingleMarker()
     }
 
@@ -828,7 +822,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
             }
 
             override fun onMarkerDrag(p0: Marker) {
-
                 Timber.d("onMarkerDrag")
             }
         }
@@ -836,7 +829,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
         markerCollection!!.setOnMarkerDragListener(listener)
         markerCollection!!.setOnMarkerClickListener { marker -> //userPosition?.let { mosqueInputDialog(it) }
             Timber.d("onMarkerClickListener:%s", marker.position)
-
             marker.let {
                 mosqueInputDialog(
                     LatLng(
@@ -863,7 +855,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
             message(text = getString(R.string.dialog_prompt_location))
             positiveButton(text = getString(R.string.dialog_save)) { dialog ->
                 val inputField = dialog.getInputField().text.toString()
-
                 dialog.cancel()
                 this@MapsActivity2.button.remove()
                 saveMosqueInputInDatabase(userPositionToAdd, inputField)
@@ -876,7 +867,6 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
                 mosqueeDePlace(userPositionToAdd)
                 userPosition?.let { addMapMarkers(it) }
             }
-
             icon(R.drawable.logo2)
         }
 
@@ -885,30 +875,21 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
     private fun saveMosqueInputInDatabase(userPosition: LatLng, inputField: String) {
         val mosqueLocation = GeoPoint(userPosition.latitude, userPosition.longitude)
         val userMosqueInput: HashMap<String, Comparable<*>> = hashMapOf(
-            "name" to inputField,
-            "position" to mosqueLocation,
-            "documentId" to "0",
-            "report" to 0
+            MOSQUE_NAME to inputField,
+            MOSQUE_POSITION to mosqueLocation,
+            MOSQUE_DOC_ID to "0",
+            MOSQUE_REPORT to 0
 
         )
 
         mapViewModel.inputMosqueInDatabase(userMosqueInput)
     }
 
-
-    /*private fun setupViewModel() {
-        mapViewModel = ViewModelProvider(
-            this,
-            MapViewModelFactory(Common.googleApiService, application)
-        ).get(MapViewModel::class.java)
-
-    }*/
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                clusterMarkerFromIntent = data.getParcelableExtra("search_result")!!
+                clusterMarkerFromIntent = data.parcelable(EXTRA_SEARCH)!!
 
                 val latLngNow = clusterMarkerFromIntent?.position
                 val bottomBoundary: Double = latLngNow!!.latitude - .009
@@ -1001,11 +982,11 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
         try {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0))
         } catch (ise: IllegalStateException) {
-            mMap.setOnMapLoadedCallback(GoogleMap.OnMapLoadedCallback {
+            mMap.setOnMapLoadedCallback {
                 mMap.moveCamera(
                     CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0)
                 )
-            })
+            }
         }
     }
 
@@ -1062,31 +1043,28 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
                     if (mosqueLocation.report >= 2) {
                         newClusterMarker =
                             ClusterMarker(
-
                                 mosqueLocation.position.latitude,
                                 mosqueLocation.position.longitude,
                                 title,
                                 snippet,
-                                "verified",
+                                getString(R.string.mosque_verified),
                                 false,
                                 distanceFromUser
                             )
                     } else if (mosqueLocation.report == 0L || mosqueLocation.report == -1L || mosqueLocation.report == 1L) {
                         newClusterMarker =
                             ClusterMarker(
-
                                 mosqueLocation.position.latitude,
                                 mosqueLocation.position.longitude,
                                 title,
                                 snippet,
-                                "not_verified",
+                                getString(R.string.mosque_not_verified),
                                 false,
                                 distanceFromUser
                             )
                     } else if (mosqueLocation.report <= -2) {
                         newClusterMarker =
                             ClusterMarker(
-
                                 mosqueLocation.position.latitude,
                                 mosqueLocation.position.longitude,
                                 title,
@@ -1116,7 +1094,7 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
                 ClusterMarker(
                     position.latitude,
                     position.longitude,
-                    "You",
+                    getString(R.string.map_user),
                     snippet2,
                     "Me",
                     false,
@@ -1158,7 +1136,7 @@ class MapsActivity2 : BaseActivity(), OnMapReadyCallback, FirebaseAuth.AuthState
 
     private fun showOptionsDialog(marker: Marker) {
         when {
-            marker.title!!.contains("You") -> {
+            marker.title!!.contains(getString(R.string.map_user)) -> {
                 marker.showInfoWindow()
             }
             marker.title!!.contains("Trip") -> {

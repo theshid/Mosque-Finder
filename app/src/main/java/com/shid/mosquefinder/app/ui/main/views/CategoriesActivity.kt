@@ -1,58 +1,57 @@
 package com.shid.mosquefinder.app.ui.main.views
 
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_CATEGORY
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_categories.*
 
 @AndroidEntryPoint
-class CategoriesActivity : AppCompatActivity() {
+class CategoriesActivity : BaseActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
-
         setClickListeners()
     }
 
     private fun setClickListeners() {
-        cardMorning.setOnClickListener(View.OnClickListener {
+        cardMorning.setOnClickListener {
             goToChapterActivity(1)
-        })
-        cardHome.setOnClickListener(View.OnClickListener {
+        }
+        cardHome.setOnClickListener {
             goToChapterActivity(2)
-        })
-        cardFood.setOnClickListener(View.OnClickListener {
+        }
+        cardFood.setOnClickListener {
             goToChapterActivity(3)
-        })
-        cardJoy.setOnClickListener(View.OnClickListener {
+        }
+        cardJoy.setOnClickListener {
             goToChapterActivity(4)
-        })
-        cardTravel.setOnClickListener(View.OnClickListener {
+        }
+        cardTravel.setOnClickListener {
             goToChapterActivity(5)
-        })
-        cardPrayer.setOnClickListener(View.OnClickListener {
+        }
+        cardPrayer.setOnClickListener {
             goToChapterActivity(6)
-        })
-        cardPraising.setOnClickListener(View.OnClickListener {
+        }
+        cardPraising.setOnClickListener {
             goToChapterActivity(7)
-        })
-        cardHajj.setOnClickListener(View.OnClickListener {
+        }
+        cardHajj.setOnClickListener {
             goToChapterActivity(8)
-        })
-        cardEtiquette.setOnClickListener(View.OnClickListener {
+        }
+        cardEtiquette.setOnClickListener {
             goToChapterActivity(9)
-        })
-        cardNature.setOnClickListener(View.OnClickListener {
+        }
+        cardNature.setOnClickListener {
             goToChapterActivity(10)
-        })
-        cardSickness.setOnClickListener(View.OnClickListener {
+        }
+        cardSickness.setOnClickListener {
             goToChapterActivity(11)
-        })
+        }
 
         toolbar.setNavigationOnClickListener {
             onBackPressed()
@@ -61,7 +60,7 @@ class CategoriesActivity : AppCompatActivity() {
 
     private fun goToChapterActivity(categoryNum: Int) {
         startActivity<ChapterActivity> {
-            putExtra("category", categoryNum)
+            putExtra(EXTRA_CATEGORY, categoryNum)
         }
     }
 }

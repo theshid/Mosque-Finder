@@ -10,7 +10,7 @@ class DbReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
-        if (intent.action.equals(LoadingActivity.FILTER)){
+        if (intent.action.equals(LoadingActivity.FILTER)) {
             Timber.d("BR Test")
         }
 

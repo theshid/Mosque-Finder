@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
+import com.shid.mosquefinder.app.ui.broadcast_receiver.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.hour
 import com.shid.mosquefinder.app.utils.minutes

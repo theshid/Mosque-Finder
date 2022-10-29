@@ -15,7 +15,10 @@ class MosqueViewPagerAdapter(var list: MutableList<String>, var context: Context
     private lateinit var layoutInflater: LayoutInflater
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MosqueViewPagerAdapter.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MosqueViewPagerAdapter.ViewHolder {
         layoutInflater = LayoutInflater.from(context)
         val view: View = layoutInflater.inflate(R.layout.mosque_item, parent, false)
 

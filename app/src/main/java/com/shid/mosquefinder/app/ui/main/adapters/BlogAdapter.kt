@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.shid.mosquefinder.data.model.Article
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.views.ArticleDetailActivity
 import com.shid.mosquefinder.app.utils.helper_class.Constants
+import com.shid.mosquefinder.data.model.Article
 import kotlinx.android.synthetic.main.item_post.view.*
 import java.util.*
 
@@ -44,11 +44,11 @@ class BlogAdapter :
         fun bind(article: Article) {
             itemView.apply {
                 if (Locale.getDefault().language.contentEquals(Constants.FRENCH_VERSION)) {
-                    post_title.text = "Titre:"+article.title_fr
-                    post_author.text = "Auteur:"+article.author
-                }else{
-                    post_title.text = "Title:"+article.title
-                    post_author.text = "Author:"+article.author
+                    post_title.text = "Titre:" + article.title_fr
+                    post_author.text = "Auteur:" + article.author
+                } else {
+                    post_title.text = "Title:" + article.title
+                    post_author.text = "Author:" + article.author
                 }
 
                 imageView.load(article.pic)

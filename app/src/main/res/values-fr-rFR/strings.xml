@@ -30,6 +30,9 @@
     <string name="sneaker_msg_network_lost">Pas de connexion 🧐</string>
 
     //Map Activity
+    <string name="map_user">Vous</string>
+    <string name="mosque_verified">vérifiée</string>
+    <string name="mosque_not_verified">non vérifiée</string>
     <string name="search_hint">Rechercher</string>
     <string name="home_bottom_dialog_title">Mosquée les plus proches de vous</string>
     <string name="mosque_name">Nom Mosqueé:</string>

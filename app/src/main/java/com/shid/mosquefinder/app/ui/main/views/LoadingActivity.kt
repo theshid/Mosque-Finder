@@ -59,7 +59,6 @@ class LoadingActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
         registerReceiver(receiver, intentFilter)
     }
 
@@ -67,7 +66,6 @@ class LoadingActivity : AppCompatActivity() {
         super.onDestroy()
         unregisterReceiver(receiver)
     }
-
 
     fun goToHomeActivity() {
         startActivity<HomeActivity> {

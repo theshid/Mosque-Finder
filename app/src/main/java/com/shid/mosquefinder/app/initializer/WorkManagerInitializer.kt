@@ -15,7 +15,7 @@ class WorkManagerInitializer : Initializer<Unit> {
     lateinit var workerFactory: HiltWorkerFactory
 
     override fun create(context: Context) {
-        if (this::workerFactory.isInitialized){
+        if (this::workerFactory.isInitialized) {
             val configuration = Configuration.Builder().apply {
                 setWorkerFactory(workerFactory)
                 setMinimumLoggingLevel(Log.VERBOSE)

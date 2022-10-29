@@ -28,5 +28,7 @@ internal fun Ayah.toPresentation() = AyahPresentation(
 internal fun Verse.toPresentation() = VersePresentation(num, trans, numInSurah)
 
 internal fun Article.toPresentation() =
-    ArticlePresentation(title = this.title, title_fr = this.title_fr, author = this.author,
-    body = this.body, pic = this.pic, body_fr = this.body_fr, tag = this.tag)
+    ArticlePresentation(
+        title = this.title, title_fr = this.title_fr, author = this.author,
+        body = this.body, pic = this.pic, body_fr = this.body_fr, tag = this.tag
+    )

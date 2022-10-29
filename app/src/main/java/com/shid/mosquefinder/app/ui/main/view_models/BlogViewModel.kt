@@ -10,7 +10,6 @@ import com.shid.mosquefinder.domain.usecases.GetArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel

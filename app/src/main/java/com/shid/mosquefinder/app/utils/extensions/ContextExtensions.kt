@@ -27,10 +27,10 @@ internal inline fun <reified T : Service> Context.startService(block: Intent.() 
     }
 }
 
-internal fun Context.showToast(message: String,duration:Int = Toast.LENGTH_LONG) {
+internal fun Context.showToast(message: String, duration: Int = Toast.LENGTH_LONG) {
     Toast.makeText(this, message, duration).show()
 }
 
-internal fun Context.loadColor(@ColorRes colorRes: Int):Int{
-    return ContextCompat.getColor(this,colorRes)
+internal fun Context.loadColor(@ColorRes colorRes: Int): Int {
+    return ContextCompat.getColor(this, colorRes)
 }

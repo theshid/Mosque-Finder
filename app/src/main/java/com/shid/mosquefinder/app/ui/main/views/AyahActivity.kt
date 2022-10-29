@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import com.afollestad.materialdialogs.MaterialDialog
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
-import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -19,7 +18,6 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.AyahAdapter
 import com.shid.mosquefinder.app.ui.main.states.AyahViewState
-import com.shid.mosquefinder.app.ui.main.states.SurahViewState
 import com.shid.mosquefinder.app.ui.main.view_models.AyahViewModel
 import com.shid.mosquefinder.app.ui.models.AyahPresentation
 import com.shid.mosquefinder.app.ui.models.SurahPresentation

@@ -72,7 +72,7 @@ object RemoteDataSourceModule {
         rootRef: FirebaseFirestore,
         crashlytics: FirebaseCrashlytics
     ): AuthRepository =
-        AuthRepositoryImpl(firebaseAuth, rootRef,crashlytics)
+        AuthRepositoryImpl(firebaseAuth, rootRef, crashlytics)
 
     @Provides
     @Singleton

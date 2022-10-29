@@ -7,19 +7,17 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.data.model.ClusterMarker
 import kotlinx.android.synthetic.main.item_search.view.*
 import java.util.*
-import kotlin.collections.ArrayList
 
-class SearchAdapter constructor(var context: Context, var listener: OnClickSearch) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>(),
-Filterable{
+class SearchAdapter constructor(var context: Context, var listener: OnClickSearch) :
+    RecyclerView.Adapter<SearchAdapter.SearchViewHolder>(),
+    Filterable {
     var list: MutableList<ClusterMarker>? = null
     var mosqueList: MutableList<ClusterMarker>? = null
     var onClickSearch: OnClickSearch? = null
-
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SearchViewHolder(
@@ -40,7 +38,7 @@ Filterable{
         }
     }
 
-    inner class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(clusterMarker: ClusterMarker) {
             itemView.apply {
                 nameText.text = clusterMarker.title
@@ -56,18 +54,20 @@ Filterable{
     }
 
     override fun getFilter(): Filter {
-        return object:Filter(){
+        return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
-                    if (list?.isNotEmpty()!!){
+                    if (list?.isNotEmpty()!!) {
                         mosqueList = list!!
                     }
 
                 } else {
                     val resultList = ArrayList<ClusterMarker>()
                     for (row in list!!) {
-                        if (row.title!!.toLowerCase(Locale.ROOT).contains(charSearch.toLowerCase(Locale.ROOT))) {
+                        if (row.title!!.toLowerCase(Locale.ROOT)
+                                .contains(charSearch.toLowerCase(Locale.ROOT))
+                        ) {
                             resultList.add(row)
                         }
                     }

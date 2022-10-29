@@ -28,6 +28,9 @@
     <string name="sneaker_msg_network_lost">No Network!🧐</string>
 
     //Map Activity
+    <string name="map_user">You</string>
+    <string name="mosque_verified">verified</string>
+    <string name="mosque_not_verified">not verified</string>
     <string name="search_hint">Search</string>
     <string name="home_bottom_dialog_title">Closest Mosque around you</string>
     <string name="mosque_name">Mosque Name:</string>

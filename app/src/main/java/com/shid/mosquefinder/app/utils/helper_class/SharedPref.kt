@@ -5,6 +5,19 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_ACTIVATE
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FILENAME
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FIRST_TIME
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FIRST_TIME_AYAH
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FIRST_TIME_BIS
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FIRST_TIME_PRAYER
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_POSITION_LAT
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_POSITION_LONG
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_REMINDER
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_TOKEN
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_USER
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_RATE
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_USE_COUNT
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 
 const val defaultLat = 33.971592F
@@ -13,50 +26,50 @@ const val defaultLng = -6.849813F
 
 class SharePref(context: Context) {
     private val mySharePref: SharedPreferences =
-        context.getSharedPreferences("filename", Context.MODE_PRIVATE)
+        context.getSharedPreferences(PREF_FILENAME, Context.MODE_PRIVATE)
     private val mContext = context
     var editor: SharedPreferences.Editor = mySharePref.edit()
 
 
     fun saveUserPosition(savedPosition: LatLng) {
-        editor.putFloat("position_lat", savedPosition.latitude.toFloat())
-        editor.putFloat("position_lon", savedPosition.longitude.toFloat())
+        editor.putFloat(PREF_POSITION_LAT, savedPosition.latitude.toFloat())
+        editor.putFloat(PREF_POSITION_LONG, savedPosition.longitude.toFloat())
         editor.apply()
     }
 
     fun saveUseCount(count: Int) {
-        editor.putInt("use_count", count)
+        editor.putInt(PREF_USE_COUNT, count)
         editor.apply()
     }
 
     fun saveIfUserRated(rated: Boolean) {
-        editor.putBoolean("rate", rated)
+        editor.putBoolean(PREF_RATE, rated)
         editor.apply()
     }
 
     fun setIsFirstTime(firstTime: Boolean) {
-        editor.putBoolean("first_time", firstTime)
+        editor.putBoolean(PREF_FIRST_TIME, firstTime)
         editor.apply()
     }
 
     fun setFirstTimeAyah(firstTime: Boolean) {
-        editor.putBoolean("first_time_ayah", firstTime)
+        editor.putBoolean(PREF_FIRST_TIME_AYAH, firstTime)
         editor.apply()
     }
 
     fun setFirstTimePrayerNotification(firstTime: Boolean) {
-        editor.putBoolean("first_time_prayer", firstTime)
+        editor.putBoolean(PREF_FIRST_TIME_PRAYER, firstTime)
         editor.apply()
     }
 
     fun setAllPrayerNotifications(activateAll: Boolean) {
-        editor.putBoolean("activate", activateAll)
+        editor.putBoolean(PREF_ACTIVATE, activateAll)
         editor.apply()
     }
 
 
     fun setFirstTime(firstTime: Boolean) {
-        editor.putBoolean("first_time_bis", firstTime)
+        editor.putBoolean(PREF_FIRST_TIME_BIS, firstTime)
         editor.apply()
     }
 
@@ -66,7 +79,7 @@ class SharePref(context: Context) {
     }
 
     fun saveUser(user: String) {
-        editor.putString("user", user)
+        editor.putString(PREF_USER, user)
         editor.apply()
     }
 
@@ -74,7 +87,7 @@ class SharePref(context: Context) {
         if (TextUtils.isEmpty(token)) {
             return
         }
-        editor.putString("token", token)
+        editor.putString(PREF_TOKEN, token)
         editor.apply()
     }
 
@@ -174,7 +187,7 @@ class SharePref(context: Context) {
     }
 
     fun loadIsAllPrayersNotificationActivated(): Boolean {
-        return mySharePref.getBoolean("activate", false)
+        return mySharePref.getBoolean(PREF_ACTIVATE, false)
     }
 
     fun loadFajrState(): Boolean {
@@ -218,11 +231,11 @@ class SharePref(context: Context) {
     }
 
     fun isReminderSet(): String {
-        return mySharePref.getString("reminder", "").toString()
+        return mySharePref.getString(PREF_REMINDER, "").toString()
     }
 
     fun loadFirebaseToken(): String {
-        return mySharePref.getString("token", "").toString()
+        return mySharePref.getString(PREF_TOKEN, "").toString()
     }
 
     fun loadSwitchState(): Boolean {
@@ -231,48 +244,48 @@ class SharePref(context: Context) {
     }
 
     fun loadUseCount(): Int {
-        return mySharePref.getInt("use_count", 0)
+        return mySharePref.getInt(PREF_USE_COUNT, 0)
     }
 
     fun loadIfUserRated(): Boolean {
-        return mySharePref.getBoolean("rate", false)
+        return mySharePref.getBoolean(PREF_RATE, false)
     }
 
     fun loadSavedPosition(): LatLng {
         return LatLng(
-            mySharePref.getFloat("position_lat", defaultLat).toDouble(),
-            mySharePref.getFloat("position_lon", defaultLng).toDouble()
+            mySharePref.getFloat(PREF_POSITION_LAT, defaultLat).toDouble(),
+            mySharePref.getFloat(PREF_POSITION_LONG, defaultLng).toDouble()
         )
     }
 
     fun loadIsFirstTimePref(): Boolean {
-        return mySharePref.getBoolean("first_time", true)
+        return mySharePref.getBoolean(PREF_FIRST_TIME, true)
     }
 
     fun loadFirstTime(): Boolean {
-        return mySharePref.getBoolean("first_time_bis", true)
+        return mySharePref.getBoolean(PREF_FIRST_TIME_BIS, true)
     }
 
     fun loadFirstTimeAyah(): Boolean {
-        return mySharePref.getBoolean("first_time_ayah", true)
+        return mySharePref.getBoolean(PREF_FIRST_TIME_AYAH, true)
     }
 
     fun loadFirstTimePrayerNotification(): Boolean {
-        return mySharePref.getBoolean("first_time_prayer", true)
+        return mySharePref.getBoolean(PREF_FIRST_TIME_PRAYER, true)
     }
 
     fun loadUser(): String {
-        return mySharePref.getString("user", "")!!
+        return mySharePref.getString(PREF_USER, "")!!
     }
 
     fun isAppInBackground(state: Boolean) {
         editor.apply {
-            putBoolean(Constants.APP_STATE_KEY, state)
+            putBoolean(Constants.PREF_APP_STATE_KEY, state)
             apply()
         }
     }
 
-    fun getIsAppInBackground() = mySharePref.getBoolean(Constants.APP_STATE_KEY, false)
+    fun getIsAppInBackground() = mySharePref.getBoolean(Constants.PREF_APP_STATE_KEY, false)
 
 
 }

@@ -13,6 +13,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.*
 import com.google.firebase.ktx.Firebase
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.utils.helper_class.Constants.MOSQUE_COLLECTION_PATH
 import com.shid.mosquefinder.app.utils.helper_class.Resource
 import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.data.model.Mosque
@@ -31,7 +32,7 @@ class MapRepository @Inject constructor(
     @ApplicationContext val application: Context,
     val database: FirebaseFirestore
 ) {
-    private val firebaseMosqueRef: CollectionReference = database.collection("mosques")
+    private val firebaseMosqueRef: CollectionReference = database.collection(MOSQUE_COLLECTION_PATH)
     private lateinit var mMosqueListEventListener: ListenerRegistration
     private val realDatabase: DatabaseReference = Firebase.database.reference
 
@@ -54,7 +55,7 @@ class MapRepository @Inject constructor(
     init {
         getGoogleMosqueFromFirebase()
         getTotalMosquesFromFirebase()
-        getNigerGoogleMosqueFromFirebase()
+        //getNigerGoogleMosqueFromFirebase()
     }
 
 
@@ -226,9 +227,6 @@ class MapRepository @Inject constructor(
     )
             : MutableLiveData<Place> {
 
-        //mMap.clear()
-
-        //Build url request base on location
         val requestUrl =
             getRequestUrl(userPosition.latitude, userPosition.longitude, keyword, nextToken)
 

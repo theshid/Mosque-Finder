@@ -19,8 +19,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.view_models.PrayerViewModel
-import com.shid.mosquefinder.app.ui.services.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.Constants.DATE_PATTERN
+import com.shid.mosquefinder.app.utils.helper_class.Constants.HOUR_PATTERN
 import com.shid.mosquefinder.app.utils.helper_class.FusedLocationWrapper
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.SharedPreferenceBooleanLiveData
@@ -69,7 +70,7 @@ class PrayerActivity : BaseActivity() {
     private val viewModel: PrayerViewModel by viewModels()
 
     private var _broadcastReceiver: BroadcastReceiver? = null
-    private val _sdfWatchTime = SimpleDateFormat("HH:mm")
+    private val _sdfWatchTime = SimpleDateFormat(HOUR_PATTERN)
 
 
     @Inject
@@ -196,7 +197,6 @@ class PrayerActivity : BaseActivity() {
         timeZone = getTimeZone()
         Timber.d("timeZone:${timeZone.toString()}")
         calculatePrayerTime(userPosition!!)
-        //findCity(userPosition!!.latitude, userPosition!!.longitude)
         setDate()
     }
 
@@ -416,8 +416,8 @@ class PrayerActivity : BaseActivity() {
 
     private fun setDate() {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("EEE, MMM d, yyyy")
-        val timeFormat = SimpleDateFormat("HH:mm")
+        val dateFormat = SimpleDateFormat(DATE_PATTERN)
+        val timeFormat = SimpleDateFormat(HOUR_PATTERN)
         val time = timeFormat.format(calendar.time)
         val date = dateFormat.format(calendar.time)
         textTime.text = time

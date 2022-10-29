@@ -29,24 +29,29 @@ inline fun <reified VM : ViewModel> AppCompatActivity.viewModelOf(
 ) = ViewModelProvider(this, factory).get(VM::class.java)
 
 
-internal fun Activity.showSnackbar(view: View, message: String, isError: Boolean = false,duration:Int = 0 ) {
-    val sb = Snackbar.make(view,message, duration)
+internal fun Activity.showSnackbar(
+    view: View,
+    message: String,
+    isError: Boolean = false,
+    duration: Int = 0
+) {
+    val sb = Snackbar.make(view, message, duration)
 
-    if (isError){
+    if (isError) {
         sb.setBackgroundTint(loadColor(R.color.colorRed))
             .setTextColor(loadColor(R.color.colorWhite))
             .show()
-    } else{
+    } else {
         sb.setBackgroundTint(loadColor(R.color.colorPrimary))
             .setTextColor(loadColor(R.color.colorWhite))
             .show()
     }
 
-if (duration == -2){
-    Handler(Looper.getMainLooper()).postDelayed({
-        sb.dismiss()
-    }, 10000)
-}
+    if (duration == -2) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            sb.dismiss()
+        }, 10000)
+    }
 
 }
 

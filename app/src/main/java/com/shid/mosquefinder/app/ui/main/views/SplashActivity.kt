@@ -24,14 +24,13 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        //initSplashViewModel()
         setTransparentStatusBar()
         checkIfPermissionActive()
 
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             checkIfUserIsAuthenticated();
-        }, 3000)
+        }, 2000)
 
     }
 

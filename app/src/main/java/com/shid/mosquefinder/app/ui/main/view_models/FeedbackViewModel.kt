@@ -16,7 +16,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedbackViewModel @Inject constructor(val application: Application, val database: FirebaseFirestore) :ViewModel(){
+class FeedbackViewModel @Inject constructor(
+    val application: Application,
+    val database: FirebaseFirestore
+) : ViewModel() {
 
     private val context: Context = application.applicationContext
     private val firebaseFeedbackRef: CollectionReference = database.collection("feedback")
@@ -29,28 +32,28 @@ class FeedbackViewModel @Inject constructor(val application: Application, val da
 
     private val viewModelScope = CoroutineScope(Dispatchers.Main + viewModelJob)*/
 
-    fun sendFeedback(email: String, message: String, countryCode:String) {
+    fun sendFeedback(email: String, message: String, countryCode: String) {
         showLoadingLiveData.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                    val feedback: MutableMap<String, String> = HashMap()
-                    feedback["email"] = email
-                    feedback["message"] = message
-                    feedback["country"] =
-                        countryCode
+                val feedback: MutableMap<String, String> = HashMap()
+                feedback["email"] = email
+                feedback["message"] = message
+                feedback["country"] =
+                    countryCode
 
-                    firebaseFeedbackRef
-                        .add(feedback)
-                        .addOnSuccessListener {
-                            onSendFeedbackSuccessful()
-                        }
-                        .addOnFailureListener {
-                            val errorMessage = getErrorMessage(context, it)
-                            onSendFeedbackFailed(errorMessage)
-                            Timber.e(
-                                "Error adding document $it"
-                            )
-                        }
+                firebaseFeedbackRef
+                    .add(feedback)
+                    .addOnSuccessListener {
+                        onSendFeedbackSuccessful()
+                    }
+                    .addOnFailureListener {
+                        val errorMessage = getErrorMessage(context, it)
+                        onSendFeedbackFailed(errorMessage)
+                        Timber.e(
+                            "Error adding document $it"
+                        )
+                    }
 
             } catch (ex: Exception) {
                 val errorMessage = getErrorMessage(context, ex)

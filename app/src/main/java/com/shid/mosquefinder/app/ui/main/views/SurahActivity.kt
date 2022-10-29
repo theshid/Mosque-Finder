@@ -81,7 +81,6 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
         surahAdapter = SurahAdapter()
         surahRecycler.adapter = surahAdapter
         surahAdapter.setItemClick(this@SurahActivity)
-        //setRecycler()
     }
 
     private fun setOnClick() {
@@ -94,6 +93,5 @@ class SurahActivity : BaseActivity(), SurahAdapter.OnClickSurah {
         startActivity<AyahActivity> {
             putExtra(Constants.EXTRA_SURAH_NUMBER, surahPresentation.number)
         }
-
     }
 }

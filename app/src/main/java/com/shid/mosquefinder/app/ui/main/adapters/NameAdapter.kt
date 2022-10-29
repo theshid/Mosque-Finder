@@ -8,7 +8,7 @@ import com.shid.mosquefinder.R
 import dev.kosrat.muslimdata.models.NameOfAllah
 import kotlinx.android.synthetic.main.item_names.view.*
 
-class NameAdapter():RecyclerView.Adapter<NameAdapter.NameViewHolder>() {
+class NameAdapter() : RecyclerView.Adapter<NameAdapter.NameViewHolder>() {
     private var listData = ArrayList<NameOfAllah>()
 
 
@@ -26,9 +26,9 @@ class NameAdapter():RecyclerView.Adapter<NameAdapter.NameViewHolder>() {
 
     override fun onBindViewHolder(holder: NameAdapter.NameViewHolder, position: Int) {
         listData[position].run { holder.bind(this) }
-      /*  holder.itemView.setOnClickListener(View.OnClickListener {
-            listData[position].let { it -> onClickName.onClickName(it) }
-        })*/
+        /*  holder.itemView.setOnClickListener(View.OnClickListener {
+              listData[position].let { it -> onClickName.onClickName(it) }
+          })*/
     }
 
     override fun getItemCount(): Int {

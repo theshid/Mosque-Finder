@@ -17,6 +17,7 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.SearchAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.SearchViewModel
 import com.shid.mosquefinder.app.utils.enums.Status
+import com.shid.mosquefinder.app.utils.helper_class.Constants.BUNDLE_KEY_SEARCH
 import com.shid.mosquefinder.data.model.ClusterMarker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_search.*
@@ -43,7 +44,7 @@ class SearchActivity : BaseActivity(), SearchAdapter.OnClickSearch {
         val bundle = intent.extras
         if (bundle != null) {
             listFromApi =
-                bundle.getParcelableArrayList<ClusterMarker>("test") as ArrayList<ClusterMarker>
+                bundle.getParcelableArrayList<ClusterMarker>(BUNDLE_KEY_SEARCH) as ArrayList<ClusterMarker>
         }
         setRecycler()
         setObservers()

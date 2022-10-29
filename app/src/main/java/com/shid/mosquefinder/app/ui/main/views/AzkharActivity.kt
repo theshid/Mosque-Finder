@@ -2,13 +2,15 @@ package com.shid.mosquefinder.app.ui.main.views
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.AzkharAdapter
 import com.shid.mosquefinder.app.ui.main.states.AzkharViewState
 import com.shid.mosquefinder.app.ui.main.view_models.AzkharViewModel
+import com.shid.mosquefinder.app.utils.extensions.showToast
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_CHAPTER
+import com.shid.mosquefinder.app.utils.helper_class.singleton.NetworkUtil
 import com.shid.mosquefinder.app.utils.showSnackbar
 import com.shid.mosquefinder.data.model.AzkarII
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +21,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class AzkharActivity : AppCompatActivity() {
+class AzkharActivity : BaseActivity() {
     private lateinit var adapter: AzkharAdapter
     private var chapterId: Int? = null
     private val viewModel by viewModels<AzkharViewModel>()
@@ -29,13 +31,21 @@ class AzkharActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item)
 
-        chapterId = intent.getIntExtra("chapter", 1)
+        chapterId = intent.getIntExtra(EXTRA_CHAPTER, 1)
         adapter = AzkharAdapter() { azkarItem ->
-            viewModel.getTranslation(azkarItem.translation)
+            getFrenchTranslation(azkarItem)
         }
         setUI()
         observeAzkharViewState()
         setOnClick()
+    }
+
+    private fun getFrenchTranslation(item: AzkarII) {
+        if (NetworkUtil.isOnline(this)) {
+            viewModel.getTranslation(item.translation)
+        } else {
+            showToast(getString(R.string.network_error_message))
+        }
     }
 
     override fun onPause() {
@@ -45,7 +55,7 @@ class AzkharActivity : AppCompatActivity() {
 
     private fun observeAzkharViewState() {
         viewModel.azkharViewState.observe(this) { viewState ->
-            if (AzkharAdapter.itemToSend != null){
+            if (AzkharAdapter.itemToSend != null) {
                 val element = list.first { AzkharAdapter.itemToSend!!.itemId == it.itemId }
                 Timber.d("ele:$element")
                 val translationFr = viewState.translation?.translation?.get(0)?.textTranslation

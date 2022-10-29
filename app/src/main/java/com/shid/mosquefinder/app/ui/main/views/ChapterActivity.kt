@@ -9,6 +9,8 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.ChapterAdapter
 import com.shid.mosquefinder.app.ui.main.view_models.ChapterViewModel
 import com.shid.mosquefinder.app.utils.extensions.startActivity
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_CATEGORY
+import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_CHAPTER
 import com.shid.mosquefinder.data.local.database.entities.Chapter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.kosrat.muslimdata.models.Language
@@ -20,14 +22,13 @@ import kotlinx.coroutines.launch
 class ChapterActivity : BaseActivity(), ChapterAdapter.ItemAction {
     private lateinit var adapter: ChapterAdapter
     private var categorNum: Int? = null
-    private var chapterList: List<Chapter>? = null
     private val viewModel: ChapterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chapter)
 
-        categorNum = intent.getIntExtra("category", 1)
+        categorNum = intent.getIntExtra(EXTRA_CATEGORY, 1)
         adapter = ChapterAdapter { it1 -> goToItemActivity(it1) }
         setData()
         setUI()
@@ -35,7 +36,6 @@ class ChapterActivity : BaseActivity(), ChapterAdapter.ItemAction {
     }
 
     private fun setData() {
-        //Handle French Translation
         categorNum?.let { viewModel.fetchChapters(it) }
     }
 
@@ -55,7 +55,7 @@ class ChapterActivity : BaseActivity(), ChapterAdapter.ItemAction {
 
     private fun goToItemActivity(chapterNum: Int) {
         startActivity<AzkharActivity> {
-            putExtra("chapter", chapterNum)
+            putExtra(EXTRA_CHAPTER, chapterNum)
         }
     }
 
@@ -66,8 +66,6 @@ class ChapterActivity : BaseActivity(), ChapterAdapter.ItemAction {
             if (azkarChapters != null) {
                 adapter.submitList(azkarChapters)
             }
-            /*Log.i("azkarChapters", "$azkarChapters")
-            Log.i("azkarChapters", "${azkarChapters?.size}")*/
         }
     }
 

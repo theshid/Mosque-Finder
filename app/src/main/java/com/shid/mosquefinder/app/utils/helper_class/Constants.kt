@@ -2,6 +2,9 @@ package com.shid.mosquefinder.app.utils.helper_class
 
 object Constants {
 
+    //
+    const val MOSQUE_COLLECTION_PATH = "mosques"
+
     //Blog fields
     const val BLOG_COLLECTION_PATH = "blog"
     const val BLOG_FIELD_TITLE = "title"
@@ -60,6 +63,8 @@ object Constants {
     const val EXTRA_STATE_PLAYER = "state_player"
     const val EXTRA_USER = "user"
     const val EXTRA_CHAPTER = "chapter"
+    const val EXTRA_CATEGORY = "category"
+    const val EXTRA_SEARCH = "search_result"
 
 
     //Intent keys
@@ -71,6 +76,9 @@ object Constants {
     const val BUNDLE_KEY_PLAYER_STATUS = "play_status"
     const val BUNDLE_KEY_PLAYER_SEEK = "seek"
     const val BUNDLE_KEY_PLAYER_REPEAT = "repeat"
+    const val BUNDLE_KEY_TEXT = "text"
+    const val BUNDLE_KEY_SEARCH = "test"
+    const val BUNDLE_KEY_CONNECTION = "LOST_CONNECTION"
 
     //Intent Filters
     const val INTENT_FILTER_MESSAGE_RECEIVER = "MyData"
@@ -103,12 +111,40 @@ object Constants {
     const val EVENT_PLAYER_PAUSE = "play_pause"
     const val EVENT_PLAYER_FINISH = "finish"
 
-    //SharedPReferences
-    const val FILENAME =  "filename"
+    //SharedPreferences
+    const val PREF_FILENAME = "filename"
+    const val PREF_POSITION_LAT = "position_lat"
+    const val PREF_POSITION_LONG = "position_lon"
+    const val PREF_USE_COUNT = "use_count"
+    const val PREF_RATE = "rate"
+    const val PREF_FIRST_TIME = "first_time"
+    const val PREF_FIRST_TIME_AYAH = "first_time_ayah"
+    const val PREF_FIRST_TIME_PRAYER = "first_time_prayer"
+    const val PREF_ACTIVATE = "activate"
+    const val PREF_FIRST_TIME_BIS = "first_time_bis"
+    const val PREF_USER = "user"
+    const val PREF_TOKEN = "token"
+    const val PREF_REMINDER = "reminder"
+    const val PREF_APP_STATE_KEY = "APP_STATE"
 
     const val notificationId = 77
     const val ACTION_RETRY = "ACTION_RETRY"
-    const val APP_STATE_KEY = "APP_STATE"
+
+
+    //Date
+    const val HOUR_PATTERN = "HH:mm"
+    const val DATE_PATTERN = "EEE, MMM d, yyyy"
+
+    //text
+    const val EMAIL = "mosquefinder@gmail.com"
+    const val MESSAGE_TYPE = "message/rfc822"
+
+
+    //MOSQUE INPUT
+    const val MOSQUE_NAME = "name"
+    const val MOSQUE_POSITION = "position"
+    const val MOSQUE_DOC_ID = "documentId"
+    const val MOSQUE_REPORT = "report"
 
 
 }

@@ -23,7 +23,6 @@ class FeedbackActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feedback)
-
         setViewModel()
         setOnClick()
     }
@@ -71,9 +70,6 @@ class FeedbackActivity : BaseActivity() {
     }
 
     private fun setViewModel() {
-        /* feedbackViewModelFactory = FeedbackViewModelFactory(application)
-         feedbackViewModel =ViewModelProvider(this,feedbackViewModelFactory).get(FeedbackViewModel(application)::class.java)*/
-
         feedbackViewModel.showLoadingLiveData.observe(this, observerShowLoading())
         feedbackViewModel.sendFeedbackSuccessfulLiveData.observe(
             this,

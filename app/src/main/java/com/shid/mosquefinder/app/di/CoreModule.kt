@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
-import androidx.core.content.getSystemService
 import androidx.work.WorkManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -55,7 +54,7 @@ object CoreModule {
     @Provides
     @Singleton
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return context.getSharedPreferences(Constants.FILENAME, Context.MODE_PRIVATE)
+        return context.getSharedPreferences(Constants.PREF_FILENAME, Context.MODE_PRIVATE)
     }
 
     @Singleton
@@ -96,7 +95,7 @@ object CoreModule {
 
     @Provides
     @Singleton
-    fun provideAlarmManager(@ApplicationContext context: Context):AlarmManager{
+    fun provideAlarmManager(@ApplicationContext context: Context): AlarmManager {
         return context.getSystemService(AlarmManager::class.java)
     }
 }

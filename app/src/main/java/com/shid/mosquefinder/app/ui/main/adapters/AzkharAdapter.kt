@@ -7,10 +7,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.ui.main.views.AzkharActivity
 import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.data.model.AzkarII
-import dev.kosrat.muslimdata.models.AzkarItem
 import kotlinx.android.synthetic.main.item_azkhar.view.*
 import timber.log.Timber
 import java.util.*
@@ -27,7 +25,7 @@ internal class AzkharAdapter(val listener: (AzkarII) -> Unit) :
                 oldItem == newItem
         }
 
-        var itemToSend:AzkarII?=null
+        var itemToSend: AzkarII? = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {

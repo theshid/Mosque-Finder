@@ -9,7 +9,7 @@ import com.orhanobut.logger.PrettyFormatStrategy
 import timber.log.Timber
 
 @Suppress("unused")
-class TimberInitializer: Initializer<Unit> {
+class TimberInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         customLoggerSetUp()
     }
@@ -17,7 +17,7 @@ class TimberInitializer: Initializer<Unit> {
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
 
 
-    private fun customLoggerSetUp(){
+    private fun customLoggerSetUp() {
         val formatStrategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
             .showThreadInfo(true) // (Optional) Whether to show thread info or not. Default true
             .methodCount(1) // (Optional) How many method line to show. Default 2
