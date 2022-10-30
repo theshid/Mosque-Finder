@@ -11,7 +11,7 @@ import com.shid.mosquefinder.app.di.CoroutinesScopesModule
 import com.shid.mosquefinder.app.ui.main.views.LoadingActivity
 import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.loadJsonArray
-import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.daos.QuranDao
 import com.shid.mosquefinder.data.local.database.entities.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope

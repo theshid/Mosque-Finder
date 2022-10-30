@@ -21,9 +21,8 @@ class SplashRepository @Inject constructor(
     private val crashlytics: FirebaseCrashlytics,
     val user: User
 ) {
-    // private val user: User = User()
-    private val usersRef = rootRef.collection(USERS)
 
+    private val usersRef = rootRef.collection(USERS)
 
     fun checkIfUserIsAuthenticatedInFirebase(): MutableLiveData<User> {
         val isUserAuthenticateInFirebaseMutableLiveData: MutableLiveData<User> =

@@ -27,11 +27,11 @@ import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.extensions.startService
 import com.shid.mosquefinder.app.utils.helper_class.Constants
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
-import com.shid.mosquefinder.app.utils.hide
+import com.shid.mosquefinder.app.utils.extensions.hide
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder
-import com.shid.mosquefinder.app.utils.remove
-import com.shid.mosquefinder.app.utils.show
-import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.app.utils.extensions.remove
+import com.shid.mosquefinder.app.utils.extensions.show
+import com.shid.mosquefinder.app.utils.extensions.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.ghyeok.stickyswitch.widget.StickySwitch
 import kotlinx.android.synthetic.main.activity_ayah.*

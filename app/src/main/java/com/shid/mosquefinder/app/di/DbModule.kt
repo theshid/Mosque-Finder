@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.shid.mosquefinder.data.local.QuranDatabaseCallback
-import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.daos.QuranDao
 import com.shid.mosquefinder.data.local.database.QuranDatabase
 import dagger.Module
 import dagger.Provides

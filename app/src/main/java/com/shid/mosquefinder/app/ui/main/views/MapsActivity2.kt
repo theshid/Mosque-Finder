@@ -64,10 +64,10 @@ import com.shid.mosquefinder.app.utils.helper_class.MyClusterManagerRenderer
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
-import com.shid.mosquefinder.app.utils.remove
-import com.shid.mosquefinder.app.utils.setTransparentStatusBar
-import com.shid.mosquefinder.app.utils.show
-import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.app.utils.extensions.remove
+import com.shid.mosquefinder.app.utils.extensions.setTransparentStatusBar
+import com.shid.mosquefinder.app.utils.extensions.show
+import com.shid.mosquefinder.app.utils.extensions.showSnackbar
 import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.data.model.Mosque
 import com.shid.mosquefinder.data.model.User

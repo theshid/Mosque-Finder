@@ -9,10 +9,10 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.BlogAdapter
 import com.shid.mosquefinder.app.ui.main.states.BlogViewState
 import com.shid.mosquefinder.app.ui.main.view_models.BlogViewModel
-import com.shid.mosquefinder.app.utils.hide
-import com.shid.mosquefinder.app.utils.remove
-import com.shid.mosquefinder.app.utils.show
-import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.app.utils.extensions.hide
+import com.shid.mosquefinder.app.utils.extensions.remove
+import com.shid.mosquefinder.app.utils.extensions.show
+import com.shid.mosquefinder.app.utils.extensions.showSnackbar
 import com.skydoves.transformationlayout.onTransformationStartContainer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_beautiful_mosques.toolbar

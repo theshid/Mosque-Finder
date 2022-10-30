@@ -2,7 +2,6 @@ package com.shid.mosquefinder.domain.usecases
 
 import com.shid.mosquefinder.domain.repository.AzkharRepository
 import com.shid.mosquefinder.domain.model.DeepL
-import com.shid.mosquefinder.app.utils.toPresentation
 import kotlinx.coroutines.flow.Flow
 
 typealias GetTranslationBaseUseCase = BaseUseCase<String, Flow<DeepL>>

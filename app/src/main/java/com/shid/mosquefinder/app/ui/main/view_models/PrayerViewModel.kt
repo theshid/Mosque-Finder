@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.broadcast_receiver.PrayerAlarmBroadcastReceiver
 import com.shid.mosquefinder.app.utils.extensions.showToast
-import com.shid.mosquefinder.app.utils.hour
-import com.shid.mosquefinder.app.utils.minutes
+import com.shid.mosquefinder.app.utils.extensions.hour
+import com.shid.mosquefinder.app.utils.extensions.minutes
 import de.coldtea.smplr.smplralarm.alarmNotification
 import de.coldtea.smplr.smplralarm.channel
 import de.coldtea.smplr.smplralarm.smplrAlarmCancel

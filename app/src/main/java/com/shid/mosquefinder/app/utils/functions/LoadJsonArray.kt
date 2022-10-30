@@ -8,7 +8,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 
- fun loadJsonArray(resources:Resources,fileId:Int,jsonName:String): JSONArray? {
+fun loadJsonArray(resources: Resources, fileId: Int, jsonName: String): JSONArray? {
     val builder = StringBuilder()
     val `in` =
         resources.openRawResource(fileId)

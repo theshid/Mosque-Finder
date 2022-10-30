@@ -11,7 +11,7 @@ import com.shid.mosquefinder.app.ui.main.view_models.AzkharViewModel
 import com.shid.mosquefinder.app.utils.extensions.showToast
 import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_CHAPTER
 import com.shid.mosquefinder.app.utils.helper_class.singleton.NetworkUtil
-import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.app.utils.extensions.showSnackbar
 import com.shid.mosquefinder.data.model.AzkarII
 import dagger.hilt.android.AndroidEntryPoint
 import dev.kosrat.muslimdata.models.Language

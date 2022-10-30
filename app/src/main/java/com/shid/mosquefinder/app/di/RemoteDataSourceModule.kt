@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.shid.mosquefinder.data.api.DeeplApiInterface
 import com.shid.mosquefinder.data.api.GoogleApiInterface
 import com.shid.mosquefinder.data.api.QuranApiInterface
-import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.daos.QuranDao
 import com.shid.mosquefinder.data.model.User
 import com.shid.mosquefinder.data.repository.*
 import com.shid.mosquefinder.domain.repository.*

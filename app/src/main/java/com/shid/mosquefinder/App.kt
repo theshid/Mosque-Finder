@@ -1,31 +1,23 @@
 package com.shid.mosquefinder
 
 import android.app.Application
-import android.content.Context
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
-import androidx.work.impl.Scheduler.MAX_SCHEDULER_LIMIT
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
-
 import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder.registerConnectivityBroadcaster
-import dagger.hilt.EntryPoint
-import dagger.hilt.EntryPoints
-import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
-import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class App : Application(),Configuration.Provider {
+class App : Application(), Configuration.Provider {
 
     @Inject
     lateinit var sharedPref: SharePref
+
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
     private val lifecycle = ProcessLifecycleOwner.get().lifecycle

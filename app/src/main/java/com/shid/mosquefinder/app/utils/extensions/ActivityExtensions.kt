@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.app.utils
+package com.shid.mosquefinder.app.utils.extensions
 
 import android.app.Activity
 import android.graphics.Color
@@ -13,20 +13,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.shid.mosquefinder.R
-import com.shid.mosquefinder.app.utils.extensions.loadColor
 import com.skydoves.transformationlayout.onTransformationEndContainer
 
 fun AppCompatActivity.onTransformationEndContainerApplyParams() {
-    onTransformationEndContainer(intent.getParcelableExtra("com.skydoves.transformationlayout"))
+    onTransformationEndContainer(intent.parcelable("com.skydoves.transformationlayout"))
 }
 
 fun ComponentActivity.onTransformationEndContainerApplyParams() {
-    onTransformationEndContainer(intent.getParcelableExtra("com.skydoves.transformationlayout"))
+    onTransformationEndContainer(intent.parcelable("com.skydoves.transformationlayout"))
 }
 
 inline fun <reified VM : ViewModel> AppCompatActivity.viewModelOf(
     factory: ViewModelProvider.Factory
-) = ViewModelProvider(this, factory).get(VM::class.java)
+) = ViewModelProvider(this, factory)[VM::class.java]
 
 
 internal fun Activity.showSnackbar(

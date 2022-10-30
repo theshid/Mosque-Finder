@@ -1,7 +1,7 @@
 package com.shid.mosquefinder.data.repository
 
 import com.shid.mosquefinder.data.api.QuranApiInterface
-import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.daos.QuranDao
 import com.shid.mosquefinder.data.local.toDomain
 import com.shid.mosquefinder.data.remote.toDomain
 import com.shid.mosquefinder.domain.model.Ayah

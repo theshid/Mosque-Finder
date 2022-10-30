@@ -1,6 +1,5 @@
 package com.shid.mosquefinder.app.utils.helper_class
 
-import android.R.attr
 import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Sensor
@@ -11,7 +10,6 @@ import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -114,17 +112,16 @@ class Compass(context: Context) : SensorEventListener {
                 azimuth = (azimuth + azimuthFix + 360) % 360
 
                 azimuth -= bearing(
-                        userPosition.latitude,
-                        userPosition.longitude, kaabaLocation.latitude, kaabaLocation.longitude
-                    )
-                        .toFloat()
-                }
-                if (listener != null) {
-                    listener!!.onNewAzimuth(azimuth)
-                }
+                    userPosition.latitude,
+                    userPosition.longitude, kaabaLocation.latitude, kaabaLocation.longitude
+                )
+                    .toFloat()
+            }
+            if (listener != null) {
+                listener!!.onNewAzimuth(azimuth)
             }
         }
-
+    }
 
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {

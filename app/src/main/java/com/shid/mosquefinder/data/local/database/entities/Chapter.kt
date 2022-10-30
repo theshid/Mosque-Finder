@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "chapter")
 data class Chapter(
-    @PrimaryKey(autoGenerate = true)  val id:Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "chapter_name") val chapterName: String,
     @ColumnInfo(name = "category_id") val categoryId: Int,
 )

@@ -9,7 +9,7 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.MosqueViewPagerAdapter
 import com.shid.mosquefinder.app.utils.extensions.parcelable
 import com.shid.mosquefinder.app.utils.helper_class.Constants.FRENCH_VERSION
-import com.shid.mosquefinder.app.utils.onTransformationEndContainerApplyParams
+import com.shid.mosquefinder.app.utils.extensions.onTransformationEndContainerApplyParams
 import com.shid.mosquefinder.data.model.BeautifulMosques
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout

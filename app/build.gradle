@@ -93,6 +93,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.6'
+
     //Moshi
     implementation "com.squareup.moshi:moshi:1.14.0"
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
@@ -111,7 +112,6 @@ dependencies {
 
     // Recommended: Add the Firebase SDK for Google Analytics.
     implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
-
 
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:18.1.0'
@@ -143,9 +143,6 @@ dependencies {
     //Real time database
     implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
 
-    //Material Design
-    /*implementation 'com.google.android.material:material:1.2.0'*/
-
     //Fab
     implementation 'uk.co.markormesher:android-fab:2.5.0'
 
@@ -175,20 +172,20 @@ dependencies {
 
     implementation 'com.github.GwonHyeok:StickySwitch:0.0.16'
 
+    //Muslim data
     implementation 'dev.kosrat.muslimdata:muslimdata:0.6'
-
     implementation 'com.github.ahmedeltaher:Azan:3.0'
 
+    //Downloader
     implementation "com.github.ssseasonnn:DownloadX:1.0.2"
 
-    implementation 'com.github.mumayank:AirLocation:2.5.2'
-
+    //Worker
     implementation "androidx.work:work-runtime-ktx:2.7.1"
 
-
+    //Android Media
     implementation("androidx.media:media:1.6.0")
 
-
+    //Custom Logger
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.orhanobut:logger:2.2.0'
 
@@ -203,7 +200,6 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
     // For instrumented tests.
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.40.5'
-    // ...with Kotlin.
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.42'
 
     // startup

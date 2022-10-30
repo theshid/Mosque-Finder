@@ -8,8 +8,8 @@ interface DeeplApiInterface {
 
     @POST("v2/translate")
     suspend fun getTranslation(
-        @Query("auth_key") key:String,
-        @Query("text") inputText:String,
-        @Query("target_lang") targetLg:String
-    ):DeepLResponse
+        @Query("auth_key") key: String,
+        @Query("text") inputText: String,
+        @Query("target_lang") targetLg: String
+    ): DeepLResponse
 }

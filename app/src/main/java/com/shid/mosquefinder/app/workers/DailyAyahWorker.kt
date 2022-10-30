@@ -24,7 +24,7 @@ class DailyAyahWorker @Inject constructor(
             PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
                 .addTag(Constants.WORKER_TAG)
                 .build()
-        Timber.d("value of state:"+ sharePref.loadSwitchState())
+        Timber.d("value of state:" + sharePref.loadSwitchState())
         if (sharePref.loadSwitchState()) {
             workManager.enqueueUniquePeriodicWork(
                 Constants.WORKER_NAME,

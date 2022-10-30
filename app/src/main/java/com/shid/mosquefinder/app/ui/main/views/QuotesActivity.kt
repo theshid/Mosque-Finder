@@ -10,10 +10,10 @@ import com.shid.mosquefinder.app.ui.base.BaseActivity
 import com.shid.mosquefinder.app.ui.main.adapters.ViewPagerAdapter
 import com.shid.mosquefinder.app.ui.main.states.QuoteViewState
 import com.shid.mosquefinder.app.ui.main.view_models.QuotesViewModel
-import com.shid.mosquefinder.app.utils.hide
-import com.shid.mosquefinder.app.utils.remove
-import com.shid.mosquefinder.app.utils.show
-import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.app.utils.extensions.hide
+import com.shid.mosquefinder.app.utils.extensions.remove
+import com.shid.mosquefinder.app.utils.extensions.show
+import com.shid.mosquefinder.app.utils.extensions.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_blog.*
 import kotlinx.android.synthetic.main.activity_quotes.*

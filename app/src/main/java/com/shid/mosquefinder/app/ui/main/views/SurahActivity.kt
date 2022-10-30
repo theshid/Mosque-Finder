@@ -12,9 +12,9 @@ import com.shid.mosquefinder.app.ui.main.view_models.SurahViewModel
 import com.shid.mosquefinder.app.ui.models.SurahPresentation
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import com.shid.mosquefinder.app.utils.helper_class.Constants
-import com.shid.mosquefinder.app.utils.hide
-import com.shid.mosquefinder.app.utils.show
-import com.shid.mosquefinder.app.utils.showSnackbar
+import com.shid.mosquefinder.app.utils.extensions.hide
+import com.shid.mosquefinder.app.utils.extensions.show
+import com.shid.mosquefinder.app.utils.extensions.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_surah.*
 import timber.log.Timber

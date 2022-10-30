@@ -7,8 +7,10 @@ import com.shid.mosquefinder.domain.model.DeepL
 import com.shid.mosquefinder.domain.model.Translation
 import com.shid.mosquefinder.domain.model.Verse
 
-internal fun DeepLResponse.toDomain():DeepL = DeepL(this.translationResponse.map { response -> response.toDomain() })
+internal fun DeepLResponse.toDomain(): DeepL =
+    DeepL(this.translationResponse.map { response -> response.toDomain() })
 
-internal fun TranslationResponse.toDomain():Translation = Translation(this.srcLg,this.textTranslation)
+internal fun TranslationResponse.toDomain(): Translation =
+    Translation(this.srcLg, this.textTranslation)
 
-internal fun VerseResponse.toDomain():Verse = Verse(this.verseNumber,this.trans,this.numInSurah)
+internal fun VerseResponse.toDomain(): Verse = Verse(this.verseNumber, this.trans, this.numInSurah)

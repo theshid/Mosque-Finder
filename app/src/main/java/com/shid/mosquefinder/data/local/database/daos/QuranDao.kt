@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.data.local.database
+package com.shid.mosquefinder.data.local.database.daos
 
 import androidx.room.Dao
 import androidx.room.Insert

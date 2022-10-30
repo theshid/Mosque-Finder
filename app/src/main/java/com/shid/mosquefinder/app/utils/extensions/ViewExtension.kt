@@ -1,4 +1,4 @@
-package com.shid.mosquefinder.app.utils
+package com.shid.mosquefinder.app.utils.extensions
 
 import android.view.View
 

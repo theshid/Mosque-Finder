@@ -1,6 +1,6 @@
 package com.shid.mosquefinder.data.repository
 
-import com.shid.mosquefinder.data.local.database.QuranDao
+import com.shid.mosquefinder.data.local.database.daos.QuranDao
 import com.shid.mosquefinder.data.local.toDomain
 import com.shid.mosquefinder.domain.model.Surah
 import com.shid.mosquefinder.domain.repository.SurahRepository
@@ -23,6 +23,8 @@ class SurahRepositoryImpl @Inject constructor(private val quranDao: QuranDao) : 
     }
 
     override fun getListSurahsForBaseCalculation(surahNumber: Int): Flow<List<Surah>> = flow {
-        emit(quranDao.getSurahListForBaseCalculation(surahNumber).map { surahDb -> surahDb.toDomain() })
+        emit(
+            quranDao.getSurahListForBaseCalculation(surahNumber)
+                .map { surahDb -> surahDb.toDomain() })
     }
 }

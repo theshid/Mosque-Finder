@@ -26,10 +26,6 @@ class QuoteRepositoryImpl @Inject constructor(database: FirebaseFirestore) : Quo
         getQuotesFromFirebase()
     }
 
-    fun returnStatusMsg(): LiveData<Resource<String>> {
-        return statusMsg
-    }
-
     override fun getQuotesFromFirebase(): MutableList<Quotes> {
         mQuoteListEventListener =
             firebaseQuoteRef.addSnapshotListener(EventListener<QuerySnapshot> { querySnapshot: QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->

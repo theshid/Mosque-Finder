@@ -36,7 +36,7 @@ import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_SURAH_NAME
 import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_SURAH_NAME_AYAH
 import com.shid.mosquefinder.app.utils.helper_class.Constants.EXTRA_SURAH_NUMBER
 import com.shid.mosquefinder.app.utils.helper_class.Constants.QARI_MISHARY
-import com.shid.mosquefinder.app.utils.remove
+import com.shid.mosquefinder.app.utils.extensions.remove
 import kotlinx.android.synthetic.main.activity_music.*
 import timber.log.Timber
 import java.io.File

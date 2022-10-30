@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import com.shid.mosquefinder.app.utils.helper_class.SharePref
-import com.shid.mosquefinder.data.api.ApiClient
-import com.shid.mosquefinder.data.api.GoogleApiInterface
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -56,15 +54,6 @@ object Common {
         Log.d(TAG, errorMessage.toString())
     }
 
-
-    val googleApiService: GoogleApiInterface
-        get() = ApiClient.getClient(GOOGLE_API_URL).create(GoogleApiInterface::class.java)
-
-    val deeplApiService: GoogleApiInterface
-        get() = ApiClient.getClient(DEEPL_API_URL).create(GoogleApiInterface::class.java)
-
-    val frenchQuranApiService: GoogleApiInterface
-        get() = ApiClient.getClient(QURAN_API_URL).create(GoogleApiInterface::class.java)
 
     suspend fun retrievePushId(context: Context): String? {
         return suspendCoroutine { cont ->

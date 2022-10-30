@@ -13,10 +13,10 @@ import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FIRST_TIME_BI
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_FIRST_TIME_PRAYER
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_POSITION_LAT
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_POSITION_LONG
+import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_RATE
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_REMINDER
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_TOKEN
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_USER
-import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_RATE
 import com.shid.mosquefinder.app.utils.helper_class.Constants.PREF_USE_COUNT
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common
 

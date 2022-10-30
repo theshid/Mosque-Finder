@@ -1,8 +1,11 @@
-package com.shid.mosquefinder.data.local.database
+package com.shid.mosquefinder.data.local.database.daos
 
 import androidx.room.Dao
 import androidx.room.Insert
-import com.shid.mosquefinder.data.local.database.entities.*
+import com.shid.mosquefinder.data.local.database.entities.Category
+import com.shid.mosquefinder.data.local.database.entities.Chapter
+import com.shid.mosquefinder.data.local.database.entities.DivineName
+import com.shid.mosquefinder.data.local.database.entities.Item
 
 @Dao
 interface AzkharDao {

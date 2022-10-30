@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.utils.helper_class.NetworkException
-import java.lang.Exception
 
 fun getErrorMessage(context: Context, ex: Exception): String {
     return if (ex is NetworkException) {

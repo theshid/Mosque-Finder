@@ -47,12 +47,16 @@ class FusedLocationWrapper(private val fusedLocation: FusedLocationProviderClien
     ): Flow<Location> = fusedLocation.locationFlow(request, context.mainLooper)
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
-    private fun FusedLocationProviderClient.locationFlow(request: LocationRequest, looper: android.os.Looper) = callbackFlow<Location> {
+    private fun FusedLocationProviderClient.locationFlow(
+        request: LocationRequest,
+        looper: android.os.Looper
+    ) = callbackFlow<Location> {
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 try {
                     result.lastLocation?.let { trySend(it) }
-                } catch(e: Exception) {}
+                } catch (e: Exception) {
+                }
             }
         }
 
@@ -71,5 +75,5 @@ class FusedLocationWrapper(private val fusedLocation: FusedLocationProviderClien
 }
 
 @ExperimentalCoroutinesApi
-fun ComponentActivity.fusedLocationWrapper()
-        = FusedLocationWrapper(LocationServices.getFusedLocationProviderClient(this))
+fun ComponentActivity.fusedLocationWrapper() =
+    FusedLocationWrapper(LocationServices.getFusedLocationProviderClient(this))

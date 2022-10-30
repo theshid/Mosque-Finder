@@ -11,7 +11,7 @@ import com.shid.mosquefinder.R
 import com.shid.mosquefinder.app.ui.main.view_models.SplashViewModel
 import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USER
 import com.shid.mosquefinder.app.utils.helper_class.singleton.PermissionUtils
-import com.shid.mosquefinder.app.utils.setTransparentStatusBar
+import com.shid.mosquefinder.app.utils.extensions.setTransparentStatusBar
 import com.shid.mosquefinder.app.utils.extensions.startActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber

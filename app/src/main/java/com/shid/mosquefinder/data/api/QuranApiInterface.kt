@@ -8,5 +8,5 @@ import retrofit2.http.Path
 interface QuranApiInterface {
 
     @GET("v1/surah/{surahNumber}/fr.hamidullah")
-    suspend fun getFrenchSurah(@Path("surahNumber") numSurah:Long):Response<RootResponse>
+    suspend fun getFrenchSurah(@Path("surahNumber") numSurah: Long): Response<RootResponse>
 }

@@ -2,6 +2,8 @@ package com.shid.mosquefinder.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.shid.mosquefinder.data.local.database.daos.AzkharDao
+import com.shid.mosquefinder.data.local.database.daos.QuranDao
 import com.shid.mosquefinder.data.local.database.entities.*
 
 @Database(

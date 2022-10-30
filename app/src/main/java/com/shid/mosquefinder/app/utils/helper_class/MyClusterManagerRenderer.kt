@@ -15,32 +15,32 @@ import com.google.maps.android.clustering.Cluster
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
-import com.shid.mosquefinder.data.model.ClusterMarker
 import com.shid.mosquefinder.R
+import com.shid.mosquefinder.data.model.ClusterMarker
 import java.util.concurrent.ExecutionException
 
 class MyClusterManagerRenderer constructor(
     context: Context,
     clusterManager: ClusterManager<ClusterMarker>, map: GoogleMap?
-): DefaultClusterRenderer<ClusterMarker>(context, map, clusterManager) {
+) : DefaultClusterRenderer<ClusterMarker>(context, map, clusterManager) {
     private lateinit var iconGenerator: IconGenerator
-    private  var imageView: ImageView? = null
+    private var imageView: ImageView? = null
     private var markerWidth: Int? = null
     private var markerHeight: Int? = null
-     lateinit var mContext: Context
+    lateinit var mContext: Context
 
     init {
-        mContext=context
+        mContext = context
         iconGenerator = IconGenerator(context.applicationContext)
         imageView = ImageView(context.applicationContext)
         markerWidth = (context.resources.getDimension(R.dimen.custom_marker_image)).toInt()
         markerHeight = (context.resources.getDimension(R.dimen.custom_marker_image)).toInt()
-        val params:ViewGroup.LayoutParams = ViewGroup.LayoutParams(markerWidth!!, markerHeight!!)
+        val params: ViewGroup.LayoutParams = ViewGroup.LayoutParams(markerWidth!!, markerHeight!!)
         imageView!!.layoutParams = params
         /*imageView!!.layoutParams.width = markerWidth!!
         imageView!!.layoutParams.height = markerHeight!!*/
         val padding = context.resources.getDimension(R.dimen.custom_marker_padding).toInt()
-        imageView!!.setPadding(padding,padding,padding,padding)
+        imageView!!.setPadding(padding, padding, padding, padding)
         iconGenerator.setContentView(imageView)
     }
 
@@ -56,13 +56,13 @@ class MyClusterManagerRenderer constructor(
                 imageView!!.setImageResource(R.drawable.verifiee)
                 //imageView!!.load(R.drawable.verifiee)
                 val icon = iconGenerator.makeIcon()
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title )
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             }
-            "not_verified" ->{
+            "not_verified" -> {
                 imageView!!.setImageResource(R.drawable.non_verifiee)
                 //imageView!!.load(R.drawable.non_verifiee)
                 val icon = iconGenerator.makeIcon()
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title )
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             }
             "false" -> {
                 imageView!!.setImageResource(R.drawable.fausse_position)
@@ -71,7 +71,7 @@ class MyClusterManagerRenderer constructor(
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
             }
             else -> {
-               imageView!!.setImageResource(R.drawable.user_pic)
+                imageView!!.setImageResource(R.drawable.user_pic)
                 //imageView!!.load(R.drawable.user_pic)
                 val icon = iconGenerator.makeIcon()
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(item.title)
@@ -118,9 +118,9 @@ class MyClusterManagerRenderer constructor(
         }
     }
 
-     class GetBitmap(var url: String, var context: Context) : Runnable {
+    class GetBitmap(var url: String, var context: Context) : Runnable {
 
-         var icon: Bitmap? = null
+        var icon: Bitmap? = null
 
         override fun run() {
             try {
@@ -129,12 +129,11 @@ class MyClusterManagerRenderer constructor(
                 val req = ImageRequest.Builder(context)
                     .data(url) // demo link
                     .target { result ->
-                       icon = (result as BitmapDrawable).bitmap
+                        icon = (result as BitmapDrawable).bitmap
                     }
                     .build()
 
                 //val disposable = loader.execute(req)
-
 
 
             } catch (e: ExecutionException) {
@@ -144,9 +143,9 @@ class MyClusterManagerRenderer constructor(
             }
         }
 
-         fun getBitmapFromThread(): Bitmap? {
-             return icon
-         }
+        fun getBitmapFromThread(): Bitmap? {
+            return icon
+        }
 
     }
 }

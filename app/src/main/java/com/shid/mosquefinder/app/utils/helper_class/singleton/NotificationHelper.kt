@@ -16,7 +16,7 @@ import com.shid.mosquefinder.app.ui.services.downloadUtil.NotificationHelper.Com
 
 object NotificationHelper {
     @RequiresApi(Build.VERSION_CODES.M)
-    fun showNotification(context:Context, pendingIntent: PendingIntent, message:String){
+    fun showNotification(context: Context, pendingIntent: PendingIntent, message: String) {
         val alarmSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val largeIcon = BitmapFactory.decodeResource(context.resources, R.drawable.logo2)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -26,7 +26,8 @@ object NotificationHelper {
             .setContentText(message)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                .bigText(message))
+                    .bigText(message)
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setColor(context.resources.getColor(R.color.whiteTransparent))
@@ -35,16 +36,19 @@ object NotificationHelper {
             .setAutoCancel(true)
         with(NotificationManagerCompat.from(context)) {
             // notificationId is a unique int for each notification that you must define
-            notify(com.shid.mosquefinder.app.ui.notification.NotificationWorker.Companion.notificationId, builder.build())
+            notify(
+                com.shid.mosquefinder.app.ui.notification.NotificationWorker.Companion.notificationId,
+                builder.build()
+            )
         }
 
 
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    fun getPendingIntent(context: Context):PendingIntent{
-        val intentBlog = Intent(context,BlogActivity::class.java)
+    fun getPendingIntent(context: Context): PendingIntent {
+        val intentBlog = Intent(context, BlogActivity::class.java)
         intentBlog.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        return PendingIntent.getActivity(context,0,intentBlog, PendingIntent.FLAG_IMMUTABLE)
+        return PendingIntent.getActivity(context, 0, intentBlog, PendingIntent.FLAG_IMMUTABLE)
     }
 }

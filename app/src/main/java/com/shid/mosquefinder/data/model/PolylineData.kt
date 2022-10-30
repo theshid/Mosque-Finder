@@ -3,10 +3,7 @@ package com.shid.mosquefinder.data.model
 import com.google.android.gms.maps.model.Polyline
 import com.google.maps.model.DirectionsLeg
 
-class PolylineData(var polyline: Polyline, var leg: DirectionsLeg) {
-
-    var mPolyline:Polyline = polyline
-    var mLeg: DirectionsLeg = leg
+data class PolylineData(var polyline: Polyline, var leg: DirectionsLeg) {
 
     override fun toString(): String {
         return "PolylineData{" +

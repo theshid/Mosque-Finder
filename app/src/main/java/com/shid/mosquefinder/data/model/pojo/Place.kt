@@ -4,29 +4,29 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.google.maps.model.PlacesSearchResult
 
-data class Place (
+data class Place(
 
     @SerializedName("html_attributions")
     @Expose
-    var htmlAttributions:List<Any> ,
+    var htmlAttributions: List<Any>,
 
     @SerializedName("next_page_token")
     @Expose
-    var nextPageToken:String ?= null,
+    var nextPageToken: String? = null,
 
     @SerializedName("results")
     @Expose
-    var results:List<PlacesSearchResult> ,
+    var results: List<PlacesSearchResult>,
 
     @SerializedName("status")
     @Expose
-     var status:String
-){
+    var status: String
+) {
 
 /*
 
     */
-/**
+    /**
      *
      * @return
      * The htmlAttributions
@@ -38,7 +38,7 @@ data class Place (
 
 
     */
-/**
+    /**
      *
      * @param htmlAttributions
      * The html_attributions
@@ -50,7 +50,7 @@ data class Place (
 
 
     */
-/**
+    /**
      *
      * @return
      * The nextPageToken
@@ -62,7 +62,7 @@ data class Place (
 
 
     */
-/**
+    /**
      *
      * @param nextPageToken
      * The next_page_token
@@ -74,7 +74,7 @@ data class Place (
 
 
     */
-/**
+    /**
      *
      * @return
      * The results
@@ -85,7 +85,7 @@ data class Place (
     }
 
     */
-/**
+    /**
      *
      * @param results
      * The results
@@ -97,7 +97,7 @@ data class Place (
 
 
     */
-/**
+    /**
      *
      * @return
      * The status
@@ -109,7 +109,7 @@ data class Place (
 
 
     */
-/**
+    /**
      *
      * @param status
      * The status
