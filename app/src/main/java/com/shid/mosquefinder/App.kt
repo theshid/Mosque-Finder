@@ -1,50 +1,56 @@
 package com.shid.mosquefinder
 
 import android.app.Application
-import android.content.Context
-import com.orhanobut.logger.AndroidLogAdapter
-import com.orhanobut.logger.FormatStrategy
-import com.orhanobut.logger.Logger
-import com.orhanobut.logger.PrettyFormatStrategy
-
-import com.shid.mosquefinder.ConnectivityStateHolder.registerConnectivityBroadcaster
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.work.Configuration
+import com.shid.mosquefinder.app.utils.helper_class.SharePref
+import com.shid.mosquefinder.app.utils.network.ConnectivityStateHolder.registerConnectivityBroadcaster
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
+import javax.inject.Inject
 
+@HiltAndroidApp
+class App : Application(), Configuration.Provider {
 
-class App : Application() {
+    @Inject
+    lateinit var sharedPref: SharePref
 
-    companion object {
-        var context: Context? = null
-        lateinit var application: App
-    }
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+    private val lifecycle = ProcessLifecycleOwner.get().lifecycle
+
 
     override fun onCreate() {
         super.onCreate()
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                sharedPref.isAppInBackground(false)
+                Timber.d("foreground")
+            }
 
-        context = this;
-        application = this
-        registerConnectivityBroadcaster()
-        val formatStrategy:FormatStrategy = PrettyFormatStrategy.newBuilder()
-            .showThreadInfo(true)
-            .methodCount(1)
-            .methodOffset(5)
-            .tag("")
-            .build()
-
-        Logger.addLogAdapter(AndroidLogAdapter(formatStrategy))
-        Timber.plant(object : Timber.DebugTree() {
-            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-                Logger.log(priority,"-$tag",message,t)
+            override fun onPause(owner: LifecycleOwner) {
+                super.onPause(owner)
+                sharedPref.isAppInBackground(true)
+                Timber.d("background")
             }
         })
-
-        /*SoLoader.init(this, false)
-
-        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
-            val client = AndroidFlipperClient.getInstance(this)
-            client.addPlugin(InspectorFlipperPlugin(this, DescriptorMapping.withDefaults()))
-            client.addPlugin(DatabasesFlipperPlugin(this))
-            client.start()
-        }*/
+        registerConnectivityBroadcaster()
     }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().setWorkerFactory(workerFactory)
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .build()
+    }
+
+    /* override fun getWorkManagerConfiguration(): Configuration {
+         return Configuration.Builder().setWorkerFactory(workerFactory)
+             .setMinimumLoggingLevel(android.util.Log.DEBUG)
+             .build()
+     }*/
+
 }

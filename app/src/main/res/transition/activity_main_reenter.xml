@@ -11,12 +11,12 @@
                 />
         </targets>
         <transition
-                class="com.shid.mosquefinder.Ui.onboardingscreen.core.PopTransition"
+                class="com.shid.mosquefinder.app.ui.onboardingscreen.core.PopTransition"
             app:startScale="0.95"
             app:endScale="1.0"
                 />
         <transition
-                class="com.shid.mosquefinder.Ui.onboardingscreen.core.FadeTransition"
+                class="com.shid.mosquefinder.app.ui.onboardingscreen.core.FadeTransition"
             app:startAlpha="0.3"
             app:endAlpha="1.0"
                 />

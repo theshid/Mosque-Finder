@@ -10,9 +10,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.shid.mosquefinder.Data.Model.User
-import com.shid.mosquefinder.Ui.Main.View.AuthActivity
-import com.shid.mosquefinder.Utils.Common.USER
+import com.shid.mosquefinder.app.ui.main.views.AuthActivity
+import com.shid.mosquefinder.app.utils.helper_class.singleton.Common.USER
+import com.shid.mosquefinder.data.model.User
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     private fun setMessageToMessageTextView(user: User) {
         val message = "You are logged in as: " + user.name
-       // messageTextView!!.text = message
+        // messageTextView!!.text = message
         message_text_view.text = message
     }
 
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         firebaseAuth.removeAuthStateListener(this)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.shid.mosquefinder">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -19,45 +20,47 @@
 
     <application
         android:name=".App"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup">
         <activity
-            android:name=".Ui.Main.View.ArticleDetailActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.ArticleDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".Ui.Main.View.BlogActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.BlogActivity"
             android:exported="false" />
         <activity
-            android:name=".Ui.Main.View.CompassActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.CompassActivity"
             android:exported="false" />
 
         <receiver
-            android:name=".Ui.broadcast_receiver.DbReceiver"
+            android:name="com.shid.mosquefinder.app.ui.broadcast_receiver.DbReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.shid.mosquefinder.DBLOAD" />
             </intent-filter>
         </receiver>
 
-        <activity android:name=".Ui.Main.View.LoadingActivity" />
+        <activity android:name="com.shid.mosquefinder.app.ui.main.views.LoadingActivity" />
         <activity
-            android:name=".Ui.Main.View.SettingsActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".Ui.Main.View.ItemActivity" />
-        <activity android:name=".Ui.Main.View.ChapterActivity" />
+        <activity android:name="com.shid.mosquefinder.app.ui.main.views.AzkharActivity" />
+        <activity android:name="com.shid.mosquefinder.app.ui.main.views.ChapterActivity" />
 
         <service
-            android:name=".Ui.services.SurahDLService"
+            android:name="com.shid.mosquefinder.app.ui.services.SurahDLService"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".Ui.services.MusicService"
+            android:name="com.shid.mosquefinder.app.ui.services.MusicService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -65,46 +68,43 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Ui.Main.View.MusicActivity" />
-        <activity android:name=".Ui.Main.View.PrayerActivity" />
+        <activity android:name="com.shid.mosquefinder.app.ui.main.views.MusicActivity" />
+        <activity android:name="com.shid.mosquefinder.app.ui.main.views.PrayerActivity" />
         <activity
-            android:name=".Ui.Main.View.HomeActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.NamesActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.NamesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.CategoriesActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.CategoriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.AyahActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.AyahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.SurahActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.SurahActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.TestActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.DetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.DetailActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.BeautifulMosquesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.BeautifulMosquesActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.SearchActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.SearchActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.QuotesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.QuotesActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.CreditsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.CreditsActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.FeedbackActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Ui.Main.View.FeedbackActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Ui.Main.View.SplashActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -114,10 +114,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
+            android:name="com.shid.mosquefinder.app.ui.onboardingscreen.feature.onboarding.OnBoardingActivity"
             android:theme="@style/AppTheme.OnBoarding" />
         <activity
-            android:name=".Ui.Main.View.AuthActivity"
+            android:name="com.shid.mosquefinder.app.ui.main.views.AuthActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -132,26 +133,61 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Ui.Main.View.MapsActivity2"
+            android:name="com.shid.mosquefinder.app.ui.main.views.MapsActivity2"
             android:label="@string/title_activity_maps"
             android:screenOrientation="fullSensor"
             android:theme="@style/HomeTheme" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme" />
+
         <service
-            android:name=".Ui.services.MyFirebaseMessagingService"
+            android:name="com.shid.mosquefinder.app.ui.services.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name="com.shid.mosquefinder.app.ui.broadcast_receiver.PrayerAlarmBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name="com.shid.mosquefinder.app.ui.broadcast_receiver.AyahReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="ACTION_RETRY" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logo2" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="com.shid.mosquefinder.androidx-startup"
+            android:exported="false"
+            tools:node="merge"
+            >
+
+            <meta-data
+                android:name="com.shid.mosquefinder.app.initializer.TimberInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="com.shid.mosquefinder.app.initializer.WorkManagerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
     </application>
 
